@@ -1604,3 +1604,176 @@ html body[data-intranet-module="atas"] #mainSystem#mainSystem .main-area .topbar
     max-width: 100% !important;
   }
 }
+
+
+/* =====================================================================
+   REFINAMENTO APÓS FEEDBACK — largura, navegação e leitura dos cards
+   2026-10-05
+   ===================================================================== */
+
+/* O menu é controle de sidebar móvel; em desktop a navegação já está aberta. */
+@media (min-width: 1025px) {
+  html body[data-intranet-module="atas"] #mainSystem .topbar .btn-toggle-sidebar {
+    display: none !important;
+  }
+}
+@media (max-width: 1024px) {
+  html body[data-intranet-module="atas"] #mainSystem .topbar .btn-toggle-sidebar {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Usa a largura disponível; mantém apenas um gutter curto e consistente. */
+html body[data-intranet-module="atas"] #mainSystem#mainSystem > .main-area > .conteudo.conteudo-full {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 16px 18px 32px !important;
+  box-sizing: border-box !important;
+}
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #dashboardContent,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #consultaContent,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #gestaoContent,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #cadastroContent,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #pedidosContent,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #aditivosContent,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #faqContent,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #carrinhoContent,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem #relatoriosContent {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+html body[data-intranet-module="atas"] #mainSystem#mainSystem .filtros-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+html body[data-intranet-module="atas"] #mainSystem#mainSystem .dashboard-container,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem .gestao-container,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem .cadastro-container,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem .pedidos-container,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem .aditivos-container,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem .relatorios-container,
+html body[data-intranet-module="atas"] #mainSystem#mainSystem .relatorios-ativo {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Cartões claros e neutros: cor forte fica reservada a status e alertas. */
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card {
+  overflow: hidden !important;
+  border: 1px solid #d8e1e9 !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  background-image: none !important;
+  color: #263746 !important;
+  box-shadow: 0 2px 8px rgba(24, 45, 64, .055) !important;
+  transition: border-color .16s ease, box-shadow .16s ease !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card:hover {
+  transform: translateY(-1px) !important;
+  border-color: #b8c9d8 !important;
+  box-shadow: 0 6px 16px rgba(24, 45, 64, .09) !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card::before {
+  display: none !important;
+  content: none !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-header {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 9px !important;
+  padding: 12px 14px !important;
+  border: 0 !important;
+  border-bottom: 1px solid #e5ebf0 !important;
+  border-radius: 0 !important;
+  background: #f6f8fa !important;
+  background-image: none !important;
+  color: #263746 !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-status {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-card-item-count {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 8px !important;
+  border: 1px solid #e1e7ed !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: #5d6b78 !important;
+  font-size: .64rem !important;
+  font-weight: 650 !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-numero {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  color: #1f3447 !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-titulo-numero,
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-numero {
+  color: #1f3447 !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-card-body,
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-footer {
+  background: #fff !important;
+  background-image: none !important;
+  color: #334155 !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-footer {
+  border-top: 1px solid #e8edf2 !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-card-balance {
+  border-color: #e4eaf0 !important;
+  background: #f8fafb !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-card-balance-available strong,
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-card-consumed strong,
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .ata-card-total strong {
+  color: #20384d !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .btn-visualizar {
+  background: #245b8f !important;
+  box-shadow: none !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .btn-visualizar:hover {
+  background: #1b4a75 !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .btn-favoritar-ata[aria-pressed="true"] {
+  border-color: #b7d2ea !important;
+  background: #edf5fc !important;
+  color: #245b8f !important;
+  box-shadow: none !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .btn-favoritar-ata[aria-pressed="true"] i {
+  color: #245b8f !important;
+}
+@media (max-width: 720px) {
+  html body[data-intranet-module="atas"] #mainSystem#mainSystem > .main-area > .conteudo.conteudo-full {
+    padding: 14px 12px 24px !important;
+  }
+}
