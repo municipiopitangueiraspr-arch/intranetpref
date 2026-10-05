@@ -6,7 +6,7 @@
 import { supabase } from "./supabase.js";
 import { Auth } from "./modules/auth.js";
 import { UI } from "./modules/ui.js";
-import { Consulta } from "./modules/consulta.js?v=20261005-favoritas-1";
+import { Consulta } from "./modules/consulta.js?v=20261005-shell-cards-1";
 import { Gestao } from "./modules/gestao.js";
 import { Cadastro } from "./modules/cadastro.js";
 import { Pedidos } from "./modules/pedidos.js";
@@ -135,17 +135,17 @@ class SistemaGestaoAtas {
       const usuario = await initLayout({
         supabase,
 
-        // Marca exibida no topo da sidebar
+        // Identidade institucional exibida na sidebar
         brand: {
-          nome: "Atas, Saldos e Pedidos",
-          subtitulo: "Compras, saldos e pedidos",
+          nome: "Prefeitura Municipal de Pitangueiras",
+          subtitulo: "Intranet Municipal",
           icone: "fa-layer-group",
         },
 
-        // Topbar (título da página)
+        // Topbar identifica o módulo; cada view apresenta seu próprio título.
         iconeTitulo: "fa-layer-group",
-        titulo: "Painel Administrativo",
-        subtitulo: "Consulte atas, acompanhe saldos e controle pedidos",
+        titulo: "Gestão de Atas",
+        subtitulo: "Saldos, consumo e pedidos",
         // Menu do usuário alinhado ao padrão da Biblioteca Municipal.
         // A Ajuda abre a view FAQ já existente neste módulo.
         menuUsuario: {
