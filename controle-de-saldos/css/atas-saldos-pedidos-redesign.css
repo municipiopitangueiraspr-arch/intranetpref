@@ -11,6 +11,16 @@ body[data-intranet-module="atas"] {
   --atas-line: #dbe5ee;
   --atas-muted: #64748b;
   --atas-bg: #f4f7fb;
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: #0b63ce;
+  --primary-700: #0754af;
+  --primary-800: #073b69;
+  --primary-900: #092d4f;
   background: var(--atas-bg) !important;
   color: var(--atas-ink);
   font-family: Manrope, "Segoe UI", Roboto, system-ui, sans-serif;
@@ -93,22 +103,7 @@ body[data-intranet-module="atas"] .pedidos-container {
   max-width: 1440px;
   margin: 0 auto;
 }
-/* Dashboard: lightweight page intro, matching the reference hierarchy. */
-body[data-intranet-module="atas"] .dashboard-container::before {
-  content: "Gestão de Atas, Saldos e Pedidos  ·  Consulte, acompanhe e gerencie as atas de registro de preços, saldos e pedidos.";
-  display: block;
-  margin: 0 0 18px;
-  padding: 18px 22px;
-  border: 1px solid #d8e4ee;
-  border-radius: 14px;
-  color: var(--atas-ink);
-  background: linear-gradient(100deg, #fff 0%, #f4f9fd 62%, #e8f4fb 100%);
-  box-shadow: 0 8px 22px rgba(25, 63, 88, .06);
-  font-size: clamp(1rem, 1.7vw, 1.34rem);
-  font-weight: 800;
-  letter-spacing: -.025em;
-}
-body[data-intranet-module="atas"] .dashboard-container::first-line { line-height: 1.25; }
+/* O título do dashboard usa semântica HTML no template. */
 /* Consultation summary cards */
 body[data-intranet-module="atas"] .resumo-rapido,
 body[data-intranet-module="atas"] .dashboard-kpis { gap: 12px; }
@@ -220,7 +215,6 @@ body[data-intranet-module="atas"] td { border-bottom-color: #e7eef3; }
   body[data-intranet-module="atas"] .main-area { margin-left: 0; }
   body[data-intranet-module="atas"] .topbar { padding: 0 16px; }
   body[data-intranet-module="atas"] .conteudo.conteudo-full { padding: 16px 12px 28px; }
-  body[data-intranet-module="atas"] .dashboard-container::before { padding: 15px 16px; font-size: 1rem; }
 }
 @media (max-width: 620px) {
   body[data-intranet-module="atas"] .resumo-rapido,
@@ -301,4 +295,750 @@ body[data-intranet-module="atas"] #mainSystem th { background: #edf5fa !importan
   body[data-intranet-module="atas"] #mainSystem .app-layout { grid-template-columns: 1fr !important; }
   body[data-intranet-module="atas"] #mainSystem .sidebar { width: 216px !important; }
   body[data-intranet-module="atas"] #mainSystem .conteudo.conteudo-full { padding: 16px 12px 28px !important; }
+}
+
+
+/* Consulta — hierarquia editorial e alternância de apresentação (sem banner fotográfico). */
+body[data-intranet-module="atas"] #mainSystem .atas-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 1440px;
+  margin: 0 auto 10px;
+  color: #718096;
+  font-size: .76rem;
+}
+body[data-intranet-module="atas"] #mainSystem .atas-breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #47627b;
+  text-decoration: none;
+}
+body[data-intranet-module="atas"] #mainSystem .atas-breadcrumb a:hover { color: #0b63ce; }
+body[data-intranet-module="atas"] #mainSystem .atas-breadcrumb-separator { color: #a0adba; }
+body[data-intranet-module="atas"] #mainSystem .consulta-page-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 1440px;
+  margin: 0 auto 18px;
+  color: #102a43;
+}
+body[data-intranet-module="atas"] #mainSystem .consulta-page-icon {
+  display: grid;
+  width: 42px;
+  height: 48px;
+  flex: 0 0 42px;
+  place-items: center;
+  border-radius: 9px;
+  background: #eaf3fc;
+  color: #0b63ce;
+  font-size: 1.55rem;
+}
+body[data-intranet-module="atas"] #mainSystem .consulta-page-heading h2 {
+  margin: 0;
+  color: #102a43;
+  font-size: clamp(1.12rem, 1.5vw, 1.38rem);
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+body[data-intranet-module="atas"] #mainSystem .consulta-page-heading p {
+  margin: 3px 0 0;
+  color: #64748b;
+  font-size: .79rem;
+}
+body[data-intranet-module="atas"] #mainSystem .consulta-ferramentas-resultados {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+body[data-intranet-module="atas"] #mainSystem .consulta-visualizacao {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #dbe5ee;
+  border-radius: 9px;
+  background: #fff;
+}
+body[data-intranet-module="atas"] #mainSystem .btn-visualizacao-atas {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: #60748a;
+  cursor: pointer;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 700;
+  transition: background-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+body[data-intranet-module="atas"] #mainSystem .btn-visualizacao-atas:hover { background: #f1f6fb; color: #174d83; }
+body[data-intranet-module="atas"] #mainSystem .btn-visualizacao-atas.ativo {
+  border-color: #0b63ce;
+  background: #0b63ce;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(11, 99, 206, .18);
+}
+body[data-intranet-module="atas"] #mainSystem .btn-visualizacao-atas:focus-visible {
+  outline: 3px solid rgba(11, 99, 206, .28);
+  outline-offset: 2px;
+}
+@media (min-width: 1500px) {
+  body[data-intranet-module="atas"] #mainSystem #atasLista:not(.modo-lista) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  min-height: 0;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-header {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: center;
+  gap: 7px 14px;
+  padding: 13px 16px;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-status { grid-column: 1 / -1; margin: 0; }
+body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-numero { margin: 0; }
+body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-card-balance { margin: 0; }
+body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .itens-correspondentes { grid-column: 1 / -1; }
+body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-footer {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-width: 170px;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  border-left: 1px solid #e5edf4;
+  padding: 12px 16px;
+}
+@media (max-width: 900px) {
+  body[data-intranet-module="atas"] #mainSystem .consulta-ferramentas-resultados { justify-content: space-between; }
+  body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-card { grid-template-columns: minmax(0, 1fr); }
+  body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-header { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-footer {
+    grid-column: 1;
+    grid-row: auto;
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #e5edf4;
+    border-left: 0;
+  }
+}
+@media (max-width: 620px) {
+  body[data-intranet-module="atas"] #mainSystem .consulta-page-heading { align-items: flex-start; gap: 10px; }
+  body[data-intranet-module="atas"] #mainSystem .consulta-page-icon { width: 36px; height: 40px; flex-basis: 36px; font-size: 1.2rem; }
+  body[data-intranet-module="atas"] #mainSystem .consulta-page-heading p { font-size: .74rem; }
+  body[data-intranet-module="atas"] #mainSystem .consulta-ferramentas-resultados { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr); justify-content: stretch; }
+  body[data-intranet-module="atas"] #mainSystem .consulta-filtro-favoritas { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  body[data-intranet-module="atas"] #mainSystem .consulta-filtro-favoritas .btn-filtro-favoritas { justify-content: center; min-width: 0; padding-right: 6px; padding-left: 6px; white-space: nowrap; font-size: .67rem; }
+  body[data-intranet-module="atas"] #mainSystem .consulta-visualizacao { justify-self: end; }
+  body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-header { grid-template-columns: minmax(0, 1fr); }
+  body[data-intranet-module="atas"] #mainSystem #atasLista.modo-lista .ata-status { grid-column: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-intranet-module="atas"] #mainSystem .btn-visualizacao-atas { transition: none; }
+}
+
+
+/* =====================================================================
+   CAMADA DE COMPONENTES — MÓDULO COMPLETO
+   Aplicada após o CSS compartilhado. As regras de tela ficam limitadas à
+   SPA #mainSystem; as páginas standalone usam data-intranet-page próprio.
+   ===================================================================== */
+body[data-intranet-module="atas"] #mainSystem {
+  --atas-ink: #102a43;
+  --atas-blue: #0b63ce;
+  --atas-blue-dark: #073b69;
+  --atas-line: #dbe5ee;
+  --atas-muted: #64748b;
+  --atas-surface: #fff;
+  --atas-shadow: 0 7px 20px rgba(25, 63, 88, .06);
+}
+
+/* Cabeçalho editorial do dashboard: sem banner fotográfico. */
+body[data-intranet-module="atas"] #mainSystem .dashboard-page-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 18px;
+  color: var(--atas-ink);
+}
+body[data-intranet-module="atas"] #mainSystem .dashboard-page-icon {
+  display: grid;
+  width: 44px;
+  height: 48px;
+  flex: 0 0 44px;
+  place-items: center;
+  border-radius: 10px;
+  background: #eaf3fc;
+  color: var(--atas-blue);
+  font-size: 1.45rem;
+}
+body[data-intranet-module="atas"] #mainSystem .dashboard-page-heading h2 {
+  margin: 0;
+  color: var(--atas-ink);
+  font-size: clamp(1.12rem, 1.5vw, 1.38rem);
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+body[data-intranet-module="atas"] #mainSystem .dashboard-page-heading p {
+  margin: 3px 0 0;
+  color: var(--atas-muted);
+  font-size: .79rem;
+}
+
+/* Proporção e superfícies das telas de trabalho. */
+body[data-intranet-module="atas"] #mainSystem :is(
+  .dashboard-container,
+  .filtros-container,
+  .gestao-container,
+  .pedidos-container,
+  .pedido-container,
+  .cadastro-container,
+  .aditivos-container,
+  .relatorios-container,
+  .carrinho-view
+) {
+  max-width: 1440px;
+  margin-right: auto;
+  margin-left: auto;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .pedido-container,
+  .cadastro-form-wrapper,
+  .aditivos-container,
+  .relatorios-ativo,
+  .relatorios-grafico-card,
+  .carrinho-empty,
+  .carrinho-grupo-ata,
+  .carrinho-resumo
+) {
+  border: 1px solid var(--atas-line) !important;
+  border-radius: 14px !important;
+  background: var(--atas-surface) !important;
+  box-shadow: var(--atas-shadow) !important;
+}
+body[data-intranet-module="atas"] #mainSystem .pedido-container {
+  padding: 22px;
+}
+body[data-intranet-module="atas"] #mainSystem .relatorios-indice-header {
+  padding: 18px 20px;
+  border: 1px solid var(--atas-line) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: var(--atas-shadow) !important;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .gestao-header,
+  .aditivos-header,
+  .cadastro-header,
+  .pedido-header,
+  .relatorios-ativo-header
+) {
+  border-color: #e4edf4;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .gestao-titulo,
+  .cadastro-titulo,
+  .relatorios-indice-titulo,
+  .relatorios-ativo-titulo,
+  .pedido-titulo,
+  .aditivos-header h3
+) {
+  color: var(--atas-ink) !important;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .gestao-titulo i,
+  .cadastro-titulo i,
+  .relatorios-indice-titulo i,
+  .relatorios-ativo-titulo i,
+  .aditivos-header h3 i
+) {
+  color: var(--atas-blue) !important;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .cadastro-secao,
+  .dashboard-card,
+  .auditoria-saldos-card,
+  .relatorios-grafico-card,
+  .relatorios-resultado,
+  .pedido-detalhe-card,
+  .aditivo-card
+) {
+  border-color: var(--atas-line) !important;
+  border-radius: 13px !important;
+  box-shadow: 0 5px 16px rgba(25, 63, 88, .05) !important;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .cadastro-indicadores .indicador-card,
+  .pedidos-indicadores .indicador-card,
+  .gestao-stats > div,
+  .relatorios-kpis > *,
+  .dashboard-kpis .kpi-card
+) {
+  border: 1px solid var(--atas-line) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 16px rgba(25, 63, 88, .06) !important;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .cadastro-indicadores .indicador-card:hover,
+  .pedidos-indicadores .indicador-card:hover,
+  .dashboard-kpis .kpi-card:hover
+) {
+  transform: translateY(-2px);
+  border-color: #a9cce7 !important;
+  box-shadow: 0 10px 24px rgba(25, 63, 88, .11) !important;
+}
+body[data-intranet-module="atas"] #mainSystem .pill.ativo {
+  border-color: var(--atas-blue) !important;
+  background: var(--atas-blue) !important;
+  box-shadow: 0 2px 6px rgba(11, 99, 206, .18) !important;
+  color: #fff !important;
+}
+
+/* Formulários: dimensões, legibilidade, foco e consistência entre views. */
+body[data-intranet-module="atas"] #mainSystem :is(
+  .filtro-input,
+  .filtro-select,
+  .gestao-select,
+  .form-input,
+  .relatorios-filtros input[type="date"],
+  .relatorios-filtros input[type="number"],
+  .relatorios-filtros select,
+  #modalFinalizacao input,
+  #modalFinalizacao select,
+  #modalFinalizacao textarea
+) {
+  min-height: 40px;
+  border: 1px solid #d5e0e9 !important;
+  border-radius: 9px !important;
+  background-color: #fff !important;
+  color: #263f55 !important;
+  box-shadow: none !important;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .filtro-input,
+  .filtro-select,
+  .gestao-select,
+  .form-input,
+  .relatorios-filtros input,
+  .relatorios-filtros select,
+  #modalFinalizacao input,
+  #modalFinalizacao select,
+  #modalFinalizacao textarea
+):focus {
+  border-color: var(--atas-blue) !important;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(11, 99, 206, .13) !important;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .filtro-label,
+  .form-group label,
+  .relatorios-filtros .filtro-label
+) {
+  color: #566b7d;
+}
+body[data-intranet-module="atas"] #mainSystem input[type="checkbox"],
+body[data-intranet-module="atas"] #mainSystem input[type="radio"] {
+  accent-color: var(--atas-blue);
+}
+
+/* Ações: azul para fluxo principal, neutro para ações auxiliares. */
+body[data-intranet-module="atas"] #mainSystem :is(
+  .btn-primary,
+  .btn-aplicar,
+  .btn-visualizar,
+  .btn-acao-principal,
+  .btn-novo-aditivo,
+  .btn-adicionar-item,
+  .btn-continuar-comprando,
+  .btn-finalizar-pedido,
+  .btn-salvar-ata,
+  .btn-confirmar-pedido
+) {
+  border: 1px solid #0b63ce !important;
+  border-radius: 9px !important;
+  background: linear-gradient(110deg, #0b76da, #0754af) !important;
+  box-shadow: 0 6px 14px rgba(8, 92, 180, .18) !important;
+  color: #fff !important;
+  font-weight: 750;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .btn-primary,
+  .btn-aplicar,
+  .btn-visualizar,
+  .btn-acao-principal,
+  .btn-novo-aditivo,
+  .btn-adicionar-item,
+  .btn-continuar-comprando,
+  .btn-finalizar-pedido,
+  .btn-salvar-ata,
+  .btn-confirmar-pedido
+):hover:not(:disabled) {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .btn-outline,
+  .btn-secondary,
+  .btn-voltar,
+  .btn-limpar,
+  .btn-exportar,
+  .btn-limpar-carrinho,
+  .btn-acao-secundaria,
+  .btn-ver-fila-completa
+) {
+  border: 1px solid #cbd9e4 !important;
+  border-radius: 9px !important;
+  background: #f5f8fb !important;
+  color: #31546e !important;
+  box-shadow: none !important;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  button,
+  a,
+  [role="button"],
+  input,
+  select,
+  textarea
+):focus-visible {
+  outline: 3px solid rgba(11, 99, 206, .28);
+  outline-offset: 2px;
+}
+
+/* Tabelas e listagens com rolagem horizontal segura em telas estreitas. */
+body[data-intranet-module="atas"] #mainSystem :is(
+  .tabela-container,
+  .gestao-tabela-wrapper,
+  .relatorios-tabela-container,
+  .tabela-responsive,
+  .table-responsive
+) {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+  scrollbar-color: #b7c9d8 #f1f5f9;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .tabela-itens,
+  .tabela-carrinho,
+  .gestao-tabela
+) {
+  min-width: 680px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .tabela-itens,
+  .tabela-carrinho,
+  .gestao-tabela
+) th {
+  padding: 11px 13px;
+  border-bottom: 1px solid #dbe5ee !important;
+  background: #edf5fa !important;
+  color: #244965 !important;
+  font-size: .69rem;
+  font-weight: 800;
+  letter-spacing: .035em;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .tabela-itens,
+  .tabela-carrinho,
+  .gestao-tabela
+) td {
+  padding: 11px 13px;
+  border-bottom: 1px solid #e7eef3 !important;
+  color: #30495d;
+}
+body[data-intranet-module="atas"] #mainSystem :is(
+  .tabela-itens,
+  .tabela-carrinho,
+  .gestao-tabela
+) tbody tr:hover td {
+  background: #f5f9fc;
+}
+body[data-intranet-module="atas"] #mainSystem .carrinho-resumo {
+  gap: 12px;
+  padding: 18px 20px;
+}
+body[data-intranet-module="atas"] #mainSystem .breadcrumb-carrinho {
+  color: #718096;
+}
+body[data-intranet-module="atas"] #mainSystem .breadcrumb-carrinho a {
+  color: var(--atas-blue);
+}
+
+/* Modais, alertas e estados auxiliares. */
+body[data-intranet-module="atas"] #mainSystem .modal-content {
+  border: 1px solid var(--atas-line) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 24px 64px rgba(10, 38, 64, .2) !important;
+}
+body[data-intranet-module="atas"] #mainSystem .modal-header {
+  border-bottom: 1px solid #e6eef4;
+}
+body[data-intranet-module="atas"] #mainSystem :is(.modal-header h2, .modal-header h3) {
+  color: var(--atas-ink);
+}
+body[data-intranet-module="atas"] #mainSystem .modal-footer {
+  border-top: 1px solid #e6eef4;
+}
+
+/* Páginas standalone do mesmo módulo — detalhes da ata. */
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] {
+  background: #f4f7fb !important;
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] .page-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 64px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--atas-line);
+  background: rgba(255, 255, 255, .97) !important;
+  box-shadow: 0 2px 10px rgba(18, 52, 79, .05);
+  color: var(--atas-ink);
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] .page-header h1 {
+  color: var(--atas-ink);
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] .page-header h1 i {
+  color: var(--atas-blue);
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] .page-header :is(.btn-voltar, .carrinho-btn, .btn-logout) {
+  border: 1px solid #d5e0e9;
+  border-radius: 9px;
+  background: #f5f8fb;
+  color: #31546e;
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] .main-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 30px 40px;
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] :is(.ata-info-card, .itens-section) {
+  border: 1px solid var(--atas-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--atas-shadow);
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] .section-header {
+  border-bottom: 1px solid #e6eef4;
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] .section-header h2 {
+  color: var(--atas-ink);
+}
+body[data-intranet-page="controle-de-saldos-detalhes-ata"] .section-header h2 i {
+  color: var(--atas-blue);
+}
+
+/* Páginas standalone — edição da ata. */
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] {
+  background: #f4f7fb !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] .header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--atas-line);
+  background: rgba(255, 255, 255, .97) !important;
+  box-shadow: 0 2px 10px rgba(18, 52, 79, .05);
+  color: var(--atas-ink) !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] :is(
+  .header-titulo-sistema h1,
+  .header-titulo-sistema p,
+  .user-name,
+  .user-role
+) {
+  color: var(--atas-ink) !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] .header-titulo-sistema h1 i {
+  color: var(--atas-blue) !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] .editar-container {
+  max-width: 1440px;
+  padding: 24px 30px 40px;
+}
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] :is(
+  .editar-header,
+  .editar-secao,
+  .cadastro-secao
+) {
+  border: 1px solid var(--atas-line) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: var(--atas-shadow) !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] :is(
+  .form-input,
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select,
+  textarea
+) {
+  border-color: #d5e0e9;
+  border-radius: 9px;
+  background: #fff;
+  color: #263f55;
+}
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] :is(
+  .form-input,
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select,
+  textarea
+):focus {
+  border-color: var(--atas-blue);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(11, 99, 206, .13);
+}
+body[data-intranet-page="controle-de-saldos-templates-editar-ata"] .btn-logout {
+  border-radius: 9px;
+  background: #f5f8fb;
+  color: #31546e;
+}
+
+/* Manual interativo: preserva seu conteúdo, alinhando shell e estados ativos. */
+body[data-intranet-page="controle-de-saldos-templates-faq"] {
+  background: #f4f7fb !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--atas-line);
+  background: rgba(255, 255, 255, .97) !important;
+  color: var(--atas-ink);
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .topbar :is(.brand, .icon-btn) {
+  color: var(--atas-ink);
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .sidebar {
+  background: linear-gradient(180deg, #092d4f 0%, #06365d 52%, #062e50 100%) !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .nav button.active {
+  border-color: rgba(123, 203, 255, .35) !important;
+  background: linear-gradient(90deg, #0877db, #0e5eb2) !important;
+  color: #fff !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] :is(.chip.active, .hero-actions .btn-primary) {
+  border-color: var(--atas-blue) !important;
+  background: var(--atas-blue) !important;
+  color: #fff !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .mock-top {
+  background: linear-gradient(110deg, #092d4f, #0754af) !important;
+  color: #fff !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .mock-top .tag {
+  border-color: rgba(255, 255, 255, .28) !important;
+  background: rgba(255, 255, 255, .14) !important;
+  color: #fff !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .callout:not(.warning) {
+  border: 1px solid #cbdff0 !important;
+  border-left: 4px solid var(--atas-blue) !important;
+  background: #edf5fc !important;
+  color: #30495d;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .callout:not(.warning) strong {
+  color: #0754af;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] :is(.role-icon, .step-no) {
+  background: #eaf3fc !important;
+  color: #0754af !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] :is(.section-kicker, .eyebrow) {
+  color: var(--atas-blue) !important;
+}
+body[data-intranet-page="controle-de-saldos-templates-faq"] .tag:not(.amber):not(.red),
+body[data-intranet-page="controle-de-saldos-templates-faq"] .label {
+  border-color: #bfd6eb !important;
+  background: #eaf3fc !important;
+  color: #0754af !important;
+}
+
+@media (max-width: 900px) {
+  body[data-intranet-module="atas"] #mainSystem .pedido-container { padding: 16px; }
+  body[data-intranet-page="controle-de-saldos-detalhes-ata"] .main-content,
+  body[data-intranet-page="controle-de-saldos-templates-editar-ata"] .editar-container {
+    padding: 18px 16px 30px;
+  }
+}
+@media (max-width: 620px) {
+  body[data-intranet-module="atas"] #mainSystem .dashboard-page-heading { align-items: flex-start; gap: 10px; }
+  body[data-intranet-module="atas"] #mainSystem .dashboard-page-icon { width: 36px; height: 40px; flex-basis: 36px; font-size: 1.2rem; }
+  body[data-intranet-module="atas"] #mainSystem .dashboard-page-heading p { font-size: .74rem; }
+  body[data-intranet-module="atas"] #mainSystem :is(.pedidos-filtros-grid, .filtros-grid, .form-row) { grid-template-columns: minmax(0, 1fr) !important; }
+  body[data-intranet-module="atas"] #mainSystem :is(.cadastro-indicadores, .pedidos-indicadores, .gestao-stats) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  body[data-intranet-module="atas"] #mainSystem .carrinho-resumo { align-items: stretch; }
+  body[data-intranet-page="controle-de-saldos-detalhes-ata"] .page-header { padding: 9px 12px; }
+  body[data-intranet-page="controle-de-saldos-detalhes-ata"] .main-content,
+  body[data-intranet-page="controle-de-saldos-templates-editar-ata"] .editar-container { padding: 14px 12px 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-intranet-module="atas"] #mainSystem *,
+  body[data-intranet-page="controle-de-saldos-detalhes-ata"] *,
+  body[data-intranet-page="controle-de-saldos-templates-editar-ata"] * {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+
+@media (max-width: 620px) {
+  body[data-intranet-module="atas"] #mainSystem .pedido-container,
+  body[data-intranet-module="atas"] #mainSystem .aditivos-container {
+    width: 100%;
+    min-width: 0;
+  }
+  body[data-intranet-module="atas"] #mainSystem .aditivos-container {
+    padding: 16px !important;
+  }
+  body[data-intranet-module="atas"] #mainSystem .aditivos-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  body[data-intranet-module="atas"] #mainSystem .aditivos-grid {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  body[data-intranet-module="atas"] #mainSystem .aditivos-grid > * {
+    min-width: 0;
+  }
+  body[data-intranet-module="atas"] #mainSystem .compra-rapida-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  body[data-intranet-module="atas"] #mainSystem .filtro-data-inputs {
+    flex-wrap: wrap;
+  }
+  body[data-intranet-module="atas"] #mainSystem .pedidos-lista-wrapper {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+  }
 }
