@@ -1,10 +1,113 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Solicitar acesso — Intranet Municipal</title>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Solicitar acesso — Intranet Municipal</title>
+    <script src="shared/js/acessibilidade-intranet.js" defer></script>
+    <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5" />
+  </head>
+  <body data-intranet-module="plataforma" data-intranet-page="acesso">
+    <main id="conteudo-principal" class="card">
+      <h1>Solicitar acesso</h1>
+      <p class="muted">A conta Google será validada antes do envio. O acesso só será liberado após análise de um administrador municipal.</p>
+      <section id="googleStep">
+        <button id="btnGoogle" class="primary" type="button">Entrar com Google para validar</button>
+        <p id="googleMsg" class="muted"></p>
+      </section>
+      <form id="requestForm" class="hidden">
+        <p id="identity"></p>
+        <label for="nome">Nome</label>
+        <input id="nome" required maxlength="160" aria-label="nome" />
+        <label for="justificativa">Justificativa</label>
+        <textarea id="justificativa" rows="4" required maxlength="2000" aria-label="justificativa"></textarea>
+        <label>Módulos desejados</label>
+        <div class="checks">
+          <label><input type="checkbox" value="atas" aria-label="Campo de formulário" /> Atas, pedidos e saldos</label>
+          <label><input type="checkbox" value="compras" aria-label="Campo de formulário" /> Compras públicas</label>
+          <label><input type="checkbox" value="tarefas" aria-label="Campo de formulário" /> Gestão de trabalho</label>
+          <label><input type="checkbox" value="biblioteca" aria-label="Campo de formulário" /> Biblioteca</label>
+        </div>
+        <button class="primary" type="submit">Enviar solicitação</button>
+      </form>
+      <div id="status" class="msg hidden" role="status" aria-live="polite"></div>
+    </main>
+    <script type="module">
+      import { supabase } from "./shared/js/supabase.js";
 
+      const $ = (id) => document.getElementById(id);
+      function msg(text) {
+        $("status").textContent = text;
+        $("status").classList.remove("hidden");
+      }
 
+      async function check() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          $("googleStep").classList.remove("hidden");
+          return;
+        }
+        const { data: profile } = await supabase
+          .from("usuarios")
+          .select("id,nome,email,ativo")
+          .eq("uuid", session.user.id)
+          .maybeSingle();
+        if (profile?.ativo !== false && profile) {
+          location.href = "intranet.html";
+          return;
+        }
+        $("googleStep").classList.add("hidden");
+        $("requestForm").classList.remove("hidden");
+        $("nome").value = session.user.user_metadata?.full_name || session.user.user_metadata?.name || "";
+        $("identity").textContent = `Conta validada: ${session.user.email}.`;
+        const { data: request } = await supabase
+          .from("solicitacoes_acesso")
+          .select("status,decisao_observacao")
+          .eq("auth_user_id", session.user.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (request) {
+          msg(request.status === "PENDENTE"
+            ? "Sua solicitação está aguardando análise do administrador."
+            : `Status: ${request.status}. ${request.decisao_observacao || ""}`);
+          if (request.status !== "PENDENTE") $("requestForm").classList.add("hidden");
+        }
+      }
 
-<script src="shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
-</head><body data-intranet-module="plataforma" data-intranet-page="acesso"><main class="card"><h1>Solicitar acesso</h1><p class="muted">A conta Google será validada antes do envio. O acesso só será liberado após análise de um administrador municipal.</p><section id="googleStep"><button id="btnGoogle" class="primary" type="button">Entrar com Google para validar</button><p id="googleMsg" class="muted"></p></section><form id="requestForm" class="hidden"><p id="identity"></p><label for="nome">Nome</label><input id="nome" required maxlength="160" aria-label="nome"><label for="justificativa">Justificativa</label><textarea id="justificativa" rows="4" required maxlength="2000" aria-label="justificativa"></textarea><label>Módulos desejados</label><div class="checks"><label><input type="checkbox" value="atas" aria-label="Campo de formulário"> Atas, pedidos e saldos</label><label><input type="checkbox" value="compras" aria-label="Campo de formulário"> Compras públicas</label><label><input type="checkbox" value="tarefas" aria-label="Campo de formulário"> Gestão de trabalho</label><label><input type="checkbox" value="biblioteca" aria-label="Campo de formulário"> Biblioteca</label></div><button class="primary" type="submit">Enviar solicitação</button></form><div id="status" class="msg hidden"></div></main><script type="module">
-import { supabase } from "./shared/js/supabase.js";
-const $=id=>document.getElementById(id);function msg(t){$("status").textContent=t;$("status").classList.remove("hidden")}async function check(){const{data:{session}}=await supabase.auth.getSession();if(!session){$("googleStep").classList.remove("hidden");return}const{data:p}=await supabase.from("usuarios").select("id,nome,email,ativo").eq("uuid",session.user.id).maybeSingle();if(p?.ativo!==false&&p){location.href="intranet.html";return}$("googleStep").classList.add("hidden");$("requestForm").classList.remove("hidden");$("nome").value=session.user.user_metadata?.full_name||session.user.user_metadata?.name||"";$("identity").textContent=`Conta validada: ${session.user.email}.`;const{data:r}=await supabase.from("solicitacoes_acesso").select("status,decisao_observacao").eq("auth_user_id",session.user.id).order("created_at",{ascending:false}).limit(1).maybeSingle();if(r){msg(r.status==='PENDENTE'?"Sua solicitação está aguardando análise do administrador.":`Status: ${r.status}. ${r.decisao_observacao||""}`);if(r.status!=='PENDENTE')$("requestForm").classList.add("hidden")}}$("btnGoogle").onclick=async()=>{const{error}=await supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}/acesso.html`}});if(error)$("googleMsg").textContent=`Não foi possível iniciar o Google: ${error.message}`};$("requestForm").onsubmit=async e=>{e.preventDefault();const{data:{session}}=await supabase.auth.getSession();if(!session)return;const mods=[...document.querySelectorAll("input[type=checkbox]:checked")].map(x=>x.value);const{error}=await supabase.from("solicitacoes_acesso").insert({auth_user_id:session.user.id,email:session.user.email,nome:$("nome").value.trim(),provider:"google",modulos_solicitados:mods,justificativa:$("justificativa").value.trim()});if(error)msg(error.code==='23505'?"Já existe uma solicitação pendente para esta conta.":error.message);else{msg("Solicitação enviada. Aguarde a análise do administrador.");$("requestForm").classList.add("hidden");await supabase.auth.signOut()}};check();</script></body></html>
+      $("btnGoogle").onclick = async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: new URL("./acesso.html", window.location.href).href },
+        });
+        if (error) $("googleMsg").textContent = `Não foi possível iniciar o Google: ${error.message}`;
+      };
+
+      $("requestForm").onsubmit = async (event) => {
+        event.preventDefault();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+        const modules = [...document.querySelectorAll("input[type=checkbox]:checked")].map((input) => input.value);
+        const { error } = await supabase.from("solicitacoes_acesso").insert({
+          auth_user_id: session.user.id,
+          email: session.user.email,
+          nome: $("nome").value.trim(),
+          provider: "google",
+          modulos_solicitados: modules,
+          justificativa: $("justificativa").value.trim(),
+        });
+        if (error) {
+          msg(error.code === "23505"
+            ? "Já existe uma solicitação pendente para esta conta."
+            : error.message);
+        } else {
+          msg("Solicitação enviada. Aguarde a análise do administrador.");
+          $("requestForm").classList.add("hidden");
+          await supabase.auth.signOut();
+        }
+      };
+
+      check();
+    </script>
+  </body>
+</html>

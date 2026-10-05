@@ -1101,7 +1101,7 @@ export const UsuariosService = {
   async enviarRedefinicaoSenha(email) {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/redefinir-senha.html`,
+        redirectTo: new URL("../../../redefinir-senha.html", import.meta.url).href,
       });
       if (error) throw error;
       return true;

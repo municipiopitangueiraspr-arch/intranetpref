@@ -35,7 +35,7 @@
     sidebar.querySelectorAll('a').forEach((link) => {
       const href = link.getAttribute('href') || '';
       try {
-        const target = new URL(href, window.location.origin).pathname.replace(/\/+$/, '') || '/';
+        const target = new URL(href, document.baseURI).pathname.replace(/\/+$/, '') || '/';
         if (target === path || (target !== '/' && path.endsWith(target))) {
           link.classList.add('active');
           link.setAttribute('aria-current', 'page');

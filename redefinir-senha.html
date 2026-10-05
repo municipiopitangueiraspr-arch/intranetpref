@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redefinir senha — Intranet Municipal</title>
+    <script src="shared/js/acessibilidade-intranet.js" defer></script>
+    <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261005-intranetpref-1" />
+  </head>
+  <body data-intranet-module="plataforma" data-intranet-page="redefinir-senha">
+    <main id="conteudo-principal" class="reset-card">
+      <header class="reset-header">
+        <img src="brasao-pref.png" alt="Brasão da Prefeitura de Pitangueiras" />
+        <h1>Definir nova senha</h1>
+        <p>Crie uma senha para voltar à Intranet Municipal.</p>
+      </header>
+
+      <div id="resetStatus" class="reset-status" role="status" aria-live="polite">
+        Validando o link de recuperação…
+      </div>
+
+      <form id="resetForm" hidden novalidate>
+        <div class="reset-field">
+          <label for="novaSenha">Nova senha</label>
+          <input id="novaSenha" type="password" autocomplete="new-password" required minlength="8" />
+          <small>Use ao menos 8 caracteres, com letra maiúscula, minúscula e número.</small>
+        </div>
+        <div class="reset-field">
+          <label for="confirmarSenha">Confirmar nova senha</label>
+          <input id="confirmarSenha" type="password" autocomplete="new-password" required minlength="8" />
+        </div>
+        <button id="salvarSenha" class="reset-submit" type="submit">Atualizar senha</button>
+      </form>
+
+      <a class="reset-back" href="./index.html">Voltar ao login</a>
+    </main>
+
+    <script type="module">
+      import { supabase } from "./shared/js/supabase.js";
+
+      const form = document.getElementById("resetForm");
+      const status = document.getElementById("resetStatus");
+      const submitButton = document.getElementById("salvarSenha");
+      const passwordInput = document.getElementById("novaSenha");
+      const confirmationInput = document.getElementById("confirmarSenha");
+
+      function showStatus(message, kind = "") {
+        status.textContent = message;
+        status.className = `reset-status${kind ? ` is-${kind}` : ""}`;
+      }
+
+      async function initialize() {
+        try {
+          const { data: { session }, error } = await supabase.auth.getSession();
+          if (error || !session) {
+            form.hidden = true;
+            showStatus("Este link de recuperação é inválido ou expirou. Solicite um novo link ao suporte de TI.", "error");
+            return;
+          }
+          form.hidden = false;
+          showStatus("Link validado. Escolha sua nova senha.");
+        } catch {
+          form.hidden = true;
+          showStatus("Não foi possível validar o link. Solicite um novo link ao suporte de TI.", "error");
+        }
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const password = passwordInput.value;
+        const confirmation = confirmationInput.value;
+        const meetsPolicy = password.length >= 8
+          && /[A-Z]/.test(password)
+          && /[a-z]/.test(password)
+          && /[0-9]/.test(password);
+
+        if (!meetsPolicy) {
+          showStatus("A senha precisa ter 8 caracteres ou mais, incluindo letra maiúscula, minúscula e número.", "error");
+          passwordInput.focus();
+          return;
+        }
+        if (password !== confirmation) {
+          showStatus("A senha e a confirmação não coincidem.", "error");
+          confirmationInput.focus();
+          return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Atualizando…";
+        try {
+          const { error } = await supabase.auth.updateUser({ password });
+          if (error) throw error;
+          form.hidden = true;
+          showStatus("Senha atualizada. Você já pode voltar ao login.", "success");
+          try { await supabase.auth.signOut(); } catch { /* a atualização já foi concluída */ }
+        } catch {
+          showStatus("Não foi possível atualizar a senha. Solicite um novo link ao suporte de TI.", "error");
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "Atualizar senha";
+          passwordInput.value = "";
+          confirmationInput.value = "";
+        }
+      });
+
+      initialize();
+    </script>
+  </body>
+</html>

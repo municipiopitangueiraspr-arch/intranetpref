@@ -357,3 +357,124 @@ body[data-intranet-page] [data-intranet-inline-style~="ised5976318678"]{color:#c
 body[data-intranet-page="biblioteca-emprestimos"] .emprestimo-exemplar-resumo{font-size:0.78rem;line-height:1.5;}
 body[data-intranet-page="biblioteca-emprestimos"] .emprestimo-exemplar-resumo--devolvido{text-decoration:line-through;opacity:0.55;}
 body[data-intranet-page="controle-de-saldos-gestao-atas"] .intranet-dashboard-chart-bar{height:100%;width:var(--bar-width,0%);background:var(--bar-color,transparent);border-radius:4px;transition:width 0.3s;}
+
+
+/* Fluxo de redefinição de senha da Intranet (GitHub Pages sob subcaminho). */
+body[data-intranet-page="redefinir-senha"] {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: clamp(16px, 4vw, 36px);
+  background: #f6f9fc !important;
+  color: #102a43 !important;
+  font-family: Inter, "Segoe UI", sans-serif;
+}
+body[data-intranet-page="redefinir-senha"] .reset-card {
+  box-sizing: border-box;
+  width: min(100%, 460px);
+  padding: clamp(24px, 5vw, 36px);
+  border: 1px solid #d9e2ec;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(15, 45, 68, 0.12);
+}
+body[data-intranet-page="redefinir-senha"] .reset-header {
+  margin-bottom: 22px;
+  text-align: center;
+}
+body[data-intranet-page="redefinir-senha"] .reset-header img {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 10px;
+  object-fit: contain;
+}
+body[data-intranet-page="redefinir-senha"] .reset-header h1 {
+  margin: 0 0 8px;
+  color: #102a43;
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
+}
+body[data-intranet-page="redefinir-senha"] .reset-header p {
+  margin: 0;
+  color: #486581;
+  line-height: 1.5;
+}
+body[data-intranet-page="redefinir-senha"] .reset-status {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border: 1px solid #d8e7df;
+  border-radius: 10px;
+  background: #f2f8f4;
+  color: #285a3f;
+  line-height: 1.45;
+}
+body[data-intranet-page="redefinir-senha"] .reset-status.is-error {
+  border-color: #f1caca;
+  background: #fff5f5;
+  color: #9b2c2c;
+}
+body[data-intranet-page="redefinir-senha"] .reset-status.is-success {
+  border-color: #b8dec8;
+  background: #effaf3;
+  color: #1c6b3d;
+}
+body[data-intranet-page="redefinir-senha"] .reset-field {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 17px;
+}
+body[data-intranet-page="redefinir-senha"] .reset-field label {
+  color: #243b53;
+  font-weight: 650;
+}
+body[data-intranet-page="redefinir-senha"] .reset-field input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5dc;
+  border-radius: 9px;
+  background: #fff;
+  color: #16324f;
+  font: inherit;
+}
+body[data-intranet-page="redefinir-senha"] .reset-field input:focus {
+  border-color: #16834a;
+  outline: 3px solid rgba(22, 131, 74, 0.16);
+}
+body[data-intranet-page="redefinir-senha"] .reset-field small {
+  color: #667784;
+  line-height: 1.4;
+}
+body[data-intranet-page="redefinir-senha"] .reset-submit {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 10px;
+  background: #087a43;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+body[data-intranet-page="redefinir-senha"] .reset-submit:hover:not(:disabled) {
+  background: #066738;
+  transform: translateY(-1px);
+}
+body[data-intranet-page="redefinir-senha"] .reset-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+body[data-intranet-page="redefinir-senha"] .reset-back {
+  display: block;
+  margin-top: 20px;
+  color: #087a43;
+  font-weight: 650;
+  text-align: center;
+  text-decoration: none;
+}
+body[data-intranet-page="redefinir-senha"] .reset-back:hover {
+  text-decoration: underline;
+}

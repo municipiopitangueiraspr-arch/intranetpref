@@ -2171,9 +2171,15 @@ function downloadPDFAdmin() {
 }
 
 // ========== LINK PÚBLICO ==========
+function obterUrlPublicaAto() {
+  const url = new URL("./portal-atos-oficiais.html", window.location.href);
+  url.searchParams.set("ato", currentViewAtoId);
+  return url.toString();
+}
+
 function copiarLinkPublico() {
   if (!currentViewAtoId) return;
-  const url = `${window.location.origin}/portal-atos-oficiais.html?ato=${currentViewAtoId}`;
+  const url = obterUrlPublicaAto();
   navigator.clipboard
     .writeText(url)
     .then(() => {
@@ -2186,7 +2192,7 @@ function copiarLinkPublico() {
 
 function abrirLinkPublico() {
   if (!currentViewAtoId) return;
-  const url = `${window.location.origin}/portal-atos-oficiais.html?ato=${currentViewAtoId}`;
+  const url = obterUrlPublicaAto();
   window.open(url, "_blank");
 }
 
