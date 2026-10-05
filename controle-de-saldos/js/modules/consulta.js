@@ -2537,6 +2537,25 @@ export class Consulta {
       return s + consumido * (i.valor_unitario || 0);
     }, 0);
     const saldoAta = valorTotal - valorConsumido;
+    const saldoPercentualCalculado =
+      valorTotal > 0 ? (saldoAta / valorTotal) * 100 : null;
+    const saldoPercentual =
+      saldoPercentualCalculado === null
+        ? 0
+        : Math.round(Math.max(0, Math.min(100, saldoPercentualCalculado)));
+    const nivelSaldo =
+      saldoPercentualCalculado === null
+        ? "indefinido"
+        : saldoPercentual <= 10
+          ? "critico"
+          : saldoPercentual <= 30
+            ? "atencao"
+            : "saudavel";
+    const indicadorSaldo =
+      saldoPercentualCalculado === null
+        ? `<span class="ata-card-balance-note">Percentual não calculável</span>`
+        : `<div class="ata-card-progress-track" role="progressbar" aria-label="Saldo disponível em relação ao valor dos itens" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${saldoPercentual}" aria-valuetext="${saldoPercentual}% do saldo disponível"><span style="width: ${saldoPercentual}%"></span></div>
+           <span class="ata-card-balance-note">${saldoPercentual}% do valor dos itens ainda disponível</span>`;
 
     // ============================================================
     // ✅ NOVO · CONTAGEM DE ITENS NO CARRINHO (badge)
@@ -2608,41 +2627,47 @@ export class Consulta {
           <div class="ata-status">
             <span class="status-badge ${statusClass}">${ata.situacao || "ATIVA"}</span>
             ${badgeVencimento}
-            <span class="ata-card-item-count"><i class="fas fa-box"></i> ${itens.length}</span>
+            <span class="ata-card-item-count"><i class="fas fa-box" aria-hidden="true"></i> ${itens.length} ${itens.length === 1 ? "item" : "itens"}</span>
           </div>
           <div class="ata-numero"><span class="ata-titulo-numero">Ata nº ${numeroAtaDestacado}</span>${botaoFavorita}</div>
-          ${
-            pregaoDisplay
-              ? `<div class="ata-card-pregao">
-                  <i class="fas fa-gavel"></i> Pregão: ${pregaoDestacado}
-                </div>`
-              : ""
-          }
+        </div>
+        <div class="ata-card-body">
           <div class="ata-fornecedor">
-            <i class="fas fa-building"></i> ${fornecedorDestacado}
-            ${ata.fornecedor?.cnpj ? ` <span class="ata-card-cnpj">(${this.formatarCnpj(ata.fornecedor.cnpj)})</span>` : ""}
+            <i class="fas fa-building" aria-hidden="true"></i>
+            <span class="ata-card-fornecedor-nome">${fornecedorDestacado}</span>
+            ${ata.fornecedor?.cnpj ? `<span class="ata-card-cnpj">CNPJ ${this.formatarCnpj(ata.fornecedor.cnpj)}</span>` : ""}
           </div>
-          <div class="ata-card-meta ata-card-category"><i class="fas fa-tag"></i> ${categoriaDestacada}</div>
-          <div class="ata-card-meta ata-card-dates">
-            <i class="fas fa-calendar"></i> ${this.sistema.ui.formatarData(ata.data_inicio_vigencia)}
-            ${ata.data_fim_vigencia ? `até ${this.sistema.ui.formatarData(ata.data_fim_vigencia)}` : ""}
+          <div class="ata-card-details">
+            ${
+              pregaoDisplay
+                ? `<div class="ata-card-meta ata-card-pregao"><i class="fas fa-gavel" aria-hidden="true"></i><span>Pregão ${pregaoDestacado}</span></div>`
+                : ""
+            }
+            <div class="ata-card-meta ata-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span>${categoriaDestacada}</span></div>
+            <div class="ata-card-meta ata-card-dates">
+              <i class="fas fa-calendar" aria-hidden="true"></i><span>Vigência: ${this.sistema.ui.formatarData(ata.data_inicio_vigencia)}
+              ${ata.data_fim_vigencia ? `até ${this.sistema.ui.formatarData(ata.data_fim_vigencia)}` : ""}</span>
+            </div>
           </div>
-          <div class="ata-card-balance">
-            <span>Saldo: <strong>${this.sistema.ui.formatarMoeda(saldoAta)}</strong></span>
-            <span class="ata-card-consumed">Consumido: <strong>${this.sistema.ui.formatarMoeda(valorConsumido)}</strong></span>
+          <div class="ata-card-balance saldo-${nivelSaldo}">
+            <div class="ata-card-balance-values">
+              <span class="ata-card-balance-available"><span>Saldo disponível</span><strong>${this.sistema.ui.formatarMoeda(saldoAta)}</strong></span>
+              <span class="ata-card-consumed"><span>Consumido</span><strong>${this.sistema.ui.formatarMoeda(valorConsumido)}</strong></span>
+            </div>
+            ${indicadorSaldo}
           </div>
           ${badgeCarrinho ? `<div class="ata-card-cart">${badgeCarrinho}</div>` : ""}
         </div>
         ${blocoItens}
         <div class="ata-footer">
-          <span class="ata-card-total">${this.sistema.ui.formatarMoeda(ata.valor_global || 0)}</span>
+          <span class="ata-card-total"><span class="ata-card-total-label">Valor total da ata</span><strong>${this.sistema.ui.formatarMoeda(ata.valor_global || 0)}</strong></span>
           <button
             type="button"
             class="btn-visualizar"
             data-action="abrir-detalhes"
             data-ata-id="${ata.id}"
           >
-            <i class="fas fa-eye"></i> Ver Itens
+            <i class="fas fa-eye"></i> Ver itens
           </button>
         </div>
       </div>
