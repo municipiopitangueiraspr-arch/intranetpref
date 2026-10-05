@@ -1,0 +1,237 @@
+/*
+ * Atas, Saldos e Pedidos — camada visual canônica
+ * 2026-10-05
+ * Escopo: somente body[data-intranet-module="atas"]
+ * Não substitui regras funcionais; apenas organiza hierarquia, estados e responsividade.
+ */
+body[data-intranet-module="atas"] {
+  --atas-ink: #102a43;
+  --atas-blue: #0b63ce;
+  --atas-blue-dark: #073b69;
+  --atas-line: #dbe5ee;
+  --atas-muted: #64748b;
+  --atas-bg: #f4f7fb;
+  background: var(--atas-bg) !important;
+  color: var(--atas-ink);
+  font-family: Manrope, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+body[data-intranet-module="atas"] .main-area {
+  background: var(--atas-bg);
+  min-width: 0;
+}
+body[data-intranet-module="atas"] .sidebar {
+  width: 226px !important;
+  background: linear-gradient(180deg, #092d4f 0%, #06365d 52%, #062e50 100%) !important;
+  border-right: 0 !important;
+  box-shadow: 10px 0 30px rgba(8, 40, 69, .13);
+}
+body[data-intranet-module="atas"] .sidebar-brand {
+  margin: 0 14px 22px;
+  padding: 0 3px 18px;
+  border-bottom: 1px solid rgba(148, 210, 255, .28);
+}
+body[data-intranet-module="atas"] .sidebar-brand .brand-name,
+body[data-intranet-module="atas"] .sidebar-brand strong {
+  color: #fff;
+  letter-spacing: -.02em;
+}
+body[data-intranet-module="atas"] .sidebar-brand .brand-subtitle,
+body[data-intranet-module="atas"] .sidebar-brand small { color: #b8d7ee; }
+body[data-intranet-module="atas"] .sidebar-nav { padding: 0 10px; }
+body[data-intranet-module="atas"] .sidebar-nav .nav-section {
+  margin: 19px 11px 7px;
+  color: #9fc0db;
+  font-size: .61rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+body[data-intranet-module="atas"] .sidebar-nav a {
+  min-height: 40px;
+  margin: 3px 0;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #e1eef8;
+  font-size: .72rem;
+  font-weight: 700;
+  transition: background .18s ease, transform .18s ease;
+}
+body[data-intranet-module="atas"] .sidebar-nav a i { color: #bfd8eb; width: 18px; text-align: center; }
+body[data-intranet-module="atas"] .sidebar-nav a:hover { background: rgba(87, 171, 255, .16); transform: translateX(2px); }
+body[data-intranet-module="atas"] .sidebar-nav a.active {
+  background: linear-gradient(90deg, #0877db, #0e5eb2);
+  border-color: rgba(123, 203, 255, .35);
+  box-shadow: 0 8px 18px rgba(0, 24, 56, .24);
+  color: #fff;
+}
+body[data-intranet-module="atas"] .sidebar-nav a.active i { color: #fff; }
+body[data-intranet-module="atas"] .sidebar-voltar { margin: auto 14px 12px; border-top-color: rgba(148, 210, 255, .24); }
+body[data-intranet-module="atas"] .sidebar-voltar a { color: #c6e2f5; font-size: .68rem; }
+body[data-intranet-module="atas"] .topbar {
+  min-height: 64px;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--atas-line);
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 2px 10px rgba(18, 52, 79, .04);
+}
+body[data-intranet-module="atas"] .topbar-titulo h1 {
+  color: var(--atas-ink);
+  font-size: .96rem;
+  font-weight: 800;
+}
+body[data-intranet-module="atas"] .topbar-titulo h1 i { color: var(--atas-blue); }
+body[data-intranet-module="atas"] .topbar-titulo p { color: var(--atas-muted); font-size: .7rem; }
+body[data-intranet-module="atas"] .conteudo.conteudo-full {
+  max-width: none;
+  padding: 24px 30px 40px;
+}
+body[data-intranet-module="atas"] .dashboard-container,
+body[data-intranet-module="atas"] .filtros-container,
+body[data-intranet-module="atas"] .gestao-container,
+body[data-intranet-module="atas"] .pedidos-container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+/* Dashboard: lightweight page intro, matching the reference hierarchy. */
+body[data-intranet-module="atas"] .dashboard-container::before {
+  content: "Gestão de Atas, Saldos e Pedidos  ·  Consulte, acompanhe e gerencie as atas de registro de preços, saldos e pedidos.";
+  display: block;
+  margin: 0 0 18px;
+  padding: 18px 22px;
+  border: 1px solid #d8e4ee;
+  border-radius: 14px;
+  color: var(--atas-ink);
+  background: linear-gradient(100deg, #fff 0%, #f4f9fd 62%, #e8f4fb 100%);
+  box-shadow: 0 8px 22px rgba(25, 63, 88, .06);
+  font-size: clamp(1rem, 1.7vw, 1.34rem);
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+body[data-intranet-module="atas"] .dashboard-container::first-line { line-height: 1.25; }
+/* Consultation summary cards */
+body[data-intranet-module="atas"] .resumo-rapido,
+body[data-intranet-module="atas"] .dashboard-kpis { gap: 12px; }
+body[data-intranet-module="atas"] .resumo-card,
+body[data-intranet-module="atas"] .kpi-card {
+  min-height: 76px;
+  border: 1px solid var(--atas-line) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 16px rgba(25, 63, 88, .06) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+body[data-intranet-module="atas"] .resumo-card:hover,
+body[data-intranet-module="atas"] .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(25, 63, 88, .12) !important; border-color: #a9cce7 !important; }
+body[data-intranet-module="atas"] .resumo-card.ativo { border-color: var(--atas-blue) !important; box-shadow: 0 0 0 3px rgba(11, 99, 206, .12) !important; }
+body[data-intranet-module="atas"] .resumo-icone,
+body[data-intranet-module="atas"] .kpi-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: grid; place-items: center;
+  color: #fff !important;
+  background: linear-gradient(145deg, #1687ef, #0758b8) !important;
+}
+body[data-intranet-module="atas"] .resumo-vencimento-30 .resumo-icone { background: linear-gradient(145deg, #14a975, #087c59) !important; }
+body[data-intranet-module="atas"] .resumo-vencimento-60 .resumo-icone { background: linear-gradient(145deg, #f8b318, #db8500) !important; }
+body[data-intranet-module="atas"] .resumo-vencimento-90 .resumo-icone { background: linear-gradient(145deg, #ef6970, #d63b46) !important; }
+body[data-intranet-module="atas"] .resumo-alertas .resumo-icone,
+body[data-intranet-module="atas"] .kpi-alertas .kpi-icon { background: linear-gradient(145deg, #64748b, #34455b) !important; }
+body[data-intranet-module="atas"] .resumo-numero,
+body[data-intranet-module="atas"] .kpi-valor { color: var(--atas-ink) !important; font-weight: 850; }
+body[data-intranet-module="atas"] .resumo-label,
+body[data-intranet-module="atas"] .kpi-label { color: var(--atas-muted) !important; font-size: .7rem; font-weight: 650; }
+/* Filters: one calm surface, clear focus, consistent controls. */
+body[data-intranet-module="atas"] .filtros-container,
+body[data-intranet-module="atas"] .filtros-gestao,
+body[data-intranet-module="atas"] .filtro-global {
+  border: 1px solid var(--atas-line) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 18px rgba(25, 63, 88, .05) !important;
+}
+body[data-intranet-module="atas"] .filtros-grid,
+body[data-intranet-module="atas"] .filtros-avancados { gap: 14px; }
+body[data-intranet-module="atas"] .filtro-label,
+body[data-intranet-module="atas"] .filtro-global-label { color: #566b7d !important; font-size: .68rem; font-weight: 800; }
+body[data-intranet-module="atas"] .filtro-input,
+body[data-intranet-module="atas"] .filtro-select,
+body[data-intranet-module="atas"] .gestao-select,
+body[data-intranet-module="atas"] .filtro-vencimento-bloco select {
+  min-height: 40px;
+  border: 1px solid #d5e0e9 !important;
+  border-radius: 9px !important;
+  color: #263f55 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+body[data-intranet-module="atas"] .filtro-input:focus,
+body[data-intranet-module="atas"] .filtro-select:focus,
+body[data-intranet-module="atas"] .gestao-select:focus { border-color: var(--atas-blue) !important; box-shadow: 0 0 0 3px rgba(11, 99, 206, .13) !important; outline: none; }
+body[data-intranet-module="atas"] .btn-aplicar,
+body[data-intranet-module="atas"] .btn-auditoria-principal,
+body[data-intranet-module="atas"] .btn-visualizar,
+body[data-intranet-module="atas"] .btn-finalizar-drawer {
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: linear-gradient(110deg, #0b76da, #0754af) !important;
+  box-shadow: 0 7px 15px rgba(8, 92, 180, .2) !important;
+  color: #fff !important;
+  font-weight: 800;
+}
+body[data-intranet-module="atas"] .btn-aplicar:hover,
+body[data-intranet-module="atas"] .btn-auditoria-principal:hover,
+body[data-intranet-module="atas"] .btn-visualizar:hover { filter: brightness(1.06); transform: translateY(-1px); }
+body[data-intranet-module="atas"] .btn-limpar,
+body[data-intranet-module="atas"] .btn-exportar,
+body[data-intranet-module="atas"] .btn-auditoria-secundario { border-radius: 9px !important; border-color: #cbd9e4 !important; color: #31546e !important; background: #f5f8fb !important; }
+/* Results and data cards */
+body[data-intranet-module="atas"] .consulta-contador { margin: 16px 0 10px; color: #4d6478; font-size: .78rem; font-weight: 750; }
+body[data-intranet-module="atas"] .ata-card,
+body[data-intranet-module="atas"] .dashboard-card,
+body[data-intranet-module="atas"] .auditoria-saldos-card,
+body[data-intranet-module="atas"] .gestao-stats > div {
+  border: 1px solid var(--atas-line) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 7px 20px rgba(25, 63, 88, .06) !important;
+  background: #fff !important;
+}
+body[data-intranet-module="atas"] .ata-card::before { height: 3px; background: linear-gradient(90deg, #0c80dc, #16a677) !important; }
+body[data-intranet-module="atas"] .ata-card:hover { border-color: #9cc7e5 !important; box-shadow: 0 13px 28px rgba(25, 63, 88, .12) !important; }
+body[data-intranet-module="atas"] .dashboard-card .card-header,
+body[data-intranet-module="atas"] .auditoria-saldos-header { border-bottom-color: #e6eef4 !important; }
+body[data-intranet-module="atas"] .card-header h3,
+body[data-intranet-module="atas"] .auditoria-saldos-header h2 { color: var(--atas-ink) !important; }
+body[data-intranet-module="atas"] .card-header h3 i,
+body[data-intranet-module="atas"] .auditoria-saldos-header h2 i { color: var(--atas-blue) !important; }
+body[data-intranet-module="atas"] .gestao-header { border-top: 4px solid var(--atas-blue) !important; }
+body[data-intranet-module="atas"] .gestao-stats > div { border-top: 3px solid #1582d3 !important; }
+body[data-intranet-module="atas"] .gestao-stat-label { color: var(--atas-muted); }
+body[data-intranet-module="atas"] .tabela-carrinho,
+body[data-intranet-module="atas"] table { border-color: #dce7ef; }
+body[data-intranet-module="atas"] th { background: #edf5fa; color: #244965; }
+body[data-intranet-module="atas"] td { border-bottom-color: #e7eef3; }
+/* Shared responsive rules for all three work areas. */
+@media (max-width: 1100px) {
+  body[data-intranet-module="atas"] .conteudo.conteudo-full { padding: 20px 18px 34px; }
+  body[data-intranet-module="atas"] .sidebar { width: 216px !important; }
+  body[data-intranet-module="atas"] .main-area { margin-left: 216px; }
+}
+@media (max-width: 900px) {
+  body[data-intranet-module="atas"] .main-area { margin-left: 0; }
+  body[data-intranet-module="atas"] .topbar { padding: 0 16px; }
+  body[data-intranet-module="atas"] .conteudo.conteudo-full { padding: 16px 12px 28px; }
+  body[data-intranet-module="atas"] .dashboard-container::before { padding: 15px 16px; font-size: 1rem; }
+}
+@media (max-width: 620px) {
+  body[data-intranet-module="atas"] .resumo-rapido,
+  body[data-intranet-module="atas"] .dashboard-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  body[data-intranet-module="atas"] .resumo-card,
+  body[data-intranet-module="atas"] .kpi-card { min-height: 70px; padding: 10px !important; }
+  body[data-intranet-module="atas"] .resumo-icone,
+  body[data-intranet-module="atas"] .kpi-icon { width: 36px; height: 36px; border-radius: 10px; }
+  body[data-intranet-module="atas"] .filtros-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 420px) {
+  body[data-intranet-module="atas"] .resumo-rapido,
+  body[data-intranet-module="atas"] .dashboard-kpis { grid-template-columns: 1fr !important; }
+}
