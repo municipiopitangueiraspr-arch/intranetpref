@@ -18,6 +18,7 @@ export class Consulta {
     this._ultimaBusca = null;
     this._favoritasIds = new Set();
     this._mostrarTodas = false;
+    this._modoVisualizacao = "cards";
     this._carregandoInicial = false;
     // Termo de busca atual (para destacar nos resultados)
     this._termoBuscaAtual = "";
@@ -117,6 +118,7 @@ export class Consulta {
     container.innerHTML = html;
     await this.carregarFiltros();
     this.configurarEventos();
+    this.aplicarModoVisualizacao();
 
     // ============================================================
     // Aplica filtro vindo do dashboard (drill-down)
@@ -317,6 +319,18 @@ export class Consulta {
   // ============================================================
   async gerarHTMLConsultas() {
     return `
+      <nav class="atas-breadcrumb" aria-label="Trilha de navegação">
+        <a href="#dashboard"><i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span></a>
+        <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
+        <span aria-current="page">Consulta</span>
+      </nav>
+      <header class="consulta-page-heading">
+        <span class="consulta-page-icon" aria-hidden="true"><i class="fas fa-file-contract"></i></span>
+        <div>
+          <h2>Gestão de Atas, Saldos e Pedidos</h2>
+          <p>Consulte, acompanhe e gerencie as atas de registro de preços, saldos e pedidos.</p>
+        </div>
+      </header>
       <div class="filtros-container">
         <!-- ============================================================ -->
         <!-- RESULTADOS RÁPIDOS - CARD CLICÁVEIS                          -->
@@ -491,9 +505,15 @@ export class Consulta {
       <!-- ============================================================ -->
       <div class="consulta-contador" id="consultaContador">
         <span id="consultaContadorTexto">Carregando...</span>
-        <div class="consulta-filtro-favoritas" id="consultaFiltroFavoritas" role="group" aria-label="Filtro de atas favoritas">
-          <button type="button" class="btn-filtro-favoritas" data-favoritas-modo="favoritas"><i class="fas fa-star"></i> Minhas favoritas <span id="qtdAtasFavoritas">0</span></button>
-          <button type="button" class="btn-filtro-favoritas" data-favoritas-modo="todas"><i class="fas fa-list"></i> Mostrar todas</button>
+        <div class="consulta-ferramentas-resultados">
+          <div class="consulta-filtro-favoritas" id="consultaFiltroFavoritas" role="group" aria-label="Filtro de atas favoritas">
+            <button type="button" class="btn-filtro-favoritas" data-favoritas-modo="favoritas"><i class="fas fa-star" aria-hidden="true"></i> Minhas favoritas <span id="qtdAtasFavoritas">0</span></button>
+            <button type="button" class="btn-filtro-favoritas" data-favoritas-modo="todas"><i class="fas fa-list" aria-hidden="true"></i> Mostrar todas</button>
+          </div>
+          <div class="consulta-visualizacao" role="group" aria-label="Modo de visualização das atas">
+            <button type="button" class="btn-visualizacao-atas ativo" data-visualizacao-atas="cards" aria-pressed="true" aria-label="Exibir atas em cards" title="Exibir em cards"><i class="fas fa-grip" aria-hidden="true"></i><span>Cards</span></button>
+            <button type="button" class="btn-visualizacao-atas" data-visualizacao-atas="lista" aria-pressed="false" aria-label="Exibir atas em lista" title="Exibir em lista"><i class="fas fa-list" aria-hidden="true"></i><span>Lista</span></button>
+          </div>
         </div>
       </div>
 
@@ -965,6 +985,11 @@ export class Consulta {
         this.filtrarAtas();
       });
     });
+    document.querySelectorAll("[data-visualizacao-atas]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        this.aplicarModoVisualizacao(btn.dataset.visualizacaoAtas);
+      });
+    });
 
     // Filtros de saldo
     document
@@ -1392,6 +1417,16 @@ export class Consulta {
       const modo = btn.dataset.favoritasModo;
       btn.classList.toggle("ativo", (modo === "todas") === this._mostrarTodas);
       btn.disabled = modo === "favoritas" && this._favoritasIds.size === 0;
+    });
+  }
+  aplicarModoVisualizacao(modo = this._modoVisualizacao) {
+    this._modoVisualizacao = modo === "lista" ? "lista" : "cards";
+    const lista = document.getElementById("atasLista");
+    if (lista) lista.classList.toggle("modo-lista", this._modoVisualizacao === "lista");
+    document.querySelectorAll("[data-visualizacao-atas]").forEach((btn) => {
+      const ativo = btn.dataset.visualizacaoAtas === this._modoVisualizacao;
+      btn.classList.toggle("ativo", ativo);
+      btn.setAttribute("aria-pressed", String(ativo));
     });
   }
   async alternarFavoritaAta(ataId) {
