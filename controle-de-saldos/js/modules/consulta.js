@@ -375,7 +375,7 @@ export class Consulta {
         <!-- FILTROS                                                        -->
         <!-- ============================================================ -->
         <div class="filtros-grid">
-          <div class="filtro-grupo" data-intranet-style="36b46462dcc9">
+          <div class="filtro-grupo filtro-busca-global" data-intranet-style="36b46462dcc9">
             <label class="filtro-label"><i class="fas fa-search"></i> Busca Global</label>
             <input
               type="text"
@@ -400,7 +400,7 @@ export class Consulta {
               <option value="todos">Todos</option>
             </select>
           </div>
-          <div class="filtro-grupo">
+          <div class="filtro-grupo filtro-status">
             <label class="filtro-label"><i class="fas fa-tag"></i> Status</label>
             <select id="filtroStatus" class="filtro-select">
               <option value="todos">Todos</option>
@@ -409,7 +409,7 @@ export class Consulta {
               <option value="VENCIDA">Vencida</option>
             </select>
           </div>
-          <div class="filtro-grupo">
+          <div class="filtro-grupo filtro-categoria">
             <label class="filtro-label"><i class="fas fa-layer-group"></i> Categoria</label>
             <select id="filtroCategoria" class="filtro-select">
               <option value="todos">Todas as categorias</option>
@@ -2526,7 +2526,7 @@ export class Consulta {
       }[ata.situacao] || "status-ativa";
     const categoriaNome = ata.categoria?.nome || "Outros";
     const favorita = this._favoritasIds.has(String(ata.id));
-    const botaoFavorita = `<button type="button" class="btn-favoritar-ata ${favorita ? "ativo" : ""}" data-action="toggle-favorita" data-ata-id="${ata.id}" aria-pressed="${favorita}" title="${favorita ? "Remover das favoritas" : "Favoritar esta ATA"}"><i class="fas fa-star"></i><span>${favorita ? "Favorita" : "Favoritar"}</span></button>`;
+    const botaoFavorita = `<button type="button" class="btn-favoritar-ata ${favorita ? "ativo" : ""}" data-action="toggle-favorita" data-ata-id="${ata.id}" aria-pressed="${favorita}" aria-label="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}" title="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}"><i class="${favorita ? "fas" : "far"} fa-star" aria-hidden="true"></i><span>${favorita ? "Favoritada" : "Favoritar"}</span></button>`;
 
     // Calcular valor consumido para exibição
     const itens = ata.itens || [];
@@ -2610,7 +2610,7 @@ export class Consulta {
             ${badgeVencimento}
             <span class="ata-card-item-count"><i class="fas fa-box"></i> ${itens.length}</span>
           </div>
-          <div class="ata-numero">Ata nº ${numeroAtaDestacado} ${botaoFavorita}</div>
+          <div class="ata-numero"><span class="ata-titulo-numero">Ata nº ${numeroAtaDestacado}</span>${botaoFavorita}</div>
           ${
             pregaoDisplay
               ? `<div class="ata-card-pregao">

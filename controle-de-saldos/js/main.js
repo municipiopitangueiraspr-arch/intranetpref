@@ -6,7 +6,7 @@
 import { supabase } from "./supabase.js";
 import { Auth } from "./modules/auth.js";
 import { UI } from "./modules/ui.js";
-import { Consulta } from "./modules/consulta.js";
+import { Consulta } from "./modules/consulta.js?v=20261005-favoritas-1";
 import { Gestao } from "./modules/gestao.js";
 import { Cadastro } from "./modules/cadastro.js";
 import { Pedidos } from "./modules/pedidos.js";

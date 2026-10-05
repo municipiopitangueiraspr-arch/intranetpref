@@ -1042,3 +1042,115 @@ body[data-intranet-page="controle-de-saldos-templates-faq"] .label {
     overflow-x: auto;
   }
 }
+
+/* Favoritas: estado visível sem depender apenas da cor amarela da estrela. */
+body[data-intranet-module="atas"] #mainSystem .ata-numero {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+}
+body[data-intranet-module="atas"] #mainSystem .ata-titulo-numero {
+  min-width: 0;
+}
+body[data-intranet-module="atas"] #mainSystem .btn-favoritar-ata {
+  display: inline-flex !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 28px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 9px !important;
+  border: 1px solid #cbd5df !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: #52677a !important;
+  font-size: .69rem;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+body[data-intranet-module="atas"] #mainSystem .btn-favoritar-ata span {
+  display: inline !important;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista .ata-card .btn-favoritar-ata[aria-pressed="false"] {
+  border-color: #cbd5df !important;
+  background: #fff !important;
+  color: #52677a !important;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista .ata-card .btn-favoritar-ata[aria-pressed="false"]:hover {
+  border-color: #94a9bd !important;
+  background: #f4f8fb !important;
+  color: #334e68 !important;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista .ata-card .btn-favoritar-ata[aria-pressed="false"] i {
+  color: #718096 !important;
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+  font-weight: 400 !important;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista .ata-card .btn-favoritar-ata[aria-pressed="true"] {
+  border-color: #e8c75f !important;
+  background: #fff7dc !important;
+  color: #765600 !important;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista .ata-card .btn-favoritar-ata[aria-pressed="true"]:hover {
+  border-color: #d9ad32 !important;
+  background: #fff0bd !important;
+}
+body[data-intranet-module="atas"] #mainSystem #atasLista .ata-card .btn-favoritar-ata[aria-pressed="true"] i {
+  color: #d69500 !important;
+  font-weight: 900 !important;
+}
+body[data-intranet-module="atas"] #mainSystem .btn-favoritar-ata:focus-visible {
+  outline: 3px solid rgba(11, 99, 206, .28);
+  outline-offset: 2px;
+}
+
+/* Filtros acompanham a grade de quatro cards em telas amplas. */
+@media (min-width: 1500px) {
+  body[data-intranet-module="atas"] #mainSystem .filtros-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 12px 14px !important;
+  }
+  body[data-intranet-module="atas"] #mainSystem .filtro-busca-global {
+    grid-column: span 2;
+  }
+  body[data-intranet-module="atas"] #mainSystem .filtro-status,
+  body[data-intranet-module="atas"] #mainSystem .filtro-categoria {
+    grid-column: span 2;
+  }
+}
+@media (min-width: 641px) and (max-width: 1499px) {
+  body[data-intranet-module="atas"] #mainSystem .filtros-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  body[data-intranet-module="atas"] #mainSystem .filtro-busca-global {
+    grid-column: 1 / -1;
+  }
+  body[data-intranet-module="atas"] #mainSystem .filtro-status,
+  body[data-intranet-module="atas"] #mainSystem .filtro-categoria {
+    grid-column: auto;
+  }
+}
+@media (max-width: 640px) {
+  body[data-intranet-module="atas"] #mainSystem .filtros-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  body[data-intranet-module="atas"] #mainSystem .filtros-grid > .filtro-grupo {
+    grid-column: 1 / -1;
+  }
+  body[data-intranet-module="atas"] #mainSystem .ata-numero {
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 1rem;
+  }
+  body[data-intranet-module="atas"] #mainSystem .btn-favoritar-ata {
+    min-height: 26px;
+    padding: 4px 7px !important;
+    font-size: .65rem;
+  }
+}
