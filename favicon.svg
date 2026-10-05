@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Prefeitura Municipal de Pitangueiras</title>
+  <desc id="desc">Ícone institucional azul e verde</desc>
+  <rect width="64" height="64" rx="14" fill="#073b69"/>
+  <path d="M14 27 32 12l18 15v22H14Z" fill="#fff" opacity=".96"/>
+  <path d="M20 29h24v20H20z" fill="#0b63ce"/>
+  <path d="M26 49V35h12v14M16 28h32" fill="none" stroke="#79d7b0" stroke-width="3"/>
+  <path d="M28 22h8v6h-8z" fill="#79d7b0"/>
+</svg>
