@@ -21,7 +21,7 @@
 
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
-  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261006-blue-icons-2">
+  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261006-ui-polish-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="intranet">
     <!-- ============================================================ -->
@@ -701,9 +701,12 @@ import { supabase } from "./shared/js/supabase.js";
             return { titulo: m.descricao || m.nome, resumo: "Acessar recursos, informações e serviços deste módulo da Intranet Municipal." };
           };
 
+          const paletaCoresModulos = ["#2868c7", "#16836b", "#c27a19", "#7652a8", "#157f8c", "#b54f62"];
           const cardsModulos = visiveis
-            .map((m) => {
-              const cor = corValida(m.cor) ? m.cor : "#0d5e3a";
+            .map((m, indice) => {
+              const cor = corValida(m.cor)
+                ? m.cor
+                : paletaCoresModulos[indice % paletaCoresModulos.length];
               const icone = m.icone || "fa-cube";
               const temRota = m.rota && m.rota !== "#";
               const identidade = `${m.nome || ""} ${m.descricao || ""}`.toLocaleLowerCase("pt-BR");
@@ -720,7 +723,7 @@ import { supabase } from "./shared/js/supabase.js";
                      data-modulo="${escaparHtml(m.nome)}"
                      onclick="window.acessarModulo('${escaparHtml(m.nome)}')">
                   <div class="card-icon"
-                       style="background: linear-gradient(135deg, ${cor}22 0%, ${cor}11 100%); color: ${cor};">
+                       style="--module-icon-color: ${cor}; --module-icon-background: linear-gradient(135deg, ${cor}22 0%, ${cor}11 100%); --module-icon-border-color: ${cor}33;">
                     <i class="fas ${escaparHtml(icone)}"></i>
                   </div>
                   <h3>${escaparHtml(copy.titulo)}</h3>
@@ -782,8 +785,33 @@ import { supabase } from "./shared/js/supabase.js";
 
         const avatar = document.getElementById("avatarIniciais");
         if (avatar) {
-          if (usuarioLogado.foto_url) avatar.innerHTML = `<img src="${escaparHtml(usuarioLogado.foto_url)}" alt="Foto de ${escaparHtml(usuarioLogado.nome)}">`;
-          else avatar.textContent = iniciais;
+          const valorFoto = String(usuarioLogado.foto_url || "").trim();
+          let urlFoto = "";
+          if (valorFoto) {
+            try {
+              const url = new URL(valorFoto, window.location.href);
+              if (url.protocol === "https:" || url.origin === window.location.origin) {
+                urlFoto = url.href;
+              }
+            } catch {
+              urlFoto = "";
+            }
+          }
+
+          if (urlFoto) {
+            const imagem = document.createElement("img");
+            imagem.src = urlFoto;
+            imagem.alt = `Foto de ${usuarioLogado.nome || "usuário"}`;
+            imagem.loading = "eager";
+            imagem.decoding = "async";
+            imagem.referrerPolicy = "no-referrer";
+            imagem.addEventListener("error", () => {
+              avatar.textContent = iniciais;
+            }, { once: true });
+            avatar.replaceChildren(imagem);
+          } else {
+            avatar.textContent = iniciais;
+          }
         }
         setTxt("menuNome", usuarioLogado.nome);
         setTxt("menuEmail", usuarioLogado.email);
@@ -803,7 +831,7 @@ import { supabase } from "./shared/js/supabase.js";
         const { data: perfil, error } = await supabase
           .from("usuarios")
           .select(
-            "id, nome, cargo, orgao_id, perfil, ativo, primeiro_acesso, perfil_completo",
+            "id, nome, cargo, orgao_id, perfil, ativo, primeiro_acesso, perfil_completo, foto_url",
           )
           .eq("uuid", user.id)
           .maybeSingle();

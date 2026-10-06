@@ -388,3 +388,155 @@ body[data-intranet-page="intranet"] #adminSection .sistema-card .acesso-badge {
     border-radius: 18px;
   }
 }
+
+
+/* Ajustes cirúrgicos solicitados — login e hall, 2026-10-06 */
+body[data-intranet-page="index"] {
+  background: #f1f3f5 !important;
+  color: #263746 !important;
+}
+body[data-intranet-page="index"] #loginModalOverlay {
+  background: #f1f3f5 !important;
+  background-image: none !important;
+}
+body[data-intranet-page="index"] .modal-login-header .brasao-mini {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+body[data-intranet-page="index"] .modal-login-header .brasao-mini img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 7px rgba(28, 48, 66, .16));
+}
+body[data-intranet-page="index"] #btnGoogle .fab.fa-google {
+  color: transparent !important;
+  background: conic-gradient(from -35deg, #4285f4 0 24%, #34a853 24% 46%, #fbbc05 46% 68%, #ea4335 68% 84%, #4285f4 84% 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body[data-intranet-page="index"] #btnSolicitarAcesso {
+  border-color: #d5dbe1 !important;
+  background: #f3f5f7 !important;
+  color: #40566b !important;
+  box-shadow: none !important;
+}
+body[data-intranet-page="index"] #btnSolicitarAcesso:hover {
+  border-color: #b8c6d2 !important;
+  background: #e9eef2 !important;
+}
+body[data-intranet-page="index"] .login-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 11px;
+  padding: 10px 12px;
+  border: 1px solid #d7e2eb;
+  border-radius: 10px;
+  background: #f4f7f9;
+  color: #38536b;
+  font-size: .84rem;
+  line-height: 1.4;
+}
+body[data-intranet-page="index"] .login-status[hidden] { display: none !important; }
+body[data-intranet-page="index"] .login-status[data-estado="carregando"] {
+  border-color: #cbdced;
+  background: #edf4fa;
+  color: #285477;
+}
+body[data-intranet-page="index"] .login-status[data-estado="erro"] {
+  border-color: #f0c7c7;
+  background: #fff5f4;
+  color: #9b3434;
+}
+body[data-intranet-page="index"] .login-status[data-estado="sucesso"] {
+  border-color: #bfdfd0;
+  background: #f0f8f3;
+  color: #28634b;
+}
+body[data-intranet-page="index"] #btnEntrar:disabled {
+  cursor: progress;
+  opacity: .82;
+  transform: none !important;
+}
+
+body[data-intranet-page="intranet"] .avatar-btn {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+}
+body[data-intranet-page="intranet"] .avatar-btn > span {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border-radius: 50%;
+}
+body[data-intranet-page="intranet"] .avatar-btn > span > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card .card-icon,
+body[data-intranet-page="intranet"] #adminSection .sistema-card .card-icon {
+  border: 1px solid var(--module-icon-border-color, #d8e6f3) !important;
+  border-radius: 16px !important;
+  background: var(--module-icon-background, #eaf2fa) !important;
+  color: var(--module-icon-color, #1d5688) !important;
+  box-shadow: 0 4px 12px rgba(22, 55, 87, .06) !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card.card-perfil .card-icon {
+  --module-icon-color: #7652a8 !important;
+  --module-icon-background: linear-gradient(135deg, #f0eafd 0%, #f8f5ff 100%) !important;
+  --module-icon-border-color: #e1d4f3 !important;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 1) .card-icon {
+  --module-icon-color: #2868c7; --module-icon-background: #edf3ff; --module-icon-border-color: #d4e2ff;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 2) .card-icon {
+  --module-icon-color: #16836b; --module-icon-background: #e9f7f1; --module-icon-border-color: #cceade;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 3) .card-icon {
+  --module-icon-color: #c27a19; --module-icon-background: #fff4e4; --module-icon-border-color: #f2dfbf;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 4) .card-icon {
+  --module-icon-color: #7652a8; --module-icon-background: #f2ecfa; --module-icon-border-color: #e1d4f3;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 5) .card-icon {
+  --module-icon-color: #157f8c; --module-icon-background: #e8f6f7; --module-icon-border-color: #c9e8ea;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 6) .card-icon {
+  --module-icon-color: #b54f62; --module-icon-background: #fff0f1; --module-icon-border-color: #f2d4d9;
+}
+
+
+/* O PNG institucional já contém o brasão; não adicionar molduras via estilos legados. */
+html body[data-intranet-page="index"] #loginModalOverlay .modal-login .modal-login-header .brasao-mini {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+html body[data-intranet-page="index"] #loginModalOverlay .modal-login .modal-login-header .brasao-mini img {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 4px 7px rgba(28, 48, 66, .16)) !important;
+}

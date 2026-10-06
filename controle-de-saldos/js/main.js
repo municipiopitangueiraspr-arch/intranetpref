@@ -6,7 +6,7 @@
 import { supabase } from "./supabase.js";
 import { Auth } from "./modules/auth.js";
 import { UI } from "./modules/ui.js";
-import { Consulta } from "./modules/consulta.js?v=20261006-drive-fixes-1";
+import { Consulta } from "./modules/consulta.js?v=20261006-ui-polish-1";
 import { Gestao } from "./modules/gestao.js";
 import { Cadastro } from "./modules/cadastro.js";
 import { Pedidos } from "./modules/pedidos.js";
@@ -144,8 +144,7 @@ class SistemaGestaoAtas {
 
         // Topbar identifica o módulo; cada view apresenta seu próprio título.
         iconeTitulo: "fa-layer-group",
-        titulo: "Gestão de Atas",
-        subtitulo: "Saldos, consumo e pedidos",
+        titulo: "Gestão de Atas, Saldos e Pedidos",
         // Menu do usuário alinhado ao padrão da Biblioteca Municipal.
         // A Ajuda abre a view FAQ já existente neste módulo.
         menuUsuario: {

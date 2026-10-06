@@ -324,13 +324,6 @@ export class Consulta {
         <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
         <span aria-current="page">Consulta</span>
       </nav>
-      <header class="consulta-page-heading">
-        <span class="consulta-page-icon" aria-hidden="true"><i class="fas fa-file-contract"></i></span>
-        <div>
-          <h2>Gestão de Atas, Saldos e Pedidos</h2>
-          <p>Consulte, acompanhe e gerencie as atas de registro de preços, saldos e pedidos.</p>
-        </div>
-      </header>
       <div class="filtros-container">
         <!-- ============================================================ -->
         <!-- RESULTADOS RÁPIDOS - CARD CLICÁVEIS                          -->
@@ -2541,7 +2534,7 @@ export class Consulta {
       }[ata.situacao] || "status-ativa";
     const categoriaNome = ata.categoria?.nome || "Outros";
     const favorita = this._favoritasIds.has(String(ata.id));
-    const botaoFavorita = `<button type="button" class="btn-favoritar-ata ${favorita ? "ativo" : ""}" data-action="toggle-favorita" data-ata-id="${ata.id}" aria-pressed="${favorita}" aria-label="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}" title="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}"><i class="${favorita ? "fas" : "far"} fa-star" aria-hidden="true"></i><span>${favorita ? "Favoritada" : "Favoritar"}</span></button>`;
+    const botaoFavorita = `<button type="button" class="btn-favoritar-ata ${favorita ? "ativo" : ""}" data-action="toggle-favorita" data-ata-id="${ata.id}" aria-pressed="${favorita}" aria-label="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}" title="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}"><i class="${favorita ? "fas" : "far"} fa-star" aria-hidden="true"></i>${favorita ? "" : "<span>Favoritar</span>"}</button>`;
 
     // Calcular valor consumido para exibição
     const itens = ata.itens || [];

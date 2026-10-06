@@ -2003,3 +2003,79 @@ html body[data-intranet-page="controle-de-saldos-templates-faq"] #menuBtn {
     display: none !important;
   }
 }
+
+
+/* Ajustes cirúrgicos solicitados — menu, avatares e favoritos, 2026-10-06 */
+body[data-intranet-module="atas"] #mainSystem .sidebar-brand .brand-icon {
+  padding: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+body[data-intranet-module="atas"] #mainSystem .sidebar-brand .brand-icon::before,
+body[data-intranet-module="atas"] #mainSystem .sidebar-brand .brand-icon::after {
+  display: none !important;
+  content: none !important;
+  box-shadow: none !important;
+}
+body[data-intranet-module="atas"] #mainSystem .sidebar-brand .brand-icon img.brasao-municipio {
+  filter: none !important;
+  box-shadow: none !important;
+}
+body[data-intranet-module="atas"] #mainSystem .sidebar-brand {
+  margin-bottom: 0 !important;
+  padding-bottom: 6px !important;
+}
+body[data-intranet-module="atas"] #mainSystem .sidebar-nav .nav-section {
+  margin-top: 0 !important;
+  padding-top: .25rem !important;
+}
+body[data-intranet-module="atas"] #mainSystem .sidebar-nav a.active i {
+  color: #ffd166 !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .16));
+}
+body[data-intranet-module="atas"] #mainSystem .topbar .avatar-btn {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1;
+}
+body[data-intranet-module="atas"] #mainSystem .topbar .avatar-btn .avatar-foto {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+body[data-intranet-module="atas"] #mainSystem .topbar .avatar-btn > span {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border-radius: 50%;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .btn-favoritar-ata[aria-pressed="true"] span {
+  display: none !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .btn-favoritar-ata[aria-pressed="true"] i {
+  color: #f4b400 !important;
+}
+html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-gestao-atas"] #mainSystem#mainSystem #atasLista#atasLista .ata-card .btn-favoritar-ata[aria-pressed="false"] i {
+  color: #93a2b0 !important;
+}
+@media (max-width: 760px) {
+  body[data-intranet-module="atas"] #mainSystem .topbar-titulo h1 {
+    max-width: min(60vw, 300px);
+    font-size: .8rem !important;
+    line-height: 1.2;
+    white-space: normal;
+  }
+}

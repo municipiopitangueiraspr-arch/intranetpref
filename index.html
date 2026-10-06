@@ -21,7 +21,7 @@
 
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
-  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261006-blue-icons-2">
+  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261006-ui-polish-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="index">
     <!-- ========== MODAL DE LOGIN ========== -->
@@ -66,6 +66,7 @@
           <button type="submit" class="btn btn-primary" id="btnEntrar">
             <i class="fas fa-arrow-right-to-bracket"></i> Entrar
           </button>
+          <div class="login-status" id="loginStatus" role="status" aria-live="polite" hidden></div>
         </form>
         <button type="button" class="btn btn-primary intranet-style-6e24e007eb" id="btnGoogle">
           <i class="fab fa-google"></i> Entrar com Google
@@ -264,25 +265,29 @@ import { supabase } from "./shared/js/supabase.js";
             );
           }
 
-          // Notifica sucesso
-          window.showNotification(
-            "success",
-            "Autenticado",
-            `Bem-vindo, ${usuario.nome}! Redirecionando...`,
-          );
+          const statusLogin = document.getElementById("loginStatus");
+          if (statusLogin) {
+            statusLogin.hidden = false;
+            statusLogin.dataset.estado = "sucesso";
+            statusLogin.textContent = "Acesso validado. Entrando na intranet...";
+          }
 
-          // Pequeno delay para a notificação aparecer,
-          // depois o guard decide o destino correto
-          setTimeout(async () => {
-            await decidirDestino();
-          }, 900);
+          await decidirDestino();
+          return true;
         } catch (err) {
+          const statusLogin = document.getElementById("loginStatus");
+          if (statusLogin) {
+            statusLogin.hidden = false;
+            statusLogin.dataset.estado = "erro";
+            statusLogin.textContent = err.message || "Não foi possível validar o acesso.";
+          }
           window.showNotification(
             "error",
             "Falha na autenticação",
             err.message,
           );
           console.error(err);
+          return false;
         }
       }
 
@@ -329,7 +334,14 @@ import { supabase } from "./shared/js/supabase.js";
           e.preventDefault();
           const email = document.getElementById("loginEmail").value.trim();
           const senha = document.getElementById("loginSenha").value.trim();
+          const btnEntrar = document.getElementById("btnEntrar");
+          const statusLogin = document.getElementById("loginStatus");
           if (!email || !senha) {
+            if (statusLogin) {
+              statusLogin.hidden = false;
+              statusLogin.dataset.estado = "erro";
+              statusLogin.textContent = "Preencha e-mail e senha para continuar.";
+            }
             window.showNotification(
               "warning",
               "Campos obrigatórios",
@@ -337,7 +349,22 @@ import { supabase } from "./shared/js/supabase.js";
             );
             return;
           }
-          await fazerLogin(email, senha);
+          const textoOriginal = btnEntrar.innerHTML;
+          btnEntrar.disabled = true;
+          btnEntrar.setAttribute("aria-busy", "true");
+          btnEntrar.innerHTML = '<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Validando acesso...';
+          if (statusLogin) {
+            statusLogin.hidden = false;
+            statusLogin.dataset.estado = "carregando";
+            statusLogin.textContent = "Validando seu e-mail e senha...";
+          }
+
+          const autenticado = await fazerLogin(email, senha);
+          if (!autenticado) {
+            btnEntrar.disabled = false;
+            btnEntrar.removeAttribute("aria-busy");
+            btnEntrar.innerHTML = textoOriginal;
+          }
         });
 
       document.getElementById("btnGoogle").addEventListener("click", entrarComGoogle);

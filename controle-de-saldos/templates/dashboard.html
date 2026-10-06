@@ -45,20 +45,14 @@
 <!--   · .card-estreito → span 4  (1/3)                           -->
 <!-- ============================================================ -->
 <div class="dashboard-container" data-intranet-scope="controle-de-saldos-templates-dashboard">
-  <header class="dashboard-page-heading" aria-labelledby="dashboardPageTitle">
-    <span class="dashboard-page-icon" aria-hidden="true"><i class="fas fa-file-contract"></i></span>
-    <div>
-      <h2 id="dashboardPageTitle">Gestão de Atas, Saldos e Pedidos</h2>
-      <p>Visão geral dos registros, saldos disponíveis e pedidos em andamento.</p>
-    </div>
-  </header>
+  <!-- O título do módulo permanece na topbar compartilhada. O dashboard começa pelos filtros. -->
   <!-- ============================================================ -->
   <!-- FILTRO GLOBAL DE PERÍODO                                     -->
   <!-- Aplica em todos os widgets de dados                          -->
   <!-- ============================================================ -->
   <div class="filtro-global" id="filtroGlobal">
     <div class="filtro-global-label">
-      <i class="fas fa-calendar-range"></i> Período:
+      <i class="fas fa-calendar-days"></i> Período:
     </div>
     <div class="filtro-pills" id="filtroPills">
       <button class="pill" data-periodo="hoje" type="button">Hoje</button>
