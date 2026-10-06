@@ -1051,7 +1051,11 @@ export class Consulta {
     const listaAtas = document.getElementById("atasLista");
     if (listaAtas) {
       listaAtas.addEventListener("click", (e) => {
-        const btnFavorita = e.target.closest("[data-action='toggle-favorita']");
+        const target =
+          e.target instanceof Element ? e.target : e.target?.parentElement;
+        if (!target) return;
+
+        const btnFavorita = target.closest("[data-action='toggle-favorita']");
         if (btnFavorita) {
           e.stopPropagation();
           e.preventDefault();
@@ -1059,7 +1063,7 @@ export class Consulta {
           return;
         }
         // ----- 0.a) Botão "Adicionar" no bloco de itens correspondentes -----
-        const btnAddCarrinho = e.target.closest(
+        const btnAddCarrinho = target.closest(
           "[data-action='add-item-carrinho']",
         );
         if (btnAddCarrinho) {
@@ -1077,7 +1081,7 @@ export class Consulta {
         // Sem este handler, o clique borbulha até o .ata-card (que tem
         // data-action='abrir-detalhes') e abre o modal de detalhes.
         // Com stopPropagation, o clique é capturado aqui e NÃO sobe.
-        const btnRemCarrinho = e.target.closest(
+        const btnRemCarrinho = target.closest(
           "[data-action='rem-item-carrinho']",
         );
         if (btnRemCarrinho) {
@@ -1092,7 +1096,7 @@ export class Consulta {
         }
 
         // ----- 1) Botão "ver todos os itens correspondentes" -----
-        const btnVerTodos = e.target.closest("[data-action='ver-todos-itens']");
+        const btnVerTodos = target.closest("[data-action='ver-todos-itens']");
         if (btnVerTodos) {
           e.stopPropagation();
           e.preventDefault();
@@ -1104,7 +1108,7 @@ export class Consulta {
         }
 
         // ----- 2) Botão "recolher itens" -----
-        const btnRecolher = e.target.closest("[data-action='recolher-itens']");
+        const btnRecolher = target.closest("[data-action='recolher-itens']");
         if (btnRecolher) {
           e.stopPropagation();
           e.preventDefault();
@@ -1116,13 +1120,22 @@ export class Consulta {
         }
 
         // ----- 3) Card inteiro OU botão "Ver Itens" → abrir detalhes -----
-        const alvoDetalhes = e.target.closest("[data-action='abrir-detalhes']");
+        const alvoDetalhes = target.closest(
+          "[data-action='abrir-detalhes']",
+        );
         if (alvoDetalhes) {
           e.stopPropagation();
           e.preventDefault();
           const ataId = alvoDetalhes.dataset.ataId;
           if (ataId) {
-            this.abrirDetalhes(ataId);
+            void this.abrirDetalhes(ataId).catch((error) => {
+              console.error("[Consulta] Falha ao abrir detalhes da ata:", error);
+              this.sistema.ui.mostrarToast(
+                "erro",
+                "Não foi possível abrir os itens",
+                "Tente novamente. Se o problema continuar, recarregue a consulta.",
+              );
+            });
           }
           return;
         }
@@ -2473,7 +2486,9 @@ export class Consulta {
     const lista = Array.isArray(atas) ? atas : [];
     const vencidasLista = lista.filter((a) => a.situacao === "VENCIDA");
     const ativasLista = lista.filter((a) => a.situacao !== "VENCIDA");
-    const total = ativasLista.length;
+    // “Total” corresponde ao conjunto completo mostrado pelo filtro
+    // total (inclui atas vencidas); as janelas de vencimento usam só não vencidas.
+    const total = lista.length;
     let venc30 = 0,
       venc60 = 0,
       venc90 = 0;
@@ -2897,16 +2912,34 @@ export class Consulta {
       `;
     }
 
-    // Conteúdo (tabela de itens)
-    this.renderizarConteudoModalDetalhes(ata);
-
-    // Abre o modal
     const modal = document.getElementById("modalDetalhes");
-    if (modal) {
-      modal.classList.add("active");
-      // Foco no botão de fechar para acessibilidade
-      modal.querySelector(".modal-close")?.focus();
+    const conteudo = document.getElementById("modalConteudo");
+    if (!modal || !conteudo) {
+      console.error("[Consulta] Estrutura do modal de detalhes não encontrada.");
+      this.sistema.ui.mostrarToast(
+        "erro",
+        "Detalhes indisponíveis",
+        "A janela de detalhes não está disponível nesta tela.",
+      );
+      return;
     }
+
+    // Abre primeiro para que uma falha no renderer não deixe o clique sem resposta.
+    modal.classList.add("active");
+    try {
+      this.renderizarConteudoModalDetalhes(ata);
+    } catch (error) {
+      console.error("[Consulta] Falha ao renderizar itens da ata:", error);
+      conteudo.replaceChildren();
+      const aviso = document.createElement("p");
+      aviso.setAttribute("role", "alert");
+      aviso.textContent =
+        "Não foi possível carregar os itens desta ata. Feche a janela e tente novamente.";
+      conteudo.append(aviso);
+    }
+
+    // Foco no botão de fechar para acessibilidade.
+    modal.querySelector(".modal-close")?.focus();
   }
 
   // ============================================================

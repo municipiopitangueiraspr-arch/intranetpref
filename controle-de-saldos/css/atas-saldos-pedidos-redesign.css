@@ -1777,3 +1777,229 @@ html body[data-intranet-module="atas"][data-intranet-page="controle-de-saldos-ge
     padding: 14px 12px 24px !important;
   }
 }
+
+/* =====================================================================
+   QA PRIORITÁRIO — menu desktop, FAQ horizontal e controles móveis
+   2026-10-06
+   ===================================================================== */
+
+/* O menu segue recolhível em tablet/celular, mas não aparece no desktop. */
+@media (min-width: 1025px) {
+  html body[data-intranet-module="atas"] #mainSystem#mainSystem #topbar#topbar #btnToggleSidebar {
+    display: none !important;
+  }
+}
+@media (max-width: 1024px) {
+  html body[data-intranet-module="atas"] #mainSystem#mainSystem #topbar#topbar #btnToggleSidebar {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* FAQ: a navegação interna vira uma faixa horizontal, coerente com o shell externo. */
+html body[data-intranet-page="controle-de-saldos-templates-faq"] {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow-x: hidden !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] *,
+html body[data-intranet-page="controle-de-saldos-templates-faq"] *::before,
+html body[data-intranet-page="controle-de-saldos-templates-faq"] *::after {
+  box-sizing: border-box !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .app {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  width: 100% !important;
+  min-height: 58px !important;
+  margin: 0 !important;
+  padding: 8px 16px !important;
+  border-bottom: 1px solid #dbe5ee !important;
+  background: rgba(255, 255, 255, .97) !important;
+  box-shadow: 0 3px 12px rgba(22, 53, 79, .06) !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .brand {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: #163b5c !important;
+  font-weight: 750 !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .brand-mark {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 8px !important;
+  background: #0b63ce !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .brand-mark span {
+  display: block !important;
+  width: 13px !important;
+  height: 10px !important;
+  border: 2px solid #fff !important;
+  border-radius: 2px !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .progress {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: 320px !important;
+  height: 5px !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: #e7eef6 !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .top-actions {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  margin-left: auto !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] #menuBtn {
+  display: none !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] #printBtn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  border: 1px solid #d5e2ef !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #38556c !important;
+  cursor: pointer !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .layout {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .sidebar {
+  position: sticky !important;
+  top: 56px !important;
+  z-index: 20 !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  margin: 0 0 14px !important;
+  padding: 8px 10px !important;
+  border: 1px solid #dbe5ee !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: 0 4px 14px rgba(22, 53, 79, .08) !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .sidebar h3,
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .sidebar .side-tip {
+  display: none !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] #nav {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 2px 2px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+  scrollbar-width: thin;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] #nav button {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  gap: 7px !important;
+  width: auto !important;
+  min-width: max-content !important;
+  margin: 0 !important;
+  padding: 9px 11px !important;
+  border: 1px solid #d5e2ef !important;
+  border-radius: 9px !important;
+  background: #f5f8fc !important;
+  color: #38556c !important;
+  box-shadow: none !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] #nav button.active {
+  border-color: #0b63ce !important;
+  background: #0b63ce !important;
+  color: #fff !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] #nav button .num {
+  margin-left: 4px !important;
+  color: inherit !important;
+  opacity: .72;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] .main {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+html body[data-intranet-page="controle-de-saldos-templates-faq"] #menuBtn {
+  display: none !important;
+}
+
+/* No celular, reserva espaço de rolagem e libera controles sob o FAB ao editar. */
+@media (max-width: 480px) {
+  html body[data-intranet-module="atas"] #mainSystem#mainSystem > .main-area > .conteudo.conteudo-full {
+    padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  html body[data-intranet-module="atas"] .btn-carrinho-flutuante {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 16px !important;
+  }
+  html body[data-intranet-module="atas"] .btn-carrinho-flutuante.fab-oculto-mobile {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: scale(.85) !important;
+  }
+  @supports selector(body:has(input:focus)) {
+    html body[data-intranet-module="atas"]:has(#mainSystem input:focus, #mainSystem select:focus, #mainSystem textarea:focus) .btn-carrinho-flutuante {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: scale(.85) !important;
+    }
+  }
+  html body[data-intranet-page="controle-de-saldos-templates-faq"] .sidebar {
+    top: 52px !important;
+    padding: 7px !important;
+  }
+  html body[data-intranet-page="controle-de-saldos-templates-faq"] .topbar {
+    min-height: 52px !important;
+    padding: 7px 12px !important;
+    gap: 8px !important;
+  }
+  html body[data-intranet-page="controle-de-saldos-templates-faq"] .progress {
+    display: none !important;
+  }
+  html body[data-intranet-page="controle-de-saldos-templates-faq"] #nav button {
+    padding: 8px 9px !important;
+  }
+  html body[data-intranet-page="controle-de-saldos-templates-faq"] #nav button .num {
+    display: none !important;
+  }
+}
