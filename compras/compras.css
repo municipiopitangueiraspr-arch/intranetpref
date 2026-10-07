@@ -65,3 +65,10 @@ body { background: radial-gradient(circle at 8% 0%, rgba(234,242,255,.92), trans
 .avatar-menu { border: 1px solid #d9e2ec !important; box-shadow: 0 24px 55px rgba(16,42,67,.18) !important; }
 .avatar-menu-item:hover, .avatar-menu-item:focus-visible { background: linear-gradient(90deg,#eaf2ff,#f0f9ff) !important; }
 .avatar-menu-item i { color: #1d4ed8 !important; }
+
+/* Formulários configuráveis de ETP/TR: mesma linguagem visual do módulo. */
+.artifact-section{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:6px 0 0;padding:16px;border:1px solid #dfe7eb;border-radius:14px;background:#fbfcfc}
+.artifact-section legend{padding:0 8px;color:#29475b;font-size:.82rem;font-weight:850;letter-spacing:.04em;text-transform:uppercase}
+.artifact-section .form-field{margin:0}
+.artifact-section .form-field label{color:#304d60;font-weight:750;line-height:1.4}
+@media(max-width:700px){.artifact-section{grid-template-columns:1fr}.artifact-section .span-2{grid-column:auto}}
