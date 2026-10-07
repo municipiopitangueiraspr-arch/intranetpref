@@ -21,7 +21,7 @@
 
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
-  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261006-ui-polish-1">
+  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261007-avatar-data-url-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="intranet">
     <!-- ============================================================ -->
@@ -61,6 +61,19 @@
             >
               <i class="fas fa-user-circle"></i> Meu Perfil
             </button>
+            <section class="avatar-menu-quick" aria-labelledby="avatarQuickTitle">
+              <h2 class="avatar-menu-quick-title" id="avatarQuickTitle">
+                <i class="fas fa-bolt" aria-hidden="true"></i> Acessos rápidos
+              </h2>
+              <div
+                class="avatar-menu-quick-list"
+                id="avatarQuickModules"
+                role="group"
+                aria-label="Módulos disponíveis para esta conta"
+              >
+                <p class="avatar-menu-quick-empty">Carregando módulos autorizados...</p>
+              </div>
+            </section>
             <button
               class="avatar-menu-item sair"
               id="menuSair"
@@ -701,6 +714,50 @@ import { supabase } from "./shared/js/supabase.js";
             return { titulo: m.descricao || m.nome, resumo: "Acessar recursos, informações e serviços deste módulo da Intranet Municipal." };
           };
 
+          // Os atalhos reaproveitam a mesma lista filtrada que gera os cards do hall.
+          // Assim, módulos sem permissão ou sem rota funcional não aparecem no avatar.
+          const quickAccessHost = document.getElementById("avatarQuickModules");
+          if (quickAccessHost) {
+            const itensAtalho = visiveis
+              .filter((m) => m.rota && m.rota !== "#")
+              .map((m) => ({
+                modulo: m.nome,
+                titulo: copyModulo(m).titulo || m.nome,
+                icone: m.icone || "fa-cube",
+              }));
+
+            if (usuarioLogado.perfil === "ADMIN") {
+              const modulosAdmin = [
+                { modulo: "core", titulo: "Painel Admin", icone: "fa-cogs" },
+                { modulo: "orgaos", titulo: "Órgãos", icone: "fa-building" },
+                { modulo: "usuarios", titulo: "Usuários", icone: "fa-users" },
+                { modulo: "modulos", titulo: "Módulos", icone: "fa-cubes" },
+                { modulo: "permissoes", titulo: "Permissões", icone: "fa-key" },
+              ];
+              const jaIncluidos = new Set(itensAtalho.map((item) => item.modulo));
+              modulosAdmin.forEach((item) => {
+                if (!jaIncluidos.has(item.modulo)) itensAtalho.push(item);
+              });
+            }
+
+            quickAccessHost.innerHTML = itensAtalho.length
+              ? itensAtalho.map((item) => `
+                  <button
+                    class="avatar-menu-item avatar-menu-quick-link"
+                    type="button"
+                    role="menuitem"
+                    data-atalho-modulo="${escaparHtml(item.modulo)}"
+                    aria-label="Acessar ${escaparHtml(item.titulo)}"
+                    title="Acessar ${escaparHtml(item.titulo)}"
+                  >
+                    <span class="avatar-menu-quick-icon"><i class="fas ${escaparHtml(item.icone)}" aria-hidden="true"></i></span>
+                    <span class="avatar-menu-quick-label">${escaparHtml(item.titulo)}</span>
+                    <i class="fas fa-arrow-up-right-from-square avatar-menu-quick-arrow" aria-hidden="true"></i>
+                  </button>
+                `).join("")
+              : '<p class="avatar-menu-quick-empty">Nenhum módulo com acesso direto está disponível.</p>';
+          }
+
           const paletaCoresModulos = ["#2868c7", "#16836b", "#c27a19", "#7652a8", "#157f8c", "#b54f62"];
           const cardsModulos = visiveis
             .map((m, indice) => {
@@ -788,13 +845,22 @@ import { supabase } from "./shared/js/supabase.js";
           const valorFoto = String(usuarioLogado.foto_url || "").trim();
           let urlFoto = "";
           if (valorFoto) {
-            try {
-              const url = new URL(valorFoto, window.location.href);
-              if (url.protocol === "https:" || url.origin === window.location.origin) {
-                urlFoto = url.href;
+            // O perfil salva a foto compactada como data:image/jpeg;base64,...
+            // e também pode receber uma URL HTTPS de Storage. O código antigo
+            // passava tudo pelo construtor URL, que rejeita data URLs e fazia
+            // o hall cair silenciosamente nas iniciais.
+            const fotoDataUrl = /^data:image\/(?:jpeg|jpg|png|webp|gif);base64,[a-z0-9+/=\s]+$/i.test(valorFoto);
+            if (fotoDataUrl) {
+              urlFoto = valorFoto;
+            } else {
+              try {
+                const url = new URL(valorFoto, window.location.href);
+                if (url.protocol === "https:" || url.origin === window.location.origin) {
+                  urlFoto = url.href;
+                }
+              } catch {
+                urlFoto = "";
               }
-            } catch {
-              urlFoto = "";
             }
           }
 
@@ -807,6 +873,9 @@ import { supabase } from "./shared/js/supabase.js";
             imagem.referrerPolicy = "no-referrer";
             imagem.addEventListener("error", () => {
               avatar.textContent = iniciais;
+            }, { once: true });
+            imagem.addEventListener("load", () => {
+              avatar.classList.add("has-avatar-photo");
             }, { once: true });
             avatar.replaceChildren(imagem);
           } else {
@@ -1009,6 +1078,16 @@ import { supabase } from "./shared/js/supabase.js";
             menu.classList.remove("aberto");
             btn.setAttribute("aria-expanded", "false");
           }
+        });
+
+        // Os módulos exibidos aqui são montados a partir da lista autorizada do usuário.
+        menu.addEventListener("click", (e) => {
+          const atalho = e.target.closest("[data-atalho-modulo]");
+          if (!atalho) return;
+          const modulo = atalho.dataset.atalhoModulo;
+          menu.classList.remove("aberto");
+          btn.setAttribute("aria-expanded", "false");
+          if (modulo) window.acessarModulo(modulo);
         });
 
         // Item "Meu Perfil"
