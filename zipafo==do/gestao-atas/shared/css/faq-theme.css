@@ -1,0 +1,135 @@
+:root {
+  --faq-green: #0a5c36;
+  --faq-green-2: #087044;
+  --faq-green-3: #e8f0ec;
+  --faq-navy: #0b1c2e;
+  --faq-muted: #667085;
+  --faq-bg: #f3f4f6;
+  --faq-card: #ffffff;
+  --faq-line: #e5e7eb;
+  --faq-blue: #2563eb;
+  --faq-amber: #d97706;
+  --faq-shadow: 0 16px 40px rgba(11, 28, 46, .09);
+  --faq-radius: 18px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--faq-bg) !important;
+  color: var(--faq-navy) !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+/* Entrada: login */
+body:has(.modal-login) {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(10, 92, 54, .12), transparent 32%),
+    linear-gradient(145deg, #f8fbf9 0%, #eef2f4 100%) !important;
+}
+body:has(.modal-login) .modal-overlay { background: rgba(11, 28, 46, .30) !important; backdrop-filter: blur(9px); }
+body:has(.modal-login) .modal-login {
+  border: 1px solid rgba(255,255,255,.8) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--faq-shadow) !important;
+  padding: 32px 28px !important;
+}
+body:has(.modal-login) .modal-login-header .brasao-mini {
+  background: var(--faq-green) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 22px rgba(10,92,54,.18);
+}
+body:has(.modal-login) .form-input {
+  border-color: var(--faq-line) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+}
+body:has(.modal-login) .form-input:focus { border-color: var(--faq-green) !important; box-shadow: 0 0 0 4px rgba(10,92,54,.10) !important; }
+body:has(.modal-login) .btn-primary { background: var(--faq-green) !important; border-radius: 12px !important; box-shadow: 0 8px 18px rgba(10,92,54,.20); }
+body:has(.modal-login) .btn-primary:hover { background: var(--faq-green-2) !important; transform: translateY(-1px); }
+
+/* Seleção de módulos */
+body:has(.sistemas-grid) {
+  background:
+    radial-gradient(circle at 5% 0%, rgba(10,92,54,.12), transparent 28%),
+    linear-gradient(145deg, #f8fbf9 0%, #eef2f4 100%) !important;
+}
+body:has(.sistemas-grid) .sistemas-grid { gap: 16px !important; margin-top: 28px !important; }
+body:has(.sistemas-grid) .sistema-card {
+  background: rgba(255,255,255,.94) !important;
+  border: 1px solid var(--faq-line) !important;
+  border-radius: var(--faq-radius) !important;
+  box-shadow: 0 5px 18px rgba(11,28,46,.04) !important;
+  padding: 24px 20px !important;
+}
+body:has(.sistemas-grid) .sistema-card:hover { border-color: var(--faq-green) !important; box-shadow: var(--faq-shadow) !important; transform: translateY(-4px) !important; }
+body:has(.sistemas-grid) .sistema-card::before { height: 4px !important; background: var(--faq-green) !important; }
+body:has(.sistemas-grid) .card-icon { background: var(--faq-green-3) !important; color: var(--faq-green) !important; border-radius: 14px !important; box-shadow: none !important; }
+body:has(.sistemas-grid) .sistema-card h3 { color: var(--faq-navy) !important; letter-spacing: -.02em; }
+body:has(.sistemas-grid) .sistema-card p { color: var(--faq-muted) !important; }
+body:has(.sistemas-grid) .acesso-badge { background: var(--faq-green-3) !important; border-color: rgba(10,92,54,.15) !important; color: var(--faq-green) !important; border-radius: 999px !important; }
+body:has(.sistemas-grid) .sistema-card.card-perfil { background: linear-gradient(135deg,#fff 0%,#f4faf6 100%) !important; border-color: rgba(10,92,54,.35) !important; }
+body:has(.sistemas-grid) .sistema-card.card-perfil .card-icon { background: var(--faq-green) !important; color: #fff !important; }
+body:has(.sistemas-grid) .sistema-card.card-perfil .acesso-badge { background: var(--faq-green) !important; color: #fff !important; }
+
+/* Layout interno: Biblioteca e Gestão de Atas */
+.app-layout { background: var(--faq-bg) !important; }
+.sidebar {
+  background: #fff !important;
+  color: var(--faq-navy) !important;
+  border-right: 1px solid var(--faq-line) !important;
+  box-shadow: 6px 0 24px rgba(11,28,46,.03);
+}
+.sidebar-brand { border-bottom-color: var(--faq-line) !important; }
+.sidebar-brand .brand-icon { background: var(--faq-green-3) !important; color: var(--faq-green) !important; }
+.sidebar-brand .brand-text h2 { color: var(--faq-navy) !important; }
+.sidebar-brand .brand-text span { color: var(--faq-muted) !important; opacity: 1 !important; }
+.sidebar-nav .nav-section { color: var(--faq-muted) !important; opacity: 1 !important; }
+.sidebar-nav a { color: var(--faq-muted) !important; border-radius: 12px !important; }
+.sidebar-nav a i { color: inherit !important; }
+.sidebar-nav a:hover { background: var(--faq-green-3) !important; color: var(--faq-green) !important; }
+.sidebar-nav a.active { background: var(--faq-green-3) !important; color: var(--faq-green) !important; font-weight: 750 !important; }
+.sidebar-nav a.active i { color: var(--faq-green) !important; }
+.sidebar-voltar a { color: var(--faq-muted) !important; border-radius: 12px; }
+.sidebar-voltar a:hover { background: var(--faq-green-3) !important; color: var(--faq-green) !important; }
+.topbar {
+  background: rgba(255,255,255,.94) !important;
+  border-top: 5px solid var(--faq-green) !important;
+  border-bottom: 1px solid var(--faq-line) !important;
+  box-shadow: 0 4px 18px rgba(11,28,46,.04) !important;
+}
+.topbar-titulo h1 { color: var(--faq-navy) !important; letter-spacing: -.025em; }
+.topbar-titulo h1 i { color: var(--faq-green) !important; }
+.topbar-titulo p, .topbar-info span { color: var(--faq-muted) !important; }
+.topbar-info strong { color: var(--faq-navy) !important; }
+.btn-toggle-sidebar { color: var(--faq-green) !important; }
+.btn-toggle-sidebar:hover { background: var(--faq-green-3) !important; }
+.btn-sair { border-radius: 10px !important; }
+.main-area { background: var(--faq-bg) !important; }
+.conteudo { max-width: 1420px !important; }
+
+/* Componentes de conteúdo */
+.card, .kpi-card, .dashboard-card, .painel-card, .tabela-container, .filtro-container, .modal, .modal-confirm {
+  border-radius: var(--faq-radius) !important;
+  border-color: var(--faq-line) !important;
+  box-shadow: 0 5px 18px rgba(11,28,46,.04) !important;
+}
+.card:hover, .kpi-card:hover, .dashboard-card:hover { box-shadow: var(--faq-shadow) !important; }
+.btn { border-radius: 12px !important; }
+.btn-primary, .btn-success { background: var(--faq-green) !important; }
+.btn-primary:hover, .btn-success:hover { background: var(--faq-green-2) !important; }
+.form-input, .form-select, .form-textarea { border-radius: 12px !important; border-color: var(--faq-line) !important; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--faq-green) !important; box-shadow: 0 0 0 4px rgba(10,92,54,.10) !important; }
+.badge-verde, .tag { background: var(--faq-green-3) !important; color: var(--faq-green) !important; }
+
+@media (max-width: 760px) {
+  body:has(.sistemas-grid) .sistemas-grid { grid-template-columns: 1fr !important; margin-left: 0 !important; margin-right: 0 !important; }
+  .topbar { min-height: 64px !important; }
+  .sidebar { box-shadow: 12px 0 30px rgba(11,28,46,.12) !important; }
+  .conteudo { padding: 20px 14px 80px !important; }
+  body:has(.modal-login) .modal-login { width: calc(100% - 28px) !important; padding: 26px 20px !important; }
+}
+
+@media print {
+  .sidebar { box-shadow: none !important; }
+  body { background: #fff !important; }
+}

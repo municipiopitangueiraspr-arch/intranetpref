@@ -1,0 +1,1465 @@
+/* ============================================================ */
+/* MÓDULO · RELATÓRIOS · CSS                                    */
+/* ------------------------------------------------------------ */
+/* Estilos EXCLUSIVOS da view de Relatórios.                    */
+/*                                                              */
+/* IMPORTANTE: este arquivo NÃO redefine nada que já existe     */
+/* no design system (variáveis, botões, tabelas, filtros, etc). */
+/* Ele apenas:                                                   */
+/*   · Sobrescreve pontualmente onde o relatório precisa de um  */
+/*     comportamento visual diferente                            */
+/*   · Adiciona as classes específicas do módulo                 */
+/*                                                              */
+/* Carregado DEPOIS de:                                          */
+/*   · ../shared/css/intranet-base.css                          */
+/*   · ../shared/css/componentes.css                            */
+/*   · css/gestao-atas.css                                       */
+/*                                                              */
+/* Depende das variáveis CSS já definidas no design system:      */
+/*   --primary-*, --success-*, --warning-*, --error-*,          */
+/*   --neutral-*, --shadow-*, --border-radius-*,                */
+/*   --transition-base                                          */
+/* ============================================================ */
+
+/* ============================================================ */
+/* CONTAINER PRINCIPAL                                           */
+/* ============================================================ */
+.relatorios-container {
+  max-width: 100%;
+  animation: fadeInRelatorios 0.3s ease-out;
+}
+
+@keyframes fadeInRelatorios {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================ */
+/* MODO 1 · ÍNDICE DE RELATÓRIOS                                 */
+/* ============================================================ */
+.relatorios-indice {
+  display: block;
+}
+
+/* ---------- Cabeçalho do índice ---------- */
+.relatorios-indice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, var(--primary-50) 0%, #f0f9ff 100%);
+  border: 1px solid var(--primary-100);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.relatorios-indice-titulo-wrapper {
+  flex: 1;
+  min-width: 200px;
+}
+
+.relatorios-indice-titulo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary-800);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.relatorios-indice-titulo i {
+  color: var(--primary-600);
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.relatorios-indice-subtitulo {
+  font-size: 0.88rem;
+  color: var(--neutral-500);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ---------- Grid de cards ---------- */
+.relatorios-indice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+/* ---------- Card individual de relatório ---------- */
+.relatorio-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 22px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 140px;
+}
+
+/* Faixa colorida no topo do card
+   — cor base (fallback). Cada família sobrescreve abaixo. */
+.relatorio-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--primary-600);
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+/* ============================================================ */
+/* FAMÍLIAS DE COR POR TEMA                                     */
+/* ------------------------------------------------------------ */
+/* Sistema de 6 cores semânticas agrupando os 13 relatórios:    */
+/*                                                              */
+/*   1. PRAZO / VENCIMENTO      → Laranja  (--warning-*)        */
+/*   2. CONSUMO / EXECUÇÃO      → Verde    (--success-*)        */
+/*   3. PEDIDOS / FLUXO         → Azul     (--primary-7xx)      */
+/*   4. FORNECEDORES            → Roxo     (#7c3aed)            */
+/*   5. AUDITORIA / ALERTA      → Vermelho (--error-*)          */
+/*   6. COMPARATIVO / ANÁLISE   → Ciano    (#0891b2)            */
+/*                                                              */
+/* Os cards recebem a mesma cor de família tanto na faixa      */
+/* do topo (::before) quanto no fundo do ícone.                */
+/* ============================================================ */
+
+/* ---------- FAMÍLIA 1 · PRAZO / VENCIMENTO (Laranja) ---------- */
+.relatorio-card[data-relatorio="atas_vencendo"]::before,
+.relatorio-card[data-relatorio="projecao_esgotamento"]::before {
+  background: linear-gradient(90deg, var(--warning-500), var(--warning-600));
+}
+
+.relatorio-card[data-relatorio="atas_vencendo"] .relatorio-card-icon,
+.relatorio-card[data-relatorio="projecao_esgotamento"] .relatorio-card-icon {
+  background: var(--warning-100);
+  color: var(--warning-700);
+}
+
+/* ---------- FAMÍLIA 2 · CONSUMO / EXECUÇÃO (Verde) ---------- */
+.relatorio-card[data-relatorio="consumo_por_orgao"]::before,
+.relatorio-card[data-relatorio="consumo_por_categoria"]::before,
+.relatorio-card[data-relatorio="execucao_por_ata"]::before,
+.relatorio-card[data-relatorio="curva_abc_itens"]::before {
+  background: linear-gradient(90deg, var(--success-500), var(--success-600));
+}
+
+.relatorio-card[data-relatorio="consumo_por_orgao"] .relatorio-card-icon,
+.relatorio-card[data-relatorio="consumo_por_categoria"] .relatorio-card-icon,
+.relatorio-card[data-relatorio="execucao_por_ata"] .relatorio-card-icon,
+.relatorio-card[data-relatorio="curva_abc_itens"] .relatorio-card-icon {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+
+/* ---------- FAMÍLIA 3 · PEDIDOS / FLUXO (Azul) ---------- */
+.relatorio-card[data-relatorio="pedidos_por_status"]::before,
+.relatorio-card[data-relatorio="pedidos_pendentes"]::before,
+.relatorio-card[data-relatorio="tempo_medio_aprovacao"]::before {
+  background: linear-gradient(90deg, var(--primary-600), #1a3a6b);
+}
+
+.relatorio-card[data-relatorio="pedidos_por_status"] .relatorio-card-icon,
+.relatorio-card[data-relatorio="pedidos_pendentes"] .relatorio-card-icon,
+.relatorio-card[data-relatorio="tempo_medio_aprovacao"] .relatorio-card-icon {
+  background: var(--primary-100);
+  color: #1a3a6b;
+}
+
+/* ---------- FAMÍLIA 4 · FORNECEDORES (Roxo) ---------- */
+.relatorio-card[data-relatorio="ranking_fornecedores"]::before {
+  background: linear-gradient(90deg, #7c3aed, #6d28d9);
+}
+
+.relatorio-card[data-relatorio="ranking_fornecedores"] .relatorio-card-icon {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+/* ---------- FAMÍLIA 5 · AUDITORIA / ALERTA (Vermelho) ---------- */
+.relatorio-card[data-relatorio="historico_alteracoes"]::before,
+.relatorio-card[data-relatorio="divergencias_saldo"]::before {
+  background: linear-gradient(90deg, var(--error-500), var(--error-600));
+}
+
+.relatorio-card[data-relatorio="historico_alteracoes"] .relatorio-card-icon,
+.relatorio-card[data-relatorio="divergencias_saldo"] .relatorio-card-icon {
+  background: var(--error-100);
+  color: var(--error-700);
+}
+
+/* ---------- FAMÍLIA 6 · COMPARATIVO / ANÁLISE (Ciano) ---------- */
+.relatorio-card[data-relatorio="comparativo_ano_a_ano"]::before {
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+}
+
+.relatorio-card[data-relatorio="comparativo_ano_a_ano"] .relatorio-card-icon {
+  background: #cffafe;
+  color: #0e7490;
+}
+
+/* ---------- Hover e foco (genéricos, valem para todas as famílias) ---------- */
+.relatorio-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-300);
+}
+
+.relatorio-card:hover::before {
+  opacity: 1;
+}
+
+.relatorio-card:focus-visible {
+  outline: 3px solid var(--primary-300);
+  outline-offset: 2px;
+}
+
+.relatorio-card:active {
+  transform: translateY(-2px) scale(0.99);
+  transition: transform 0.08s ease;
+}
+
+/* ---------- Ícone do card (base) ---------- */
+.relatorio-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  background: var(--primary-100);
+  color: var(--primary-700);
+  transition: var(--transition-base);
+}
+
+.relatorio-card:hover .relatorio-card-icon {
+  transform: scale(1.05);
+}
+
+/* ---------- Texto do card ---------- */
+.relatorio-card-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.relatorio-card-descricao {
+  font-size: 0.82rem;
+  color: var(--neutral-500);
+  margin: 0;
+  line-height: 1.45;
+  flex: 1;
+}
+
+/* ---------- Setinha no canto ---------- */
+.relatorio-card-arrow {
+  position: absolute;
+  bottom: 16px;
+  right: 18px;
+  color: var(--neutral-300);
+  font-size: 1rem;
+  transition: var(--transition-base);
+}
+
+.relatorio-card:hover .relatorio-card-arrow {
+  color: var(--primary-600);
+  transform: translateX(4px);
+}
+
+/* ---------- Skeleton do card (loading inicial) ---------- */
+.relatorio-card-skeleton {
+  min-height: 140px;
+  padding: 20px 22px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-line-sm {
+  width: 45%;
+}
+.skeleton-line-md {
+  width: 70%;
+}
+.skeleton-line-lg {
+  width: 95%;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================================ */
+/* MODO 2 · RELATÓRIO ATIVO                                      */
+/* ============================================================ */
+.relatorios-ativo {
+  display: block;
+}
+
+/* ---------- Cabeçalho do relatório ativo ---------- */
+.relatorios-ativo-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 18px 22px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Botão Voltar ---------- */
+.btn-voltar-relatorio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-lg);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-voltar-relatorio:hover {
+  background: var(--neutral-200);
+  transform: translateX(-2px);
+}
+
+.btn-voltar-relatorio:active {
+  transform: translateX(0) scale(0.98);
+}
+
+.btn-voltar-relatorio i {
+  font-size: 0.9rem;
+}
+
+/* ---------- Título + subtítulo ---------- */
+.relatorios-ativo-titulo-wrapper {
+  flex: 1;
+  min-width: 200px;
+}
+
+.relatorios-ativo-titulo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.relatorios-ativo-titulo i {
+  color: var(--primary-600);
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.relatorios-ativo-titulo-texto {
+  word-break: break-word;
+}
+
+.relatorios-ativo-subtitulo {
+  font-size: 0.85rem;
+  color: var(--neutral-500);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ============================================================ */
+/* ÁREA DE FILTROS                                               */
+/* ============================================================ */
+.relatorios-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  background: var(--neutral-50);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-xl);
+}
+
+/* Cada grupo de filtro reusa .filtro-grupo / .filtro-label
+   do design system — só ajustamos o tamanho mínimo. */
+.relatorios-filtros .filtro-grupo {
+  min-width: 180px;
+}
+
+.relatorios-filtros .filtro-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--neutral-700);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.relatorios-filtros .filtro-label i {
+  color: var(--primary-600);
+  font-size: 0.75rem;
+}
+
+/* ---------- Campo de data única ---------- */
+.relatorios-filtros input[type="date"],
+.relatorios-filtros input[type="number"],
+.relatorios-filtros select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--border-radius-lg);
+  font-size: 0.85rem;
+  background: white;
+  font-family: inherit;
+  color: var(--neutral-800);
+  transition: var(--transition-base);
+}
+
+.relatorios-filtros input[type="date"]:focus,
+.relatorios-filtros input[type="number"]:focus,
+.relatorios-filtros select:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 4px var(--primary-100);
+}
+
+/* ---------- Bloco de data (data início + data fim) ---------- */
+.relatorio-filtro-datas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 260px;
+}
+
+.relatorio-filtro-datas input {
+  flex: 1;
+  min-width: 0;
+}
+
+.relatorio-filtro-datas .filtro-data-separador {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--neutral-400);
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ---------- Bloco de "X dias" (input numérico com sufixo) ---------- */
+.relatorio-filtro-dias {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.relatorio-filtro-dias input {
+  max-width: 100px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--primary-700);
+}
+
+.relatorio-filtro-dias .relatorio-filtro-sufixo {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+  white-space: nowrap;
+}
+
+/* ---------- Botão de aplicar/atualizar dentro dos filtros ---------- */
+.relatorio-filtro-acoes {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.btn-aplicar-relatorio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-lg);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: inherit;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-aplicar-relatorio:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-aplicar-relatorio:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-aplicar-relatorio i {
+  font-size: 0.9rem;
+}
+
+/* ============================================================ */
+/* ÁREA DE KPIs                                                  */
+/* ============================================================ */
+.relatorios-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.kpi-relatorio {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-relatorio::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary-600);
+  border-radius: 0 4px 4px 0;
+}
+
+.kpi-relatorio:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Variação de cor por tipo de KPI */
+.kpi-relatorio.kpi-sucesso::before {
+  background: var(--success-600);
+}
+.kpi-relatorio.kpi-aviso::before {
+  background: var(--warning-600);
+}
+.kpi-relatorio.kpi-erro::before {
+  background: var(--error-600);
+}
+.kpi-relatorio.kpi-info::before {
+  background: var(--primary-600);
+}
+
+.kpi-relatorio .kpi-relatorio-valor {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--neutral-900);
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+.kpi-relatorio .kpi-relatorio-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1.3;
+}
+
+.kpi-relatorio.kpi-sucesso .kpi-relatorio-valor {
+  color: var(--success-700);
+}
+.kpi-relatorio.kpi-aviso .kpi-relatorio-valor {
+  color: var(--warning-700);
+}
+.kpi-relatorio.kpi-erro .kpi-relatorio-valor {
+  color: var(--error-700);
+}
+.kpi-relatorio.kpi-info .kpi-relatorio-valor {
+  color: var(--primary-700);
+}
+
+/* ============================================================ */
+/* ÁREA DO GRÁFICO                                               */
+/* ============================================================ */
+.relatorios-grafico-wrapper {
+  margin-bottom: 20px;
+}
+
+.relatorios-grafico-card {
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.relatorios-grafico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: var(--neutral-50);
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.relatorios-grafico-titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--neutral-800);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.relatorios-grafico-titulo i {
+  color: var(--primary-600);
+}
+
+.relatorios-grafico-body {
+  padding: 20px;
+  position: relative;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.relatorios-grafico-body canvas {
+  max-height: 320px;
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* ============================================================ */
+/* ÁREA DO RESULTADO (TABELA)                                    */
+/* ============================================================ */
+.relatorios-resultado {
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.relatorios-resultado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: var(--neutral-50);
+  border-bottom: 1px solid var(--neutral-200);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.relatorios-contador {
+  font-size: 0.85rem;
+  color: var(--neutral-600);
+  font-weight: 500;
+}
+
+.relatorios-contador strong {
+  color: var(--primary-700);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* ---------- Container da tabela (com scroll horizontal) ---------- */
+.relatorios-tabela-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* A tabela interna reusa .tabela-itens do design system.
+   Aqui só ajustamos detalhes específicos de relatório. */
+.relatorios-tabela-container .tabela-itens {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 600px;
+}
+
+.relatorios-tabela-container .tabela-itens th {
+  background: linear-gradient(135deg, var(--primary-700), #1a3a6b);
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.relatorios-tabela-container .tabela-itens td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--neutral-100);
+  vertical-align: middle;
+  color: var(--neutral-700);
+  background: white;
+}
+
+.relatorios-tabela-container .tabela-itens tbody tr {
+  transition: background 0.15s;
+}
+
+.relatorios-tabela-container .tabela-itens tbody tr:hover td {
+  background: var(--neutral-50);
+}
+
+.relatorios-tabela-container .tabela-itens tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.relatorios-tabela-container .tabela-itens .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Destaques de célula por tipo */
+.relatorios-tabela-container .destaque-sucesso {
+  color: var(--success-700);
+  font-weight: 700;
+}
+.relatorios-tabela-container .destaque-aviso {
+  color: var(--warning-700);
+  font-weight: 700;
+}
+.relatorios-tabela-container .destaque-erro {
+  color: var(--error-700);
+  font-weight: 700;
+}
+.relatorios-tabela-container .destaque-info {
+  color: var(--primary-700);
+  font-weight: 700;
+}
+
+/* ---------- Empty state da tabela ---------- */
+.relatorios-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--neutral-400);
+}
+
+.relatorios-empty i {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 12px;
+  color: var(--neutral-300);
+}
+
+.relatorios-empty h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+  margin: 0 0 6px 0;
+}
+
+.relatorios-empty p {
+  font-size: 0.85rem;
+  color: var(--neutral-400);
+  margin: 0;
+}
+
+/* ---------- Loading spinner da tabela ---------- */
+.relatorios-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--primary-600);
+}
+
+.relatorios-loading i {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 12px;
+  animation: spin 1s linear infinite;
+}
+
+.relatorios-loading p {
+  font-size: 0.9rem;
+  color: var(--neutral-500);
+  margin: 0;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================ */
+/* RODAPÉ DE AÇÕES (EXPORTAÇÃO)                                  */
+/* ============================================================ */
+.relatorios-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 22px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-exportar-relatorio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border: none;
+  border-radius: var(--border-radius-lg);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: inherit;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-exportar-relatorio:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none;
+}
+
+.btn-exportar-relatorio i {
+  font-size: 0.95rem;
+}
+
+/* ---------- Botão Exportar CSV ---------- */
+.btn-exportar-csv {
+  background: linear-gradient(135deg, var(--success-600), var(--success-700));
+  color: white;
+}
+
+.btn-exportar-csv:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---------- Botão Exportar PDF ---------- */
+.btn-exportar-pdf {
+  background: linear-gradient(135deg, var(--error-600), var(--error-700));
+  color: white;
+}
+
+.btn-exportar-pdf:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================================ */
+/* RESPONSIVIDADE                                                */
+/* ============================================================ */
+
+/* Tablets grandes */
+@media (max-width: 1200px) {
+  .relatorios-indice-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  .relatorios-kpis {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+  .relatorios-indice-header {
+    padding: 16px 18px;
+  }
+
+  .relatorios-ativo-header {
+    padding: 14px 16px;
+  }
+
+  .relatorios-filtros {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .relatorio-filtro-acoes {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .btn-aplicar-relatorio {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .relatorios-grafico-body {
+    min-height: 240px;
+    padding: 14px;
+  }
+}
+
+/* Mobile grande */
+@media (max-width: 768px) {
+  .relatorios-indice-titulo {
+    font-size: 1.15rem;
+  }
+
+  .relatorios-indice-subtitulo {
+    font-size: 0.8rem;
+  }
+
+  .relatorios-indice-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .relatorio-card {
+    padding: 16px 18px;
+    min-height: 120px;
+  }
+
+  .relatorio-card-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.15rem;
+  }
+
+  .relatorio-card-titulo {
+    font-size: 0.95rem;
+  }
+
+  .relatorio-card-descricao {
+    font-size: 0.78rem;
+  }
+
+  .relatorios-ativo-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .btn-voltar-relatorio {
+    align-self: flex-start;
+  }
+
+  .relatorios-ativo-titulo {
+    font-size: 1.05rem;
+  }
+
+  .relatorios-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .relatorios-filtros .filtro-grupo {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .relatorio-filtro-datas {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .relatorio-filtro-dias {
+    width: 100%;
+  }
+
+  .relatorio-filtro-dias input {
+    flex: 1;
+    max-width: none;
+  }
+
+  .relatorios-kpis {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .kpi-relatorio {
+    padding: 12px 14px;
+  }
+
+  .kpi-relatorio .kpi-relatorio-valor {
+    font-size: 1.2rem;
+  }
+
+  .kpi-relatorio .kpi-relatorio-label {
+    font-size: 0.65rem;
+  }
+
+  .relatorios-grafico-body {
+    min-height: 200px;
+    padding: 12px;
+  }
+
+  .relatorios-grafico-body canvas {
+    max-height: 240px;
+  }
+
+  .relatorios-tabela-container .tabela-itens {
+    font-size: 0.78rem;
+  }
+
+  .relatorios-tabela-container .tabela-itens th,
+  .relatorios-tabela-container .tabela-itens td {
+    padding: 9px 10px;
+  }
+
+  .relatorios-acoes {
+    flex-direction: column;
+  }
+
+  .btn-exportar-relatorio {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  .relatorios-indice-header {
+    padding: 14px 16px;
+    border-radius: var(--border-radius-xl);
+  }
+
+  .relatorios-indice-titulo {
+    font-size: 1rem;
+  }
+
+  .relatorios-indice-titulo i {
+    font-size: 1.1rem;
+  }
+
+  .relatorio-card {
+    padding: 14px 16px;
+    min-height: 110px;
+    border-radius: var(--border-radius-xl);
+  }
+
+  .relatorio-card-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    border-radius: var(--border-radius-md);
+  }
+
+  .relatorio-card-arrow {
+    bottom: 12px;
+    right: 14px;
+    font-size: 0.9rem;
+  }
+
+  .btn-voltar-relatorio {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .btn-voltar-relatorio span {
+    /* mantém o texto visível também no mobile pequeno,
+       pois é um elemento de navegação importante */
+  }
+
+  .relatorios-ativo-titulo {
+    font-size: 0.95rem;
+  }
+
+  .relatorios-ativo-subtitulo {
+    font-size: 0.78rem;
+  }
+
+  .relatorios-kpis {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .kpi-relatorio .kpi-relatorio-valor {
+    font-size: 1.05rem;
+  }
+
+  .relatorios-grafico-header {
+    padding: 12px 14px;
+  }
+
+  .relatorios-grafico-titulo {
+    font-size: 0.82rem;
+  }
+
+  .relatorios-resultado-header {
+    padding: 12px 14px;
+  }
+
+  .relatorios-contador {
+    font-size: 0.78rem;
+  }
+
+  .relatorios-tabela-container .tabela-itens th,
+  .relatorios-tabela-container .tabela-itens td {
+    padding: 8px 10px;
+    font-size: 0.72rem;
+  }
+
+  .relatorios-acoes {
+    padding: 14px 16px;
+  }
+
+  .btn-exportar-relatorio {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ============================================================ */
+/* IMPRESSÃO                                                     */
+/* ============================================================ */
+@media print {
+  .relatorios-indice,
+  .relatorios-filtros,
+  .relatorios-acoes,
+  .btn-voltar-relatorio {
+    display: none !important;
+  }
+
+  .relatorios-ativo-header {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+  }
+
+  .relatorios-kpis {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .kpi-relatorio {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+    padding: 10px 12px !important;
+  }
+
+  .relatorios-grafico-card,
+  .relatorios-resultado {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+  }
+
+  .relatorios-tabela-container .tabela-itens th {
+    background: #eee !important;
+    color: #000 !important;
+  }
+
+  .relatorios-tabela-container .tabela-itens td {
+    border-bottom: 1px solid #ddd !important;
+  }
+}
+
+/* ============================================================ */
+/* ALTO CONTRASTE                                                */
+/* ============================================================ */
+body.high-contrast .relatorios-indice-header {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .relatorios-indice-titulo {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-indice-titulo i {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-indice-subtitulo {
+  color: #aaa !important;
+}
+
+body.high-contrast .relatorio-card {
+  background: #111 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .relatorio-card:hover {
+  border-color: #ffff00 !important;
+  box-shadow: 0 0 0 2px #ffff00 !important;
+}
+
+body.high-contrast .relatorio-card:focus-visible {
+  outline-color: #ffff00 !important;
+}
+
+body.high-contrast .relatorio-card-titulo {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorio-card-descricao {
+  color: #ccc !important;
+}
+
+body.high-contrast .relatorio-card-icon {
+  background: #222 !important;
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorio-card-arrow {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-ativo-header {
+  background: #111 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .relatorios-ativo-titulo {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-ativo-titulo i {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-ativo-subtitulo {
+  color: #aaa !important;
+}
+
+body.high-contrast .btn-voltar-relatorio {
+  background: #222 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+
+body.high-contrast .btn-voltar-relatorio:hover {
+  background: #333 !important;
+  border-color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-filtros {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .relatorios-filtros .filtro-label {
+  color: #fff !important;
+}
+
+body.high-contrast .relatorios-filtros .filtro-label i {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-filtros input[type="date"],
+body.high-contrast .relatorios-filtros input[type="number"],
+body.high-contrast .relatorios-filtros select {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+
+body.high-contrast .relatorios-filtros input[type="date"]:focus,
+body.high-contrast .relatorios-filtros input[type="number"]:focus,
+body.high-contrast .relatorios-filtros select:focus {
+  border-color: #ffff00 !important;
+  box-shadow: 0 0 0 3px #ffff0044 !important;
+}
+
+body.high-contrast .btn-aplicar-relatorio {
+  background: #ffff00 !important;
+  color: #000 !important;
+}
+
+body.high-contrast .kpi-relatorio {
+  background: #111 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .kpi-relatorio .kpi-relatorio-valor {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .kpi-relatorio .kpi-relatorio-label {
+  color: #aaa !important;
+}
+
+body.high-contrast .relatorios-grafico-card {
+  background: #111 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .relatorios-grafico-header {
+  background: #1a1a1a !important;
+  border-bottom-color: #333 !important;
+}
+
+body.high-contrast .relatorios-grafico-titulo {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-grafico-titulo i {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-resultado {
+  background: #111 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .relatorios-resultado-header {
+  background: #1a1a1a !important;
+  border-bottom-color: #333 !important;
+}
+
+body.high-contrast .relatorios-contador {
+  color: #fff !important;
+}
+
+body.high-contrast .relatorios-contador strong {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-tabela-container .tabela-itens th {
+  background: #000 !important;
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-tabela-container .tabela-itens td {
+  background: #111 !important;
+  color: #fff !important;
+  border-bottom-color: #333 !important;
+}
+
+body.high-contrast
+  .relatorios-tabela-container
+  .tabela-itens
+  tbody
+  tr:hover
+  td {
+  background: #1a1a1a !important;
+}
+
+body.high-contrast .destaque-sucesso {
+  color: #00ff00 !important;
+}
+body.high-contrast .destaque-aviso {
+  color: #ffff00 !important;
+}
+body.high-contrast .destaque-erro {
+  color: #ff4444 !important;
+}
+body.high-contrast .destaque-info {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-acoes {
+  background: #111 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .btn-exportar-csv {
+  background: #ffff00 !important;
+  color: #000 !important;
+}
+
+body.high-contrast .btn-exportar-pdf {
+  background: #ff4444 !important;
+  color: #fff !important;
+}
+
+body.high-contrast .relatorios-empty {
+  color: #aaa !important;
+}
+
+body.high-contrast .relatorios-empty i {
+  color: #444 !important;
+}
+
+body.high-contrast .relatorios-empty h4 {
+  color: #fff !important;
+}
+
+body.high-contrast .relatorios-empty p {
+  color: #aaa !important;
+}
+
+body.high-contrast .relatorios-loading {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .relatorios-loading p {
+  color: #ccc !important;
+}

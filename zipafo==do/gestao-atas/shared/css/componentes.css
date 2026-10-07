@@ -1,0 +1,1544 @@
+/* =====================================================================
+   INTRANET MUNICIPAL · PREF. PITANGUEIRAS
+   componentes.css
+   ---------------------------------------------------------------------
+   Design System compartilhado — componentes reutilizáveis.
+   Depende de: `intranet-base.css` (variáveis + layout).
+
+   Contém:
+     · Botões (todos os tamanhos e variantes)
+     · Cards
+     · Tabelas
+     · Badges e tags
+     · Formulários (inputs, selects, textareas, labels, hints)
+     · Modais (overlay, container, header, body, footer)
+     · Toasts (notificações)
+     · Alertas contextuais
+     · Chips (para categorias/tags)
+     · Empty states
+     · Barras de progresso
+     · Toggle switch
+     · Color picker (input color padronizado)
+     · Tooltips
+     · Avatares (mini)
+     · Breadcrumbs
+   ===================================================================== */
+
+/* =====================================================================
+   BOTÕES
+   ---------------------------------------------------------------------
+   Variantes:
+     .btn-primary      verde institucional
+     .btn-secondary    cinza neutro
+     .btn-danger       vermelho
+     .btn-azul         azul petróleo
+     .btn-success      verde sucesso
+     .btn-ghost        transparente com borda
+     .btn-link         apenas texto
+
+   Tamanhos:
+     padrão            padding 0.75rem 1.2rem
+     .btn-sm           padding 0.5rem 0.85rem
+     .btn-lg           padding 1rem 1.6rem
+     .btn-icon         40×40 (só ícone)
+   ===================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.75rem 1.2rem;
+  border: none;
+  border-radius: var(--border-radius-lg);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--primary-100);
+  outline-offset: 2px;
+}
+
+.btn i {
+  font-size: 0.95em;
+}
+
+/* ---------- Variantes ---------- */
+.btn-primary {
+  background: var(--primary-600);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+.btn-primary:hover:not(:disabled) {
+  background: #0a4a2e;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--neutral-100);
+  color: var(--neutral-600);
+  border: 1px solid var(--neutral-200);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--neutral-200);
+  border-color: var(--neutral-300);
+}
+
+.btn-danger {
+  background: var(--error-600);
+  color: white;
+}
+.btn-danger:hover:not(:disabled) {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-azul {
+  background: var(--primary-700);
+  color: white;
+}
+.btn-azul:hover:not(:disabled) {
+  background: #142e54;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+  background: var(--success-600);
+  color: white;
+}
+.btn-success:hover:not(:disabled) {
+  background: var(--success-700);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--neutral-600);
+  border: 1px solid var(--neutral-200);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--neutral-50);
+  border-color: var(--neutral-300);
+}
+
+.btn-link {
+  background: transparent;
+  color: var(--primary-600);
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+}
+.btn-link:hover:not(:disabled) {
+  color: var(--primary-700);
+  text-decoration: underline;
+}
+
+/* ---------- Tamanhos ---------- */
+.btn-sm {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8rem;
+  border-radius: var(--border-radius-md);
+}
+
+.btn-lg {
+  padding: 1rem 1.6rem;
+  font-size: 1rem;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--border-radius-md);
+  flex-shrink: 0;
+}
+
+.btn-icon.btn-sm {
+  width: 32px;
+  height: 32px;
+}
+
+/* ---------- Botão com largura total ---------- */
+.btn-block {
+  width: 100%;
+}
+
+/* ---------- Grupo de botões ---------- */
+.btn-group {
+  display: inline-flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* =====================================================================
+   CARDS
+   ---------------------------------------------------------------------
+   Estrutura típica:
+     <div class="card">
+       <div class="card-header">
+         <h3>Título</h3>
+         <span class="card-badge">badge</span>
+       </div>
+       <div class="card-body">...</div>
+     </div>
+   ===================================================================== */
+.card {
+  background: white;
+  border-radius: var(--border-radius-2xl);
+  border: 1px solid var(--neutral-200);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--neutral-200);
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.card-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-header h3 i {
+  color: var(--primary-600);
+}
+
+.card-header p {
+  font-size: 0.8rem;
+  color: var(--neutral-500);
+  margin-top: 2px;
+}
+
+.card-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-full);
+  background: var(--neutral-100);
+  color: var(--neutral-500);
+  white-space: nowrap;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--neutral-200);
+  background: var(--neutral-50);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ---------- Variação compacta ---------- */
+.card.card-compact .card-header {
+  padding: 0.85rem 1.2rem;
+}
+.card.card-compact .card-body {
+  padding: 1rem 1.2rem;
+}
+
+/* =====================================================================
+   TABELAS
+   ---------------------------------------------------------------------
+   Estrutura:
+     <div class="tabela-wrapper">
+       <table class="tabela">
+         <thead><tr><th>...</th></tr></thead>
+         <tbody><tr><td>...</td></tr></tbody>
+       </table>
+     </div>
+   ===================================================================== */
+.tabela-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--neutral-200);
+  background: white;
+}
+
+table.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+table.tabela thead {
+  background: var(--neutral-50);
+}
+
+table.tabela th {
+  text-align: left;
+  padding: 0.9rem 1rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--neutral-200);
+  white-space: nowrap;
+}
+
+table.tabela td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--neutral-200);
+  color: var(--neutral-700);
+  vertical-align: middle;
+}
+
+table.tabela tbody tr {
+  transition: background var(--transition-fast);
+}
+
+table.tabela tbody tr:hover {
+  background: var(--neutral-50);
+}
+
+table.tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Célula numérica (alinhada à direita) */
+.celula-numero {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.celula-centro {
+  text-align: center;
+}
+
+/* Código em fonte mono */
+.codigo-mono {
+  font-family: "Courier New", monospace;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--primary-700);
+  background: var(--primary-50);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid #bee3f8;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ---------- Tabela compacta ---------- */
+.tabela-compacta {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.tabela-compacta th {
+  background: var(--neutral-100);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--neutral-700);
+  border-bottom: 1px solid var(--neutral-200);
+  font-size: 0.72rem;
+}
+
+.tabela-compacta td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--neutral-100);
+  color: var(--neutral-700);
+}
+
+.tabela-compacta tbody tr:hover {
+  background: var(--neutral-50);
+}
+
+/* =====================================================================
+   BADGES / TAGS / PILLS
+   ---------------------------------------------------------------------
+   Uso:
+     <span class="badge badge-verde">Ativo</span>
+     <span class="badge badge-vermelho">Atrasado</span>
+   ===================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--border-radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.badge i {
+  font-size: 0.75em;
+}
+
+.badge-verde {
+  background: var(--success-50);
+  color: var(--success-700);
+  border: 1px solid var(--success-200);
+}
+
+.badge-azul {
+  background: var(--primary-50);
+  color: var(--primary-700);
+  border: 1px solid #bee3f8;
+}
+
+.badge-cinza {
+  background: var(--neutral-100);
+  color: var(--neutral-500);
+  border: 1px solid var(--neutral-200);
+}
+
+.badge-vermelho {
+  background: var(--error-50);
+  color: var(--error-700);
+  border: 1px solid var(--error-200);
+}
+
+.badge-amarelo {
+  background: var(--warning-50);
+  color: #b45309;
+  border: 1px solid var(--warning-200);
+}
+
+.badge-roxo {
+  background: #f5f3ff;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
+}
+
+/* ---------- Badge clicável ---------- */
+.badge.clickable {
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.badge.clickable:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
+}
+
+/* =====================================================================
+   CHIPS (categorias, tags, filtros)
+   ---------------------------------------------------------------------
+   Uso:
+     <span class="chip chip-selecionado">Romance</span>
+     <span class="chip">Fantasia</span>
+   ===================================================================== */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--border-radius-full);
+  background: var(--neutral-100);
+  color: var(--neutral-600);
+  border: 1.5px solid transparent;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  user-select: none;
+}
+
+.chip:hover {
+  background: var(--neutral-200);
+}
+
+.chip.chip-selecionado,
+.chip.ativo {
+  background: var(--primary-50);
+  color: var(--primary-600);
+  border-color: var(--primary-600);
+  font-weight: 600;
+}
+
+/* ---------- Container de chips ---------- */
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0.5rem;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--border-radius-lg);
+  min-height: 46px;
+  background: white;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+/* =====================================================================
+   FORMULÁRIOS
+   ---------------------------------------------------------------------
+   Uso:
+     <div class="form-group">
+       <label class="form-label" for="input">Nome</label>
+       <input type="text" id="input" class="form-input" />
+       <span class="form-hint">Ajuda</span>
+     </div>
+   ===================================================================== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--neutral-700);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.form-label .required,
+.form-label .obrigatorio {
+  color: var(--error-600);
+  margin-left: 2px;
+}
+
+.form-label .ajuda {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--neutral-400);
+  font-weight: 500;
+}
+
+/* ---------- Inputs, selects, textareas ---------- */
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--border-radius-lg);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--neutral-800);
+  background: white;
+  outline: none;
+  transition: var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(13, 94, 58, 0.1);
+}
+
+.form-input:disabled,
+.form-select:disabled,
+.form-textarea:disabled {
+  background: var(--neutral-50);
+  color: var(--neutral-400);
+  cursor: not-allowed;
+}
+
+.form-input.input-invalido,
+.form-select.input-invalido {
+  border-color: var(--error-600);
+  background: var(--error-50);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+
+.form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23475669' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 2.2rem;
+}
+
+/* ---------- Input numérico centralizado ---------- */
+.form-input.input-numero {
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Hints / mensagens ---------- */
+.form-hint {
+  font-size: 0.72rem;
+  color: var(--neutral-400);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.form-hint.erro {
+  color: var(--error-600);
+  font-weight: 600;
+}
+
+.form-hint.ok {
+  color: var(--success-600);
+  font-weight: 600;
+}
+
+/* ---------- Grid de formulário ---------- */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1.2rem;
+}
+
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================================
+   MODAIS
+   ---------------------------------------------------------------------
+   Estrutura:
+     <div class="modal-overlay" id="meuModal">
+       <div class="modal">
+         <div class="modal-header">
+           <h3><i class="fas fa-..."></i> Título</h3>
+           <button class="btn-fechar"><i class="fas fa-xmark"></i></button>
+         </div>
+         <div class="modal-body">...</div>
+         <div class="modal-footer">
+           <button class="btn btn-secondary">Cancelar</button>
+           <button class="btn btn-primary">Salvar</button>
+         </div>
+       </div>
+     </div>
+   ===================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+  animation: modalFadeIn 0.2s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: white;
+  border-radius: var(--border-radius-2xl);
+  width: 100%;
+  max-width: 720px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--neutral-200);
+  animation: modalPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 4rem);
+}
+
+@keyframes modalPop {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 1.5rem 1.8rem;
+  border-bottom: 1px solid var(--neutral-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.modal-header h2,
+.modal-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-header h2 i,
+.modal-header h3 i {
+  color: var(--primary-600);
+}
+
+.modal-header .btn-fechar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--border-radius-md);
+  background: var(--neutral-100);
+  color: var(--neutral-500);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+  border: none;
+}
+
+.modal-header .btn-fechar:hover {
+  background: var(--neutral-200);
+  color: var(--neutral-900);
+}
+
+.modal-body {
+  padding: 1.5rem 1.8rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 1.2rem 1.8rem;
+  border-top: 1px solid var(--neutral-200);
+  background: var(--neutral-50);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  border-bottom-left-radius: var(--border-radius-2xl);
+  border-bottom-right-radius: var(--border-radius-2xl);
+  flex-shrink: 0;
+}
+
+/* ---------- Tamanhos de modal ---------- */
+.modal.modal-sm {
+  max-width: 480px;
+}
+.modal.modal-lg {
+  max-width: 900px;
+}
+.modal.modal-xl {
+  max-width: 1100px;
+}
+.modal.modal-full {
+  max-width: 95vw;
+}
+
+/* ---------- Modal de confirmação minimalista ---------- */
+.modal-confirm {
+  background: white;
+  border-radius: var(--border-radius-2xl);
+  padding: 2.5rem 2rem;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--neutral-200);
+  animation: modalPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-confirm-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-confirm h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 0.5rem;
+}
+
+.modal-confirm p {
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  white-space: pre-line;
+}
+
+.modal-confirm-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 1rem;
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-height: calc(100vh - 2rem);
+    border-radius: var(--border-radius-2xl) var(--border-radius-2xl) 0 0;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
+  .modal-footer {
+    border-radius: 0;
+  }
+}
+
+/* =====================================================================
+   TOASTS / NOTIFICAÇÕES
+   ---------------------------------------------------------------------
+   Estrutura (criada via JS):
+     <div class="notification-center" id="notificationCenter"></div>
+
+   Cada toast é injetado dentro do container acima.
+   ===================================================================== */
+.notification-center {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.notification-toast {
+  pointer-events: all;
+  background: white;
+  border-radius: var(--border-radius-xl);
+  padding: 16px 24px;
+  min-width: 320px;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  animation: notificationSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 5px solid;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.notification-toast.removing {
+  animation: notificationSlideDown 0.3s ease-in forwards;
+}
+
+@keyframes notificationSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes notificationSlideDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+.notification-toast.notification-success {
+  border-left-color: var(--success-600);
+  background: var(--success-50);
+}
+.notification-toast.notification-error {
+  border-left-color: var(--error-600);
+  background: var(--error-50);
+}
+.notification-toast.notification-warning {
+  border-left-color: var(--warning-600);
+  background: var(--warning-50);
+}
+.notification-toast.notification-info {
+  border-left-color: var(--primary-700);
+  background: var(--primary-50);
+}
+
+.notification-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.notification-success .notification-title {
+  color: var(--success-600);
+}
+.notification-error .notification-title {
+  color: var(--error-600);
+}
+.notification-warning .notification-title {
+  color: var(--warning-600);
+}
+.notification-info .notification-title {
+  color: var(--primary-700);
+}
+
+.notification-message {
+  font-size: 13px;
+  color: var(--neutral-600);
+  line-height: 1.4;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--neutral-400);
+  flex-shrink: 0;
+  margin-top: -2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.notification-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--neutral-900);
+}
+
+@media (max-width: 768px) {
+  .notification-toast {
+    min-width: 90%;
+    max-width: 90%;
+  }
+}
+
+/* =====================================================================
+   ALERTAS CONTEXTUAIS
+   ---------------------------------------------------------------------
+   Uso (dentro de uma página, sem JS):
+     <div class="alerta alerta-erro">
+       <i class="fas fa-circle-exclamation"></i>
+       <div>Mensagem de erro</div>
+     </div>
+   ===================================================================== */
+.alerta {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--border-radius-lg);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.alerta i {
+  margin-top: 2px;
+  flex-shrink: 0;
+  font-size: 1.05rem;
+}
+
+.alerta > div {
+  flex: 1;
+}
+
+.alerta-erro {
+  background: var(--error-50);
+  color: var(--error-700);
+  border: 1px solid var(--error-200);
+}
+
+.alerta-aviso {
+  background: var(--warning-50);
+  color: #b45309;
+  border: 1px solid var(--warning-200);
+}
+
+.alerta-info {
+  background: var(--primary-50);
+  color: var(--primary-700);
+  border: 1px solid #bee3f8;
+}
+
+.alerta-sucesso {
+  background: var(--success-50);
+  color: var(--success-700);
+  border: 1px solid var(--success-200);
+}
+
+/* =====================================================================
+   EMPTY STATES
+   ---------------------------------------------------------------------
+   Uso:
+     <div class="lista-vazia">
+       <i class="fas fa-inbox"></i>
+       <p>Nenhum item encontrado</p>
+     </div>
+   ===================================================================== */
+.lista-vazia,
+.estado-vazio {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--neutral-400);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.lista-vazia i,
+.estado-vazio i {
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 0.8rem;
+  opacity: 0.4;
+}
+
+.lista-vazia p,
+.estado-vazio p {
+  margin-bottom: 0.5rem;
+}
+
+.lista-vazia small,
+.estado-vazio small {
+  display: block;
+  color: var(--neutral-400);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* Variação compacta */
+.estado-vazio.estado-vazio-sm {
+  padding: 1.5rem 1rem;
+}
+.estado-vazio.estado-vazio-sm i {
+  font-size: 2rem;
+}
+
+/* Placeholder dentro de uma tabela */
+.placeholder-tabela {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--neutral-400);
+}
+
+/* =====================================================================
+   BARRAS DE PROGRESSO
+   ---------------------------------------------------------------------
+   Uso:
+     <div class="progresso-container">
+       <div class="barra"><div class="fill" style="width: 60%"></div></div>
+       <span class="valor">60%</span>
+     </div>
+   ===================================================================== */
+.progresso-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.progresso-container .barra {
+  flex: 1;
+  height: 6px;
+  background: var(--neutral-200);
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+}
+
+.progresso-container .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+  border-radius: var(--border-radius-full);
+  transition: width 0.3s ease;
+}
+
+.progresso-container .valor {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--neutral-500);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* =====================================================================
+   TOGGLE SWITCH
+   ---------------------------------------------------------------------
+   Uso:
+     <label class="switch">
+       <input type="checkbox" checked />
+       <span class="slider"></span>
+     </label>
+   ===================================================================== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch .slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--neutral-300);
+  transition: var(--transition-base);
+  border-radius: var(--border-radius-full);
+}
+
+.switch .slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background: white;
+  transition: var(--transition-base);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.switch input:checked + .slider {
+  background: var(--primary-600);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+.switch input:disabled + .slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =====================================================================
+   COLOR PICKER (input color + presets)
+   ---------------------------------------------------------------------
+   Uso:
+     <input type="color" class="color-input" />
+     <div class="color-presets">
+       <button class="color-preset" data-cor="#0d5e3a" style="background: #0d5e3a"></button>
+     </div>
+   ===================================================================== */
+.color-input {
+  width: 56px;
+  height: 44px;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  padding: 2px;
+  background: white;
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+.color-input::-moz-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.color-text {
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.color-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.color-preset {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid white;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 0;
+}
+
+.color-preset:hover {
+  transform: scale(1.15);
+}
+
+.color-preset.selecionado {
+  border-color: var(--neutral-900);
+  transform: scale(1.1);
+}
+
+/* =====================================================================
+   TOOLTIPS
+   ---------------------------------------------------------------------
+   Uso:
+     <button class="tooltip" data-tooltip="Editar">...</button>
+   ===================================================================== */
+.tooltip {
+  position: relative;
+}
+
+.tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--neutral-800);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.15s ease;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =====================================================================
+   AVATARES MINI (usados em listas, tabelas, comentários)
+   ---------------------------------------------------------------------
+   Uso:
+     <div class="avatar-mini">RS</div>
+   ===================================================================== */
+.avatar-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
+  text-transform: uppercase;
+}
+
+.avatar-mini.avatar-mini-lg {
+  width: 48px;
+  height: 48px;
+  font-size: 0.9rem;
+}
+
+/* =====================================================================
+   BREADCRUMB
+   ---------------------------------------------------------------------
+   Uso:
+     <nav class="breadcrumb">
+       <a href="...">Início</a>
+       <span class="separator">/</span>
+       <a href="...">Seção</a>
+       <span class="separator">/</span>
+       <span class="current">Página atual</span>
+     </nav>
+   ===================================================================== */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 0;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+  color: var(--neutral-500);
+}
+
+.breadcrumb a {
+  color: var(--primary-600);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.breadcrumb a:hover {
+  color: var(--primary-700);
+  text-decoration: underline;
+}
+
+.breadcrumb .separator {
+  color: var(--neutral-300);
+  user-select: none;
+}
+
+.breadcrumb .current {
+  color: var(--neutral-700);
+  font-weight: 600;
+}
+
+/* =====================================================================
+   DIVISOR DE SEÇÃO COM TÍTULO
+   ---------------------------------------------------------------------
+   Uso:
+     <div class="secao-divisor">
+       <span><i class="fas fa-arrow-down"></i> Título</span>
+     </div>
+   ===================================================================== */
+.secao-divisor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.8rem 0 1.5rem;
+  position: relative;
+}
+
+.secao-divisor::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--neutral-300),
+    transparent
+  );
+}
+
+.secao-divisor span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  background: white;
+  color: var(--neutral-500);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
+}
+
+.secao-divisor span i {
+  color: var(--primary-600);
+}
+
+/* =====================================================================
+   ANIMAÇÕES ÚTEIS
+   ===================================================================== */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* =====================================================================
+   RESPONSIVIDADE GERAL DE COMPONENTES
+   ===================================================================== */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.2rem;
+  }
+
+  .card-header {
+    padding: 0.9rem 1.2rem;
+  }
+
+  .tabela-wrapper {
+    border-radius: var(--border-radius-md);
+  }
+
+  table.tabela th,
+  table.tabela td {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .btn-lg {
+    padding: 0.85rem 1.4rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-header {
+    padding: 0.8rem 1rem;
+  }
+
+  .card-header h3 {
+    font-size: 0.92rem;
+  }
+
+  table.tabela {
+    font-size: 0.8rem;
+  }
+
+  table.tabela th,
+  table.tabela td {
+    padding: 0.6rem 0.7rem;
+  }
+
+  .btn {
+    padding: 0.65rem 1rem;
+    font-size: 0.82rem;
+  }
+
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* =====================================================================
+   ALTO CONTRASTE (opcional)
+   ---------------------------------------------------------------------
+   Ativado via JS: document.body.classList.add('alto-contraste')
+   ===================================================================== */
+body.alto-contraste .card,
+body.alto-contraste .modal,
+body.alto-contraste .modal-confirm {
+  background: #ffffff;
+  border-color: #000000;
+}
+
+body.alto-contraste .btn-primary,
+body.alto-contraste .btn-azul,
+body.alto-contraste .btn-success {
+  background: #000000;
+  color: #ffffff;
+}
+
+body.alto-contraste .btn-danger {
+  background: #8b0000;
+  color: #ffffff;
+}
+
+body.alto-contraste table.tabela th {
+  background: #000000;
+  color: #ffffff;
+}
+
+body.alto-contraste .notification-toast {
+  border-left-width: 8px;
+}
+
+body.alto-contraste .badge {
+  border-width: 2px;
+}

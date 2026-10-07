@@ -1,0 +1,29 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="usuarios-container">
+  <div class="usuarios-header">
+    <h3 style="font-size: 1.1rem">
+      <i class="fas fa-users-cog"></i> Gestão de Usuários
+    </h3>
+    <button class="btn-novo-usuario" onclick="sistema.abrirModalUsuario()" type="button">
+      <i class="fas fa-user-plus"></i> Novo Usuário
+    </button>
+  </div>
+  <div class="tabela-container">
+    <table class="tabela-usuarios" aria-label="Tabela de dados">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Órgão</th>
+          <th>Perfil</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaUsuariosBody"></tbody>
+    </table>
+  </div>
+</div>

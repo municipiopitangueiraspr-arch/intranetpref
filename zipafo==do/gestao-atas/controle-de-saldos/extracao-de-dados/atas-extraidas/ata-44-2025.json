@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "49",
+    "processo_origem": "35/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "44/2025",
+    "numero_contratacao": "1229 | 44/2025",
+    "numero_processo": "35/2025",
+    "numero_pregao": "12",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-04-22",
+    "vigencia_inicio": "2026-04-22",
+    "vigencia_fim": "2027-04-22",
+    "objeto": "Locação de terreno para treinamento físico das crianças, jovens e adultos deste Município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "LUIZ CARLOS CASAROTO",
+    "cnpj": "78.002.818/920-"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "LOCAÇÃO DE 20.000 m² DE TERRENO PARA USO DA SECRETARIA DE ESPORTES E LAZER. - LOCAÇÃO DE 20.000 m² DE TERRENO PARA USO DA SECRETARIA DE ESPORTES E LAZER.",
+      "unidade_medida": "UN",
+      "valor_unitario": 4545.0,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 12.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 24.0,
+      "valor_total": 54540.0,
+      "valor_aditivo": 54540.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 109080.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 54540.0,
+    "valor_aditivo_geral": 54540.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 109080.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original. O PDF apresenta quantidade original 12, aditivo 12, executado 0 e saldo 24 — indicando aditivo de 12 meses. Totais conferem: R$ 54.540,00 contratado + R$ 54.540,00 aditivo = R$ 109.080,00 total.",
+  "anexos": []
+}

@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Ata - Controle de Saldos</title>
+
+    <!-- ============================================================ -->
+    <!-- FONT AWESOME 6                                                -->
+    <!-- ============================================================ -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- ============================================================ -->
+    <!-- DESIGN SYSTEM COMPARTILHADO DA INTRANET                       -->
+    <!-- Fornece: variáveis, reset, body, botões, cards, formulários,  -->
+    <!-- modais, badges, toasts, alerts, etc.                          -->
+    <!-- ============================================================ -->
+    <link rel="stylesheet" href="../../shared/css/intranet-base.css" />
+    <link rel="stylesheet" href="../../shared/css/componentes.css" />
+
+    <!-- ============================================================ -->
+    <!-- CSS ESPECÍFICO DA PÁGINA DE EDIÇÃO                            -->
+    <!-- ============================================================ -->
+    <link rel="stylesheet" href="../css/editar-ata.css" />
+
+    <!-- ============================================================ -->
+    <!-- CHART.JS (opcional, mantido para compatibilidade)             -->
+    <!-- ============================================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- ============================================================ -->
+    <!-- ESTILOS COMPLEMENTARES                                        -->
+    <!-- Cobrem elementos que o design system não traz prontos:        -->
+    <!--   · Header institucional verde musgo                          -->
+    <!--   · Compatibilidade de modais com a estrutura legada          -->
+    <!--   · Toast legado (usado pelo UI.mostrarToast)                 -->
+    <!-- ============================================================ -->
+    <style>
+      /* ============================================================
+         APP WRAPPER
+         ============================================================ */
+      .app {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ============================================================
+         HEADER INSTITUCIONAL (verde musgo — mesmo padrão das demais
+         páginas do módulo e da intranet)
+         ============================================================ */
+      .header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-600) 0%,
+          #0a4a2e 100%
+        );
+        color: white;
+        padding: 16px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        box-shadow: 0 10px 25px rgba(13, 94, 58, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+        z-index: 100;
+      }
+
+      /* Detalhe decorativo (mesmo padrão de gestaoatas/detalhes-ata) */
+      .header::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.08) 0%,
+          transparent 70%
+        );
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .header > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .header-institucional {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .brasao-header-sistema {
+        height: 52px;
+        width: auto;
+        object-fit: contain;
+        border-radius: 12px;
+        background: white;
+        padding: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        flex-shrink: 0;
+      }
+
+      .header-titulo-sistema h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .header-titulo-sistema h1 i {
+        color: #c6f6d5;
+        flex-shrink: 0;
+      }
+
+      .header-titulo-sistema p {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        margin-top: 4px;
+      }
+
+      /* ---------- Lado direito do header ---------- */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.12);
+        padding: 6px 16px 6px 6px;
+        border-radius: 60px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-300),
+          var(--primary-400)
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--neutral-900);
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      .user-info > div:last-child {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+      }
+
+      .user-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: white;
+      }
+
+      .user-role {
+        font-size: 0.72rem;
+        color: rgba(255, 255, 255, 0.75);
+      }
+
+      .btn-logout {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 8px 18px;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: var(--transition-base);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-family: inherit;
+        font-weight: 600;
+      }
+
+      .btn-logout:hover {
+        background: rgba(229, 62, 62, 0.35);
+        border-color: rgba(229, 62, 62, 0.6);
+      }
+
+      /* ============================================================
+         COMPATIBILIDADE · MODAIS
+         ------------------------------------------------------------
+         O script inline faz `modal.classList.add("active")` no
+         elemento com id `modalConfirmacao` / `modalExclusao` /
+         `modalHistoricoDetalhes`. O design system expõe .modal-overlay
+         como sempre visível (pois é criado/removido via JS).
+
+         Aqui garantimos que:
+           · .modal-overlay fica ESCONDIDO por padrão
+           · .modal-overlay.active aparece como flex
+         ============================================================ */
+      .modal-overlay {
+        display: none;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+        animation: modalFadeIn 0.2s ease;
+      }
+
+      /* ---------- Botão fechar (compat) ---------- */
+      .modal-close {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--border-radius-md);
+        background: var(--neutral-100);
+        color: var(--neutral-500);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        transition: var(--transition-fast);
+        flex-shrink: 0;
+        border: none;
+        font-family: inherit;
+      }
+
+      .modal-close:hover {
+        background: var(--neutral-200);
+        color: var(--neutral-900);
+      }
+
+      /* ---------- Título do modal (compat) ---------- */
+      .modal-titulo {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--neutral-900);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+      }
+
+      .modal-titulo i {
+        color: var(--primary-600);
+      }
+
+      /* ---------- Botão outline (usado nos modais) ---------- */
+      .btn-outline {
+        background: white;
+        border: 2px solid var(--neutral-200);
+        color: var(--neutral-700);
+        padding: 0.6rem 1rem;
+        border-radius: var(--border-radius-md);
+        font-weight: 600;
+        font-size: 0.82rem;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: inherit;
+      }
+
+      .btn-outline:hover {
+        background: var(--neutral-50);
+        border-color: var(--neutral-300);
+      }
+
+      /* ============================================================
+         COMPATIBILIDADE · TOAST
+         ------------------------------------------------------------
+         O `UI.mostrarToast()` do módulo `ui.js` cria elementos com
+         as classes `.toast .sucesso` / `.toast .erro` / etc.
+         Aqui reposicionamos para bottom-center (padrão do DS).
+         ============================================================ */
+      .toast-container {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .toast {
+        pointer-events: all;
+        min-width: 320px;
+        max-width: 500px;
+        padding: 16px 24px;
+        border-radius: var(--border-radius-xl);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        background: white;
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+        animation: toastSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: inherit;
+      }
+
+      @keyframes toastSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .toast.sucesso {
+        border-left-color: var(--success-600);
+        background: var(--success-50);
+      }
+      .toast.erro {
+        border-left-color: var(--error-600);
+        background: var(--error-50);
+      }
+      .toast.aviso {
+        border-left-color: var(--warning-600);
+        background: var(--warning-50);
+      }
+      .toast.info {
+        border-left-color: var(--primary-700);
+        background: var(--primary-50);
+      }
+
+      .toast i {
+        font-size: 1.2rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+      .toast.sucesso i {
+        color: var(--success-600);
+      }
+      .toast.erro i {
+        color: var(--error-600);
+      }
+      .toast.aviso i {
+        color: var(--warning-600);
+      }
+      .toast.info i {
+        color: var(--primary-700);
+      }
+
+      .toast span {
+        flex: 1;
+        font-size: 0.88rem;
+        color: var(--neutral-700);
+        line-height: 1.45;
+      }
+
+      .toast span strong {
+        display: block;
+        font-weight: 700;
+        color: var(--neutral-900);
+        margin-bottom: 2px;
+      }
+
+      .toast .btn-fechar {
+        background: none;
+        border: none;
+        color: var(--neutral-400);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        border-radius: var(--border-radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-fast);
+        flex-shrink: 0;
+      }
+
+      .toast .btn-fechar:hover {
+        background: rgba(0, 0, 0, 0.06);
+        color: var(--neutral-700);
+      }
+
+      /* ============================================================
+         RESPONSIVIDADE
+         ============================================================ */
+      @media (max-width: 768px) {
+        .header {
+          padding: 12px 16px;
+        }
+
+        .header-titulo-sistema h1 {
+          font-size: 1.1rem;
+        }
+
+        .header-titulo-sistema p {
+          display: none;
+        }
+
+        .brasao-header-sistema {
+          height: 42px;
+        }
+
+        .user-info > div:last-child {
+          display: none;
+        }
+
+        .user-info {
+          padding: 4px;
+        }
+
+        .btn-logout {
+          padding: 8px 12px;
+        }
+
+        .btn-logout:not(:hover) {
+          /* esconde o texto "Sair" em telas pequenas */
+        }
+
+        .btn-logout span {
+          display: none;
+        }
+
+        .toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .header-titulo-sistema h1 {
+          font-size: 0.95rem;
+        }
+
+        .brasao-header-sistema {
+          height: 36px;
+        }
+      }
+    </style>
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <div class="app">
+      <!-- ============================================================ -->
+      <!-- HEADER INSTITUCIONAL · VERDE MUSGO                            -->
+      <!-- ============================================================ -->
+      <header class="header">
+        <div class="header-institucional">
+          <img
+            src="../brasao-pref.png"
+            alt="Brasão Prefeitura de Pitangueiras"
+            class="brasao-header-sistema"
+            onerror="
+              this.onerror = null;
+              this.src =
+                'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%23f8fafc\' stroke=\'%230d5e3a\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'58\' font-size=\'12\' text-anchor=\'middle\' fill=\'%230f172a\' font-weight=\'bold\'%3EPMG%3C/text%3E%3Ctext x=\'50\' y=\'75\' font-size=\'9\' text-anchor=\'middle\' fill=\'%23475669\'%3EPitangueiras%3C/text%3E%3C/svg%3E';
+            "
+          />
+          <div class="header-titulo-sistema">
+            <h1><i class="fas fa-file-contract"></i> Editar Ata</h1>
+            <p>Sistema de Gestão de Atas · Controle de Saldos</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="user-info">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div>
+              <div class="user-name" id="userName">Usuário</div>
+              <div class="user-role" id="userRole">Perfil</div>
+            </div>
+          </div>
+          <button class="btn-logout" id="btnLogout" title="Sair" type="button">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sair</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- ============================================================ -->
+      <!-- CONTEÚDO PRINCIPAL                                            -->
+      <!-- ============================================================ -->
+      <div class="editar-container">
+        <!-- ============================================================ -->
+        <!-- CABEÇALHO DA EDIÇÃO                                          -->
+        <!-- ============================================================ -->
+        <div class="editar-header">
+          <div class="editar-header-left">
+            <button
+              class="btn-voltar"
+              id="btnVoltar"
+              onclick="window.history.back()"
+             type="button">
+              <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <h2 class="editar-titulo">
+              <i class="fas fa-pen"></i> Editar Ata
+              <span id="ataNumeroDisplay" class="ata-numero-display"
+                >Nº 000/2026</span
+              >
+            </h2>
+          </div>
+          <div class="editar-header-right">
+            <span class="status-badge" id="ataStatusBadge">ATIVA</span>
+            <span class="editar-id" id="ataIdDisplay">ID: 0</span>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ALERTA DE PERMISSÃO                                          -->
+        <!-- ============================================================ -->
+        <div class="editar-alerta" id="editarAlerta" style="display: none">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span
+            >Você não tem permissão para editar atas. Apenas Administradores e
+            Estagiários podem editar.</span
+          >
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- FORMULÁRIO DE EDIÇÃO                                         -->
+        <!-- ============================================================ -->
+        <form id="formEditarAta" class="editar-form">
+          <!-- Seção: Dados da Ata -->
+          <div class="editar-secao">
+            <div class="secao-header">
+              <h3><i class="fas fa-file-contract"></i> Dados da Ata</h3>
+              <span class="secao-badge">Campos obrigatórios *</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editarNumeroAta">Número da Ata *</label>
+                <input
+                  type="text"
+                  id="editarNumeroAta"
+                  class="form-input"
+                  placeholder="Ex: 74/2026"
+                  required
+                / aria-label="Ex: 74/2026">
+              </div>
+              <div class="form-group">
+                <label for="editarNumeroPregao">Número do Pregão</label>
+                <input
+                  type="text"
+                  id="editarNumeroPregao"
+                  class="form-input"
+                  placeholder="Ex: 12/2026"
+                / aria-label="Ex: 12/2026">
+              </div>
+              <div class="form-group">
+                <label for="editarModalidade">Modalidade (conforme edital) *</label>
+                <input
+                  type="text"
+                  id="editarModalidade"
+                  class="form-input"
+                  list="modalidadesSugestao"
+                  placeholder="Ex.: Pregão eletrônico"
+                  required
+                / aria-label="Ex.: Pregão eletrônico">
+                <datalist id="modalidadesSugestao">
+                  <option value="Pregão eletrônico"></option>
+                  <option value="Pregão presencial"></option>
+                  <option value="Concorrência eletrônica"></option>
+                  <option value="Concorrência presencial"></option>
+                  <option value="Concurso"></option>
+                  <option value="Leilão"></option>
+                  <option value="Diálogo competitivo"></option>
+                  <option value="Dispensa de licitação"></option>
+                  <option value="Inexigibilidade de licitação"></option>
+                  <option value="Registro de preços"></option>
+                  <option value="Credenciamento"></option>
+                </datalist>
+                <small class="campo-ajuda-modalidade">Use a denominação que consta no edital ou na ata; mantenha procedimentos como registro de preços conforme o documento.</small>
+              </div>
+              <div class="form-group">
+                <label for="editarProcesso">Processo Administrativo *</label>
+                <input
+                  type="text"
+                  id="editarProcesso"
+                  class="form-input"
+                  placeholder="Ex: 12345/2026"
+                  required
+                / aria-label="Ex: 12345/2026">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editarObjeto">Objeto *</label>
+                <textarea
+                  id="editarObjeto"
+                  class="form-input"
+                  rows="3"
+                  placeholder="Descreva o objeto da ata..."
+                  required
+                 aria-label="Descreva o objeto da ata..."></textarea>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editarFornecedor">Fornecedor *</label>
+                <select id="editarFornecedor" class="form-input" required aria-label="editarFornecedor">
+                  <option value="">Selecione um fornecedor...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="editarCategoria">Categoria</label>
+                <select id="editarCategoria" class="form-input" aria-label="editarCategoria">
+                  <option value="">Selecione uma categoria...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editarDataInicio">Vigência Início *</label>
+                <input
+                  type="date"
+                  id="editarDataInicio"
+                  class="form-input"
+                  required
+                / aria-label="editarDataInicio">
+              </div>
+              <div class="form-group">
+                <label for="editarDataFim">Vigência Fim *</label>
+                <input
+                  type="date"
+                  id="editarDataFim"
+                  class="form-input"
+                  required
+                / aria-label="editarDataFim">
+              </div>
+              <div class="form-group">
+                <label for="editarValorGlobal">Valor Global (R$) *</label>
+                <input
+                  type="number"
+                  id="editarValorGlobal"
+                  class="form-input"
+                  placeholder="0,00"
+                  min="0"
+                  step="0.01"
+                  required
+                / aria-label="0,00">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editarStatus">Status</label>
+                <select id="editarStatus" class="form-input" aria-label="editarStatus">
+                  <option value="ATIVA">🟢 Ativa</option>
+                  <option value="PROXIMA">🟡 Próxima</option>
+                  <option value="VENCIDA">🔴 Vencida</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="editarObservacao">Observações</label>
+                <input
+                  type="text"
+                  id="editarObservacao"
+                  class="form-input"
+                  placeholder="Observações adicionais..."
+                / aria-label="Observações adicionais...">
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção: Itens da Ata -->
+          <div class="editar-secao">
+            <div class="secao-header">
+              <h3><i class="fas fa-boxes"></i> Itens da Ata</h3>
+              <div class="secao-actions">
+                <span class="secao-badge" id="totalItensDisplay">0 itens</span>
+                <button
+                  type="button"
+                  class="btn-adicionar-item"
+                  id="btnAdicionarItem"
+                >
+                  <i class="fas fa-plus"></i> Adicionar Item
+                </button>
+              </div>
+            </div>
+
+            <!-- Tabela de Itens -->
+            <div class="tabela-container" id="itensContainer">
+              <table class="tabela-itens-editar" id="tabelaItens" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th style="width: 60px">Item</th>
+                    <th>Descrição</th>
+                    <th style="width: 80px">Qtd</th>
+                    <th style="width: 120px">Valor Unit.</th>
+                    <th style="width: 120px">Valor Total</th>
+                    <th style="width: 60px">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="itensBody">
+                  <!-- Itens serão inseridos via JavaScript -->
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="4" style="text-align: right; font-weight: 700">
+                      TOTAL DA ATA
+                    </td>
+                    <td
+                      id="totalItensValor"
+                      style="font-weight: 700; color: var(--success-600)"
+                    >
+                      R$ 0,00
+                    </td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- Mensagem de lista vazia -->
+            <div id="itensVazio" class="itens-vazio" style="display: none">
+              <i class="fas fa-box-open"></i>
+              <p>
+                Nenhum item cadastrado. Clique em "Adicionar Item" para incluir
+                itens.
+              </p>
+            </div>
+          </div>
+
+          <!-- Seção: Histórico de Alterações -->
+          <div class="editar-secao">
+            <div class="secao-header">
+              <h3><i class="fas fa-history"></i> Histórico de Alterações</h3>
+              <span class="secao-badge" id="historicoCount">0 registros</span>
+            </div>
+
+            <div class="historico-container" id="historicoContainer">
+              <div class="historico-placeholder" id="historicoPlaceholder">
+                <i class="fas fa-clock"></i>
+                <p>Nenhuma alteração registrada ainda.</p>
+              </div>
+              <div
+                class="historico-lista"
+                id="historicoLista"
+                style="display: none"
+              >
+                <!-- Histórico será inserido via JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================ -->
+          <!-- BOTÕES DE AÇÃO                                               -->
+          <!-- ============================================================ -->
+          <div class="editar-actions">
+            <button type="button" class="btn-cancelar" id="btnCancelar">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn-excluir"
+              id="btnExcluir"
+              style="display: none"
+            >
+              <i class="fas fa-trash"></i> Excluir Ata
+            </button>
+            <button type="submit" class="btn-salvar" id="btnSalvar">
+              <i class="fas fa-save"></i> Salvar Alterações
+            </button>
+          </div>
+        </form>
+
+        <!-- ============================================================ -->
+        <!-- SPINNER DE CARREGAMENTO                                      -->
+        <!-- ============================================================ -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none">
+          <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Carregando dados da ata...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- MODAL DE CONFIRMAÇÃO                                          -->
+      <!-- Estrutura migrada para o padrão do design system:            -->
+      <!--   .modal-overlay (backdrop) > .modal (caixa)                  -->
+      <!-- O ID #modalConfirmacao permanece o mesmo                      -->
+      <!-- ============================================================ -->
+      <div class="modal-overlay" id="modalConfirmacao">
+        <div class="modal" style="max-width: 450px">
+          <div class="modal-header">
+            <h2 class="modal-titulo">
+              <i class="fas fa-question-circle"></i> Confirmar
+            </h2>
+            <button
+              class="modal-close"
+              onclick="sistema.fecharModalConfirmacao()"
+              title="Fechar"
+             type="button">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p
+              id="confirmacaoMensagem"
+              style="
+                font-size: 1rem;
+                line-height: 1.6;
+                color: var(--neutral-700);
+              "
+            >
+              Tem certeza que deseja salvar as alterações?
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn-outline"
+              id="confirmacaoNao"
+              onclick="sistema.resolverConfirmacao(false)"
+             type="button">
+              Cancelar
+            </button>
+            <button
+              class="btn btn-primary"
+              id="confirmacaoSim"
+              onclick="sistema.resolverConfirmacao(true)"
+             type="button">
+              <i class="fas fa-check"></i> Confirmar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- MODAL DE EXCLUSÃO                                            -->
+      <!-- ============================================================ -->
+      <div class="modal-overlay" id="modalExclusao">
+        <div class="modal" style="max-width: 450px">
+          <div
+            class="modal-header"
+            style="
+              background: var(--error-50);
+              border-bottom: 2px solid var(--error-200);
+            "
+          >
+            <h2 class="modal-titulo" style="color: var(--error-800)">
+              <i
+                class="fas fa-exclamation-triangle"
+                style="color: var(--error-600)"
+              ></i>
+              Excluir Ata
+            </h2>
+            <button
+              class="modal-close"
+              onclick="sistema.fecharModalExclusao()"
+              title="Fechar"
+             type="button">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p
+              style="
+                font-size: 1rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+                color: var(--neutral-700);
+              "
+            >
+              Tem certeza que deseja <strong>excluir</strong> esta ata?
+            </p>
+            <div
+              style="
+                background: var(--error-50);
+                padding: 12px 16px;
+                border-radius: var(--border-radius-lg);
+                border-left: 4px solid var(--error-600);
+              "
+            >
+              <p style="font-size: 0.85rem; color: var(--neutral-700)">
+                <i
+                  class="fas fa-info-circle"
+                  style="color: var(--error-600)"
+                ></i>
+                Esta ação não pode ser desfeita. Todos os itens relacionados
+                também serão excluídos.
+              </p>
+            </div>
+            <p
+              style="
+                font-size: 0.85rem;
+                color: var(--neutral-500);
+                margin-top: 12px;
+              "
+            >
+              <strong>Ata:</strong> <span id="exclusaoAtaNumero">N/I</span>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-outline" onclick="sistema.fecharModalExclusao()" type="button">
+              Cancelar
+            </button>
+            <button
+              class="btn btn-danger"
+              id="btnConfirmarExclusao"
+              onclick="sistema.confirmarExclusao()"
+             type="button">
+              <i class="fas fa-trash"></i> Excluir
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- MODAL DE HISTÓRICO (DETALHES)                                 -->
+      <!-- ============================================================ -->
+      <div class="modal-overlay" id="modalHistoricoDetalhes">
+        <div class="modal" style="max-width: 600px">
+          <div class="modal-header">
+            <h2 class="modal-titulo">
+              <i class="fas fa-history"></i> Detalhes da Alteração
+            </h2>
+            <button
+              class="modal-close"
+              onclick="sistema.fecharModalHistoricoDetalhes()"
+              title="Fechar"
+             type="button">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body" id="historicoDetalhesConteudo">
+            <!-- Conteúdo inserido via JavaScript -->
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn-outline"
+              onclick="sistema.fecharModalHistoricoDetalhes()"
+             type="button">
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- TOAST CONTAINER                                              -->
+      <!-- Usado pelo `UI.mostrarToast()` (módulo ui.js)                -->
+      <!-- ============================================================ -->
+      <div id="toastContainer" class="toast-container"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCRIPTS                                                       -->
+    <!-- ============================================================ -->
+    <script type="module">
+      // ============================================================
+      // IMPORTAÇÕES
+      // ============================================================
+      import { supabase } from "../js/supabase.js";
+      import { UI } from "../js/modules/ui.js";
+      import { EditarAta } from "../js/modules/editar-ata.js";
+
+      // ============================================================
+      // INICIALIZAÇÃO
+      // ============================================================
+      class SistemaEdicao {
+        constructor() {
+          this.usuarioAtual = null;
+          this.ataId = null;
+          this.ataDados = null;
+          this.itensOriginais = [];
+          this.historico = [];
+          this.confirmacaoResolver = null;
+
+          this.ui = new UI(this);
+          this.editar = new EditarAta(this);
+
+          this.init();
+        }
+
+        async init() {
+          try {
+            // ============================================================
+            // SOLUÇÃO RÁPIDA: Usar o usuário atual do sistema
+            // Confiar que o usuário já está logado
+            // ============================================================
+
+            // Tentar usar o usuário que já está carregado no sistema
+            if (window.sistema && window.sistema.usuarioAtual) {
+              console.log("✅ Usuário encontrado no sistema global");
+              this.usuarioAtual = window.sistema.usuarioAtual;
+
+              // Atualizar informações do usuário na UI
+              this.atualizarUserInfo();
+
+              // Verificar permissão
+              if (!this.verificarPermissao()) {
+                document.getElementById("editarAlerta").style.display = "flex";
+                document.getElementById("formEditarAta").style.display = "none";
+                return;
+              }
+
+              // Obter ID da URL
+              const params = new URLSearchParams(window.location.search);
+              this.ataId = params.get("id");
+
+              if (!this.ataId) {
+                this.ui.mostrarToast("erro", "ID da ata não informado.");
+                setTimeout(() => window.history.back(), 2000);
+                return;
+              }
+
+              // Carregar dados da ata
+              await this.editar.carregarConteudo(this.ataId);
+              return;
+            }
+
+            // ============================================================
+            // FALLBACK: Se não tiver usuário no sistema, tentar carregar do Supabase
+            // ============================================================
+            console.log(
+              "🔄 Usuário não encontrado no sistema. Tentando carregar do Supabase...",
+            );
+
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
+
+            if (!session) {
+              console.warn(
+                "❌ Sessão não encontrada. Redirecionando para login...",
+              );
+              window.location.href = new URL(
+                "../../index.html",
+                window.location.href,
+              ).href;
+              return;
+            }
+
+            // Esta página é independente da SPA principal. Consultamos o
+            // usuário diretamente para não inicializar módulos ausentes aqui.
+            const { data: usuario, error: usuarioError } = await supabase
+              .from("usuarios")
+              .select("*, orgao:orgaos(*)")
+              .eq("uuid", session.user.id)
+              .single();
+            if (usuarioError) throw usuarioError;
+            if (!usuario) throw new Error("Usuário não encontrado.");
+            this.usuarioAtual = usuario;
+            this.atualizarUserInfo();
+
+            // Verificar permissão
+            if (!this.verificarPermissao()) {
+              document.getElementById("editarAlerta").style.display = "flex";
+              document.getElementById("formEditarAta").style.display = "none";
+              return;
+            }
+
+            // Obter ID da URL
+            const params = new URLSearchParams(window.location.search);
+            this.ataId = params.get("id");
+
+            if (!this.ataId) {
+              this.ui.mostrarToast("erro", "ID da ata não informado.");
+              setTimeout(() => window.history.back(), 2000);
+              return;
+            }
+
+            // Carregar dados da ata
+            await this.editar.carregarConteudo(this.ataId);
+          } catch (error) {
+            console.error("❌ Erro ao inicializar edição:", error);
+            this.ui.mostrarToast("erro", "Erro ao carregar dados da ata.");
+            // ============================================================
+            // Em caso de erro, voltar para o login na raiz correta do projeto.
+            // A página está em /controle/templates/, portanto /index.html
+            // apontaria para a raiz do domínio e poderia resultar em 404.
+            setTimeout(() => {
+              window.location.href = new URL(
+                "../../index.html",
+                window.location.href,
+              ).href;
+            }, 2000);
+          }
+        }
+
+        verificarPermissao() {
+          const perfil = this.usuarioAtual?.perfil;
+          return perfil === "ADMIN" || perfil === "ESTAGIARIO";
+        }
+
+        // ============================================================
+        // MÉTODOS DE CONFIRMAÇÃO
+        // ============================================================
+        confirmar(mensagem) {
+          return new Promise((resolve) => {
+            this.confirmacaoResolver = resolve;
+            const modal = document.getElementById("modalConfirmacao");
+            const msgEl = document.getElementById("confirmacaoMensagem");
+            if (modal && msgEl) {
+              msgEl.textContent = mensagem;
+              modal.classList.add("active");
+            } else {
+              resolve(confirm(mensagem));
+            }
+          });
+        }
+
+        resolverConfirmacao(resultado) {
+          const modal = document.getElementById("modalConfirmacao");
+          if (modal) modal.classList.remove("active");
+          if (this.confirmacaoResolver) {
+            this.confirmacaoResolver(resultado);
+            this.confirmacaoResolver = null;
+          }
+        }
+
+        fecharModalConfirmacao() {
+          const modal = document.getElementById("modalConfirmacao");
+          if (modal) modal.classList.remove("active");
+          if (this.confirmacaoResolver) {
+            this.confirmacaoResolver(false);
+            this.confirmacaoResolver = null;
+          }
+        }
+
+        // ============================================================
+        // MÉTODOS DE EXCLUSÃO
+        // ============================================================
+        abrirModalExclusao() {
+          const modal = document.getElementById("modalExclusao");
+          const numeroEl = document.getElementById("exclusaoAtaNumero");
+          if (numeroEl) {
+            numeroEl.textContent = this.ataDados?.numero_ata || "N/I";
+          }
+          if (modal) modal.classList.add("active");
+        }
+
+        fecharModalExclusao() {
+          const modal = document.getElementById("modalExclusao");
+          if (modal) modal.classList.remove("active");
+        }
+
+        async confirmarExclusao() {
+          try {
+            const modal = document.getElementById("modalExclusao");
+            if (modal) modal.classList.remove("active");
+
+            // Confirmar exclusão
+            const confirmado = await this.confirmar(
+              "Tem certeza que deseja excluir esta ata? Esta ação não pode ser desfeita.",
+            );
+            if (!confirmado) return;
+
+            // Excluir ata
+            const { error } = await supabase
+              .from("atas")
+              .delete()
+              .eq("id", this.ataId);
+
+            if (error) throw error;
+
+            this.ui.mostrarToast("sucesso", "Ata excluída com sucesso!");
+            setTimeout(
+              () => (window.location.href = "../gestao-atas.html"),
+              1500,
+            );
+          } catch (error) {
+            console.error("Erro ao excluir ata:", error);
+            this.ui.mostrarToast(
+              "erro",
+              error.message || "Erro ao excluir ata.",
+            );
+          }
+        }
+
+        // ============================================================
+        // MÉTODOS DE HISTÓRICO
+        // ============================================================
+        abrirModalHistoricoDetalhes(registro) {
+          const modal = document.getElementById("modalHistoricoDetalhes");
+          const conteudo = document.getElementById("historicoDetalhesConteudo");
+
+          if (!modal || !conteudo) return;
+
+          const data = new Date(registro.created_at).toLocaleString("pt-BR");
+          const usuario = registro.usuario_nome || "Desconhecido";
+
+          conteudo.innerHTML = `
+            <div style="padding: 8px 0;">
+              <div style="display: grid; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: var(--neutral-50); border-radius: var(--border-radius-lg);">
+                  <span style="font-weight: 600; color: var(--neutral-600);">Usuário</span>
+                  <span>${usuario}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: var(--neutral-50); border-radius: var(--border-radius-lg);">
+                  <span style="font-weight: 600; color: var(--neutral-600);">Data/Hora</span>
+                  <span>${data}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: var(--neutral-50); border-radius: var(--border-radius-lg);">
+                  <span style="font-weight: 600; color: var(--neutral-600);">Campo</span>
+                  <span style="font-weight: 500;">${registro.campo_alterado}</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                  <div style="padding: 8px 12px; background: var(--error-50); border-radius: var(--border-radius-lg); border-left: 3px solid var(--error-600);">
+                    <span style="font-size: 0.7rem; text-transform: uppercase; color: var(--neutral-500);">Valor Antigo</span>
+                    <p style="font-weight: 600; color: var(--error-700); word-break: break-word;">${registro.valor_antigo || "<em>vazio</em>"}</p>
+                  </div>
+                  <div style="padding: 8px 12px; background: var(--success-50); border-radius: var(--border-radius-lg); border-left: 3px solid var(--success-600);">
+                    <span style="font-size: 0.7rem; text-transform: uppercase; color: var(--neutral-500);">Valor Novo</span>
+                    <p style="font-weight: 600; color: var(--success-700); word-break: break-word;">${registro.valor_novo || "<em>vazio</em>"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          modal.classList.add("active");
+        }
+
+        fecharModalHistoricoDetalhes() {
+          const modal = document.getElementById("modalHistoricoDetalhes");
+          if (modal) modal.classList.remove("active");
+        }
+
+        // ============================================================
+        // MÉTODOS DE LOADING
+        // ============================================================
+        mostrarLoading(mensagem = "Carregando dados da ata...") {
+          const overlay = document.getElementById("loadingOverlay");
+          if (overlay) {
+            overlay.style.display = "flex";
+            const text = overlay.querySelector("p");
+            if (text) text.textContent = mensagem;
+          }
+        }
+
+        esconderLoading() {
+          const overlay = document.getElementById("loadingOverlay");
+          if (overlay) overlay.style.display = "none";
+        }
+
+        // ============================================================
+        // ATUALIZAR INFORMAÇÕES DO USUÁRIO
+        // ============================================================
+        atualizarUserInfo() {
+          const user = this.usuarioAtual;
+          if (!user) return;
+
+          const avatar = document.getElementById("userAvatar");
+          const nome = document.getElementById("userName");
+          const role = document.getElementById("userRole");
+
+          if (avatar) {
+            avatar.textContent = user.nome?.charAt(0).toUpperCase() || "U";
+          }
+          if (nome) {
+            nome.textContent = user.nome || "Usuário";
+          }
+          if (role) {
+            const roles = {
+              ADMIN: "Administrador",
+              SECRETARIO: "Secretário",
+              SOLICITANTE: "Solicitante",
+              ESTAGIARIO: "Estagiário",
+            };
+            role.textContent = roles[user.perfil] || user.perfil || "Usuário";
+          }
+        }
+      }
+
+      // ============================================================
+      // INICIAR APLICAÇÃO
+      // ============================================================
+      document.addEventListener("DOMContentLoaded", () => {
+        window.sistema = new SistemaEdicao();
+      });
+
+      // ============================================================
+      // EXPOR FUNÇÕES GLOBAIS
+      // ============================================================
+      window.fecharModalConfirmacao = () => {
+        if (window.sistema) window.sistema.fecharModalConfirmacao();
+      };
+
+      window.fecharModalExclusao = () => {
+        if (window.sistema) window.sistema.fecharModalExclusao();
+      };
+
+      window.confirmarExclusao = () => {
+        if (window.sistema) window.sistema.confirmarExclusao();
+      };
+
+      window.abrirModalHistoricoDetalhes = (registro) => {
+        if (window.sistema)
+          window.sistema.abrirModalHistoricoDetalhes(registro);
+      };
+
+      window.fecharModalHistoricoDetalhes = () => {
+        if (window.sistema) window.sistema.fecharModalHistoricoDetalhes();
+      };
+
+      window.mostrarLoading = (msg) => {
+        if (window.sistema) window.sistema.mostrarLoading(msg);
+      };
+
+      window.esconderLoading = () => {
+        if (window.sistema) window.sistema.esconderLoading();
+      };
+
+      window.confirmar = (mensagem) => {
+        if (window.sistema) return window.sistema.confirmar(mensagem);
+        return Promise.resolve(confirm(mensagem));
+      };
+
+      window.resolverConfirmacao = (resultado) => {
+        if (window.sistema) window.sistema.resolverConfirmacao(resultado);
+      };
+    </script>
+  </body>
+</html>

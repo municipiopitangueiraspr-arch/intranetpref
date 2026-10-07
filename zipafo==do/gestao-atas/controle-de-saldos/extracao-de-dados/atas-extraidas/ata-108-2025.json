@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "79",
+    "processo_origem": "102/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "108/2025",
+    "numero_contratacao": "1362 | 108/2025",
+    "numero_processo": "102/2025",
+    "numero_pregao": "35",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Menor Preço Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-11-14",
+    "vigencia_inicio": "2025-11-14",
+    "vigencia_fim": "2026-11-14",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para credenciamento de médico neurologista.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "RAFAEL W DE SOUZA & CIA LTDA",
+    "cnpj": "12.100.406/0001-25"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "CREDENCIAMENTO DE PESSOA JURÍDICA DA ÁREA DE SAÚDE PARA EXECUÇÃO DE ATENDIMENTO DE CONSULTAS MÉDICAS NA ESPECIALIDADE DE NEUROLOGIA. - CREDENCIAMENTO DE PESSOA JURÍDICA DA ÁREA DE SAÚDE PARA EXECUÇÃO DE ATENDIMENTO DE CONSULTAS MÉDICAS NA ESPECIALIDADE DE NEUROLOGIA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 165.0,
+      "quantidade_contratada": 240.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 204.0,
+      "quantidade_saldo": 36.0,
+      "valor_total": 39600.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 33660.0,
+      "valor_saldo": 5940.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 39600.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 33660.0,
+    "valor_saldo_geral": 5940.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem: R$ 39.600,00 contratado, R$ 33.660,00 executado e R$ 5.940,00 de saldo.",
+  "anexos": []
+}

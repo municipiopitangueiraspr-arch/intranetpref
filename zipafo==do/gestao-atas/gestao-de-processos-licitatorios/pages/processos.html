@@ -1,0 +1,60 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="processos">
+  <div class="page-header">
+    <h1>Processos</h1>
+    <button class="btn btn-primary" id="btn-novo-processo" type="button">
+      + Novo Processo
+    </button>
+  </div>
+
+  <div class="filters">
+    <div class="filter-group">
+      <label>Modalidade:</label>
+      <select id="filter-modalidade" aria-label="filter modalidade">
+        <option value="todos">Todas</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Fase:</label>
+      <select id="filter-fase" aria-label="filter fase">
+        <option value="todos">Todas</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Responsável:</label>
+      <select id="filter-responsavel" aria-label="filter responsavel">
+        <option value="todos">Todos</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" id="btn-aplicar-filtros" type="button">Aplicar</button>
+    <button class="btn" id="btn-limpar-filtros" type="button">Limpar</button>
+  </div>
+
+  <div class="card">
+    <div class="table-container">
+      <table aria-label="Tabela de dados">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Objeto</th>
+            <th>Modalidade</th>
+            <th>Fase atual</th>
+            <th>Responsável</th>
+            <th>Saúde</th>
+            <th>Data criação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="processos-table-body"></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button type="button">1</button>
+      <button type="button">2</button>
+      <button type="button">3</button>
+    </div>
+  </div>
+</div>

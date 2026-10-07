@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "270",
+    "processo_origem": "95/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor 2M - COMERCIO DE ELETROELETRONICOS LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "111/2025",
+    "numero_contratacao": "1407 | 111/2025",
+    "numero_processo": "95/2025",
+    "numero_pregao": "46",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2026-02-20",
+    "vigencia_inicio": "2026-02-20",
+    "vigencia_fim": "2027-02-20",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual aquisição de eletrodomésticos, móveis e equipamentos.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "2M - COMERCIO DE ELETROELETRONICOS LTDA",
+    "cnpj": "32.691.514/0001-27"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "FORNO MICROONDAS 30 LITROS, CAPACIDADE 30L; CLASSIFICAÇÃO ENERGÉTICA A; COR INTERNA CINA; COZIMENTO E DESLOCAMENTO UNIFORME, DESCONGELAMENTO, PAINEL DIGITAL, PESO DO PRODUTO 12,48KG, POTÊNCIA DE CONSUMO 1.250 W; POTENCIA DE SAÍDA 800W, PROFUNDIDADE 44 CM; RELÓGIO; SELO PROCEL A; TENSÃO 220; COR BRANCO",
+      "unidade_medida": "UN",
+      "valor_unitario": 700.0,
+      "quantidade_contratada": 2.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 1.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 1400.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 700.0,
+      "valor_saldo": 700.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 1400.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 700.0,
+    "valor_saldo_geral": 700.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem com o PDF: R$ 1.400,00 contratado, R$ 700,00 executado e R$ 700,00 de saldo.",
+  "anexos": []
+}

@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "40",
+    "processo_origem": "42/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "64/2026",
+    "numero_contratacao": "1525",
+    "numero_processo": "42/2026",
+    "numero_pregao": "11",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-08-14",
+    "vigencia_inicio": "2026-08-14",
+    "vigencia_fim": "2027-08-14",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para contratação de serviços variados para atender as necessidades de todas as secretarias do Município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "FELIPE GALIZA PSICOLOGIA LTDA",
+    "cnpj": "67.138.617/0001-49"
+  },
+  "itens": [
+    {
+      "numero": "5",
+      "descricao": "Psicólogo(a): condução de grupos socioeducativos com temas transversais (convivência familiar, saúde mental, prevenção de violências, fortalecimento de vínculos, entre outros).",
+      "unidade_medida": "HORA",
+      "valor_unitario": 120.0,
+      "quantidade_contratada": 420.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 420.0,
+      "valor_total": 50400.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 50400.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 50400.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 50400.0
+  },
+  "observacoes": "Ata 64/2026 — FELIPE GALIZA PSICOLOGIA (Processo 42/2026). 1 serviço: Psicólogo. Nada executado. ⚠️ Nº Ata 64/2026 vai colidir com o Processo 47/2026 (GERALDA AP. MARCHINI).",
+  "anexos": []
+}

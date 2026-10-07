@@ -1,0 +1,94 @@
+- Retirar Botão de Recolher MENU
+- Aplicar mensagens de confirmação antes de cadastrar, editar, excluir algum registro
+
+**************************************************************************************************************************************************************************************
+
+Ótima pergunta! Você quer um controle de acesso mais granular: além do perfil (ADMIN, SECRETARIO, SOLICITANTE), definir **quais módulos** cada usuário pode acessar (Atos Oficiais, Gestão de Atas, Estoque, Tarefas, etc.). Isso é chamado de **RBAC (Role-Based Access Control) com permissões por módulo**.
+
+## 📐 Estrutura de tabelas sugerida
+
+No Supabase, você já tem a tabela `usuarios`. Vamos adicionar duas tabelas novas:
+
+### 1. `modulos`
+```sql
+CREATE TABLE modulos (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR NOT NULL UNIQUE,
+  descricao TEXT,
+  ativo BOOLEAN DEFAULT true,
+  ordem INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+Inserir os módulos existentes:
+```sql
+INSERT INTO modulos (nome, descricao, ordem) VALUES
+('atos_oficiais', 'Gestão de Atos Oficiais', 1),
+('atas', 'Gestão de Atas de Registro de Preços', 2),
+('estoque', 'Gestão de Estoque', 3),
+('tarefas', 'Gestão de Tarefas', 4);
+```
+
+### 2. `permissoes_usuarios` (ou `acessos_usuarios`)
+```sql
+CREATE TABLE permissoes_usuarios (
+  id SERIAL PRIMARY KEY,
+  usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+  modulo_id INTEGER REFERENCES modulos(id) ON DELETE CASCADE,
+  permissao VARCHAR(20) DEFAULT 'visualizar', -- 'visualizar', 'editar', 'admin' (opcional)
+  concedido_por INTEGER REFERENCES usuarios(id),
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(usuario_id, modulo_id)
+);
+```
+
+## 🔄 Como integrar no frontend
+
+### Na intranet (`intranet.html`)
+
+Após o login, você deve carregar os módulos que o usuário tem permissão para acessar e **renderizar apenas os cards correspondentes** na tela principal.
+
+**Fluxo:**
+1. Usuário loga via Supabase Auth.
+2. Buscar perfil na tabela `usuarios` (como já faz).
+3. Buscar os módulos permitidos para esse usuário:
+```sql
+SELECT m.nome FROM modulos m
+JOIN permissoes_usuarios pu ON pu.modulo_id = m.id
+WHERE pu.usuario_id = :usuario_id
+UNION
+-- Se for ADMIN, pode ter todos os módulos (opcional)
+SELECT nome FROM modulos WHERE (SELECT perfil FROM usuarios WHERE id = :usuario_id) = 'ADMIN';
+```
+4. Dinamicamente, esconder ou mostrar os cards de acesso na intranet.
+
+### No painel de administração de usuários (painel de Atos Oficiais)
+
+Dentro da aba "Usuários", ao editar um usuário (ou criar), você adiciona uma nova seção "Módulos permitidos", com checkboxes dos módulos disponíveis. Ao salvar, insere/atualiza as permissões na tabela `permissoes_usuarios`.
+
+## 🧩 Implementação prática (passo a passo)
+
+### 1. Criar as tabelas no Supabase
+Execute o SQL acima. Se você já tem a tabela `permissoes` (do schema original), pode reaproveitá-la, mas recomendo essa estrutura mais simples.
+
+### 2. Modificar o login da intranet para filtrar módulos
+No `intranet.html`, após obter `usuarioLogado`, faça uma consulta para pegar os nomes dos módulos permitidos. Depois, filtre os cards do HTML.
+
+### 3. No painel de usuários (dentro do painel de Atos Oficiais)
+Adicione um novo modal ou expanda o modal de usuário para incluir uma lista de checkboxes de módulos. Use a tabela `modulos` para popular.
+
+### 4. Sincronizar permissões de acesso nos outros módulos
+Cada módulo (Gestão de Atas, Estoque, etc.) deve, ao carregar, verificar se o usuário logado tem permissão para acessá-lo. Caso contrário, redirecionar ou mostrar erro.
+
+## 🎯 Resposta direta à sua pergunta
+
+> *"como funciona e como seria nossa implementação?"*
+
+**Funciona assim:** você terá uma tabela de módulos e uma tabela de permissões associando usuários a módulos. Na intranet, você consulta esses módulos permitidos e exibe apenas os cards dos sistemas que o usuário pode acessar. No cadastro/edição de usuários, você permite marcar/desmarcar os módulos. Cada módulo, ao ser aberto, também deve verificar se o usuário tem acesso (redundância segura).
+
+Se você quiser, posso gerar o **código SQL completo** e as **modificações necessárias** nos arquivos `intranet.html` e `painel-adm-atos-oficiais.js` para implementar isso. Basta autorizar.
+
+**************************************************************************************************************************************************************************************
+
+- Retirar menu lateral e transoformar em cards no topo da tela.

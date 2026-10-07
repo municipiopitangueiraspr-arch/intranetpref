@@ -1,0 +1,7 @@
+﻿item_ata_id,processo_administrativo,numero_ata,item_numero,quantidade_contratada_no_relatorio,saldo_quantidade_atual,saldo_quantidade_proposto,saldo_valor_atual,saldo_valor_proposto,valor_unitario_atual_no_banco,alerta_saldo_valor_nao_bate_com_quantidade_x_preco_atual,arquivo_fonte,linha_excel,valor_total_atual_no_banco,motivo_pendencia,status_proposta
+318,4/2026,11/2026,2,100.000,100.0000,100.00,10000.00,18000.00,100.00,SIM,Relatório de Saldos das Contratações (12).xls,843,10000.00,Saldo em R$ proposto excede valor_total atual no banco,PENDENTE_REVISÃO
+319,4/2026,11/2026,3,200.000,200.0000,157.00,20000.00,42390.00,100.00,SIM,Relatório de Saldos das Contratações (12).xls,857,20000.00,Saldo em R$ proposto excede valor_total atual no banco,PENDENTE_REVISÃO
+320,4/2026,11/2026,4,100.000,100.0000,100.00,10000.00,58000.00,100.00,SIM,Relatório de Saldos das Contratações (12).xls,864,10000.00,Saldo em R$ proposto excede valor_total atual no banco,PENDENTE_REVISÃO
+754,56/2025,76/2025,205,800.000,760.0000,72.40,31844.00,-1823.99,41.90,SIM,Relatório de Saldos das Contratações (13).xls,4783,33520.00,Saldo em R$ proposto negativo,PENDENTE_REVISÃO
+410,57/2026,83/2026,12,6000.000,6000.0000,5700.00,840.00,849.30,0.14,SIM,Relatório de Saldos das Contratações (12).xls,4131,840.00,Saldo em R$ proposto excede valor_total atual no banco,PENDENTE_REVISÃO
+445,6/2026,51/2026,29,50.000,50.0000,45.00,2250.00,3860.55,45.00,SIM,Relatório de Saldos das Contratações (12).xls,1497,2250.00,Saldo em R$ proposto excede valor_total atual no banco,PENDENTE_REVISÃO

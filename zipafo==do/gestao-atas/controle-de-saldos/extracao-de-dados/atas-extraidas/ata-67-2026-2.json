@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "47",
+    "processo_origem": "43/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "67/2026",
+    "numero_contratacao": "1528",
+    "numero_processo": "43/2026",
+    "numero_pregao": "23",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-08-06",
+    "vigencia_inicio": "2026-08-06",
+    "vigencia_fim": "2027-08-06",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de armamentos para uso da Guarda Municipal de Pitangueiras.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "LABORATORIO ARMERIA ENSAIOS E CUSTOMIZACAO DE ARMAS LTDA.",
+    "cnpj": "19.667.082/0001-50"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "FUZIL MLOK 14,5\" 30 TIROS CAL. 5.56NATO SEMI-AUTO",
+      "unidade_medida": "UN",
+      "valor_unitario": 10900.0,
+      "quantidade_contratada": 4.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 4.0,
+      "valor_total": 43600.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 43600.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 43600.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 43600.0
+  },
+  "observacoes": "Ata 67/2026 — LABORATORIO ARMERIA (Processo 43/2026). 1 item: Fuzil 5.56 NATO. Nada executado. ⚠️ Nº Ata 67/2026 em conflito com Ata 67/2026 do GUSTAVO GRACIANO PINTO (Processo 42/2026).",
+  "anexos": []
+}

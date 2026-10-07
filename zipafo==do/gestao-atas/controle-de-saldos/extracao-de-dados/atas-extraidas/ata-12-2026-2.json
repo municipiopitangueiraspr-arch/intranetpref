@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "83",
+    "processo_origem": "107/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor ABSOLUT CLINICA MEDICA E GESTAO EM SAUDE LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "12/2026",
+    "numero_contratacao": "1412 | 12/2026",
+    "numero_processo": "107/2025",
+    "numero_pregao": "38",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "",
+    "vigencia_inicio": "",
+    "vigencia_fim": "",
+    "objeto": "Contratação de empresa para fornecimento de médico, técnico de enfermagem e enfermeiro em regime de plantão, médico pediatra, psicólogo e fisioterapeuta.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "ABSOLUT CLINICA MEDICA E GESTAO EM SAUDE LTDA",
+    "cnpj": "26.740.375/0001-81"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "PRESTAÇÃO DE SERVIÇOS MÉDICOS EM REGIME DE PLANTÃO DE 12 (DOZE) HORAS, DE SEGUNDA A DOMINGO, INCLUSIVE FERIADOS, PERÍODOS DIURNO E NOTURNO. - PRESTAÇÃO DE SERVIÇOS MÉDICOS EM REGIME DE PLANTÃO DE 12 (DOZE) HORAS, DE SEGUNDA A DOMINGO, INCLUSIVE FERIADOS, PERÍODOS DIURNO E NOTURNO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 3442.0,
+      "quantidade_contratada": 0.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 207.0,
+      "quantidade_saldo": 3235.0,
+      "valor_total": 0.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 2129200.0,
+      "valor_saldo": 1855960.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 0.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 2129200.0,
+    "valor_saldo_geral": 1855960.0
+  },
+  "observacoes": "O PDF apresenta os dados deste fornecedor de forma incompleta: não há Data Assinatura nem Data Final da Vigência visíveis. A quantidade contratada aparece como 0, com executado 207 e saldo 3235 — provável truncamento na extração. Os valores executado (R$ 2.129.200,00) e saldo (R$ 1.855.960,00) foram extraídos do total do fornecedor no PDF. Recomendo conferir no sistema de origem.",
+  "anexos": []
+}

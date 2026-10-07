@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "50",
+    "processo_origem": "36/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "46/2025",
+    "numero_contratacao": "1230 | 46/2025",
+    "numero_processo": "36/2025",
+    "numero_pregao": "13",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-04-25",
+    "vigencia_inicio": "2026-04-28",
+    "vigencia_fim": "2027-04-28",
+    "objeto": "Credenciamento de pessoas jurídicas da área da saúde, para a execução de análises clínicas, exames e procedimentos laboratoriais, conforme listagem com exames inclusos na tabela SIG-TAP/SUS e listagem com exames NÃO incluídos na tabela SIG-TAP/SUS.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "ASTORLAB LABORATORIO DE ANALISES CLINICAS LTDA.",
+    "cnpj": "06.017.182/0002-70"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "EXAMES INCLUÍDOS NA TABELA SIG-TAP/SUS - EXAMES INCLUÍDOS NA TABELA SIG-TAP/SUS",
+      "unidade_medida": "UN",
+      "valor_unitario": 150000.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 1.38062,
+      "quantidade_saldo": 0.0,
+      "valor_total": 150000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 207215.65,
+      "valor_saldo": 92784.35,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "EXAMES NÃO INCLUÍDOS NA TABELA SIG-TAP/SUS - EXAMES NÃO INCLUÍDOS NA TABELA SIG-TAP/SUS",
+      "unidade_medida": "UN",
+      "valor_unitario": 100000.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.3012251,
+      "quantidade_saldo": 0.0,
+      "valor_total": 100000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 30122.51,
+      "valor_saldo": 69877.49,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 250000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 237338.16,
+    "valor_saldo_geral": 162661.84
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original. O PDF apresenta valores executados que ultrapassam os contratados em alguns itens (ex.: item 1: executado R$ 207.215,65 > contratado R$ 150.000,00), indicando possível aditivo não destacado. Totais do fornecedor conferem: R$ 237.338,16 executado e R$ 262.661,84 saldo, mas a soma dos itens dá R$ 162.661,84 de saldo — há divergência no PDF original. Priorizei os totais do fornecedor para o campo `valor_saldo_geral`.",
+  "anexos": []
+}

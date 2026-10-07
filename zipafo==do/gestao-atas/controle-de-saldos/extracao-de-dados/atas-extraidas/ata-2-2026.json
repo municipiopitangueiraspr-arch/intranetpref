@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "83",
+    "processo_origem": "8/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "2/2026",
+    "numero_contratacao": "1406",
+    "numero_processo": "8/2026",
+    "numero_pregao": "1",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-02-13",
+    "vigencia_inicio": "2026-02-13",
+    "vigencia_fim": "2027-02-13",
+    "objeto": "Locação de imóvel destinado ao funcionamento do Centro de Referência de Assistência Social – CRAS, considerando a necessidade de manutenção e continuidade dos serviços socioassistenciais ofertados à população.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "EDER SANDRO DE SOUZA",
+    "cnpj": "01.893.169/936-"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "Imóvel Residencial com área de 450,00 metros quadrados, Lote de Terras nº 06, da Quadra 16/17, localizado na Avenida Central, nº 409 – Centro, neste Município de Pitangueiras/PR, conforme Matrícula nº 15.086 do 1º Ofício de Registro de Imóveis da Comarca de Astorga/PR",
+      "unidade_medida": "MES",
+      "valor_unitario": 1440.0,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 17280.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 17280.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 17280.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 17280.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 2/2026 — EDER SANDRO DE SOUZA. Locação de imóvel (CRAS). 1 item (mensalidade). 12 parcelas de R$ 1.440,00 = R$ 17.280,00. Totalmente executada.",
+  "anexos": []
+}

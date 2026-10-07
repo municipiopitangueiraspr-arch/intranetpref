@@ -1,0 +1,143 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="gestao-container">
+  <div class="gestao-header">
+    <div class="gestao-titulo">
+      <i class="fas fa-boxes"></i> Lançamento Rápido
+    </div>
+    <div class="gestao-filtros">
+      <select
+        id="selectAtaGestao"
+        class="gestao-select"
+        onchange="sistema.carregarItensGestao()"
+       aria-label="selectAtaGestao">
+        <option value="">🔍 Selecione uma ata...</option>
+      </select>
+      <select
+        id="filtroStatusGestao"
+        class="gestao-select"
+        onchange="sistema.filtrarItensGestao()"
+       aria-label="filtroStatusGestao">
+        <option value="todos">📦 Todos</option>
+        <option value="disponivel">✅ Com saldo</option>
+        <option value="critico">⚠️ Crítico</option>
+        <option value="esgotado">❌ Esgotados</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="filtros-gestao">
+    <div class="filtro-row">
+      <div class="filtro-busca">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          id="buscaGestao"
+          placeholder="Buscar por nº da ata ou descrição do item..."
+          onkeyup="sistema.filtrarGestao()"
+        / aria-label="Buscar por nº da ata ou descrição do item...">
+      </div>
+    </div>
+    <div class="filtro-grid-3col">
+      <select
+        id="filtroGestaoFornecedor"
+        class="filtro-select"
+        onchange="sistema.filtrarGestao()"
+       aria-label="filtroGestaoFornecedor">
+        <option value="todos">Todos os fornecedores</option>
+      </select>
+      <select
+        id="filtroGestaoOrgao"
+        class="filtro-select"
+        onchange="sistema.filtrarGestao()"
+       aria-label="filtroGestaoOrgao">
+        <option value="todos">Todos os órgãos</option>
+      </select>
+      <select
+        id="filtroGestaoStatusAta"
+        class="filtro-select"
+        onchange="sistema.filtrarGestao()"
+       aria-label="filtroGestaoStatusAta">
+        <option value="todos">Todas as atas</option>
+        <option value="ATIVA">Ativas</option>
+        <option value="PROXIMA">Próximas</option>
+        <option value="VENCIDA">Vencidas</option>
+      </select>
+    </div>
+    <div class="filtro-row">
+      <select
+        id="filtroGestaoSaldo"
+        class="filtro-select"
+        style="width: 220px"
+        onchange="sistema.filtrarGestao()"
+       aria-label="filtroGestaoSaldo">
+        <option value="todos">Todos os itens</option>
+        <option value="disponivel">Com saldo disponível</option>
+        <option value="critico">Saldo crítico (<10%)</option>
+        <option value="zerado">Saldo zerado</option>
+      </select>
+    </div>
+    <div class="filtro-checkboxes">
+      <label
+        ><input
+          type="checkbox"
+          id="ocultarZerados"
+          onchange="sistema.filtrarGestao()"
+        / aria-label="ocultarZerados"><span>Ocultar itens com saldo zerado</span></label
+      >
+      <label
+        ><input
+          type="checkbox"
+          id="apenas30dias"
+          onchange="sistema.filtrarGestao()"
+        / aria-label="apenas30dias"><span>Apenas itens com consumo nos últimos 30 dias</span></label
+      >
+    </div>
+    <div class="filtro-actions">
+      <button class="btn-aplicar" onclick="sistema.aplicarFiltrosGestao()" type="button">
+        <i class="fas fa-filter"></i> Aplicar Filtros
+      </button>
+      <button class="btn-limpar" onclick="sistema.limparFiltrosGestao()" type="button">
+        <i class="fas fa-eraser"></i> Limpar
+      </button>
+      <button class="btn-exportar" onclick="sistema.exportarListaGestao()" type="button">
+        <i class="fas fa-download"></i> Exportar Lista
+      </button>
+    </div>
+  </div>
+
+  <div id="statusEditorContainer" class="status-editor" style="display: none">
+    <span><i class="fas fa-tag"></i> Status da Ata:</span>
+    <select id="statusAtaSelect" class="status-select" aria-label="statusAtaSelect">
+      <option value="ATIVA">🟢 ATIVA</option>
+      <option value="PROXIMA">🟡 PRÓXIMA</option>
+      <option value="VENCIDA">🔴 VENCIDA</option>
+    </select>
+    <button class="btn-status" onclick="sistema.alterarStatusAta()" type="button">
+      <i class="fas fa-save"></i> Salvar Alteração
+    </button>
+  </div>
+
+  <div id="gestaoStats" class="gestao-stats">
+    <div>
+      <span class="gestao-stat-label">Ata:</span>
+      <span id="gestaoAtaNome">Nenhuma</span>
+    </div>
+    <div>
+      <span class="gestao-stat-label">Total itens:</span>
+      <span id="gestaoTotalItens">0</span>
+    </div>
+    <div>
+      <span class="gestao-stat-label">Com saldo:</span>
+      <span id="gestaoItensComSaldo">0</span>
+    </div>
+    <div>
+      <span class="gestao-stat-label">Críticos:</span>
+      <span id="gestaoItensCriticos">0</span>
+    </div>
+  </div>
+
+  <div id="itensGestaoContainer" class="gestao-tabela-wrapper"></div>
+</div>

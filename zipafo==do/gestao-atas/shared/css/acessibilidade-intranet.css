@@ -1,0 +1,152 @@
+/*
+ * FUNDAÇÃO DE ACESSIBILIDADE E RESPONSIVIDADE · INTRANET PITANGUEIRAS
+ * Carregado após a identidade visual canônica em todas as telas.
+ */
+:root {
+  --a11y-focus: #ffbf00;
+  --a11y-focus-ring: 0 0 0 3px #fff, 0 0 0 6px var(--a11y-focus);
+  --a11y-max-content: 1680px;
+}
+
+html { scroll-behavior: smooth; }
+body { line-height: 1.45; overflow-x: hidden; }
+
+/* Leitor de tela e skip link */
+.a11y-sr-only,
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.a11y-skip-link {
+  position: fixed;
+  z-index: 10000;
+  top: 8px;
+  left: 8px;
+  transform: translateY(-150%);
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #fff !important;
+  background: #062744 !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.24);
+  font-weight: 800;
+  text-decoration: none !important;
+}
+.a11y-skip-link:focus { transform: translateY(0); }
+
+/* Foco visível e consistente */
+:where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 3px solid var(--a11y-focus) !important;
+  outline-offset: 2px !important;
+  box-shadow: var(--a11y-focus-ring) !important;
+}
+
+/* Alvos de toque, texto e campos */
+:where(button, [role="button"], a, summary) { min-height: 40px; }
+:where(input, select, textarea) { max-width: 100%; }
+label { cursor: pointer; }
+fieldset { min-width: 0; border: 1px solid var(--pit-line, #dbe5ee); border-radius: 12px; padding: 14px; }
+legend { padding: 0 6px; color: var(--pit-ink, #102a43); font-weight: 800; }
+
+/* Tabelas não estouram a viewport em telas pequenas */
+:where(.table-wrap, .data-table-wrap, .table-container, .table-responsive, .tabela-wrap, .table-scroll) {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+:where(table, .data-table, .tabela) { min-width: 640px; }
+
+/* Dialogs nativos e modais legados */
+dialog {
+  width: min(760px, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  overflow: auto;
+  border: 1px solid var(--pit-line, #dbe5ee);
+  border-radius: 18px;
+  color: var(--pit-text, #334e68);
+  background: #fff;
+  box-shadow: 0 28px 70px rgba(6,39,68,.28);
+}
+dialog::backdrop { background: rgba(6,39,68,.68); backdrop-filter: blur(5px); }
+:where(.modal-overlay, .modal-backdrop, .drawer-overlay) { z-index: 80; }
+:where(.modal, .modal-content, .modal-dialog, .modalbox, .dialog, .drawer, .app-dialog, .work-dialog) {
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+}
+:where(.modal-body, .dialog-body, .drawer-body) { overflow-wrap: anywhere; }
+
+/* Backdrop controlado pelo JS compartilhado */
+.a11y-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  display: none;
+  background: rgba(6,39,68,.48);
+  backdrop-filter: blur(2px);
+}
+.a11y-menu-backdrop.is-visible { display: block; }
+
+/* Responsividade transversal */
+@media (max-width: 1100px) {
+  :where(.grid, .cards-grid, .modules-grid, .sistema-grid, .kpi-grid, .metric-grid, .content-grid, .detail-grid, .hero-grid, .form-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  :where(.page-content, .conteudo, .work-main, .compras-main, .admin-content) {
+    padding-inline: 18px !important;
+  }
+}
+@media (max-width: 900px) {
+  :where(.app-layout, .app-shell, .admin-shell, .system-layout) { display: block !important; }
+  :where(.main-area, .content, .admin-content, .system-content, .app-shell > .content) { margin-left: 0 !important; }
+  :where(.sidebar, .shared-admin-sidebar, .admin-sidebar, #sidebar, .system-sidebar, .app-shell > .sidebar) {
+    width: min(288px, 88vw) !important;
+    min-width: 0 !important;
+    transform: translateX(-105%);
+    transition: transform .22s ease;
+  }
+  :where(.sidebar.is-open, .sidebar.aberta, .sidebar.open, .sidebar.visible, .shared-admin-sidebar.is-open, .admin-sidebar.is-open, #sidebar.a11y-open) {
+    transform: translateX(0) !important;
+  }
+  :where(.topbar, .shared-topbar, .admin-topbar, #topbar) { padding-inline: 14px !important; }
+  :where(.content-grid, .detail-grid, .hero-grid, .form-grid, .grid, .cards-grid, .modules-grid, .sistema-grid, .kpi-grid, .metric-grid) {
+    grid-template-columns: 1fr !important;
+  }
+  :where(.toolbar, .topbar, .topbar-esquerda, .topbar-direita, .dialog-actions, .modal-footer, .drawer-footer) {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 600px) {
+  body { font-size: 15px; }
+  :where(.page-content, .conteudo, .work-main, .compras-main, .admin-content) {
+    padding: 14px 12px 28px !important;
+  }
+  :where(.card, .surface, .panel, .modal, .modal-content, .modal-dialog, .dialog, dialog) {
+    border-radius: 13px !important;
+  }
+  :where(.modal, .modal-content, .modal-dialog, dialog) { width: calc(100vw - 1rem); max-width: calc(100vw - 1rem); }
+  :where(.button, .btn, button, input, select, textarea) { min-height: 42px; }
+  :where(.button, .btn, button) { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, summary, [tabindex]) { forced-color-adjust: auto; }
+  :where(a, button, input, select, textarea):focus-visible { outline: 3px solid CanvasText !important; }
+}

@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intranet · Gestão Pitangueiras</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* ===== CSS SEPARADO · MODAL LOGIN ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(145deg, #e8f5e9 0%, #e2eaf1 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.5rem;
+      }
+
+      /* cartão principal */
+      .portal-prefeitura {
+        max-width: 1200px;
+        width: 100%;
+        background: white;
+        border-radius: 40px;
+        padding: 3rem 2.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+      }
+
+      /* ===== CABEÇALHO COM BRASÃO OFICIAL (PNG) ===== */
+      .brasao-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .brasao-img-container {
+        width: 130px;
+        height: 130px;
+        background: white;
+        border-radius: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 18px -6px rgba(0, 0, 0, 0.1);
+        border: 3px solid white;
+        outline: 2px solid #0d5e3a;
+        margin-bottom: 1.5rem;
+        padding: 8px;
+      }
+
+      .brasao-oficial {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 50%;
+        background: white;
+      }
+
+      .boas-vindas {
+        text-align: center;
+      }
+
+      .boas-vindas h1 {
+        font-size: 2.3rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .boas-vindas h1 i {
+        color: #0d5e3a;
+      }
+
+      .departamento-tag {
+        background: #f0fdf4;
+        padding: 0.6rem 1.8rem;
+        border-radius: 60px;
+        font-size: 1rem;
+        color: #1a3a6b;
+        border: 1px solid #c6f6d5;
+        display: inline-block;
+        margin-top: 0.3rem;
+      }
+
+      .departamento-tag i {
+        color: #0d5e3a;
+        margin-right: 8px;
+      }
+
+      /* ===== SISTEMA DE NOTIFICAÇÕES ===== */
+      .notification-center {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .notification-toast {
+        pointer-events: all;
+        background: white;
+        border-radius: 16px;
+        padding: 16px 24px;
+        min-width: 320px;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        animation: notificationSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .notification-toast.removing {
+        animation: notificationSlideDown 0.3s ease-in forwards;
+      }
+
+      @keyframes notificationSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes notificationSlideDown {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+      }
+
+      .notification-toast.notification-success {
+        border-left-color: #0d5e3a;
+        background: #f0fdf4;
+      }
+      .notification-toast.notification-error {
+        border-left-color: #e53e3e;
+        background: #fff5f5;
+      }
+      .notification-toast.notification-warning {
+        border-left-color: #d69e2e;
+        background: #fffff0;
+      }
+      .notification-toast.notification-info {
+        border-left-color: #1a3a6b;
+        background: #ebf4ff;
+      }
+
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .notification-content {
+        flex: 1;
+      }
+      .notification-title {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .notification-success .notification-title {
+        color: #0d5e3a;
+      }
+      .notification-error .notification-title {
+        color: #e53e3e;
+      }
+      .notification-warning .notification-title {
+        color: #d69e2e;
+      }
+      .notification-info .notification-title {
+        color: #1a3a6b;
+      }
+      .notification-message {
+        font-size: 13px;
+        color: #475569;
+        line-height: 1.4;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #a0aec0;
+        flex-shrink: 0;
+        margin-top: -2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .notification-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+      }
+
+      /* ===== MODAIS ===== */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-confirm {
+        background: white;
+        border-radius: 20px;
+        padding: 32px;
+        max-width: 420px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        border: 1px solid #e2e8f0;
+        animation: modalPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      @keyframes modalPop {
+        0% {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .modal-confirm-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+      .modal-confirm h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 8px;
+      }
+      .modal-confirm p {
+        font-size: 14px;
+        color: #475569;
+        margin-bottom: 24px;
+        line-height: 1.5;
+      }
+      .modal-confirm-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+
+      /* Modal de Login customizado */
+      .modal-login {
+        background: white;
+        border-radius: 24px;
+        padding: 40px 32px;
+        max-width: 420px;
+        width: 90%;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        border: 1px solid #e2e8f0;
+        animation: modalPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: left;
+      }
+      .modal-login-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 28px;
+      }
+      .modal-login-header .brasao-mini {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #0d5e3a, #1a3a6b);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        color: white;
+        margin-bottom: 16px;
+      }
+      .modal-login-header h2 {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .modal-login-header p {
+        font-size: 13px;
+        color: #718096;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+      .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 6px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+      .input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: #a0aec0;
+      }
+      .form-input {
+        width: 100%;
+        padding: 12px 14px 12px 44px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+        background: white;
+        outline: none;
+      }
+      .form-input:focus {
+        border-color: #0d5e3a;
+        box-shadow: 0 0 0 3px rgba(13, 94, 58, 0.1);
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+      }
+      .btn-primary {
+        background: #0d5e3a;
+        color: white;
+        width: 100%;
+      }
+      .btn-primary:hover {
+        background: #0a4a2e;
+      }
+      .btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+      }
+      .btn-secondary:hover {
+        background: #e2e8f0;
+      }
+
+      .modal-footer-link {
+        text-align: center;
+        margin-top: 16px;
+        font-size: 13px;
+        color: #718096;
+      }
+      .modal-footer-link a {
+        color: #0d5e3a;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .modal-footer-link a:hover {
+        text-decoration: underline;
+      }
+
+      /* responsividade */
+      @media (max-width: 650px) {
+        .portal-prefeitura {
+          padding: 2rem 1.5rem;
+        }
+        .boas-vindas h1 {
+          font-size: 1.8rem;
+        }
+        .notification-toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+      }
+      /* ===== REDESIGN · LOGIN PREMIUM ===== */
+      :root { --ink-login: #241c35; --muted-login: #756c84; --coral-login: #e96e5b; --violet-login: #7957d5; --teal-login: #279f9a; }
+      * { font-family: "Space Grotesk", "Segoe UI", sans-serif; }
+      body { background: radial-gradient(circle at 8% 12%, #ffd8c7 0, transparent 28%), radial-gradient(circle at 91% 16%, #ded3ff 0, transparent 30%), radial-gradient(circle at 80% 95%, #c9f2e5 0, transparent 28%), #f7f3f7; }
+      .modal-overlay { background: rgba(42,26,49,.34); backdrop-filter: blur(8px); }
+      .modal-login { max-width: 460px; width: min(92%,460px); padding: 42px 38px 34px; border: 1px solid rgba(255,255,255,.85); border-radius: 28px; background: rgba(255,255,255,.93); box-shadow: 0 30px 90px rgba(55,30,74,.22); }
+      .modal-login-header { margin-bottom: 25px; }
+      .modal-login-header .brasao-mini { width: 72px; height: 72px; padding: 9px; border-radius: 22px; background: linear-gradient(135deg,#f6c5a9,#d9cbff); box-shadow: 0 12px 25px rgba(121,87,213,.18); }
+      .modal-login-header .brasao-mini img { width: 100%; height: 100%; object-fit: contain; border-radius: 15px; background: #fff; }
+      .modal-login-header h2 { font: 800 24px "Manrope", sans-serif; color: var(--ink-login); letter-spacing: -.045em; }
+      .modal-login-header p { color: var(--muted-login); font-size: 12px; }
+      .form-group { margin-bottom: 15px; }
+      .form-label { color: #5f536b; font-size: 12px; }
+      .form-input { border: 1px solid #e7ddea; border-radius: 12px; padding: 13px 14px 13px 43px; color: var(--ink-login); background: #fff; }
+      .form-input:focus { border-color: #b69de4; box-shadow: 0 0 0 4px rgba(121,87,213,.12); }
+      .input-icon { color: var(--violet-login); font-size: 14px; }
+      .btn { border-radius: 11px; font-family: "Space Grotesk", sans-serif; }
+      .btn-primary { background: linear-gradient(110deg,var(--coral-login),#d85c82); box-shadow: 0 9px 18px rgba(233,110,91,.2); }
+      .btn-primary:hover { background: linear-gradient(110deg,#d95d4a,#c64c73); transform: translateY(-1px); }
+      #btnGoogle { background: #fff !important; color: #4f4260; border: 1px solid #e4d8e8; box-shadow: none; }
+      #btnGoogle:hover { border-color: #c5afe1; background: #fbf8ff !important; }
+      #btnGoogle i { color: #4285f4; }
+      .btn-secondary { background: #f7f2fa; color: #665475; border: 1px solid #eadff0; }
+      .btn-secondary:hover { background: #efe6f5; color: var(--violet-login); }
+      .modal-footer-link a { color: var(--violet-login); }
+      .notification-toast { border-left-color: var(--violet-login) !important; border-radius: 15px; box-shadow: 0 20px 55px rgba(55,30,74,.2); }
+      .notification-toast.notification-success { background: #eaf9f3; border-left-color: var(--teal-login) !important; }
+      .notification-toast.notification-error { background: #fff0ef; border-left-color: var(--coral-login) !important; }
+      .notification-toast.notification-warning { background: #fff7e6; border-left-color: #d79a35 !important; }
+      .notification-toast.notification-info { background: #f1edff; border-left-color: var(--violet-login) !important; }
+      .notification-icon { font-size: 17px; color: var(--violet-login); }
+      @media (max-width:650px) { .modal-login { padding: 32px 22px 27px; } }
+      /* ===== PALETA VIVA · LOGIN ===== */
+      body::before, body::after { content:""; position:fixed; z-index:-1; border-radius:50%; pointer-events:none; }
+      body::before { width:420px; height:420px; left:-180px; bottom:-150px; background:linear-gradient(135deg,#f29b83,#d8b6f3); opacity:.42; filter:blur(2px); }
+      body::after { width:350px; height:350px; right:-130px; top:-120px; background:linear-gradient(135deg,#f3cf78,#7bcae0); opacity:.36; filter:blur(2px); }
+      .modal-login { position:relative; overflow:hidden; }
+      .modal-login::before { content:""; position:absolute; left:0; right:0; top:0; height:7px; background:linear-gradient(90deg,#e96e5b 0%,#e5a742 28%,#7957d5 62%,#279f9a 100%); }
+      .modal-login-header .brasao-mini { background:linear-gradient(135deg,#f1a37f 0%,#d6bbf5 55%,#8ad5c4 100%); }
+      .modal-login-header h2 { background:linear-gradient(100deg,#d85d72,#7655cc 60%,#268f8d); -webkit-background-clip:text; background-clip:text; color:transparent; }
+      .form-input:focus { border-color:#e39a8c; box-shadow:0 0 0 4px rgba(233,110,91,.12); }
+      .input-icon { color:#d96676; }
+      .btn-primary { background:linear-gradient(105deg,#e96e5b 0%,#d85c82 45%,#7957d5 100%); }
+      .btn-primary:hover { background:linear-gradient(105deg,#d85c4b 0%,#c84e76 45%,#6745c0 100%); }
+      #btnGoogle { border-color:#d9cce8; }
+      #btnSolicitarAcesso { background:linear-gradient(100deg,#fff7e7,#f5efff); border-color:#e6d7ee; }
+    </style>
+    <link rel="stylesheet" href="shared/css/faq-theme.css" />
+<link rel="stylesheet" href="intranet-responsivo.css">
+<link rel="stylesheet" href="shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="shared/css/acessibilidade-intranet.css">
+<script src="shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ========== MODAL DE LOGIN ========== -->
+    <div class="modal-overlay" id="loginModalOverlay">
+      <div class="modal-login">
+        <div class="modal-login-header">
+          <div class="brasao-mini"><img src="brasao-pref.png" alt="Brasão da Prefeitura de Pitangueiras" /></div>
+          <h2>Intranet Municipal</h2>
+          <p>Acesso restrito a servidores autorizados</p>
+        </div>
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">E-mail</label>
+            <div class="input-wrapper">
+              <span class="input-icon"><i class="fas fa-envelope"></i></span>
+              <input
+                type="email"
+                id="loginEmail"
+                class="form-input"
+                placeholder="seu.email@prefeitura.gov.br"
+                required
+                autocomplete="email"
+              / aria-label="seu.email@prefeitura.gov.br">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginSenha">Senha</label>
+            <div class="input-wrapper">
+              <span class="input-icon"><i class="fas fa-lock"></i></span>
+              <input
+                type="password"
+                id="loginSenha"
+                class="form-input"
+                placeholder="••••••••"
+                required
+                autocomplete="current-password"
+              / aria-label="••••••••">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnEntrar">
+            <i class="fas fa-arrow-right-to-bracket"></i> Entrar
+          </button>
+        </form>
+        <button type="button" class="btn btn-primary" id="btnGoogle" style="margin-top:10px;background:#4285f4">
+          <i class="fab fa-google"></i> Entrar com Google
+        </button>
+        <button type="button" class="btn btn-secondary" id="btnSolicitarAcesso" style="margin-top:10px;width:100%">
+          Solicitar Acesso
+        </button>
+        <div class="modal-footer-link">
+          <a
+            href="#"
+            onclick="
+              event.preventDefault();
+              showNotification(
+                'info',
+                'Esqueceu a senha?',
+                'Entre em contato com o suporte de TI para redefinir sua senha.',
+              );
+            "
+          >
+            Esqueceu a senha?
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTÊINER DE NOTIFICAÇÕES -->
+    <div class="notification-center" id="notificationCenter"></div>
+
+    <!-- Supabase SDK e lógica -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // Configuração do Supabase
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // SISTEMA DE NOTIFICAÇÕES
+      // ============================================
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        const icons = { success: "fa-circle-check", error: "fa-circle-xmark", warning: "fa-triangle-exclamation", info: "fa-circle-info" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon"><i class="fas ${icons[type] || icons.info}"></i></span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" onclick="this.parentElement.remove()" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      // ============================================
+      // MODAL DE CONFIRMAÇÃO
+      // ============================================
+      window.showConfirm = function (title, message, onConfirm) {
+        const overlay = document.createElement("div");
+        overlay.className = "modal-overlay";
+        overlay.innerHTML = `
+          <div class="modal-confirm">
+            <div class="modal-confirm-icon"><i class="fas fa-circle-question"></i></div>
+            <h3>${title}</h3>
+            <p>${message}</p>
+            <div class="modal-confirm-actions">
+              <button class="btn btn-secondary" id="cancelBtn" type="button">Cancelar</button>
+              <button class="btn btn-primary" id="confirmBtn" type="button">Confirmar</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+
+        const closeModal = () => {
+          overlay.style.opacity = "0";
+          setTimeout(() => overlay.remove(), 200);
+        };
+
+        overlay
+          .querySelector("#cancelBtn")
+          .addEventListener("click", closeModal);
+        overlay.querySelector("#confirmBtn").addEventListener("click", () => {
+          closeModal();
+          if (typeof onConfirm === "function") onConfirm();
+        });
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) closeModal();
+        });
+        return overlay;
+      };
+
+      // ============================================
+      // AUTH GUARD (importado dinamicamente)
+      // ============================================
+      let AuthGuard = null;
+
+      async function carregarAuthGuard() {
+        if (AuthGuard) return AuthGuard;
+        try {
+          const mod = await import("/shared/js/auth-guard.js");
+          AuthGuard = mod.AuthGuard || mod.default;
+          return AuthGuard;
+        } catch (err) {
+          console.warn(
+            "[Login] AuthGuard não disponível, usando fallback:",
+            err,
+          );
+          return null;
+        }
+      }
+
+      /**
+       * Decide o destino do usuário após autenticação bem-sucedida.
+       * Usa o AuthGuard se disponível; caso contrário, vai para a intranet.
+       */
+      async function decidirDestino() {
+        const guard = await carregarAuthGuard();
+
+        if (guard) {
+          try {
+            const resultado = await guard.protegerRota({
+              permitirOnboarding: false,
+              registrarAcesso: true,
+            });
+
+            if (!resultado.ok) {
+              // O guard já redirecionou (para onboarding ou login)
+              return;
+            }
+
+            if (resultado.precisaOnboarding) {
+              window.location.href = guard.ROTAS.ONBOARDING;
+              return;
+            }
+
+            window.location.href = guard.ROTAS.INTRANET;
+            return;
+          } catch (err) {
+            console.error("[Login] Erro no AuthGuard:", err);
+            // Cai no fallback abaixo
+          }
+        }
+
+        // Fallback: sem guard, vai direto para intranet
+        window.location.href = "intranet.html";
+      }
+
+      // ============================================
+      // FUNÇÃO DE LOGIN - REDIRECIONA VIA GUARD
+      // ============================================
+      async function fazerLogin(email, senha) {
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password: senha,
+          });
+          if (error) throw new Error(error.message);
+
+          // Buscar dados do usuário na tabela 'usuarios'
+          const { data: usuario, error: userError } = await supabase
+            .from("usuarios")
+            .select("id, nome, email, perfil, orgao_id, ativo")
+            .eq("uuid", data.user.id)
+            .single();
+
+          if (userError || !usuario) {
+            await supabase.auth.signOut();
+            throw new Error(
+              "Usuário não possui perfil no sistema. Contate o administrador.",
+            );
+          }
+
+          if (usuario.ativo === false) {
+            await supabase.auth.signOut();
+            throw new Error(
+              "Seu usuário está inativo. Contate o administrador.",
+            );
+          }
+
+          // Notifica sucesso
+          window.showNotification(
+            "success",
+            "Autenticado",
+            `Bem-vindo, ${usuario.nome}! Redirecionando...`,
+          );
+
+          // Pequeno delay para a notificação aparecer,
+          // depois o guard decide o destino correto
+          setTimeout(async () => {
+            await decidirDestino();
+          }, 900);
+        } catch (err) {
+          window.showNotification(
+            "error",
+            "Falha na autenticação",
+            err.message,
+          );
+          console.error(err);
+        }
+      }
+
+      async function entrarComGoogle() {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: `${window.location.origin}/index.html` },
+        });
+        if (error) window.showNotification("error", "Google não configurado", "O provedor Google precisa ser habilitado no Supabase antes do primeiro uso.");
+      }
+
+      // ============================================
+      // VERIFICAR SESSÃO EXISTENTE
+      // ============================================
+      async function verificarSessaoExistente() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session) {
+          const { data: usuario } = await supabase
+            .from("usuarios")
+            .select("id, ativo")
+            .eq("uuid", session.user.id)
+            .maybeSingle();
+          if (!usuario) {
+            window.location.href = "/acesso.html";
+            return;
+          }
+          await decidirDestino();
+        } else {
+          // Mostrar modal de login
+          document.getElementById("loginModalOverlay").style.display = "flex";
+          document.getElementById("loginEmail").focus();
+        }
+      }
+
+      // ============================================
+      // EVENTO DE SUBMIT DO FORMULÁRIO DE LOGIN
+      // ============================================
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("loginEmail").value.trim();
+          const senha = document.getElementById("loginSenha").value.trim();
+          if (!email || !senha) {
+            window.showNotification(
+              "warning",
+              "Campos obrigatórios",
+              "Preencha e-mail e senha.",
+            );
+            return;
+          }
+          await fazerLogin(email, senha);
+        });
+
+      document.getElementById("btnGoogle").addEventListener("click", entrarComGoogle);
+      document.getElementById("btnSolicitarAcesso").addEventListener("click", () => {
+        window.location.href = "/acesso.html";
+      });
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      document.addEventListener("DOMContentLoaded", async () => {
+        await verificarSessaoExistente();
+      });
+    </script>
+  </body>
+</html>

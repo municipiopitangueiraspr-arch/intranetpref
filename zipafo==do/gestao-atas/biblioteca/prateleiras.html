@@ -1,0 +1,2537 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca Municipal · Prateleiras</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* =====================================================================
+         RESET + VARIÁVEIS GLOBAIS
+         ===================================================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      :root {
+        --verde: #0d5e3a;
+        --verde-escuro: #0a4a2e;
+        --verde-claro: #e8f5e9;
+        --verde-suave: #f0fdf4;
+        --azul: #1a3a6b;
+        --azul-claro: #ebf4ff;
+        --cinza-texto: #475569;
+        --cinza-suave: #f1f5f9;
+        --cinza-borda: #e2e8f0;
+        --vermelho: #e53e3e;
+        --vermelho-suave: #fff5f5;
+        --amarelo: #d69e2e;
+        --amarelo-suave: #fffff0;
+        --branco: #ffffff;
+        --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        --sombra-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+      }
+
+      body {
+        background: linear-gradient(145deg, #e8f5e9 0%, #e2eaf1 100%);
+        min-height: 100vh;
+        color: var(--cinza-texto);
+      }
+
+      /* =====================================================================
+         LAYOUT · SIDEBAR + CONTEÚDO
+         ===================================================================== */
+      .app-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        background: linear-gradient(180deg, #0d5e3a 0%, #0a4a2e 100%);
+        color: white;
+        padding: 1.8rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+        /* Scrollbar customizada – Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+      }
+
+      /* Scrollbar customizada – Chrome/Edge/Safari */
+      .sidebar::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 8px 0;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        transition: background 0.2s;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.35);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:active {
+        background: rgba(198, 246, 213, 0.6);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.5rem 0.6rem 1.2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-brand .brand-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+      }
+
+      .sidebar-brand .brand-text h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .sidebar-brand .brand-text span {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+      }
+
+      .sidebar-nav .nav-section {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.55;
+        padding: 0.8rem 0.6rem 0.4rem;
+        font-weight: 700;
+      }
+
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.7rem 0.9rem;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        opacity: 0.9;
+      }
+
+      .sidebar-nav a i {
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+        opacity: 0.85;
+      }
+
+      .sidebar-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        transform: translateX(2px);
+      }
+
+      .sidebar-nav a.active {
+        background: rgba(255, 255, 255, 0.18);
+        opacity: 1;
+        font-weight: 600;
+        border-left: 3px solid #c6f6d5;
+      }
+
+      .sidebar-voltar {
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-voltar a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 0.82rem;
+        padding: 0.6rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+
+      .sidebar-voltar a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .main-area {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .topbar {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--cinza-borda);
+        padding: 1.1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .topbar-titulo h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .topbar-titulo h1 i {
+        color: var(--verde);
+      }
+
+      .topbar-titulo p {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      .topbar-direita {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .topbar-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 0.78rem;
+        color: #718096;
+      }
+
+      .topbar-info strong {
+        color: #0f172a;
+        font-size: 0.85rem;
+      }
+
+      .avatar-usuario {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ---------- DROPDOWN DO AVATAR (padrão dashboard) ---------- */
+      .avatar-wrapper {
+        position: relative;
+      }
+
+      .avatar-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        padding: 0;
+      }
+
+      .avatar-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      }
+
+      .avatar-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--cinza-borda);
+        min-width: 230px;
+        padding: 0.5rem;
+        z-index: 200;
+        display: none;
+        animation: menuPop 0.2s ease;
+      }
+
+      .avatar-menu.aberto {
+        display: block;
+      }
+
+      @keyframes menuPop {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .avatar-menu-header {
+        padding: 0.8rem 0.9rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        margin-bottom: 0.4rem;
+      }
+
+      .avatar-menu-header strong {
+        display: block;
+        font-size: 0.9rem;
+        color: #0f172a;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .avatar-menu-header span {
+        font-size: 0.75rem;
+        color: #718096;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+      }
+
+      .avatar-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.7rem 0.9rem;
+        border-radius: 10px;
+        color: var(--cinza-texto);
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s;
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: inherit;
+      }
+
+      .avatar-menu-item i {
+        width: 18px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.9rem;
+      }
+
+      .avatar-menu-item:hover {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+
+      .avatar-menu-item:hover i {
+        color: var(--verde);
+      }
+
+      .avatar-menu-item.sair {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair i {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair:hover {
+        background: var(--vermelho-suave);
+        color: #c53030;
+      }
+
+      .avatar-menu-divisor {
+        height: 1px;
+        background: var(--cinza-borda);
+        margin: 0.4rem 0.6rem;
+      }
+
+      .conteudo {
+        padding: 2rem;
+        flex: 1;
+        max-width: 1400px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* =====================================================================
+         GRID DE DUAS COLUNAS · ESTANTES | PRATELEIRAS
+         ===================================================================== */
+      .layout-duas-colunas {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 1.5rem;
+        align-items: start;
+      }
+
+      .coluna {
+        background: white;
+        border-radius: 18px;
+        border: 1px solid var(--cinza-borda);
+        box-shadow: var(--sombra-card);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .coluna-header {
+        padding: 1.1rem 1.4rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+      }
+
+      .coluna-header h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .coluna-header h3 i {
+        color: var(--verde);
+      }
+
+      .btn-icon-add {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        border: none;
+        background: var(--verde);
+        color: white;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+
+      .btn-icon-add:hover {
+        background: var(--verde-escuro);
+        transform: scale(1.05);
+      }
+
+      .btn-icon-add:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .coluna-corpo {
+        padding: 0.5rem;
+        flex: 1;
+        max-height: calc(100vh - 220px);
+        overflow-y: auto;
+      }
+
+      /* ---------- CABEÇALHO DA COLUNA DE PRATELEIRAS (estante selecionada) ---------- */
+      .estante-selecionada-info {
+        padding: 1rem 1.4rem;
+        background: linear-gradient(
+          135deg,
+          var(--verde-suave) 0%,
+          #ffffff 100%
+        );
+        border-bottom: 1px solid var(--cinza-borda);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .estante-selecionada-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        box-shadow: 0 6px 14px -6px rgba(13, 94, 58, 0.4);
+      }
+
+      .estante-selecionada-meta {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .estante-selecionada-meta h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 2px;
+      }
+
+      .estante-selecionada-meta span {
+        font-size: 0.78rem;
+        color: #718096;
+      }
+
+      /* ---------- ITENS (estantes e prateleiras) ---------- */
+      .item-lista {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.85rem 1rem;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 2px solid transparent;
+        margin-bottom: 4px;
+        position: relative;
+      }
+
+      .item-lista:hover {
+        background: var(--cinza-suave);
+      }
+
+      .item-lista.selecionado {
+        background: var(--verde-suave);
+        border-color: var(--verde);
+      }
+
+      .item-lista .item-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #e8f5e9 0%, #ebf4ff 100%);
+        color: var(--azul);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        border: 2px solid white;
+        box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.1);
+      }
+
+      .item-lista.selecionado .item-avatar {
+        background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+        color: white;
+      }
+
+      .item-lista .item-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .item-lista .item-info strong {
+        display: block;
+        color: #0f172a;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .item-lista .item-info span {
+        display: block;
+        font-size: 0.74rem;
+        color: #718096;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .item-lista .item-acoes {
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+
+      .item-lista:hover .item-acoes {
+        opacity: 1;
+      }
+
+      .btn-acao-mini {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        border: 1px solid var(--cinza-borda);
+        background: white;
+        color: var(--cinza-texto);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        transition: all 0.2s;
+      }
+
+      .btn-acao-mini.editar:hover {
+        background: var(--azul-claro);
+        color: var(--azul);
+        border-color: var(--azul);
+      }
+
+      .btn-acao-mini.excluir:hover {
+        background: var(--vermelho-suave);
+        color: var(--vermelho);
+        border-color: var(--vermelho);
+      }
+
+      .item-lista .badge-contagem {
+        background: var(--azul-claro);
+        color: var(--azul);
+        border: 1px solid #bee3f8;
+        padding: 0.15rem 0.55rem;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .item-lista.selecionado .badge-contagem {
+        background: white;
+        border-color: var(--verde);
+        color: var(--verde);
+      }
+
+      /* ---------- ESTADO VAZIO ---------- */
+      .estado-vazio {
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.88rem;
+      }
+
+      .estado-vazio i {
+        display: block;
+        font-size: 2.6rem;
+        margin-bottom: 0.8rem;
+        opacity: 0.4;
+      }
+
+      .estado-vazio button {
+        margin-top: 1rem;
+      }
+
+      /* =====================================================================
+         MODAL
+         ===================================================================== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+        z-index: 10000;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 2rem 1rem;
+        overflow-y: auto;
+        animation: fadeIn 0.2s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal {
+        background: white;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 560px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--cinza-borda);
+        animation: modalPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin: auto;
+      }
+
+      @keyframes modalPop {
+        0% {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .modal-header {
+        padding: 1.5rem 1.8rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .modal-header h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .modal-header h3 i {
+        color: var(--verde);
+      }
+
+      .modal-header .btn-fechar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: none;
+        background: var(--cinza-suave);
+        color: var(--cinza-texto);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        transition: all 0.2s;
+      }
+
+      .modal-header .btn-fechar:hover {
+        background: var(--cinza-borda);
+        color: #0f172a;
+      }
+
+      .modal-body {
+        padding: 1.5rem 1.8rem;
+        max-height: calc(100vh - 220px);
+        overflow-y: auto;
+      }
+
+      .modal-footer {
+        padding: 1.2rem 1.8rem;
+        border-top: 1px solid var(--cinza-borda);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        background: #f8fafc;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem 1.2rem;
+      }
+
+      .form-grid .full {
+        grid-column: 1 / -1;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #4a5568;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .form-label .required {
+        color: var(--vermelho);
+      }
+
+      .form-input,
+      .form-select,
+      .form-textarea {
+        width: 100%;
+        padding: 0.7rem 0.9rem;
+        border: 2px solid var(--cinza-borda);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s;
+        background: white;
+        font-family: inherit;
+        color: #1e293b;
+      }
+
+      .form-input:focus,
+      .form-select:focus,
+      .form-textarea:focus {
+        border-color: var(--verde);
+        box-shadow: 0 0 0 3px rgba(13, 94, 58, 0.1);
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 70px;
+      }
+
+      .form-hint {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        margin-top: 2px;
+      }
+
+      /* =====================================================================
+         BOTÕES
+         ===================================================================== */
+      .btn {
+        padding: 0.75rem 1.2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--verde);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--verde-escuro);
+        transform: translateY(-1px);
+      }
+
+      .btn-primary:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: var(--cinza-suave);
+        color: var(--cinza-texto);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .btn-secondary:hover {
+        background: var(--cinza-borda);
+      }
+
+      .btn-danger {
+        background: var(--vermelho);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c53030;
+      }
+
+      /* =====================================================================
+         NOTIFICAÇÕES TOAST
+         ===================================================================== */
+      .notification-center {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .notification-toast {
+        pointer-events: all;
+        background: white;
+        border-radius: 16px;
+        padding: 16px 24px;
+        min-width: 320px;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        animation: notificationSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .notification-toast.removing {
+        animation: notificationSlideDown 0.3s ease-in forwards;
+      }
+
+      @keyframes notificationSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes notificationSlideDown {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+      }
+
+      .notification-toast.notification-success {
+        border-left-color: var(--verde);
+        background: var(--verde-suave);
+      }
+      .notification-toast.notification-error {
+        border-left-color: var(--vermelho);
+        background: var(--vermelho-suave);
+      }
+      .notification-toast.notification-warning {
+        border-left-color: var(--amarelo);
+        background: var(--amarelo-suave);
+      }
+      .notification-toast.notification-info {
+        border-left-color: var(--azul);
+        background: var(--azul-claro);
+      }
+
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .notification-content {
+        flex: 1;
+      }
+      .notification-title {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .notification-success .notification-title {
+        color: var(--verde);
+      }
+      .notification-error .notification-title {
+        color: var(--vermelho);
+      }
+      .notification-warning .notification-title {
+        color: var(--amarelo);
+      }
+      .notification-info .notification-title {
+        color: var(--azul);
+      }
+      .notification-message {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        line-height: 1.4;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #a0aec0;
+        flex-shrink: 0;
+        margin-top: -2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .notification-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+      }
+
+      /* =====================================================================
+         LOADING
+         ===================================================================== */
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99998;
+        transition: opacity 0.3s;
+      }
+
+      .loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid var(--cinza-borda);
+        border-top-color: var(--verde);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* =====================================================================
+         RESPONSIVIDADE
+         ===================================================================== */
+      @media (max-width: 1024px) {
+        .app-layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: fixed;
+          left: -280px;
+          width: 260px;
+          z-index: 1000;
+          transition: left 0.3s;
+        }
+        .sidebar.aberta {
+          left: 0;
+        }
+        .btn-toggle-sidebar {
+          display: flex !important;
+        }
+
+        .layout-duas-colunas {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .conteudo {
+          padding: 1.2rem;
+        }
+        .topbar {
+          padding: 0.9rem 1.2rem;
+        }
+        .topbar-titulo h1 {
+          font-size: 1.1rem;
+        }
+        .topbar-info {
+          display: none;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .modal-body {
+          padding: 1rem;
+        }
+        .modal-header,
+        .modal-footer {
+          padding: 1rem 1.2rem;
+        }
+        .notification-toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+        .coluna-corpo {
+          max-height: 500px;
+        }
+      }
+
+      .btn-toggle-sidebar {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--cinza-borda);
+        color: var(--cinza-texto);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+    </style>
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+    <link rel="stylesheet" href="biblioteca-blue-theme.css">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- LOADING -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon"><i class="fas fa-book-open-reader"></i></div>
+          <div class="brand-text">
+            <h2>Biblioteca</h2>
+            <span>Municipal</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section">Principal</div>
+          <a href="dashboard.html"><i class="fas fa-gauge-high"></i> Painel</a>
+
+          <div class="nav-section">Acervo</div>
+          <a href="livros.html"><i class="fas fa-book"></i> Livros</a>
+          <a href="exemplares.html"
+            ><i class="fas fa-bookmark"></i> Exemplares</a
+          >
+          <a href="prateleiras.html" class="active"
+            ><i class="fas fa-layer-group"></i> Prateleiras</a
+          >
+          <a href="autores.html"><i class="fas fa-feather"></i> Autores</a>
+          <a href="categorias.html"><i class="fas fa-tags"></i> Categorias</a>
+          <a href="editoras.html"
+            ><i class="fas fa-building-columns"></i> Editoras</a
+          >
+
+          <div class="nav-section">Circulação</div>
+          <a href="emprestimos.html"
+            ><i class="fas fa-hand-holding-heart"></i> Empréstimos</a
+          >
+          <a href="devolucoes.html"
+            ><i class="fas fa-rotate-left"></i> Devoluções</a
+          >
+
+          <div class="nav-section">Pessoas</div>
+          <a href="leitores.html"><i class="fas fa-users"></i> Leitores</a>
+
+          <div class="nav-section">Gestão</div>
+          <a href="relatorios.html"
+            ><i class="fas fa-chart-column"></i> Relatórios</a
+          >
+          <a href="config.html"><i class="fas fa-gear"></i> Configurações</a>
+          <a href="ajuda.html">
+            <i class="fas fa-circle-question"></i> Ajuda
+          </a>
+        </nav>
+
+        <div class="sidebar-voltar">
+          <a href="../intranet.html"
+            ><i class="fas fa-arrow-left"></i> Voltar à intranet</a
+          >
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <button
+              class="btn-toggle-sidebar"
+              id="btnToggleSidebar"
+              title="Abrir menu"
+             type="button">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-titulo">
+              <h1><i class="fas fa-layer-group"></i> Prateleiras</h1>
+              <p>Estantes e prateleiras — localização física do acervo</p>
+            </div>
+          </div>
+
+          <div class="topbar-direita">
+            <div class="topbar-info">
+              <strong id="topbarNome">—</strong>
+              <span id="topbarData">—</span>
+            </div>
+
+            <!-- DROPDOWN DO AVATAR -->
+            <div class="avatar-wrapper">
+              <button
+                class="avatar-btn"
+                id="avatarBtn"
+                title="Menu do usuário"
+                aria-haspopup="menu"
+                aria-expanded="false"
+               type="button">
+                <span id="avatarIniciais">?</span>
+              </button>
+              <div class="avatar-menu" id="avatarMenu" role="menu">
+                <div class="avatar-menu-header">
+                  <strong id="menuNome">—</strong>
+                  <span id="menuEmail">—</span>
+                </div>
+                <a
+                  href="../perfil.html"
+                  class="avatar-menu-item"
+                  role="menuitem"
+                >
+                  <i class="fas fa-user-circle"></i> Meu Perfil
+                </a>
+                <a href="ajuda.html" class="avatar-menu-item" role="menuitem">
+                  <i class="fas fa-circle-question"></i> Ajuda
+                </a>
+                <div class="avatar-menu-divisor"></div>
+                <button
+                  class="avatar-menu-item sair"
+                  id="menuSair"
+                  type="button"
+                  role="menuitem"
+                >
+                  <i class="fas fa-right-from-bracket"></i> Sair
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <main class="conteudo">
+          <div class="layout-duas-colunas">
+            <!-- ============================================================
+                 COLUNA ESQUERDA · ESTANTES
+                 ============================================================ -->
+            <div class="coluna">
+              <div class="coluna-header">
+                <h3>
+                  <i class="fas fa-warehouse"></i> Estantes
+                  <span
+                    style="
+                      background: var(--azul-claro);
+                      color: var(--azul);
+                      padding: 0.1rem 0.55rem;
+                      border-radius: 40px;
+                      font-size: 0.7rem;
+                      font-weight: 700;
+                      border: 1px solid #bee3f8;
+                    "
+                    id="contadorEstantes"
+                    >0</span
+                  >
+                </h3>
+                <button
+                  class="btn-icon-add"
+                  id="btnNovaEstante"
+                  title="Nova estante"
+                 type="button">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+
+              <div class="coluna-corpo" id="listaEstantes">
+                <div class="estado-vazio">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  Carregando estantes...
+                </div>
+              </div>
+            </div>
+
+            <!-- ============================================================
+                 COLUNA DIREITA · PRATELEIRAS DA ESTANTE SELECIONADA
+                 ============================================================ -->
+            <div class="coluna">
+              <div id="painelPrateleiras">
+                <!-- Estado inicial: nenhuma estante selecionada -->
+                <div class="coluna-header">
+                  <h3><i class="fas fa-bars-staggered"></i> Prateleiras</h3>
+                </div>
+                <div class="coluna-corpo">
+                  <div class="estado-vazio">
+                    <i class="fas fa-hand-pointer"></i>
+                    Selecione uma estante à esquerda para ver e gerenciar suas
+                    prateleiras.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div class="notification-center" id="notificationCenter"></div>
+
+    <!-- ============================================================
+         MODAL DE ESTANTE
+         ============================================================ -->
+    <div class="modal-overlay" id="modalEstante" style="display: none">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-warehouse"></i>
+            <span id="modalEstanteTitulo">Nova estante</span>
+          </h3>
+          <button class="btn-fechar" id="btnFecharModalEstante" title="Fechar" type="button">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+
+        <form id="formEstante">
+          <div class="modal-body">
+            <input type="hidden" id="estanteId" />
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="estanteCodigo">
+                  Código <span class="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="estanteCodigo"
+                  class="form-input"
+                  placeholder="Ex: A, B, INFANTIL"
+                  required
+                  maxlength="20"
+                  style="text-transform: uppercase"
+                / aria-label="Ex: A, B, INFANTIL">
+                <span class="form-hint">Identificador curto e único.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="estanteSetor">Setor</label>
+                <input
+                  type="text"
+                  id="estanteSetor"
+                  class="form-input"
+                  placeholder="Ex: Acervo Geral, Infantil"
+                  maxlength="100"
+                / aria-label="Ex: Acervo Geral, Infantil">
+              </div>
+
+              <div class="form-group full">
+                <label class="form-label" for="estanteDescricao"
+                  >Descrição</label
+                >
+                <textarea
+                  id="estanteDescricao"
+                  class="form-textarea"
+                  placeholder="Descrição ou observações sobre esta estante..."
+                 aria-label="Descrição ou observações sobre esta estante..."></textarea>
+              </div>
+
+              <div class="form-group full">
+                <label class="form-label" for="estanteAtivo">Status</label>
+                <select id="estanteAtivo" class="form-select" aria-label="estanteAtivo">
+                  <option value="true">Ativa</option>
+                  <option value="false">Inativa</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="btnCancelarEstante"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" id="btnSalvarEstante">
+              <i class="fas fa-save"></i> Salvar estante
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL DE PRATELEIRA
+         ============================================================ -->
+    <div class="modal-overlay" id="modalPrateleira" style="display: none">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-bars-staggered"></i>
+            <span id="modalPrateleiraTitulo">Nova prateleira</span>
+          </h3>
+          <button
+            class="btn-fechar"
+            id="btnFecharModalPrateleira"
+            title="Fechar"
+           type="button">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+
+        <form id="formPrateleira">
+          <div class="modal-body">
+            <input type="hidden" id="prateleiraId" />
+            <input type="hidden" id="prateleiraEstanteId" />
+
+            <div
+              style="
+                background: var(--verde-suave);
+                padding: 0.9rem 1rem;
+                border-radius: 12px;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border: 1px solid #c6f6d5;
+              "
+            >
+              <i class="fas fa-warehouse" style="color: var(--verde)"></i>
+              <span style="font-size: 0.85rem; color: var(--verde)">
+                Estante:
+                <strong id="prateleiraEstanteNome">—</strong>
+              </span>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group full">
+                <label class="form-label" for="prateleiraNumero">
+                  Número <span class="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="prateleiraNumero"
+                  class="form-input"
+                  placeholder="Ex: 01, 02, 03"
+                  required
+                  maxlength="20"
+                / aria-label="Ex: 01, 02, 03">
+                <span class="form-hint">
+                  Deve ser único dentro desta estante.
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="prateleiraPosInicial">
+                  Posição inicial
+                </label>
+                <input
+                  type="text"
+                  id="prateleiraPosInicial"
+                  class="form-input"
+                  placeholder="Ex: 0001"
+                  maxlength="20"
+                / aria-label="Ex: 0001">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="prateleiraPosFinal">
+                  Posição final
+                </label>
+                <input
+                  type="text"
+                  id="prateleiraPosFinal"
+                  class="form-input"
+                  placeholder="Ex: 0050"
+                  maxlength="20"
+                / aria-label="Ex: 0050">
+              </div>
+
+              <div class="form-group full">
+                <label class="form-label" for="prateleiraObservacoes">
+                  Observações
+                </label>
+                <textarea
+                  id="prateleiraObservacoes"
+                  class="form-textarea"
+                  placeholder="Observações sobre esta prateleira..."
+                 aria-label="Observações sobre esta prateleira..."></textarea>
+              </div>
+
+              <div class="form-group full">
+                <label class="form-label" for="prateleiraAtivo">Status</label>
+                <select id="prateleiraAtivo" class="form-select" aria-label="prateleiraAtivo">
+                  <option value="true">Ativa</option>
+                  <option value="false">Inativa</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="btnCancelarPrateleira"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="btnSalvarPrateleira"
+            >
+              <i class="fas fa-save"></i> Salvar prateleira
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SUPABASE SDK -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // ============================================
+      // CONFIGURAÇÃO SUPABASE
+      // ============================================
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // ESTADO
+      // ============================================
+      let usuarioLogado = null;
+      let estantesCarregadas = [];
+      let prateleirasCarregadas = [];
+      let estanteSelecionadaId = null;
+
+      // ============================================
+      // NOTIFICAÇÕES
+      // ============================================
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      window.showConfirm = function (title, message, onConfirm) {
+        const overlay = document.createElement("div");
+        overlay.className = "modal-overlay";
+        overlay.innerHTML = `
+          <div class="modal" style="max-width: 420px;">
+            <div class="modal-body" style="text-align:center; padding: 2rem;">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">❓</div>
+              <h3 style="font-size: 1.2rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">${title}</h3>
+              <p style="font-size: 0.9rem; color: #475569; line-height: 1.5; margin-bottom: 1.5rem;">${message}</p>
+              <div style="display:flex; gap: 0.75rem; justify-content:center;">
+                <button class="btn btn-secondary" id="cancelBtn" type="button">Cancelar</button>
+                <button class="btn btn-danger" id="confirmBtn" type="button">Confirmar</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        const close = () => {
+          overlay.style.opacity = "0";
+          setTimeout(() => overlay.remove(), 200);
+        };
+        overlay.querySelector("#cancelBtn").addEventListener("click", close);
+        overlay.querySelector("#confirmBtn").addEventListener("click", () => {
+          close();
+          if (typeof onConfirm === "function") onConfirm();
+        });
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) close();
+        });
+        return overlay;
+      };
+
+      // ============================================
+      // HELPERS
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
+
+      function esconderLoading() {
+        document.getElementById("loadingOverlay")?.classList.add("hidden");
+      }
+
+      // ============================================
+      // SESSÃO
+      // ============================================
+      async function verificarSessao() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        const { data: perfil, error } = await supabase
+          .from("usuarios")
+          .select("id, uuid, nome, email, perfil, ativo")
+          .eq("uuid", session.user.id)
+          .maybeSingle();
+
+        if (error || !perfil || perfil.ativo === false) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        usuarioLogado = perfil;
+        return perfil;
+      }
+
+      function renderizarUsuario() {
+        if (!usuarioLogado) return;
+        setTexto("topbarNome", usuarioLogado.nome || "—");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+        );
+        const el = document.getElementById("avatarIniciais");
+        if (el) el.textContent = iniciais(usuarioLogado.nome);
+
+        // Preenche o dropdown do avatar
+        setTexto("menuNome", usuarioLogado.nome || "—");
+        setTexto("menuEmail", usuarioLogado.email || "—");
+      }
+
+      // ============================================
+      // MENU DO AVATAR (dropdown)
+      // ============================================
+      function configurarMenuAvatar() {
+        const btn = document.getElementById("avatarBtn");
+        const menu = document.getElementById("avatarMenu");
+        if (!btn || !menu) return;
+
+        // Abre/fecha ao clicar no avatar
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const aberto = menu.classList.toggle("aberto");
+          btn.setAttribute("aria-expanded", aberto ? "true" : "false");
+        });
+
+        // Fecha ao clicar fora
+        document.addEventListener("click", (e) => {
+          if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Fecha com ESC
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Item "Sair" dentro do dropdown
+        const menuSair = document.getElementById("menuSair");
+        if (menuSair) {
+          menuSair.addEventListener("click", async () => {
+            const confirmar = window.confirm(
+              "Deseja realmente sair do módulo?",
+            );
+            if (!confirmar) return;
+            await supabase.auth.signOut();
+            window.location.href = "../intranet.html";
+          });
+        }
+      }
+
+      // ============================================
+      // CARREGAR ESTANTES (com contagem de prateleiras)
+      // ============================================
+      async function carregarEstantes() {
+        const { data, error } = await supabase
+          .from("bib_estantes")
+          .select(
+            `
+            id, codigo, descricao, setor, ativo, created_at,
+            prateleiras: bib_prateleiras ( id )
+          `,
+          )
+          .order("codigo", { ascending: true });
+
+        if (error) {
+          console.error("Erro ao carregar estantes:", error);
+          document.getElementById("listaEstantes").innerHTML = `
+            <div class="estado-vazio">
+              <i class="fas fa-circle-exclamation"></i>
+              Erro ao carregar estantes.<br/>
+              <small>${escaparHtml(error.message)}</small>
+            </div>`;
+          return;
+        }
+
+        estantesCarregadas = data || [];
+        renderizarEstantes();
+      }
+
+      function renderizarEstantes() {
+        const container = document.getElementById("listaEstantes");
+        const contador = document.getElementById("contadorEstantes");
+        if (contador) contador.textContent = estantesCarregadas.length;
+
+        if (estantesCarregadas.length === 0) {
+          container.innerHTML = `
+            <div class="estado-vazio">
+              <i class="fas fa-warehouse"></i>
+              Nenhuma estante cadastrada ainda.
+              <button class="btn btn-primary" id="btnCriarPrimeiraEstante" style="display:inline-flex; margin-top:1rem;" type="button">
+                <i class="fas fa-plus"></i> Criar primeira estante
+              </button>
+            </div>`;
+          const btn = document.getElementById("btnCriarPrimeiraEstante");
+          if (btn) btn.addEventListener("click", abrirModalNovaEstante);
+          return;
+        }
+
+        container.innerHTML = estantesCarregadas
+          .map((e) => {
+            const numPrat = (e.prateleiras || []).length;
+            const selecionada = e.id === estanteSelecionadaId;
+            const meta = [
+              e.setor ? escaparHtml(e.setor) : null,
+              `${numPrat} prateleira${numPrat === 1 ? "" : "s"}`,
+            ]
+              .filter(Boolean)
+              .join(" · ");
+
+            return `
+              <div class="item-lista ${selecionada ? "selecionado" : ""}" data-id="${e.id}">
+                <div class="item-avatar">${escaparHtml(e.codigo)}</div>
+                <div class="item-info">
+                  <strong>Estante ${escaparHtml(e.codigo)}</strong>
+                  <span>${meta || "Sem informações"}</span>
+                </div>
+                <span class="badge-contagem">${numPrat}</span>
+                <div class="item-acoes">
+                  <button class="btn-acao-mini editar" data-acao="editar" data-id="${e.id}" title="Editar" type="button">
+                    <i class="fas fa-pen"></i>
+                  </button>
+                  <button class="btn-acao-mini excluir" data-acao="excluir" data-id="${e.id}" title="Excluir" type="button">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>`;
+          })
+          .join("");
+
+        // Eventos
+        container.querySelectorAll(".item-lista").forEach((el) => {
+          el.addEventListener("click", (ev) => {
+            // Ignora cliques nos botões de ação
+            if (ev.target.closest("[data-acao]")) return;
+            selecionarEstante(parseInt(el.dataset.id));
+          });
+        });
+        container.querySelectorAll("[data-acao='editar']").forEach((btn) => {
+          btn.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            abrirModalEditarEstante(parseInt(btn.dataset.id));
+          });
+        });
+        container.querySelectorAll("[data-acao='excluir']").forEach((btn) => {
+          btn.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            confirmarExclusaoEstante(parseInt(btn.dataset.id));
+          });
+        });
+      }
+
+      // ============================================
+      // SELECIONAR ESTANTE
+      // ============================================
+      async function selecionarEstante(id) {
+        estanteSelecionadaId = id;
+        renderizarEstantes();
+        await carregarPrateleirasDaEstante(id);
+      }
+
+      // ============================================
+      // CARREGAR PRATELEIRAS DA ESTANTE SELECIONADA
+      // ============================================
+      async function carregarPrateleirasDaEstante(estanteId) {
+        const painel = document.getElementById("painelPrateleiras");
+        const estante = estantesCarregadas.find((e) => e.id === estanteId);
+        if (!estante) {
+          painel.innerHTML = `
+            <div class="coluna-header">
+              <h3><i class="fas fa-bars-staggered"></i> Prateleiras</h3>
+            </div>
+            <div class="coluna-corpo">
+              <div class="estado-vazio">
+                <i class="fas fa-hand-pointer"></i>
+                Selecione uma estante à esquerda.
+              </div>
+            </div>`;
+          return;
+        }
+
+        // Esqueleto com header + estante selecionada
+        painel.innerHTML = `
+          <div class="estante-selecionada-info">
+            <div class="estante-selecionada-avatar">${escaparHtml(estante.codigo)}</div>
+            <div class="estante-selecionada-meta">
+              <h4>Estante ${escaparHtml(estante.codigo)}</h4>
+              <span>${escaparHtml(estante.setor || "Sem setor definido")}${
+                estante.descricao ? " · " + escaparHtml(estante.descricao) : ""
+              }</span>
+            </div>
+            <button class="btn btn-primary" id="btnNovaPrateleira" style="padding: 0.6rem 1rem;" type="button">
+              <i class="fas fa-plus"></i> Nova prateleira
+            </button>
+          </div>
+
+          <div class="coluna-header">
+            <h3>
+              <i class="fas fa-bars-staggered"></i> Prateleiras
+              <span
+                style="
+                  background: var(--azul-claro);
+                  color: var(--azul);
+                  padding: 0.1rem 0.55rem;
+                  border-radius: 40px;
+                  font-size: 0.7rem;
+                  font-weight: 700;
+                  border: 1px solid #bee3f8;
+                "
+                id="contadorPrateleiras">0</span>
+            </h3>
+          </div>
+
+          <div class="coluna-corpo" id="listaPrateleiras">
+            <div class="estado-vazio">
+              <i class="fas fa-spinner fa-spin"></i>
+              Carregando prateleiras...
+            </div>
+          </div>
+        `;
+
+        document
+          .getElementById("btnNovaPrateleira")
+          .addEventListener("click", abrirModalNovaPrateleira);
+
+        // Consulta com contagem de exemplares
+        const { data, error } = await supabase
+          .from("bib_prateleiras")
+          .select(
+            `
+            id, numero, posicao_inicial, posicao_final, observacoes, ativo, created_at,
+            exemplares: bib_exemplares ( id )
+          `,
+          )
+          .eq("estante_id", estanteId)
+          .order("numero", { ascending: true });
+
+        if (error) {
+          console.error("Erro ao carregar prateleiras:", error);
+          document.getElementById("listaPrateleiras").innerHTML = `
+            <div class="estado-vazio">
+              <i class="fas fa-circle-exclamation"></i>
+              Erro ao carregar prateleiras.<br/>
+              <small>${escaparHtml(error.message)}</small>
+            </div>`;
+          return;
+        }
+
+        prateleirasCarregadas = data || [];
+        renderizarPrateleiras();
+      }
+
+      function renderizarPrateleiras() {
+        const container = document.getElementById("listaPrateleiras");
+        const contador = document.getElementById("contadorPrateleiras");
+        if (contador) contador.textContent = prateleirasCarregadas.length;
+
+        if (prateleirasCarregadas.length === 0) {
+          container.innerHTML = `
+            <div class="estado-vazio">
+              <i class="fas fa-bars-staggered"></i>
+              Esta estante ainda não possui prateleiras.<br/>
+              Clique em <strong>Nova prateleira</strong> para começar.
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = prateleirasCarregadas
+          .map((p) => {
+            const numEx = (p.exemplares || []).length;
+            const posInfo = [
+              p.posicao_inicial ? `de ${p.posicao_inicial}` : null,
+              p.posicao_final ? `até ${p.posicao_final}` : null,
+            ]
+              .filter(Boolean)
+              .join(" ");
+
+            return `
+              <div class="item-lista" data-id="${p.id}" style="cursor:default;">
+                <div class="item-avatar"><i class="fas fa-bars-staggered" style="font-size:0.9rem;"></i></div>
+                <div class="item-info">
+                  <strong>Prateleira ${escaparHtml(p.numero)}</strong>
+                  <span>
+                    ${posInfo || "Sem faixa de posições definida"}
+                    · ${numEx} exemplar${numEx === 1 ? "" : "es"}
+                  </span>
+                </div>
+                <span class="badge-contagem">${numEx}</span>
+                <div class="item-acoes">
+                  <button class="btn-acao-mini editar" data-acao="editar-prat" data-id="${p.id}" title="Editar" type="button">
+                    <i class="fas fa-pen"></i>
+                  </button>
+                  <button class="btn-acao-mini excluir" data-acao="excluir-prat" data-id="${p.id}" title="Excluir" type="button">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>`;
+          })
+          .join("");
+
+        container
+          .querySelectorAll("[data-acao='editar-prat']")
+          .forEach((btn) => {
+            btn.addEventListener("click", () =>
+              abrirModalEditarPrateleira(parseInt(btn.dataset.id)),
+            );
+          });
+        container
+          .querySelectorAll("[data-acao='excluir-prat']")
+          .forEach((btn) => {
+            btn.addEventListener("click", () =>
+              confirmarExclusaoPrateleira(parseInt(btn.dataset.id)),
+            );
+          });
+      }
+
+      // ============================================
+      // MODAL ESTANTE · NOVA
+      // ============================================
+      function limparFormEstante() {
+        document.getElementById("formEstante").reset();
+        document.getElementById("estanteId").value = "";
+        document.getElementById("estanteAtivo").value = "true";
+      }
+
+      function abrirModalNovaEstante() {
+        limparFormEstante();
+        document.getElementById("modalEstanteTitulo").textContent =
+          "Nova estante";
+        document.getElementById("modalEstante").style.display = "flex";
+        setTimeout(() => document.getElementById("estanteCodigo").focus(), 100);
+      }
+
+      function abrirModalEditarEstante(id) {
+        const e = estantesCarregadas.find((x) => x.id === id);
+        if (!e) return;
+        limparFormEstante();
+        document.getElementById("modalEstanteTitulo").textContent =
+          "Editar estante";
+        document.getElementById("estanteId").value = e.id;
+        document.getElementById("estanteCodigo").value = e.codigo || "";
+        document.getElementById("estanteSetor").value = e.setor || "";
+        document.getElementById("estanteDescricao").value = e.descricao || "";
+        document.getElementById("estanteAtivo").value = e.ativo
+          ? "true"
+          : "false";
+        document.getElementById("modalEstante").style.display = "flex";
+      }
+
+      function fecharModalEstante() {
+        document.getElementById("modalEstante").style.display = "none";
+      }
+
+      // ============================================
+      // MODAL PRATELEIRA · NOVA
+      // ============================================
+      function limparFormPrateleira() {
+        document.getElementById("formPrateleira").reset();
+        document.getElementById("prateleiraId").value = "";
+        document.getElementById("prateleiraAtivo").value = "true";
+      }
+
+      function abrirModalNovaPrateleira() {
+        if (!estanteSelecionadaId) return;
+        const estante = estantesCarregadas.find(
+          (e) => e.id === estanteSelecionadaId,
+        );
+        if (!estante) return;
+
+        limparFormPrateleira();
+        document.getElementById("modalPrateleiraTitulo").textContent =
+          "Nova prateleira";
+        document.getElementById("prateleiraEstanteId").value = estante.id;
+        document.getElementById("prateleiraEstanteNome").textContent =
+          `Estante ${estante.codigo}`;
+        document.getElementById("modalPrateleira").style.display = "flex";
+        setTimeout(
+          () => document.getElementById("prateleiraNumero").focus(),
+          100,
+        );
+      }
+
+      function abrirModalEditarPrateleira(id) {
+        const p = prateleirasCarregadas.find((x) => x.id === id);
+        if (!p) return;
+        const estante = estantesCarregadas.find(
+          (e) => e.id === estanteSelecionadaId,
+        );
+
+        limparFormPrateleira();
+        document.getElementById("modalPrateleiraTitulo").textContent =
+          "Editar prateleira";
+        document.getElementById("prateleiraId").value = p.id;
+        document.getElementById("prateleiraEstanteId").value =
+          estanteSelecionadaId;
+        document.getElementById("prateleiraEstanteNome").textContent =
+          `Estante ${estante?.codigo || "?"}`;
+        document.getElementById("prateleiraNumero").value = p.numero || "";
+        document.getElementById("prateleiraPosInicial").value =
+          p.posicao_inicial || "";
+        document.getElementById("prateleiraPosFinal").value =
+          p.posicao_final || "";
+        document.getElementById("prateleiraObservacoes").value =
+          p.observacoes || "";
+        document.getElementById("prateleiraAtivo").value = p.ativo
+          ? "true"
+          : "false";
+        document.getElementById("modalPrateleira").style.display = "flex";
+      }
+
+      function fecharModalPrateleira() {
+        document.getElementById("modalPrateleira").style.display = "none";
+      }
+
+      // ============================================
+      // SALVAR ESTANTE
+      // ============================================
+      document
+        .getElementById("formEstante")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const btn = document.getElementById("btnSalvarEstante");
+          const id = document.getElementById("estanteId").value;
+          const codigo = document
+            .getElementById("estanteCodigo")
+            .value.trim()
+            .toUpperCase();
+
+          if (!codigo) {
+            window.showNotification(
+              "warning",
+              "Campo obrigatório",
+              "Informe o código da estante.",
+            );
+            return;
+          }
+
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Salvando...`;
+
+          try {
+            const dados = {
+              codigo,
+              setor:
+                document.getElementById("estanteSetor").value.trim() || null,
+              descricao:
+                document.getElementById("estanteDescricao").value.trim() ||
+                null,
+              ativo: document.getElementById("estanteAtivo").value === "true",
+            };
+
+            if (id) {
+              const { error } = await supabase
+                .from("bib_estantes")
+                .update(dados)
+                .eq("id", parseInt(id));
+              if (error) throw error;
+
+              window.showNotification(
+                "success",
+                "Estante atualizada",
+                `Estante ${codigo} foi atualizada.`,
+              );
+            } else {
+              const { error } = await supabase
+                .from("bib_estantes")
+                .insert(dados);
+              if (error) throw error;
+
+              window.showNotification(
+                "success",
+                "Estante cadastrada",
+                `Estante ${codigo} foi adicionada.`,
+              );
+            }
+
+            fecharModalEstante();
+            await carregarEstantes();
+            // Se editamos a estante atualmente selecionada, atualiza as prateleiras
+            if (estanteSelecionadaId) {
+              await carregarPrateleirasDaEstante(estanteSelecionadaId);
+            }
+          } catch (err) {
+            console.error(err);
+            if (err.code === "23505" || /duplicate key/i.test(err.message)) {
+              window.showNotification(
+                "error",
+                "Código já existe",
+                "Já existe uma estante com este código. Escolha outro.",
+              );
+            } else {
+              window.showNotification(
+                "error",
+                "Erro ao salvar",
+                err.message || "Não foi possível salvar a estante.",
+              );
+            }
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-save"></i> Salvar estante`;
+          }
+        });
+
+      // ============================================
+      // SALVAR PRATELEIRA
+      // ============================================
+      document
+        .getElementById("formPrateleira")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const btn = document.getElementById("btnSalvarPrateleira");
+          const id = document.getElementById("prateleiraId").value;
+          const estanteId = document.getElementById(
+            "prateleiraEstanteId",
+          ).value;
+          const numero = document
+            .getElementById("prateleiraNumero")
+            .value.trim();
+
+          if (!numero) {
+            window.showNotification(
+              "warning",
+              "Campo obrigatório",
+              "Informe o número da prateleira.",
+            );
+            return;
+          }
+
+          if (!estanteId) {
+            window.showNotification(
+              "error",
+              "Estante não definida",
+              "Selecione uma estante antes de salvar.",
+            );
+            return;
+          }
+
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Salvando...`;
+
+          try {
+            const dados = {
+              estante_id: parseInt(estanteId),
+              numero,
+              posicao_inicial:
+                document.getElementById("prateleiraPosInicial").value.trim() ||
+                null,
+              posicao_final:
+                document.getElementById("prateleiraPosFinal").value.trim() ||
+                null,
+              observacoes:
+                document.getElementById("prateleiraObservacoes").value.trim() ||
+                null,
+              ativo:
+                document.getElementById("prateleiraAtivo").value === "true",
+            };
+
+            if (id) {
+              const { error } = await supabase
+                .from("bib_prateleiras")
+                .update(dados)
+                .eq("id", parseInt(id));
+              if (error) throw error;
+
+              window.showNotification(
+                "success",
+                "Prateleira atualizada",
+                `Prateleira ${numero} foi atualizada.`,
+              );
+            } else {
+              const { error } = await supabase
+                .from("bib_prateleiras")
+                .insert(dados);
+              if (error) throw error;
+
+              window.showNotification(
+                "success",
+                "Prateleira cadastrada",
+                `Prateleira ${numero} foi adicionada.`,
+              );
+            }
+
+            fecharModalPrateleira();
+            await carregarEstantes(); // atualiza contadores das estantes
+            await carregarPrateleirasDaEstante(parseInt(estanteId));
+          } catch (err) {
+            console.error(err);
+            if (err.code === "23505" || /duplicate key/i.test(err.message)) {
+              window.showNotification(
+                "error",
+                "Número já existe",
+                "Já existe uma prateleira com este número nesta estante.",
+              );
+            } else {
+              window.showNotification(
+                "error",
+                "Erro ao salvar",
+                err.message || "Não foi possível salvar a prateleira.",
+              );
+            }
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-save"></i> Salvar prateleira`;
+          }
+        });
+
+      // ============================================
+      // EXCLUIR ESTANTE
+      // ============================================
+      async function confirmarExclusaoEstante(id) {
+        const e = estantesCarregadas.find((x) => x.id === id);
+        if (!e) return;
+
+        const numPrat = (e.prateleiras || []).length;
+        if (numPrat > 0) {
+          window.showNotification(
+            "error",
+            "Não é possível excluir",
+            `Esta estante possui ${numPrat} prateleira(s) cadastrada(s). Exclua-as antes.`,
+            6000,
+          );
+          return;
+        }
+
+        window.showConfirm(
+          "Excluir estante",
+          `Deseja realmente excluir a Estante ${escaparHtml(e.codigo)}? Esta ação não pode ser desfeita.`,
+          async () => {
+            try {
+              const { error } = await supabase
+                .from("bib_estantes")
+                .delete()
+                .eq("id", id);
+              if (error) throw error;
+
+              window.showNotification(
+                "success",
+                "Estante excluída",
+                `Estante ${e.codigo} foi removida.`,
+              );
+
+              // Se era a estante selecionada, limpa a seleção
+              if (estanteSelecionadaId === id) {
+                estanteSelecionadaId = null;
+                document.getElementById("painelPrateleiras").innerHTML = `
+                  <div class="coluna-header">
+                    <h3><i class="fas fa-bars-staggered"></i> Prateleiras</h3>
+                  </div>
+                  <div class="coluna-corpo">
+                    <div class="estado-vazio">
+                      <i class="fas fa-hand-pointer"></i>
+                      Selecione uma estante à esquerda.
+                    </div>
+                  </div>`;
+              }
+
+              await carregarEstantes();
+            } catch (err) {
+              console.error(err);
+              window.showNotification(
+                "error",
+                "Erro ao excluir",
+                err.message || "Não foi possível excluir a estante.",
+              );
+            }
+          },
+        );
+      }
+
+      // ============================================
+      // EXCLUIR PRATELEIRA
+      // ============================================
+      async function confirmarExclusaoPrateleira(id) {
+        const p = prateleirasCarregadas.find((x) => x.id === id);
+        if (!p) return;
+
+        const numEx = (p.exemplares || []).length;
+        if (numEx > 0) {
+          window.showNotification(
+            "error",
+            "Não é possível excluir",
+            `Esta prateleira possui ${numEx} exemplar(es) vinculado(s). Mova-os ou exclua-os antes.`,
+            6000,
+          );
+          return;
+        }
+
+        window.showConfirm(
+          "Excluir prateleira",
+          `Deseja realmente excluir a Prateleira ${escaparHtml(p.numero)}? Esta ação não pode ser desfeita.`,
+          async () => {
+            try {
+              const { error } = await supabase
+                .from("bib_prateleiras")
+                .delete()
+                .eq("id", id);
+              if (error) throw error;
+
+              window.showNotification(
+                "success",
+                "Prateleira excluída",
+                `Prateleira ${p.numero} foi removida.`,
+              );
+
+              await carregarEstantes();
+              await carregarPrateleirasDaEstante(estanteSelecionadaId);
+            } catch (err) {
+              console.error(err);
+              window.showNotification(
+                "error",
+                "Erro ao excluir",
+                err.message || "Não foi possível excluir a prateleira.",
+              );
+            }
+          },
+        );
+      }
+
+      // ============================================
+      // EVENTOS
+      // ============================================
+      document
+        .getElementById("btnNovaEstante")
+        .addEventListener("click", abrirModalNovaEstante);
+      document
+        .getElementById("btnFecharModalEstante")
+        .addEventListener("click", fecharModalEstante);
+      document
+        .getElementById("btnCancelarEstante")
+        .addEventListener("click", fecharModalEstante);
+      document.getElementById("modalEstante").addEventListener("click", (e) => {
+        if (e.target.id === "modalEstante") fecharModalEstante();
+      });
+
+      document
+        .getElementById("btnFecharModalPrateleira")
+        .addEventListener("click", fecharModalPrateleira);
+      document
+        .getElementById("btnCancelarPrateleira")
+        .addEventListener("click", fecharModalPrateleira);
+      document
+        .getElementById("modalPrateleira")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "modalPrateleira") fecharModalPrateleira();
+        });
+
+      // Toggle sidebar mobile
+      const btnToggle = document.getElementById("btnToggleSidebar");
+      const sidebar = document.getElementById("sidebar");
+      if (btnToggle && sidebar) {
+        btnToggle.addEventListener("click", () =>
+          sidebar.classList.toggle("aberta"),
+        );
+        sidebar.querySelectorAll("a").forEach((a) => {
+          a.addEventListener("click", () => sidebar.classList.remove("aberta"));
+        });
+      }
+
+      // ESC fecha modais
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          fecharModalEstante();
+          fecharModalPrateleira();
+        }
+      });
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        try {
+          const usuario = await verificarSessao();
+          if (!usuario) return;
+
+          renderizarUsuario();
+          configurarMenuAvatar();
+
+          await carregarEstantes();
+
+          // Auto-seleciona a primeira estante, se houver
+          if (estantesCarregadas.length > 0) {
+            await selecionarEstante(estantesCarregadas[0].id);
+          }
+        } catch (err) {
+          console.error("Erro na inicialização:", err);
+          window.showNotification(
+            "error",
+            "Erro inesperado",
+            "Não foi possível inicializar a página.",
+          );
+        } finally {
+          esconderLoading();
+        }
+      }
+
+      init();
+    </script>
+      <script type="module" src="./biblioteca-saas.js"></script>
+  </body>
+</html>

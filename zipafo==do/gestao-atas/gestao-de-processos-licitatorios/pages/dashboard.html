@@ -1,0 +1,135 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="dashboard">
+  <h1>Dashboard</h1>
+
+  <!-- Cards de acesso rápido -->
+  <div class="cards acesso-rapido">
+    <div class="card" onclick="window.location.hash = '#/processos'">
+      <div class="card-header">
+        <h3 class="card-title">Processos</h3>
+      </div>
+      <div class="card-icon">📁</div>
+      <p>Gerenciar processos licitatórios</p>
+    </div>
+    <div class="card" onclick="window.location.hash = '#/tarefas'">
+      <div class="card-header">
+        <h3 class="card-title">Tarefas</h3>
+      </div>
+      <div class="card-icon">✅</div>
+      <p>Acompanhe suas tarefas</p>
+    </div>
+    <div class="card" onclick="window.location.hash = '#/prazos'">
+      <div class="card-header">
+        <h3 class="card-title">Prazos</h3>
+      </div>
+      <div class="card-icon">⏰</div>
+      <p>Controle de prazos</p>
+    </div>
+    <div class="card" onclick="window.location.hash = '#/fluxos'">
+      <div class="card-header">
+        <h3 class="card-title">Fluxos</h3>
+      </div>
+      <div class="card-icon">🔄</div>
+      <p>Fluxos de trabalho</p>
+    </div>
+    <div class="card" onclick="window.location.hash = '#/modelos'">
+      <div class="card-header">
+        <h3 class="card-title">Modelos</h3>
+      </div>
+      <div class="card-icon">📄</div>
+      <p>Documentos padrão</p>
+    </div>
+    <div class="card" onclick="window.location.hash = '#/setores'">
+      <div class="card-header">
+        <h3 class="card-title">Setores</h3>
+      </div>
+      <div class="card-icon">🏢</div>
+      <p>Departamentos</p>
+    </div>
+    <div class="card" onclick="window.location.hash = '#/usuarios'">
+      <div class="card-header">
+        <h3 class="card-title">Usuários</h3>
+      </div>
+      <div class="card-icon">👥</div>
+      <p>Gerenciar usuários</p>
+    </div>
+    <div class="card" onclick="window.location.hash = '#/configuracoes'">
+      <div class="card-header">
+        <h3 class="card-title">Configurações</h3>
+      </div>
+      <div class="card-icon">⚙️</div>
+      <p>Ajustes do sistema</p>
+    </div>
+  </div>
+
+  <!-- Indicadores -->
+  <div class="cards indicadores">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Processos Saudáveis</h3>
+      </div>
+      <div class="card-value" id="card-saudaveis">0</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Processos em Atenção</h3>
+      </div>
+      <div class="card-value" id="card-atencao">0</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Processos Críticos</h3>
+      </div>
+      <div class="card-value" id="card-criticos">0</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Processos Parados</h3>
+      </div>
+      <div class="card-value" id="card-parados">0</div>
+    </div>
+  </div>
+
+  <!-- Listas -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Processos Críticos</h3>
+    </div>
+    <div class="table-container">
+      <table aria-label="Tabela de dados">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Objeto</th>
+            <th>Modalidade</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="lista-processos-criticos"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Tarefas Pendentes</h3>
+    </div>
+    <div class="table-container">
+      <table aria-label="Tabela de dados">
+        <thead>
+          <tr>
+            <th>Tarefa</th>
+            <th>Processo</th>
+            <th>Responsável</th>
+            <th>Prazo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="lista-tarefas-pendentes"></tbody>
+      </table>
+    </div>
+  </div>
+</div>

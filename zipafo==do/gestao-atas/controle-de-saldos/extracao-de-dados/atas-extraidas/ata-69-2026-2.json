@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "85",
+    "processo_origem": "107/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor ELO SERVICOS DE SAUDE LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "69/2026",
+    "numero_contratacao": "1550 | 69/2026",
+    "numero_processo": "107/2025",
+    "numero_pregao": "38",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2026-09-03",
+    "vigencia_inicio": "2026-09-03",
+    "vigencia_fim": "2027-09-03",
+    "objeto": "Contratação de empresa para fornecimento de médico, técnico de enfermagem e enfermeiro em regime de plantão, médico pediatra, psicólogo e fisioterapeuta.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "ELO SERVICOS DE SAUDE LTDA",
+    "cnpj": "47.826.214/0001-85"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "PRESTAÇÃO DE SERVIÇOS MÉDICOS EM REGIME DE PLANTÃO DE 12 (DOZE) HORAS, DE SEGUNDA A DOMINGO, INCLUSIVE FERIADOS, PERÍODOS DIURNO E NOTURNO. - PRESTAÇÃO DE SERVIÇOS MÉDICOS EM REGIME DE PLANTÃO DE 12 (DOZE) HORAS, DE SEGUNDA A DOMINGO, INCLUSIVE FERIADOS, PERÍODOS DIURNO E NOTURNO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 1320.0,
+      "quantidade_contratada": 800.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 6.0,
+      "quantidade_saldo": 794.0,
+      "valor_total": 1056000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 7920.0,
+      "valor_saldo": 1048080.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "6",
+      "descricao": "PRESTAÇÃO DE SERVIÇOS DE PEDIATRIA COM ATENDIMENTO EM DOIS PERÍODOS DE QUATRO HORAS CADA, TOTALIZANDO OITO HORAS SEMANAIS, COM NO MÁXIMO QUINZE CONSULTAS POR PERÍODO - PRESTAÇÃO DE SERVIÇOS DE PEDIATRIA COM ATENDIMENTO EM DOIS PERÍODOS DE QUATRO HORAS CADA, TOTALIZANDO OITO HORAS SEMANAIS, COM NO MÁXIMO QUINZE CONSULTAS POR PERÍODO",
+      "unidade_medida": "UN",
+      "valor_unitario": 9000.0,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 12.0,
+      "valor_total": 108000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 108000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 1164000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 7920.0,
+    "valor_saldo_geral": 1156080.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem com o PDF: R$ 1.164.000,00 contratado, R$ 7.920,00 executado e R$ 1.156.080,00 de saldo.",
+  "anexos": []
+}

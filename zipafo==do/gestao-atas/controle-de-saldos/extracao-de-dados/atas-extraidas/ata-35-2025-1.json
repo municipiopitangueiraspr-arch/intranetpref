@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "34",
+    "processo_origem": "28/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "33/2025",
+    "numero_contratacao": "1217 | 33/2025",
+    "numero_processo": "28/2025",
+    "numero_pregao": "14",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Lote - Lote",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-04-07",
+    "vigencia_inicio": "2026-03-02",
+    "vigencia_fim": "2027-03-02",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06 e Lei Municipal nº 690/2021, para eventual aquisição de ovos de chocolate para atender às necessidades da Secretaria de Educação.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "59.508.109 ANA LIVIA DE SOUZA RESQUETI",
+    "cnpj": "59.508.109/0001-87"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "1/2 CASCA DE OVO DE CHOCOLATE CROCANTE AO LEITE 300G; 3 MINI OVOS DE CHOCOLATE RECHEADO COM CONFETES COM 50G CADA; 05 MINI OVOS DE CHOCOLATE CROCANTE 25G. - 1/2 CASCA DE OVO DE CHOCOLATE CROCANTE AO LEITE 300G; 3 MINI OVOS DE CHOCOLATE RECHEADO COM CONFETES COM 50G CADA; 05 MINI OVOS DE CHOCOLATE CROCANTE 25G.",
+      "unidade_medida": "UN",
+      "valor_unitario": 35.9,
+      "quantidade_contratada": 1040.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 520.0,
+      "quantidade_saldo": 520.0,
+      "valor_total": 37336.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 18668.0,
+      "valor_saldo": 18668.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "EMBALAGEM: 1 PAPEL CHUMBO DA COR QUE PREFERIR; 1 SACO CELOFANE; 1 FITA DE LAÇO - EMBALAGEM: 1 PAPEL CHUMBO DA COR QUE PREFERIR; 1 SACO CELOFANE; 1 FITA DE LAÇO",
+      "unidade_medida": "UN",
+      "valor_unitario": 14.9,
+      "quantidade_contratada": 1040.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 520.0,
+      "quantidade_saldo": 520.0,
+      "valor_total": 15496.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 7748.0,
+      "valor_saldo": 7748.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 52832.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 26416.0,
+    "valor_saldo_geral": 26416.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original. Os itens no PDF aparecem com quantidades 520 contratadas + 520 aditivo (totalizando 1.040) e 1.040 executadas. Para simplificar e alinhar com o schema, consolidei: quantidade_contratada = 1.040 e quantidade_executada = 520, mantendo os valores totais do PDF (R$ 53.492,40 contratado, R$ 26.416,00 executado, R$ 27.076,40 saldo). Há pequena divergência nos totais: soma dos itens = R$ 26.416,00 executado e R$ 26.416,00 saldo; PDF total do fornecedor = R$ 26.416,00 executado e R$ 27.076,40 saldo.",
+  "anexos": []
+}

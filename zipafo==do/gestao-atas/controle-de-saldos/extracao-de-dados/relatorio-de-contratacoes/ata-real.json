@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "processo_administrativo": "31/2026",
+    "licitacao": "18",
+    "data_relatorio": "2026-09-29"
+  },
+  "fornecedores": [
+    {
+      "fornecedor": "57.945.409 EDUARDO YUKIO WAKIUTI",
+      "cnpj": "57.945.409/0001-06",
+      "numero_ata": "71/2026",
+      "processo_administrativo": "31/2026",
+      "licitacao": "18",
+      "itens": [
+        {
+          "item_numero": "11",
+          "descricao": "FONTE DE ALIMENTAÇÃO PRIORETARIA LENOVO - DESCRIÇÃO CONFORME EDITAL - FONTE DE ALIMENTAÇÃO PRIORETARIA LENOVO - DESCRIÇÃO CONFORME EDITAL",
+          "valor_unitario": 309.33,
+          "quantidade_original": 10,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 10,
+          "valor_original": 3093.30,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 3093.30
+        }
+      ]
+    },
+    {
+      "fornecedor": "ATHOMOZ - COMERCIO DE PRODUTOS ELETRONICOS LTDA",
+      "cnpj": "24.846.428/0001-18",
+      "numero_ata": "72/2026",
+      "processo_administrativo": "31/2026",
+      "licitacao": "18",
+      "itens": [
+        {
+          "item_numero": "3",
+          "descricao": "GABINETE - DESCRIÇÃO CONFORME EDITAL - GABINETE - DESCRIÇÃO CONFORME EDITAL",
+          "valor_unitario": 1418.48,
+          "quantidade_original": 20,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 20,
+          "valor_original": 28369.60,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 28369.60
+        }
+      ]
+    },
+    {
+      "fornecedor": "DLC COMERCIO E CONSULTORIA LTDA",
+      "cnpj": "61.276.512/0001-70",
+      "numero_ata": "73/2026",
+      "processo_administrativo": "31/2026",
+      "licitacao": "18",
+      "itens": [
+        {
+          "item_numero": "10",
+          "descricao": "FONTE DE ALIMENTAÇÃO ATX - DESCRIÇÃO CONFORME EDITAL - FONTE DE ALIMENTAÇÃO ATX - DESCRIÇÃO CONFORME EDITAL",
+          "valor_unitario": 157.34,
+          "quantidade_original": 10,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 10,
+          "valor_original": 1573.40,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 1573.40
+        }
+      ]
+    },
+    {
+      "fornecedor": "F & N PRODUTOS DE LIMPEZA E HIGIENE LTDA",
+      "cnpj": "58.354.399/0001-99",
+      "numero_ata": "74/2026",
+      "processo_administrativo": "31/2026",
+      "licitacao": "18",
+      "itens": [
+        {
+          "item_numero": "2",
+          "descricao": "MONITOR (TELA) - DESCRIÇÃO CONFORME EDITAL - MONITOR (TELA) - DESCRIÇÃO CONFORME EDITAL",
+          "valor_unitario": 274.00,
+          "quantidade_original": 20,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 20,
+          "valor_original": 5480.00,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 5480.00
+        },
+        {
+          "item_numero": "4",
+          "descricao": "MOUSE - DESCRIÇÃO CONFORME EDITAL - MOUSE - DESCRIÇÃO CONFORME EDITAL",
+          "valor_unitario": 7.40,
+          "quantidade_original": 50,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 50,
+          "valor_original": 370.00,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 370.00
+        },
+        {
+          "item_numero": "5",
+          "descricao": "TECLADO - DESCRIÇÃO CONFORME EDITAL - TECLADO - DESCRIÇÃO CONFORME EDITAL",
+          "valor_unitario": 18.90,
+          "quantidade_original": 50,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 50,
+          "valor_original": 945.00,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 945.00
+        },
+        {
+          "item_numero": "6",
+          "descricao": "HD EXTERNO - DESCRIÇÃO CONFORME EDITAL - HD EXTERNO - HD EXTERNO - DESCRIÇÃO CONFORME EDITAL",
+          "valor_unitario": 435.00,
+          "quantidade_original": 10,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 10,
+          "valor_original": 4350.00,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 4350.00
+        },
+        {
+          "item_numero": "7",
+          "descricao": "DISCO RÍGIDO (HD) COM TECNOLOGIA SSD - DESCRIÇÃO CONFORME ED - DISCO RÍGIDO (HD) COM TECNOLOGIA SSD - DESCRICÃO CONFORME EDITAL",
+          "valor_unitario": 425.00,
+          "quantidade_original": 10,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 10,
+          "valor_original": 4250.00,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 4250.00
+        },
+        {
+          "item_numero": "8",
+          "descricao": "IMPRESSORA MULTIFUNCIONAL COLORIDA - CONFORME EDITAL - IMPRESSORA MULTIFUNCIONAL COLORIDA - CONFORME EDITAL",
+          "valor_unitario": 980.00,
+          "quantidade_original": 10,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 10,
+          "valor_original": 9800.00,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 9800.00
+        }
+      ]
+    },
+    {
+      "fornecedor": "METDATA TECNOLOGIA DA INFORMACAO LTDA",
+      "cnpj": "28.584.157/0003-92",
+      "numero_ata": "75/2026",
+      "processo_administrativo": "31/2026",
+      "licitacao": "18",
+      "itens": [
+        {
+          "item_numero": "9",
+          "descricao": "IMPRESSORA MULTIFUNCIONAL MONOCROMATICA - DESCRIÇÃO CONFORME EDITAL - IMPRESSORA MULTIFUNCIONAL MONOCROMATICA - DESCRIÇÃO CONFORME EDITAL",
+          "valor_unitario": 1048.00,
+          "quantidade_original": 10,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 10,
+          "valor_original": 10480.00,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 10480.00
+        }
+      ]
+    },
+    {
+      "fornecedor": "MZ EQUIPAMENTOS LTDA",
+      "cnpj": "64.734.646/0001-85",
+      "numero_ata": "76/2026",
+      "processo_administrativo": "31/2026",
+      "licitacao": "18",
+      "itens": [
+        {
+          "item_numero": "1",
+          "descricao": "COMPUTADOR PORTÁTIL (NOTEBOOK) - COMPUTADOR PORTÁTIL (NOTEBOOK)",
+          "valor_unitario": 3127.00,
+          "quantidade_original": 10,
+          "quantidade_aditivo": 0,
+          "quantidade_executada": 0,
+          "quantidade_saldo": 10,
+          "valor_original": 31270.00,
+          "valor_aditivos": 0,
+          "valor_executado": 0,
+          "valor_saldo": 31270.00
+        }
+      ]
+    }
+  ]
+}

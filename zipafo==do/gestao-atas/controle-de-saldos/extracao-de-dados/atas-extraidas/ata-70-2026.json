@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "44-45",
+    "processo_origem": "42/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "70/2026",
+    "numero_contratacao": "1545",
+    "numero_processo": "42/2026",
+    "numero_pregao": "11",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-09-11",
+    "vigencia_inicio": "2026-09-11",
+    "vigencia_fim": "2027-09-11",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para contratação de serviços variados para atender as necessidades de todas as secretarias do Município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "LUIZ FERNANDO BARROS MENDONÇA",
+    "cnpj": "68.688.438/0001-48"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "Pessoa jurídica especializada para prestação de serviços, por hora trabalhada, destinados à execução de atividades de limpeza, higienização, conservação, arrumação e organização de espaços públicos, de acordo com as necessidades do Município e mediante solicitação da Administração Pública.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 33.0,
+      "quantidade_contratada": 10000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 10000.0,
+      "valor_total": 330000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 330000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 330000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 330000.0
+  },
+  "observacoes": "Ata 70/2026 — LUIZ FERNANDO BARROS MENDONÇA (Processo 42/2026). 1 serviço: Limpeza. Nada executado. ⚠️ Nº Ata 70/2026 vai colidir com o Processo 53/2026 (ITB COMERCIO).",
+  "anexos": []
+}

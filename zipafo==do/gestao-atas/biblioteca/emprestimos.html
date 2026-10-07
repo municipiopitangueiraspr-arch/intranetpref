@@ -1,0 +1,3352 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca Municipal · Empréstimos</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* =====================================================================
+         RESET + VARIÁVEIS GLOBAIS
+         ===================================================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      :root {
+        --verde: #0d5e3a;
+        --verde-escuro: #0a4a2e;
+        --verde-claro: #e8f5e9;
+        --verde-suave: #f0fdf4;
+        --azul: #1a3a6b;
+        --azul-claro: #ebf4ff;
+        --cinza-texto: #475569;
+        --cinza-suave: #f1f5f9;
+        --cinza-borda: #e2e8f0;
+        --vermelho: #e53e3e;
+        --vermelho-suave: #fff5f5;
+        --amarelo: #d69e2e;
+        --amarelo-suave: #fffff0;
+        --roxo: #8b5cf6;
+        --roxo-suave: #f3f0ff;
+        --branco: #ffffff;
+        --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        --sombra-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+      }
+
+      body {
+        background: linear-gradient(145deg, #e8f5e9 0%, #e2eaf1 100%);
+        min-height: 100vh;
+        color: var(--cinza-texto);
+      }
+
+      /* =====================================================================
+         LAYOUT · SIDEBAR + CONTEÚDO
+         ===================================================================== */
+      .app-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        background: linear-gradient(180deg, #0d5e3a 0%, #0a4a2e 100%);
+        color: white;
+        padding: 1.8rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+        /* Scrollbar customizada – Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+      }
+
+      /* Scrollbar customizada – Chrome/Edge/Safari */
+      .sidebar::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 8px 0;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        transition: background 0.2s;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.35);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:active {
+        background: rgba(198, 246, 213, 0.6);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.5rem 0.6rem 1.2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-brand .brand-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+      }
+
+      .sidebar-brand .brand-text h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .sidebar-brand .brand-text span {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+      }
+
+      .sidebar-nav .nav-section {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.55;
+        padding: 0.8rem 0.6rem 0.4rem;
+        font-weight: 700;
+      }
+
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.7rem 0.9rem;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        opacity: 0.9;
+      }
+
+      .sidebar-nav a i {
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+        opacity: 0.85;
+      }
+
+      .sidebar-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        transform: translateX(2px);
+      }
+
+      .sidebar-nav a.active {
+        background: rgba(255, 255, 255, 0.18);
+        opacity: 1;
+        font-weight: 600;
+        border-left: 3px solid #c6f6d5;
+      }
+
+      .sidebar-voltar {
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-voltar a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 0.82rem;
+        padding: 0.6rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+
+      .sidebar-voltar a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .main-area {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .topbar {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--cinza-borda);
+        padding: 1.1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .topbar-titulo h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .topbar-titulo h1 i {
+        color: var(--verde);
+      }
+
+      .topbar-titulo p {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      .topbar-direita {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .topbar-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 0.78rem;
+        color: #718096;
+      }
+
+      .topbar-info strong {
+        color: #0f172a;
+        font-size: 0.85rem;
+      }
+
+      .avatar-usuario {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ---------- DROPDOWN DO AVATAR (padrão dashboard) ---------- */
+      .avatar-wrapper {
+        position: relative;
+      }
+
+      .avatar-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        padding: 0;
+      }
+
+      .avatar-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      }
+
+      .avatar-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--cinza-borda);
+        min-width: 230px;
+        padding: 0.5rem;
+        z-index: 200;
+        display: none;
+        animation: menuPop 0.2s ease;
+      }
+
+      .avatar-menu.aberto {
+        display: block;
+      }
+
+      @keyframes menuPop {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .avatar-menu-header {
+        padding: 0.8rem 0.9rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        margin-bottom: 0.4rem;
+      }
+
+      .avatar-menu-header strong {
+        display: block;
+        font-size: 0.9rem;
+        color: #0f172a;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .avatar-menu-header span {
+        font-size: 0.75rem;
+        color: #718096;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+      }
+
+      .avatar-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.7rem 0.9rem;
+        border-radius: 10px;
+        color: var(--cinza-texto);
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s;
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: inherit;
+      }
+
+      .avatar-menu-item i {
+        width: 18px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.9rem;
+      }
+
+      .avatar-menu-item:hover {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+
+      .avatar-menu-item:hover i {
+        color: var(--verde);
+      }
+
+      .avatar-menu-item.sair {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair i {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair:hover {
+        background: var(--vermelho-suave);
+        color: #c53030;
+      }
+
+      .avatar-menu-divisor {
+        height: 1px;
+        background: var(--cinza-borda);
+        margin: 0.4rem 0.6rem;
+      }
+
+      .conteudo {
+        padding: 2rem;
+        flex: 1;
+        max-width: 1500px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* =====================================================================
+         ABAS
+         ===================================================================== */
+      .abas {
+        display: flex;
+        gap: 4px;
+        background: white;
+        border-radius: 14px 14px 0 0;
+        border: 1px solid var(--cinza-borda);
+        border-bottom: none;
+        padding: 0.4rem 0.4rem 0;
+        margin-bottom: 0;
+      }
+
+      .aba {
+        padding: 0.8rem 1.4rem;
+        border-radius: 10px 10px 0 0;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #718096;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        bottom: -1px;
+      }
+
+      .aba:hover {
+        color: var(--verde);
+        background: var(--verde-suave);
+      }
+
+      .aba.ativa {
+        background: white;
+        color: var(--verde);
+        border: 1px solid var(--cinza-borda);
+        border-bottom: 1px solid white;
+        box-shadow: 0 -2px 0 var(--verde) inset;
+      }
+
+      .aba .badge-aba {
+        background: var(--cinza-suave);
+        color: #64748b;
+        padding: 0.1rem 0.5rem;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+
+      .aba.ativa .badge-aba {
+        background: var(--verde);
+        color: white;
+      }
+
+      .aba-conteudo {
+        background: white;
+        border: 1px solid var(--cinza-borda);
+        border-radius: 0 0 14px 14px;
+        box-shadow: var(--sombra-card);
+        padding: 1.5rem;
+        display: none;
+      }
+
+      .aba-conteudo.ativa {
+        display: block;
+      }
+
+      /* =====================================================================
+         FORMULÁRIO DE EMPRÉSTIMO (aba 1)
+         ===================================================================== */
+      .emprestimo-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        align-items: start;
+      }
+
+      .bloco {
+        border: 2px solid var(--cinza-borda);
+        border-radius: 14px;
+        padding: 1.2rem;
+        background: #fafafa;
+        transition: border-color 0.2s;
+      }
+
+      .bloco.com-dados {
+        background: white;
+        border-color: var(--verde);
+      }
+
+      .bloco-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid var(--cinza-borda);
+      }
+
+      .bloco-numero {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .bloco-header h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        flex: 1;
+      }
+
+      .bloco-header .status-icon {
+        color: var(--verde);
+        font-size: 1.1rem;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .bloco.com-dados .bloco-header .status-icon {
+        opacity: 1;
+      }
+
+      /* ---------- AUTOCOMPLETE genérico ---------- */
+      .autocomplete-wrapper {
+        position: relative;
+      }
+
+      .autocomplete-resultados {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: white;
+        border: 2px solid var(--verde);
+        border-radius: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        display: none;
+      }
+
+      .autocomplete-resultados.ativo {
+        display: block;
+      }
+
+      .autocomplete-item {
+        padding: 0.75rem 0.9rem;
+        cursor: pointer;
+        border-bottom: 1px solid var(--cinza-borda);
+        transition: background 0.15s;
+      }
+
+      .autocomplete-item:last-child {
+        border-bottom: none;
+      }
+
+      .autocomplete-item:hover {
+        background: var(--verde-suave);
+      }
+
+      .autocomplete-item strong {
+        display: block;
+        color: #0f172a;
+        font-size: 0.88rem;
+        margin-bottom: 2px;
+      }
+
+      .autocomplete-item span {
+        font-size: 0.75rem;
+        color: #718096;
+      }
+
+      .autocomplete-item.sem-resultado {
+        cursor: default;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.85rem;
+      }
+
+      .autocomplete-item.sem-resultado:hover {
+        background: white;
+      }
+
+      /* ---------- CARDS DE SELEÇÃO ---------- */
+      .card-selecionado {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.9rem 1rem;
+        background: var(--verde-suave);
+        border: 2px solid var(--verde);
+        border-radius: 12px;
+        margin-top: 8px;
+        animation: cardAparecer 0.2s ease;
+      }
+
+      @keyframes cardAparecer {
+        from {
+          transform: translateY(-4px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .card-selecionado .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        flex-shrink: 0;
+      }
+
+      .card-selecionado .avatar.avatar-exemplar {
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--azul), #142e54);
+      }
+
+      .card-selecionado .info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .card-selecionado .info strong {
+        display: block;
+        color: #0f172a;
+        font-size: 0.92rem;
+        margin-bottom: 2px;
+      }
+
+      .card-selecionado .info span {
+        font-size: 0.75rem;
+        color: #64748b;
+      }
+
+      .card-selecionado .info .linha-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 3px;
+      }
+
+      .card-selecionado .info .linha-info span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .btn-limpar {
+        background: transparent;
+        border: none;
+        color: var(--vermelho);
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+
+      .btn-limpar:hover {
+        background: rgba(229, 62, 62, 0.1);
+      }
+
+      /* ---------- ALERTAS ---------- */
+      .alerta {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 0.75rem 0.9rem;
+        border-radius: 10px;
+        font-size: 0.82rem;
+        margin-top: 8px;
+        line-height: 1.4;
+      }
+
+      .alerta i {
+        margin-top: 2px;
+      }
+
+      .alerta-erro {
+        background: var(--vermelho-suave);
+        color: var(--vermelho);
+        border: 1px solid #fed7d7;
+      }
+
+      .alerta-aviso {
+        background: var(--amarelo-suave);
+        color: #b45309;
+        border: 1px solid #fde68a;
+      }
+
+      .alerta-info {
+        background: var(--azul-claro);
+        color: var(--azul);
+        border: 1px solid #bee3f8;
+      }
+
+      /* ---------- CARrinho ---------- */
+      .carrinho-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.8rem;
+      }
+
+      .carrinho-header h4 {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .carrinho-contador {
+        background: var(--verde);
+        color: white;
+        padding: 0.15rem 0.6rem;
+        border-radius: 40px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .carrinho-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 380px;
+        overflow-y: auto;
+      }
+
+      .carrinho-vazio {
+        padding: 2rem 1rem;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.82rem;
+        background: var(--cinza-suave);
+        border-radius: 12px;
+        border: 2px dashed var(--cinza-borda);
+      }
+
+      .carrinho-vazio i {
+        display: block;
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+      }
+
+      .carrinho-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.7rem 0.9rem;
+        background: white;
+        border: 1px solid var(--cinza-borda);
+        border-radius: 10px;
+        transition: all 0.2s;
+      }
+
+      .carrinho-item:hover {
+        border-color: var(--azul);
+      }
+
+      .carrinho-item .codigo {
+        font-family: "Courier New", monospace;
+        font-weight: 700;
+        font-size: 0.75rem;
+        color: var(--azul);
+        background: var(--azul-claro);
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        border: 1px solid #bee3f8;
+        flex-shrink: 0;
+      }
+
+      .carrinho-item .info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .carrinho-item .info strong {
+        display: block;
+        color: #0f172a;
+        font-size: 0.85rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .carrinho-item .info span {
+        font-size: 0.72rem;
+        color: #718096;
+      }
+
+      .btn-remover-item {
+        background: transparent;
+        border: none;
+        color: var(--vermelho);
+        cursor: pointer;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+
+      .btn-remover-item:hover {
+        background: var(--vermelho-suave);
+      }
+
+      /* ---------- PRAZO ---------- */
+      .prazo-box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        align-items: start;
+        margin-top: 1rem;
+      }
+
+      .prazo-destaque {
+        background: linear-gradient(
+          135deg,
+          var(--verde-suave) 0%,
+          #ffffff 100%
+        );
+        border: 2px solid var(--verde);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .prazo-destaque .label {
+        font-size: 0.72rem;
+        color: var(--verde);
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+
+      .prazo-destaque .data {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+      }
+
+      .prazo-destaque .dias {
+        font-size: 0.78rem;
+        color: #64748b;
+        margin-top: 4px;
+      }
+
+      /* ---------- BOTÕES GRANDES DE AÇÃO ---------- */
+      .acoes-finais {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--cinza-borda);
+      }
+
+      /* =====================================================================
+         LISTA DE EMPRÉSTIMOS ATIVOS (aba 2)
+         ===================================================================== */
+      .barra-filtros-ativos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.2rem;
+        align-items: center;
+      }
+
+      .barra-filtros-ativos .campo-busca {
+        flex: 1;
+        min-width: 240px;
+        position: relative;
+      }
+
+      .barra-filtros-ativos .campo-busca i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.95rem;
+      }
+
+      .barra-filtros-ativos .campo-busca input {
+        width: 100%;
+        padding: 0.7rem 1rem 0.7rem 2.6rem;
+        border: 2px solid var(--cinza-borda);
+        border-radius: 10px;
+        font-size: 0.88rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .barra-filtros-ativos .campo-busca input:focus {
+        border-color: var(--verde);
+      }
+
+      .filtro-select {
+        padding: 0.7rem 2.5rem 0.7rem 1rem;
+        border: 2px solid var(--cinza-borda);
+        border-radius: 10px;
+        font-size: 0.85rem;
+        outline: none;
+        background: white;
+        color: var(--cinza-texto);
+        cursor: pointer;
+        transition: border-color 0.2s;
+        appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg fill='%23475669' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        min-width: 140px;
+      }
+
+      .filtro-select:focus {
+        border-color: var(--verde);
+      }
+
+      /* ---------- TABELA DE ATIVOS ---------- */
+      .tabela-wrapper {
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid var(--cinza-borda);
+      }
+
+      table.tabela {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86rem;
+      }
+
+      table.tabela thead {
+        background: #f8fafc;
+      }
+
+      table.tabela th {
+        text-align: left;
+        padding: 0.8rem 0.9rem;
+        font-weight: 600;
+        color: #475569;
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid var(--cinza-borda);
+        white-space: nowrap;
+      }
+
+      table.tabela td {
+        padding: 0.85rem 0.9rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        color: #1e293b;
+        vertical-align: middle;
+      }
+
+      table.tabela tbody tr {
+        transition: background 0.15s;
+      }
+
+      table.tabela tbody tr:hover {
+        background: #f8fafc;
+      }
+
+      table.tabela tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .codigo-emprestimo {
+        font-family: "Courier New", monospace;
+        font-weight: 700;
+        font-size: 0.78rem;
+        color: var(--azul);
+        background: var(--azul-claro);
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+        border: 1px solid #bee3f8;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      .leitor-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .leitor-cell .mini-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.68rem;
+        flex-shrink: 0;
+      }
+
+      .leitor-cell .info strong {
+        display: block;
+        color: #0f172a;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+
+      .leitor-cell .info span {
+        font-size: 0.7rem;
+        color: #718096;
+        font-family: "Courier New", monospace;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0.25rem 0.65rem;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .badge-aberto {
+        background: var(--verde-suave);
+        color: var(--verde);
+        border: 1px solid #c6f6d5;
+      }
+      .badge-parcial {
+        background: var(--amarelo-suave);
+        color: #b45309;
+        border: 1px solid #fde68a;
+      }
+      .badge-atrasado {
+        background: var(--vermelho-suave);
+        color: var(--vermelho);
+        border: 1px solid #fed7d7;
+      }
+      .badge-devolvido {
+        background: var(--cinza-suave);
+        color: #64748b;
+        border: 1px solid var(--cinza-borda);
+      }
+      .badge-cancelado {
+        background: #f5f3ff;
+        color: #6d28d9;
+        border: 1px solid #ddd6fe;
+      }
+
+      .badge-dias {
+        background: white;
+        color: var(--cinza-texto);
+        border: 1px solid var(--cinza-borda);
+        font-size: 0.7rem;
+      }
+
+      .badge-dias.atraso {
+        background: var(--vermelho-suave);
+        color: var(--vermelho);
+        border-color: #fed7d7;
+      }
+
+      .badge-dias.hoje {
+        background: var(--amarelo-suave);
+        color: #b45309;
+        border-color: #fde68a;
+      }
+
+      .acoes-tabela {
+        display: flex;
+        gap: 6px;
+        justify-content: flex-end;
+      }
+
+      .btn-acao {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--cinza-borda);
+        background: white;
+        color: var(--cinza-texto);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        transition: all 0.2s;
+      }
+
+      .btn-acao:hover {
+        background: var(--cinza-suave);
+      }
+
+      .btn-acao.devolver:hover {
+        background: var(--verde-suave);
+        color: var(--verde);
+        border-color: var(--verde);
+      }
+
+      .btn-acao.comprovante:hover {
+        background: var(--azul-claro);
+        color: var(--azul);
+        border-color: var(--azul);
+      }
+
+      .btn-acao.renovar:hover {
+        background: var(--roxo-suave);
+        color: var(--roxo);
+        border-color: var(--roxo);
+      }
+
+      .btn-acao.cancelar:hover {
+        background: var(--vermelho-suave);
+        color: var(--vermelho);
+        border-color: var(--vermelho);
+      }
+
+      .lista-vazia {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #94a3b8;
+        font-size: 0.88rem;
+      }
+
+      .lista-vazia i {
+        display: block;
+        font-size: 3rem;
+        margin-bottom: 0.8rem;
+        opacity: 0.4;
+      }
+
+      /* =====================================================================
+         BOTÕES
+         ===================================================================== */
+      .btn {
+        padding: 0.75rem 1.2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--verde);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--verde-escuro);
+        transform: translateY(-1px);
+      }
+
+      .btn-primary:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: var(--cinza-suave);
+        color: var(--cinza-texto);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .btn-secondary:hover {
+        background: var(--cinza-borda);
+      }
+
+      .btn-danger {
+        background: var(--vermelho);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c53030;
+      }
+
+      .btn-azul {
+        background: var(--azul);
+        color: white;
+      }
+
+      .btn-azul:hover {
+        background: #142e54;
+      }
+
+      .btn-grande {
+        padding: 1rem 1.6rem;
+        font-size: 0.95rem;
+      }
+
+      /* =====================================================================
+         NOTIFICAÇÕES TOAST
+         ===================================================================== */
+      .notification-center {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .notification-toast {
+        pointer-events: all;
+        background: white;
+        border-radius: 16px;
+        padding: 16px 24px;
+        min-width: 320px;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        animation: notificationSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .notification-toast.removing {
+        animation: notificationSlideDown 0.3s ease-in forwards;
+      }
+
+      @keyframes notificationSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes notificationSlideDown {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+      }
+
+      .notification-toast.notification-success {
+        border-left-color: var(--verde);
+        background: var(--verde-suave);
+      }
+      .notification-toast.notification-error {
+        border-left-color: var(--vermelho);
+        background: var(--vermelho-suave);
+      }
+      .notification-toast.notification-warning {
+        border-left-color: var(--amarelo);
+        background: var(--amarelo-suave);
+      }
+      .notification-toast.notification-info {
+        border-left-color: var(--azul);
+        background: var(--azul-claro);
+      }
+
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .notification-content {
+        flex: 1;
+      }
+      .notification-title {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .notification-success .notification-title {
+        color: var(--verde);
+      }
+      .notification-error .notification-title {
+        color: var(--vermelho);
+      }
+      .notification-warning .notification-title {
+        color: var(--amarelo);
+      }
+      .notification-info .notification-title {
+        color: var(--azul);
+      }
+      .notification-message {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        line-height: 1.4;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #a0aec0;
+        flex-shrink: 0;
+        margin-top: -2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .notification-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+      }
+
+      /* =====================================================================
+         LOADING
+         ===================================================================== */
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99998;
+        transition: opacity 0.3s;
+      }
+
+      .loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid var(--cinza-borda);
+        border-top-color: var(--verde);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* =====================================================================
+         RESPONSIVIDADE
+         ===================================================================== */
+      @media (max-width: 1200px) {
+        .emprestimo-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .app-layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: fixed;
+          left: -280px;
+          width: 260px;
+          z-index: 1000;
+          transition: left 0.3s;
+        }
+        .sidebar.aberta {
+          left: 0;
+        }
+        .btn-toggle-sidebar {
+          display: flex !important;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .conteudo {
+          padding: 1.2rem;
+        }
+        .topbar {
+          padding: 0.9rem 1.2rem;
+        }
+        .topbar-titulo h1 {
+          font-size: 1.1rem;
+        }
+        .topbar-info {
+          display: none;
+        }
+        .aba {
+          padding: 0.65rem 1rem;
+          font-size: 0.8rem;
+        }
+        .aba-conteudo {
+          padding: 1rem;
+        }
+        .prazo-box {
+          grid-template-columns: 1fr;
+        }
+        .acoes-finais {
+          flex-direction: column-reverse;
+        }
+        .acoes-finais .btn {
+          width: 100%;
+        }
+        .notification-toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+      }
+
+      .btn-toggle-sidebar {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--cinza-borda);
+        color: var(--cinza-texto);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+    </style>
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+    <link rel="stylesheet" href="biblioteca-blue-theme.css">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- LOADING -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon"><i class="fas fa-book-open-reader"></i></div>
+          <div class="brand-text">
+            <h2>Biblioteca</h2>
+            <span>Municipal</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section">Principal</div>
+          <a href="dashboard.html"><i class="fas fa-gauge-high"></i> Painel</a>
+
+          <div class="nav-section">Acervo</div>
+          <a href="livros.html"><i class="fas fa-book"></i> Livros</a>
+          <a href="exemplares.html"
+            ><i class="fas fa-bookmark"></i> Exemplares</a
+          >
+          <a href="prateleiras.html"
+            ><i class="fas fa-layer-group"></i> Prateleiras</a
+          >
+          <a href="autores.html"><i class="fas fa-feather"></i> Autores</a>
+          <a href="categorias.html"><i class="fas fa-tags"></i> Categorias</a>
+          <a href="editoras.html"
+            ><i class="fas fa-building-columns"></i> Editoras</a
+          >
+
+          <div class="nav-section">Circulação</div>
+          <a href="emprestimos.html" class="active"
+            ><i class="fas fa-hand-holding-heart"></i> Empréstimos</a
+          >
+          <a href="devolucoes.html"
+            ><i class="fas fa-rotate-left"></i> Devoluções</a
+          >
+
+          <div class="nav-section">Pessoas</div>
+          <a href="leitores.html"><i class="fas fa-users"></i> Leitores</a>
+
+          <div class="nav-section">Gestão</div>
+          <a href="relatorios.html"
+            ><i class="fas fa-chart-column"></i> Relatórios</a
+          >
+          <a href="config.html"><i class="fas fa-gear"></i> Configurações</a>
+          <a href="ajuda.html">
+            <i class="fas fa-circle-question"></i> Ajuda
+          </a>
+        </nav>
+
+        <div class="sidebar-voltar">
+          <a href="../intranet.html"
+            ><i class="fas fa-arrow-left"></i> Voltar à intranet</a
+          >
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <button
+              class="btn-toggle-sidebar"
+              id="btnToggleSidebar"
+              title="Abrir menu"
+             type="button">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-titulo">
+              <h1><i class="fas fa-hand-holding-heart"></i> Empréstimos</h1>
+              <p>Retiradas, renovações e cancelamentos</p>
+            </div>
+          </div>
+
+          <div class="topbar-direita">
+            <div class="topbar-info">
+              <strong id="topbarNome">—</strong>
+              <span id="topbarData">—</span>
+            </div>
+
+            <!-- DROPDOWN DO AVATAR -->
+            <div class="avatar-wrapper">
+              <button
+                class="avatar-btn"
+                id="avatarBtn"
+                title="Menu do usuário"
+                aria-haspopup="menu"
+                aria-expanded="false"
+               type="button">
+                <span id="avatarIniciais">?</span>
+              </button>
+              <div class="avatar-menu" id="avatarMenu" role="menu">
+                <div class="avatar-menu-header">
+                  <strong id="menuNome">—</strong>
+                  <span id="menuEmail">—</span>
+                </div>
+                <a
+                  href="../perfil.html"
+                  class="avatar-menu-item"
+                  role="menuitem"
+                >
+                  <i class="fas fa-user-circle"></i> Meu Perfil
+                </a>
+                <a href="ajuda.html" class="avatar-menu-item" role="menuitem">
+                  <i class="fas fa-circle-question"></i> Ajuda
+                </a>
+                <div class="avatar-menu-divisor"></div>
+                <button
+                  class="avatar-menu-item sair"
+                  id="menuSair"
+                  type="button"
+                  role="menuitem"
+                >
+                  <i class="fas fa-right-from-bracket"></i> Sair
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <main class="conteudo">
+          <!-- ABAS -->
+          <div class="abas">
+            <button class="aba ativa" data-aba="nova" type="button">
+              <i class="fas fa-plus-circle"></i> Nova retirada
+            </button>
+            <button class="aba" data-aba="ativos" type="button">
+              <i class="fas fa-list"></i> Empréstimos ativos
+              <span class="badge-aba" id="badgeAtivos">0</span>
+            </button>
+          </div>
+
+          <!-- ============================================================
+               ABA 1 · NOVA RETIRADA
+               ============================================================ -->
+          <div class="aba-conteudo ativa" id="aba-nova">
+            <div class="emprestimo-layout">
+              <!-- COLUNA ESQUERDA: leitor + exemplar -->
+              <div>
+                <!-- ============ BLOCO 1: LEITOR ============ -->
+                <div class="bloco" id="blocoLeitor">
+                  <div class="bloco-header">
+                    <div class="bloco-numero">1</div>
+                    <h3>Leitor</h3>
+                    <i class="fas fa-circle-check status-icon"></i>
+                  </div>
+
+                  <div id="leitorVazio">
+                    <div class="autocomplete-wrapper" id="acLeitorWrapper">
+                      <input
+                        type="text"
+                        id="inputBuscaLeitor"
+                        class="form-input"
+                        placeholder="Digite nome, CPF ou carteirinha..."
+                        autocomplete="off"
+                        style="
+                          width: 100%;
+                          padding: 0.75rem 1rem 0.75rem 2.6rem;
+                          border: 2px solid var(--cinza-borda);
+                          border-radius: 10px;
+                          font-size: 0.9rem;
+                          outline: none;
+                          background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2218%22 height=%2218%22 viewBox=%220 0 24 24%22 fill=%22%2394a3b8%22 aria-label="Digite nome, CPF ou carteirinha..."><path d=%22M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z%22/></svg>&quot;);
+                          background-repeat: no-repeat;
+                          background-position: 12px center;
+                        "
+                      />
+                      <div
+                        class="autocomplete-resultados"
+                        id="acLeitorResultados"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div id="leitorSelecionado" style="display: none">
+                    <div class="card-selecionado">
+                      <div class="avatar" id="leitorAvatar">?</div>
+                      <div class="info">
+                        <strong id="leitorNome">—</strong>
+                        <span
+                          id="leitorCarteirinha"
+                          style="
+                            font-family: &quot;Courier New&quot;, monospace;
+                          "
+                          >—</span
+                        >
+                        <div class="linha-info" id="leitorInfoExtra"></div>
+                      </div>
+                      <button
+                        class="btn-limpar"
+                        id="btnLimparLeitor"
+                        title="Trocar leitor"
+                       type="button">
+                        <i class="fas fa-xmark"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ============ BLOCO 2: EXEMPLAR ============ -->
+                <div class="bloco" id="blocoExemplar" style="margin-top: 1rem">
+                  <div class="bloco-header">
+                    <div class="bloco-numero">2</div>
+                    <h3>Adicionar exemplar</h3>
+                    <i class="fas fa-circle-check status-icon"></i>
+                  </div>
+
+                  <div class="autocomplete-wrapper" id="acExemplarWrapper">
+                    <input
+                      type="text"
+                      id="inputBuscaExemplar"
+                      class="form-input"
+                      placeholder="Código, título, ISBN ou autor..."
+                      autocomplete="off"
+                      style="
+                        width: 100%;
+                        padding: 0.75rem 1rem 0.75rem 2.6rem;
+                        border: 2px solid var(--cinza-borda);
+                        border-radius: 10px;
+                        font-size: 0.9rem;
+                        outline: none;
+                        background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2218%22 height=%2218%22 viewBox=%220 0 24 24%22 fill=%22%2394a3b8%22 aria-label="Código, título, ISBN ou autor..."><path d=%22M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z%22/></svg>&quot;);
+                        background-repeat: no-repeat;
+                        background-position: 12px center;
+                      "
+                    />
+                    <div
+                      class="autocomplete-resultados"
+                      id="acExemplarResultados"
+                    ></div>
+                  </div>
+
+                  <div id="exemplarAlerta"></div>
+                </div>
+              </div>
+
+              <!-- COLUNA DIREITA: carrinho + prazo -->
+              <div>
+                <!-- ============ CARRINHO ============ -->
+                <div class="bloco" id="blocoCarrinho">
+                  <div class="bloco-header">
+                    <div class="bloco-numero">3</div>
+                    <h3>Exemplares a retirar</h3>
+                  </div>
+
+                  <div class="carrinho-header">
+                    <span style="font-size: 0.78rem; color: #718096">
+                      <i class="fas fa-info-circle"></i>
+                      Máximo de
+                      <strong id="limiteLivros" style="color: #0d5e3a"
+                        >—</strong
+                      >
+                      livro(s) por leitor.
+                    </span>
+                    <span class="carrinho-contador" id="carrinhoContador"
+                      >0</span
+                    >
+                  </div>
+
+                  <div class="carrinho-lista" id="carrinhoLista">
+                    <div class="carrinho-vazio">
+                      <i class="fas fa-shopping-cart"></i>
+                      Nenhum exemplar adicionado ainda.<br />
+                      Busque acima para adicionar.
+                    </div>
+                  </div>
+
+                  <!-- ============ PRAZO ============ -->
+                  <div
+                    style="
+                      margin-top: 1.5rem;
+                      padding-top: 1.5rem;
+                      border-top: 1px solid var(--cinza-borda);
+                    "
+                  >
+                    <div
+                      class="bloco-header"
+                      style="margin-bottom: 0.8rem; padding-bottom: 0"
+                    >
+                      <div class="bloco-numero">4</div>
+                      <h3>Prazo de devolução</h3>
+                    </div>
+
+                    <div class="prazo-box">
+                      <div class="form-group">
+                        <label class="form-label" for="inputDiasPrazo">
+                          Dias de empréstimo
+                        </label>
+                        <input
+                          type="number"
+                          id="inputDiasPrazo"
+                          class="form-input"
+                          min="1"
+                          max="30"
+                          value="14"
+                          style="
+                            width: 100%;
+                            padding: 0.7rem 0.9rem;
+                            border: 2px solid var(--cinza-borda);
+                            border-radius: 10px;
+                            font-size: 0.9rem;
+                            outline: none;
+                            background: white;
+                          "
+                        / aria-label="inputDiasPrazo">
+                        <span
+                          class="form-hint"
+                          style="font-size: 0.72rem; color: #94a3b8"
+                        >
+                          Padrão:
+                          <strong id="prazoPadraoTexto" style="color: #0d5e3a"
+                            >—</strong
+                          >
+                          dias · Máx:
+                          <strong id="prazoMaximoTexto" style="color: #0d5e3a"
+                            >—</strong
+                          >
+                          dias
+                        </span>
+                      </div>
+
+                      <div class="prazo-destaque">
+                        <div class="label">
+                          <i class="fas fa-calendar-check"></i> Devolver até
+                        </div>
+                        <div class="data" id="prazoDataTexto">—</div>
+                        <div class="dias" id="prazoDiasTexto">—</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ============ AÇÕES ============ -->
+                  <div class="acoes-finais">
+                    <button
+                      type="button"
+                      class="btn btn-secondary btn-grande"
+                      id="btnLimparTudo"
+                    >
+                      <i class="fas fa-eraser"></i> Limpar
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-grande"
+                      id="btnConfirmarEmprestimo"
+                      disabled
+                    >
+                      <i class="fas fa-circle-check"></i> Confirmar empréstimo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               ABA 2 · EMPRÉSTIMOS ATIVOS
+               ============================================================ -->
+          <div class="aba-conteudo" id="aba-ativos">
+            <!-- FILTROS -->
+            <div class="barra-filtros-ativos">
+              <div class="campo-busca">
+                <i class="fas fa-magnifying-glass"></i>
+                <input
+                  type="text"
+                  id="inputBuscaAtivos"
+                  placeholder="Buscar por código, leitor, carteirinha ou livro..."
+                / aria-label="Buscar por código, leitor, carteirinha ou livro...">
+              </div>
+
+              <select class="filtro-select" id="filtroStatusAtivos" aria-label="filtroStatusAtivos">
+                <option value="abertos">Em aberto e parciais</option>
+                <option value="">Todos</option>
+                <option value="ABERTO">Somente abertos</option>
+                <option value="PARCIAL">Somente parciais</option>
+                <option value="DEVOLVIDO">Devolvidos</option>
+                <option value="CANCELADO">Cancelados</option>
+              </select>
+
+              <select class="filtro-select" id="filtroPeriodoAtivos" aria-label="filtroPeriodoAtivos">
+                <option value="">Qualquer período</option>
+                <option value="hoje">Retirados hoje</option>
+                <option value="semana">Últimos 7 dias</option>
+                <option value="mes">Últimos 30 dias</option>
+                <option value="atrasados">Em atraso</option>
+              </select>
+
+              <button
+                class="btn btn-secondary"
+                id="btnAtualizarAtivos"
+                title="Recarregar"
+               type="button">
+                <i class="fas fa-rotate"></i>
+              </button>
+            </div>
+
+            <!-- TABELA -->
+            <div class="tabela-wrapper">
+              <table class="tabela" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th style="width: 110px">Empréstimo</th>
+                    <th>Leitor</th>
+                    <th>Exemplares</th>
+                    <th style="width: 130px">Retirada</th>
+                    <th style="width: 130px">Prazo</th>
+                    <th style="width: 120px; text-align: center">Situação</th>
+                    <th style="width: 190px; text-align: right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyAtivos">
+                  <tr>
+                    <td colspan="7">
+                      <div class="lista-vazia">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Carregando empréstimos...
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div class="notification-center" id="notificationCenter"></div>
+
+    <!-- SUPABASE SDK -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // ============================================
+      // CONFIG SUPABASE
+      // ============================================
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // ESTADO
+      // ============================================
+      let usuarioLogado = null;
+      let config = {
+        prazo_padrao_dias: 14,
+        prazo_maximo_dias: 30,
+        renovacoes_maximas: 1,
+        limite_livros_por_leitor: 3,
+      };
+      let leitorSelecionado = null;
+      let carrinho = []; // [{ exemplar_id, codigo, titulo, autor }]
+      let emprestimosAtivos = [];
+      let abaAtual = "nova";
+
+      // ============================================
+      // NOTIFICAÇÕES
+      // ============================================
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      window.showConfirm = function (title, message, onConfirm) {
+        const overlay = document.createElement("div");
+        overlay.className = "modal-overlay";
+        overlay.style.cssText = `
+          position: fixed; inset: 0; background: rgba(15,23,42,0.55); backdrop-filter: blur(4px);
+          z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1rem;
+        `;
+        overlay.innerHTML = `
+          <div style="background:white; border-radius:20px; padding:2rem; max-width:420px; width:100%;
+                      text-align:center; box-shadow: 0 25px 60px rgba(0,0,0,0.3); border: 1px solid #e2e8f0;">
+            <div style="font-size:3rem; margin-bottom:1rem;">❓</div>
+            <h3 style="font-size:1.2rem; font-weight:700; color:#0f172a; margin-bottom:0.5rem;">${title}</h3>
+            <p style="font-size:0.9rem; color:#475569; line-height:1.5; margin-bottom:1.5rem;">${message}</p>
+            <div style="display:flex; gap:0.75rem; justify-content:center;">
+              <button class="btn btn-secondary" id="cancelBtn" type="button">Cancelar</button>
+              <button class="btn btn-danger" id="confirmBtn" type="button">Confirmar</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        const close = () => {
+          overlay.style.opacity = "0";
+          setTimeout(() => overlay.remove(), 200);
+        };
+        overlay.querySelector("#cancelBtn").addEventListener("click", close);
+        overlay.querySelector("#confirmBtn").addEventListener("click", () => {
+          close();
+          if (typeof onConfirm === "function") onConfirm();
+        });
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) close();
+        });
+        return overlay;
+      };
+
+      window.showPrompt = function (title, message, onConfirm) {
+        const overlay = document.createElement("div");
+        overlay.style.cssText = `
+          position: fixed; inset: 0; background: rgba(15,23,42,0.55); backdrop-filter: blur(4px);
+          z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1rem;
+        `;
+        overlay.innerHTML = `
+          <div style="background:white; border-radius:20px; padding:2rem; max-width:460px; width:100%;
+                      box-shadow: 0 25px 60px rgba(0,0,0,0.3); border: 1px solid #e2e8f0;">
+            <h3 style="font-size:1.1rem; font-weight:700; color:#0f172a; margin-bottom:0.5rem;">
+              <i class="fas fa-pen-to-square" style="color:#0d5e3a;"></i> ${title}
+            </h3>
+            <p style="font-size:0.85rem; color:#475569; line-height:1.5; margin-bottom:1rem;">${message}</p>
+            <textarea id="promptInput" style="width:100%; padding:0.8rem; border:2px solid #e2e8f0;
+                      border-radius:10px; font-size:0.9rem; font-family:inherit; min-height:90px; resize:vertical; outline:none;"
+                      placeholder="Digite o motivo..." aria-label="Digite o motivo..."></textarea>
+            <div style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:1rem;">
+              <button class="btn btn-secondary" id="promptCancel" type="button">Cancelar</button>
+              <button class="btn btn-danger" id="promptConfirm" type="button">Confirmar</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        const input = overlay.querySelector("#promptInput");
+        input.focus();
+
+        const close = () => {
+          overlay.style.opacity = "0";
+          setTimeout(() => overlay.remove(), 200);
+        };
+        overlay.querySelector("#promptCancel").addEventListener("click", close);
+        overlay
+          .querySelector("#promptConfirm")
+          .addEventListener("click", () => {
+            const valor = input.value.trim();
+            close();
+            if (typeof onConfirm === "function") onConfirm(valor);
+          });
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) close();
+        });
+      };
+
+      // ============================================
+      // HELPERS
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
+
+      function esconderLoading() {
+        document.getElementById("loadingOverlay")?.classList.add("hidden");
+      }
+
+      function formatarData(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso + "T00:00:00");
+        if (isNaN(d.getTime())) return "—";
+        return d.toLocaleDateString("pt-BR");
+      }
+
+      function hoje() {
+        const d = new Date();
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      }
+
+      function formatarDataBR(d) {
+        const dia = String(d.getDate()).padStart(2, "0");
+        const mes = String(d.getMonth() + 1).padStart(2, "0");
+        return `${dia}/${mes}/${d.getFullYear()}`;
+      }
+
+      // ============================================
+      // SESSÃO
+      // ============================================
+      async function verificarSessao() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        const { data: perfil, error } = await supabase
+          .from("usuarios")
+          .select("id, uuid, nome, email, perfil, ativo")
+          .eq("uuid", session.user.id)
+          .maybeSingle();
+
+        if (error || !perfil || perfil.ativo === false) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        usuarioLogado = perfil;
+        return perfil;
+      }
+
+      function renderizarUsuario() {
+        if (!usuarioLogado) return;
+        setTexto("topbarNome", usuarioLogado.nome || "—");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+        );
+        const el = document.getElementById("avatarIniciais");
+        if (el) el.textContent = iniciais(usuarioLogado.nome);
+
+        // Preenche o dropdown do avatar
+        setTexto("menuNome", usuarioLogado.nome || "—");
+        setTexto("menuEmail", usuarioLogado.email || "—");
+      }
+
+      // ============================================
+      // MENU DO AVATAR (dropdown)
+      // ============================================
+      function configurarMenuAvatar() {
+        const btn = document.getElementById("avatarBtn");
+        const menu = document.getElementById("avatarMenu");
+        if (!btn || !menu) return;
+
+        // Abre/fecha ao clicar no avatar
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const aberto = menu.classList.toggle("aberto");
+          btn.setAttribute("aria-expanded", aberto ? "true" : "false");
+        });
+
+        // Fecha ao clicar fora
+        document.addEventListener("click", (e) => {
+          if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Fecha com ESC
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Item "Sair" dentro do dropdown
+        const menuSair = document.getElementById("menuSair");
+        if (menuSair) {
+          menuSair.addEventListener("click", async () => {
+            const confirmar = window.confirm(
+              "Deseja realmente sair do módulo?",
+            );
+            if (!confirmar) return;
+            await supabase.auth.signOut();
+            window.location.href = "../intranet.html";
+          });
+        }
+      }
+
+      // ============================================
+      // CONFIGURAÇÕES
+      // ============================================
+      async function carregarConfiguracoes() {
+        const { data, error } = await supabase
+          .from("bib_configuracoes")
+          .select(
+            "prazo_padrao_dias, prazo_maximo_dias, renovacoes_maximas, limite_livros_por_leitor",
+          )
+          .eq("id", 1)
+          .maybeSingle();
+
+        if (error || !data) {
+          console.warn("Usando config padrão");
+          return;
+        }
+
+        config = data;
+        setTexto("limiteLivros", config.limite_livros_por_leitor);
+        setTexto("prazoPadraoTexto", config.prazo_padrao_dias);
+        setTexto("prazoMaximoTexto", config.prazo_maximo_dias);
+
+        const inputDias = document.getElementById("inputDiasPrazo");
+        inputDias.value = config.prazo_padrao_dias;
+        inputDias.max = config.prazo_maximo_dias;
+
+        atualizarPrazoDisplay();
+      }
+
+      // ============================================
+      // PRAZO · CÁLCULO E DISPLAY
+      // ============================================
+      function atualizarPrazoDisplay() {
+        const dias =
+          parseInt(document.getElementById("inputDiasPrazo").value) || 0;
+        const dataDevolucao = new Date(hoje());
+        dataDevolucao.setDate(dataDevolucao.getDate() + dias);
+
+        setTexto("prazoDataTexto", formatarDataBR(dataDevolucao));
+        setTexto(
+          "prazoDiasTexto",
+          `${dias} dia${dias === 1 ? "" : "s"} a partir de hoje`,
+        );
+      }
+
+      document
+        .getElementById("inputDiasPrazo")
+        .addEventListener("input", (e) => {
+          const max = config.prazo_maximo_dias || 30;
+          let v = parseInt(e.target.value) || 0;
+          if (v > max) {
+            v = max;
+            e.target.value = max;
+            window.showNotification(
+              "warning",
+              "Prazo máximo excedido",
+              `O prazo máximo permitido é de ${max} dias.`,
+            );
+          }
+          atualizarPrazoDisplay();
+        });
+
+      // ============================================
+      // AUTOCOMPLETE DE LEITOR
+      // ============================================
+      const inputBuscaLeitor = document.getElementById("inputBuscaLeitor");
+      const acLeitorResultados = document.getElementById("acLeitorResultados");
+      let timerLeitor = null;
+
+      inputBuscaLeitor.addEventListener("input", (e) => {
+        clearTimeout(timerLeitor);
+        const termo = e.target.value.trim();
+        if (termo.length < 2) {
+          acLeitorResultados.classList.remove("ativo");
+          return;
+        }
+        timerLeitor = setTimeout(() => buscarLeitores(termo), 300);
+      });
+
+      async function buscarLeitores(termo) {
+        const alvo = termo.toLowerCase();
+        // Limpa máscara para comparar
+        const termoNumeros = termo.replace(/\D/g, "");
+
+        const { data, error } = await supabase
+          .from("bib_leitores")
+          .select(
+            "id, nome, codigo_carteirinha, cpf, telefone, status, tipo_leitor, emprestimos: bib_emprestimos ( id, status )",
+          )
+          .or(
+            `nome.ilike.%${alvo}%,codigo_carteirinha.ilike.%${alvo}%${
+              termoNumeros ? `,cpf.ilike.%${termoNumeros}%` : ""
+            }`,
+          )
+          .order("nome", { ascending: true })
+          .limit(15);
+
+        if (error) {
+          console.error("Erro ao buscar leitores:", error);
+          return;
+        }
+
+        renderizarResultadoLeitores(data || []);
+      }
+
+      function renderizarResultadoLeitores(leitores) {
+        if (leitores.length === 0) {
+          acLeitorResultados.innerHTML = `<div class="autocomplete-item sem-resultado">
+            <i class="fas fa-user-slash"></i> Nenhum leitor encontrado.
+          </div>`;
+          acLeitorResultados.classList.add("ativo");
+          return;
+        }
+
+        acLeitorResultados.innerHTML = leitores
+          .map((l) => {
+            const emprestimosAtivos = (l.emprestimos || []).filter(
+              (e) => e.status === "ABERTO" || e.status === "PARCIAL",
+            ).length;
+            const situacao = [];
+            if (l.status !== "ATIVO") situacao.push(l.status);
+            if (emprestimosAtivos > 0)
+              situacao.push(
+                `${emprestimosAtivos} empréstimo${emprestimosAtivos > 1 ? "s" : ""}`,
+              );
+            const info = situacao.join(" · ") || "Disponível para empréstimo";
+
+            return `
+              <div class="autocomplete-item" data-id="${l.id}">
+                <strong>${escaparHtml(l.nome)}</strong>
+                <span>
+                  ${l.codigo_carteirinha ? escaparHtml(l.codigo_carteirinha) + " · " : ""}
+                  ${l.cpf ? "CPF " + escaparHtml(l.cpf) + " · " : ""}
+                  ${escaparHtml(info)}
+                </span>
+              </div>`;
+          })
+          .join("");
+        acLeitorResultados.classList.add("ativo");
+
+        acLeitorResultados.querySelectorAll("[data-id]").forEach((el) => {
+          el.addEventListener("click", async () => {
+            const id = parseInt(el.dataset.id);
+            const leitor = leitores.find((x) => x.id === id);
+            if (leitor) await selecionarLeitor(leitor);
+            acLeitorResultados.classList.remove("ativo");
+          });
+        });
+      }
+
+      async function selecionarLeitor(leitor) {
+        // Bloqueia se inativo/suspenso
+        if (leitor.status !== "ATIVO") {
+          window.showNotification(
+            "error",
+            "Leitor " + leitor.status.toLowerCase(),
+            `${leitor.nome} está com status "${leitor.status}" e não pode retirar livros.`,
+            6000,
+          );
+          return;
+        }
+
+        // Conta empréstimos ativos + itens do carrinho
+        const emprestimosAtivos = (leitor.emprestimos || []).filter(
+          (e) => e.status === "ABERTO" || e.status === "PARCIAL",
+        ).length;
+
+        if (emprestimosAtivos >= config.limite_livros_por_leitor) {
+          window.showNotification(
+            "error",
+            "Limite atingido",
+            `${leitor.nome} já possui ${emprestimosAtivos} empréstimo(s) em aberto. O limite é de ${config.limite_livros_por_leitor}.`,
+            6000,
+          );
+          return;
+        }
+
+        // Busca dados completos do leitor
+        const { data: completo } = await supabase
+          .from("bib_leitores")
+          .select("*")
+          .eq("id", leitor.id)
+          .maybeSingle();
+
+        leitorSelecionado = completo || leitor;
+
+        // Renderiza card
+        document.getElementById("leitorAvatar").textContent = iniciais(
+          leitorSelecionado.nome,
+        );
+        setTexto("leitorNome", leitorSelecionado.nome);
+        setTexto(
+          "leitorCarteirinha",
+          leitorSelecionado.codigo_carteirinha || "Sem carteirinha",
+        );
+
+        const extras = [];
+        if (leitorSelecionado.telefone)
+          extras.push(
+            `<span><i class="fas fa-phone"></i> ${escaparHtml(leitorSelecionado.telefone)}</span>`,
+          );
+        if (leitorSelecionado.cpf)
+          extras.push(
+            `<span><i class="fas fa-id-card"></i> ${escaparHtml(leitorSelecionado.cpf)}</span>`,
+          );
+        if (emprestimosAtivos > 0)
+          extras.push(
+            `<span><i class="fas fa-book"></i> ${emprestimosAtivos} ativo${emprestimosAtivos > 1 ? "s" : ""}</span>`,
+          );
+        document.getElementById("leitorInfoExtra").innerHTML = extras.join("");
+
+        document.getElementById("leitorVazio").style.display = "none";
+        document.getElementById("leitorSelecionado").style.display = "block";
+        document.getElementById("blocoLeitor").classList.add("com-dados");
+
+        // Foca no próximo campo
+        document.getElementById("inputBuscaExemplar").focus();
+        atualizarBotaoConfirmar();
+      }
+
+      document
+        .getElementById("btnLimparLeitor")
+        .addEventListener("click", () => {
+          leitorSelecionado = null;
+          document.getElementById("leitorVazio").style.display = "block";
+          document.getElementById("leitorSelecionado").style.display = "none";
+          document.getElementById("blocoLeitor").classList.remove("com-dados");
+          document.getElementById("inputBuscaLeitor").value = "";
+          document.getElementById("inputBuscaLeitor").focus();
+          atualizarBotaoConfirmar();
+        });
+
+      // ============================================
+      // AUTOCOMPLETE DE EXEMPLAR (só disponíveis)
+      // ============================================
+      const inputBuscaExemplar = document.getElementById("inputBuscaExemplar");
+      const acExemplarResultados = document.getElementById(
+        "acExemplarResultados",
+      );
+      const exemplarAlerta = document.getElementById("exemplarAlerta");
+      let timerExemplar = null;
+
+      inputBuscaExemplar.addEventListener("input", (e) => {
+        clearTimeout(timerExemplar);
+        exemplarAlerta.innerHTML = "";
+        const termo = e.target.value.trim();
+        if (termo.length < 2) {
+          acExemplarResultados.classList.remove("ativo");
+          return;
+        }
+        timerExemplar = setTimeout(() => buscarExemplares(termo), 300);
+      });
+
+      async function buscarExemplares(termo) {
+        const alvo = termo.toLowerCase();
+
+        // Busca primeiro os livros que casam com o termo
+        const { data: livros, error: errL } = await supabase
+          .from("bib_livros")
+          .select(
+            `
+            id, titulo, isbn,
+            autores: bib_livro_autores ( autor: bib_autores ( nome ) )
+          `,
+          )
+          .eq("ativo", true)
+          .or(`titulo.ilike.%${alvo}%,isbn.ilike.%${alvo}%`)
+          .limit(20);
+
+        if (errL) {
+          console.error(errL);
+          return;
+        }
+
+        const livroIds = (livros || []).map((l) => l.id);
+
+        // Busca exemplares disponíveis desses livros + busca por código direto
+        let exemplares = [];
+
+        if (livroIds.length > 0) {
+          const { data: exs1, error: errE1 } = await supabase
+            .from("bib_exemplares")
+            .select(
+              `
+              id, codigo, situacao, estado_conservacao,
+              livro: bib_livros ( id, titulo, isbn, autores: bib_livro_autores ( autor: bib_autores ( nome ) ) ),
+              prateleira: bib_prateleiras ( numero, estante: bib_estantes ( codigo ) )
+            `,
+            )
+            .eq("situacao", "DISPONIVEL")
+            .eq("ativo", true)
+            .in("livro_id", livroIds)
+            .limit(30);
+          if (!errE1) exemplares = exs1 || [];
+        }
+
+        // Também busca por código do exemplar direto
+        const { data: exs2 } = await supabase
+          .from("bib_exemplares")
+          .select(
+            `
+            id, codigo, situacao, estado_conservacao,
+            livro: bib_livros ( id, titulo, isbn, autores: bib_livro_autores ( autor: bib_autores ( nome ) ) ),
+            prateleira: bib_prateleiras ( numero, estante: bib_estantes ( codigo ) )
+          `,
+          )
+          .eq("situacao", "DISPONIVEL")
+          .eq("ativo", true)
+          .ilike("codigo", `%${alvo}%`)
+          .limit(10);
+
+        if (exs2 && exs2.length > 0) {
+          // Junta sem duplicar
+          const ids = new Set(exemplares.map((e) => e.id));
+          exs2.forEach((e) => {
+            if (!ids.has(e.id)) exemplares.push(e);
+          });
+        }
+
+        renderizarResultadoExemplares(exemplares);
+      }
+
+      function renderizarResultadoExemplares(exemplares) {
+        // Filtra os que já estão no carrinho
+        exemplares = exemplares.filter(
+          (e) => !carrinho.some((c) => c.exemplar_id === e.id),
+        );
+
+        if (exemplares.length === 0) {
+          acExemplarResultados.innerHTML = `<div class="autocomplete-item sem-resultado">
+            <i class="fas fa-book"></i> Nenhum exemplar disponível encontrado.
+          </div>`;
+          acExemplarResultados.classList.add("ativo");
+          return;
+        }
+
+        acExemplarResultados.innerHTML = exemplares
+          .map((e) => {
+            const autores = (e.livro?.autores || [])
+              .map((a) => a.autor?.nome || "")
+              .filter(Boolean)
+              .join(", ");
+            const prat = e.prateleira
+              ? `Estante ${e.prateleira.estante?.codigo || "?"} · Prat. ${e.prateleira.numero}`
+              : "Sem prateleira";
+
+            return `
+              <div class="autocomplete-item" data-id="${e.id}">
+                <strong>${escaparHtml(e.livro?.titulo || "—")}</strong>
+                <span>
+                  <span style="font-family:'Courier New',monospace; color:#1a3a6b; font-weight:700;">${escaparHtml(e.codigo)}</span>
+                  · ${escaparHtml(autores || "Sem autor")}
+                  · ${escaparHtml(prat)}
+                </span>
+              </div>`;
+          })
+          .join("");
+        acExemplarResultados.classList.add("ativo");
+
+        acExemplarResultados.querySelectorAll("[data-id]").forEach((el) => {
+          el.addEventListener("click", () => {
+            const id = parseInt(el.dataset.id);
+            const ex = exemplares.find((x) => x.id === id);
+            if (ex) adicionarAoCarrinho(ex);
+            acExemplarResultados.classList.remove("ativo");
+            inputBuscaExemplar.value = "";
+            inputBuscaExemplar.focus();
+          });
+        });
+      }
+
+      // ============================================
+      // CARRINHO
+      // ============================================
+      function adicionarAoCarrinho(exemplar) {
+        // Checa limite (baseado no carrinho + empréstimos ativos do leitor)
+        const emprestimosAtivos = leitorSelecionado
+          ? (leitorSelecionado.emprestimos || []).filter(
+              (e) => e.status === "ABERTO" || e.status === "PARCIAL",
+            ).length
+          : 0;
+        const total = emprestimosAtivos + carrinho.length;
+
+        if (total >= config.limite_livros_por_leitor) {
+          exemplarAlerta.innerHTML = `<div class="alerta alerta-erro">
+            <i class="fas fa-circle-exclamation"></i>
+            <div>Limite de <strong>${config.limite_livros_por_leitor}</strong> livro(s) por leitor já foi atingido.</div>
+          </div>`;
+          return;
+        }
+
+        // Checa duplicidade no carrinho
+        if (carrinho.some((c) => c.exemplar_id === exemplar.id)) {
+          exemplarAlerta.innerHTML = `<div class="alerta alerta-aviso">
+            <i class="fas fa-triangle-exclamation"></i>
+            <div>Este exemplar já está no carrinho.</div>
+          </div>`;
+          return;
+        }
+
+        const autores = (exemplar.livro?.autores || [])
+          .map((a) => a.autor?.nome || "")
+          .filter(Boolean)
+          .join(", ");
+
+        carrinho.push({
+          exemplar_id: exemplar.id,
+          codigo: exemplar.codigo,
+          titulo: exemplar.livro?.titulo || "—",
+          autor: autores || "Sem autor",
+          prateleira: exemplar.prateleira,
+        });
+
+        exemplarAlerta.innerHTML = `<div class="alerta alerta-info">
+          <i class="fas fa-circle-check"></i>
+          <div>Exemplar adicionado ao carrinho.</div>
+        </div>`;
+        setTimeout(() => {
+          if (exemplarAlerta.querySelector(".alerta-info")) {
+            exemplarAlerta.innerHTML = "";
+          }
+        }, 2500);
+
+        renderizarCarrinho();
+      }
+
+      function renderizarCarrinho() {
+        const lista = document.getElementById("carrinhoLista");
+        setTexto("carrinhoContador", carrinho.length);
+
+        if (carrinho.length === 0) {
+          lista.innerHTML = `
+            <div class="carrinho-vazio">
+              <i class="fas fa-shopping-cart"></i>
+              Nenhum exemplar adicionado ainda.<br/>
+              Busque acima para adicionar.
+            </div>`;
+          atualizarBotaoConfirmar();
+          return;
+        }
+
+        lista.innerHTML = carrinho
+          .map(
+            (c) => `
+              <div class="carrinho-item">
+                <span class="codigo">${escaparHtml(c.codigo)}</span>
+                <div class="info">
+                  <strong>${escaparHtml(c.titulo)}</strong>
+                  <span>${escaparHtml(c.autor)}</span>
+                </div>
+                <button class="btn-remover-item" data-remover="${c.exemplar_id}" title="Remover" type="button">
+                  <i class="fas fa-xmark"></i>
+                </button>
+              </div>`,
+          )
+          .join("");
+
+        lista.querySelectorAll("[data-remover]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = parseInt(btn.dataset.remover);
+            carrinho = carrinho.filter((c) => c.exemplar_id !== id);
+            renderizarCarrinho();
+          });
+        });
+
+        atualizarBotaoConfirmar();
+      }
+
+      function atualizarBotaoConfirmar() {
+        const btn = document.getElementById("btnConfirmarEmprestimo");
+        btn.disabled = !leitorSelecionado || carrinho.length === 0;
+      }
+
+      // ============================================
+      // LIMPAR TUDO
+      // ============================================
+      document.getElementById("btnLimparTudo").addEventListener("click", () => {
+        if (leitorSelecionado || carrinho.length > 0) {
+          window.showConfirm(
+            "Limpar formulário",
+            "Deseja realmente limpar todos os dados preenchidos?",
+            () => {
+              leitorSelecionado = null;
+              carrinho = [];
+              document.getElementById("leitorVazio").style.display = "block";
+              document.getElementById("leitorSelecionado").style.display =
+                "none";
+              document
+                .getElementById("blocoLeitor")
+                .classList.remove("com-dados");
+              document.getElementById("inputBuscaLeitor").value = "";
+              document.getElementById("inputBuscaExemplar").value = "";
+              document.getElementById("inputDiasPrazo").value =
+                config.prazo_padrao_dias;
+              exemplarAlerta.innerHTML = "";
+              atualizarPrazoDisplay();
+              renderizarCarrinho();
+              document.getElementById("inputBuscaLeitor").focus();
+            },
+          );
+        }
+      });
+
+      // ============================================
+      // CONFIRMAR EMPRÉSTIMO
+      // ============================================
+      document
+        .getElementById("btnConfirmarEmprestimo")
+        .addEventListener("click", async () => {
+          if (!leitorSelecionado || carrinho.length === 0) return;
+
+          const dias =
+            parseInt(document.getElementById("inputDiasPrazo").value) || 0;
+          if (dias < 1) {
+            window.showNotification(
+              "warning",
+              "Prazo inválido",
+              "Informe pelo menos 1 dia de prazo.",
+            );
+            return;
+          }
+
+          const btn = document.getElementById("btnConfirmarEmprestimo");
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Registrando...`;
+
+          try {
+            const prazo = new Date(hoje());
+            prazo.setDate(prazo.getDate() + dias);
+            const prazoISO = prazo.toISOString().slice(0, 10);
+
+            // 1. Insere o empréstimo (código vem da trigger)
+            const { data: emprestimo, error: err1 } = await supabase
+              .from("bib_emprestimos")
+              .insert({
+                leitor_id: leitorSelecionado.id,
+                usuario_id: usuarioLogado.id,
+                data_retirada: new Date().toISOString(),
+                prazo_devolucao: prazoISO,
+                status: "ABERTO",
+                renovacoes: 0,
+              })
+              .select("id, codigo")
+              .single();
+
+            if (err1) throw err1;
+
+            // 2. Insere os itens (marca cada exemplar como emprestado via trigger)
+            const itens = carrinho.map((c) => ({
+              emprestimo_id: emprestimo.id,
+              exemplar_id: c.exemplar_id,
+            }));
+
+            const { error: err2 } = await supabase
+              .from("bib_emprestimo_itens")
+              .insert(itens);
+            if (err2) throw err2;
+
+            window.showNotification(
+              "success",
+              "Empréstimo registrado",
+              `${emprestimo.codigo} · ${carrinho.length} exemplar(es) · Devolver até ${formatarDataBR(prazo)}`,
+              7000,
+            );
+
+            // Pergunta se quer imprimir comprovante
+            const querImprimir = confirm(
+              "Empréstimo registrado com sucesso!\n\nDeseja abrir o comprovante para impressão?",
+            );
+            if (querImprimir) {
+              window.open(`comprovante.html?id=${emprestimo.id}`, "_blank");
+            }
+
+            // Limpa form
+            leitorSelecionado = null;
+            carrinho = [];
+            document.getElementById("leitorVazio").style.display = "block";
+            document.getElementById("leitorSelecionado").style.display = "none";
+            document
+              .getElementById("blocoLeitor")
+              .classList.remove("com-dados");
+            document.getElementById("inputBuscaLeitor").value = "";
+            document.getElementById("inputBuscaExemplar").value = "";
+            document.getElementById("inputDiasPrazo").value =
+              config.prazo_padrao_dias;
+            exemplarAlerta.innerHTML = "";
+            atualizarPrazoDisplay();
+            renderizarCarrinho();
+            document.getElementById("inputBuscaLeitor").focus();
+
+            // Atualiza badge de ativos
+            await carregarEmprestimosAtivos();
+          } catch (err) {
+            console.error(err);
+            window.showNotification(
+              "error",
+              "Erro ao registrar",
+              err.message || "Não foi possível registrar o empréstimo.",
+            );
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-circle-check"></i> Confirmar empréstimo`;
+          }
+        });
+
+      // ============================================
+      // LISTAGEM DE EMPRÉSTIMOS ATIVOS
+      // ============================================
+      async function carregarEmprestimosAtivos() {
+        const tbody = document.getElementById("tbodyAtivos");
+        tbody.innerHTML = `
+          <tr><td colspan="7">
+            <div class="lista-vazia">
+              <i class="fas fa-spinner fa-spin"></i> Carregando empréstimos...
+            </div>
+          </td></tr>`;
+
+        const { data, error } = await supabase
+          .from("bib_emprestimos")
+          .select(
+            `
+            id, codigo, status, data_retirada, prazo_devolucao, renovacoes,
+            leitor: bib_leitores ( id, nome, codigo_carteirinha, telefone ),
+            itens: bib_emprestimo_itens (
+              id, data_devolucao, exemplar: bib_exemplares (
+                id, codigo, livro: bib_livros ( id, titulo )
+              )
+            )
+          `,
+          )
+          .order("data_retirada", { ascending: false })
+          .limit(200);
+
+        if (error) {
+          console.error("Erro ao carregar empréstimos:", error);
+          tbody.innerHTML = `
+            <tr><td colspan="7">
+              <div class="lista-vazia">
+                <i class="fas fa-circle-exclamation"></i>
+                Erro ao carregar empréstimos.<br/>
+                <small>${escaparHtml(error.message)}</small>
+              </div>
+            </td></tr>`;
+          return;
+        }
+
+        emprestimosAtivos = data || [];
+        const abertos = emprestimosAtivos.filter(
+          (e) => e.status === "ABERTO" || e.status === "PARCIAL",
+        ).length;
+        setTexto("badgeAtivos", abertos);
+
+        aplicarFiltrosAtivos();
+      }
+
+      function aplicarFiltrosAtivos() {
+        const busca = document
+          .getElementById("inputBuscaAtivos")
+          .value.trim()
+          .toLowerCase();
+        const filtroStatus =
+          document.getElementById("filtroStatusAtivos").value;
+        const filtroPeriodo = document.getElementById(
+          "filtroPeriodoAtivos",
+        ).value;
+
+        let resultado = emprestimosAtivos.slice();
+
+        // Status
+        if (filtroStatus === "abertos") {
+          resultado = resultado.filter(
+            (e) => e.status === "ABERTO" || e.status === "PARCIAL",
+          );
+        } else if (filtroStatus) {
+          resultado = resultado.filter((e) => e.status === filtroStatus);
+        }
+
+        // Período
+        const hj = hoje();
+        if (filtroPeriodo === "hoje") {
+          resultado = resultado.filter((e) => {
+            const d = new Date(e.data_retirada);
+            return (
+              d.getFullYear() === hj.getFullYear() &&
+              d.getMonth() === hj.getMonth() &&
+              d.getDate() === hj.getDate()
+            );
+          });
+        } else if (filtroPeriodo === "semana") {
+          const limite = new Date(hj);
+          limite.setDate(limite.getDate() - 7);
+          resultado = resultado.filter(
+            (e) => new Date(e.data_retirada) >= limite,
+          );
+        } else if (filtroPeriodo === "mes") {
+          const limite = new Date(hj);
+          limite.setDate(limite.getDate() - 30);
+          resultado = resultado.filter(
+            (e) => new Date(e.data_retirada) >= limite,
+          );
+        } else if (filtroPeriodo === "atrasados") {
+          resultado = resultado.filter((e) => {
+            if (e.status !== "ABERTO" && e.status !== "PARCIAL") return false;
+            const prazo = new Date(e.prazo_devolucao + "T00:00:00");
+            return prazo < hj;
+          });
+        }
+
+        // Busca textual
+        if (busca) {
+          resultado = resultado.filter((e) => {
+            const itensStr = (e.itens || [])
+              .map((i) => i.exemplar?.livro?.titulo + " " + i.exemplar?.codigo)
+              .join(" ");
+            const alvo = [
+              e.codigo,
+              e.leitor?.nome,
+              e.leitor?.codigo_carteirinha,
+              itensStr,
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            return alvo.includes(busca);
+          });
+        }
+
+        renderizarTabelaAtivos(resultado);
+      }
+
+      function renderizarTabelaAtivos(emprestimos) {
+        const tbody = document.getElementById("tbodyAtivos");
+
+        if (emprestimos.length === 0) {
+          tbody.innerHTML = `
+            <tr><td colspan="7">
+              <div class="lista-vazia">
+                <i class="fas fa-inbox"></i>
+                Nenhum empréstimo encontrado com os filtros atuais.
+              </div>
+            </td></tr>`;
+          return;
+        }
+
+        const hj = hoje();
+
+        tbody.innerHTML = emprestimos
+          .map((e) => {
+            const itens = e.itens || [];
+            const totalItens = itens.length;
+            const itensDevolvidos = itens.filter(
+              (i) => i.data_devolucao,
+            ).length;
+            const itensPendentes = totalItens - itensDevolvidos;
+
+            // Situação visual
+            const prazoDate = new Date(e.prazo_devolucao + "T00:00:00");
+            const emAtraso = itensPendentes > 0 && prazoDate < hj;
+            let statusLabel, statusClass;
+            if (e.status === "CANCELADO") {
+              statusLabel = "Cancelado";
+              statusClass = "badge-cancelado";
+            } else if (e.status === "DEVOLVIDO") {
+              statusLabel = "Devolvido";
+              statusClass = "badge-devolvido";
+            } else if (emAtraso) {
+              statusLabel = "Atrasado";
+              statusClass = "badge-atrasado";
+            } else if (e.status === "PARCIAL") {
+              statusLabel = "Parcial";
+              statusClass = "badge-parcial";
+            } else {
+              statusLabel = "Em aberto";
+              statusClass = "badge-aberto";
+            }
+
+            // Dias
+            const diffDias = Math.floor(
+              (prazoDate - hj) / (1000 * 60 * 60 * 24),
+            );
+            let diasHtml = "";
+            if (itensPendentes > 0) {
+              if (diffDias < 0) {
+                diasHtml = `<span class="badge badge-dias atraso">${-diffDias}d em atraso</span>`;
+              } else if (diffDias === 0) {
+                diasHtml = `<span class="badge badge-dias hoje">Hoje</span>`;
+              } else if (diffDias <= 3) {
+                diasHtml = `<span class="badge badge-dias">${diffDias}d</span>`;
+              }
+            }
+
+            // Lista de exemplares resumida
+            const exemplaresResumo = itens
+              .map((i) => {
+                const t = i.exemplar?.livro?.titulo || "—";
+                const c = i.exemplar?.codigo || "—";
+                const dev = i.data_devolucao ? " ✓" : "";
+                return `<div style="font-size:0.78rem; line-height:1.5; ${i.data_devolucao ? "text-decoration:line-through; opacity:0.55;" : ""}">
+                  <strong style="color:#0f172a;">${escaparHtml(t)}</strong>${dev}
+                  <span style="color:#94a3b8; font-family:'Courier New',monospace;"> ${escaparHtml(c)}</span>
+                </div>`;
+              })
+              .join("");
+
+            const leitor = e.leitor || {};
+
+            const mostrarAcoes =
+              e.status === "ABERTO" || e.status === "PARCIAL";
+
+            return `
+              <tr data-id="${e.id}">
+                <td><span class="codigo-emprestimo">${escaparHtml(e.codigo)}</span></td>
+                <td>
+                  <div class="leitor-cell">
+                    <div class="mini-avatar">${escaparHtml(iniciais(leitor.nome || "?"))}</div>
+                    <div class="info">
+                      <strong>${escaparHtml(leitor.nome || "—")}</strong>
+                      <span>${escaparHtml(leitor.codigo_carteirinha || "")}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>${exemplaresResumo}</td>
+                <td style="font-size:0.78rem;">${formatarData(e.data_retirada)}</td>
+                <td>
+                  <div style="font-size:0.82rem; font-weight:600; color:#0f172a;">${formatarData(e.prazo_devolucao)}</div>
+                  ${diasHtml}
+                </td>
+                <td style="text-align:center;">
+                  <span class="badge ${statusClass}">${statusLabel}</span>
+                </td>
+                <td>
+                  <div class="acoes-tabela">
+                    ${
+                      mostrarAcoes
+                        ? `
+                          <button class="btn-acao devolver" data-acao="devolver" data-id="${e.id}" title="Registrar devolução" type="button">
+                            <i class="fas fa-rotate-left"></i>
+                          </button>
+                          <button class="btn-acao renovar" data-acao="renovar" data-id="${e.id}" title="Renovar empréstimo" type="button">
+                            <i class="fas fa-arrows-rotate"></i>
+                          </button>
+                        `
+                        : ""
+                    }
+                    <button class="btn-acao comprovante" data-acao="comprovante" data-id="${e.id}" title="Ver comprovante" type="button">
+                      <i class="fas fa-print"></i>
+                    </button>
+                    ${
+                      mostrarAcoes
+                        ? `
+                          <button class="btn-acao cancelar" data-acao="cancelar" data-id="${e.id}" title="Cancelar empréstimo" type="button">
+                            <i class="fas fa-ban"></i>
+                          </button>
+                        `
+                        : ""
+                    }
+                  </div>
+                </td>
+              </tr>`;
+          })
+          .join("");
+
+        tbody.querySelectorAll("[data-acao='devolver']").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.dataset.id;
+            window.location.href = `devolucoes.html?id=${id}`;
+          });
+        });
+
+        tbody.querySelectorAll("[data-acao='renovar']").forEach((btn) => {
+          btn.addEventListener("click", () =>
+            renovar(parseInt(btn.dataset.id)),
+          );
+        });
+
+        tbody.querySelectorAll("[data-acao='cancelar']").forEach((btn) => {
+          btn.addEventListener("click", () =>
+            cancelar(parseInt(btn.dataset.id)),
+          );
+        });
+
+        tbody.querySelectorAll("[data-acao='comprovante']").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            window.open(`comprovante.html?id=${btn.dataset.id}`, "_blank");
+          });
+        });
+      }
+
+      // ============================================
+      // RENOVAÇÃO
+      // ============================================
+      async function renovar(id) {
+        const e = emprestimosAtivos.find((x) => x.id === id);
+        if (!e) return;
+
+        const renovacoesMax = config.renovacoes_maximas || 1;
+        if (e.renovacoes >= renovacoesMax) {
+          window.showNotification(
+            "warning",
+            "Limite de renovações",
+            `Este empréstimo já foi renovado ${e.renovacoes} vez(es). Limite: ${renovacoesMax}.`,
+          );
+          return;
+        }
+
+        const dias = config.prazo_padrao_dias || 14;
+
+        window.showConfirm(
+          "Renovar empréstimo",
+          `Estender o prazo de <strong>${escaparHtml(e.codigo)}</strong> por mais <strong>${dias} dias</strong>?<br/><br/>
+           <small style="color:#64748b;">Renovações já realizadas: ${e.renovacoes}/${renovacoesMax}</small>`,
+          async () => {
+            try {
+              const { data: renovado, error } = await supabase.rpc("bib_renovar_emprestimo", {
+                p_emprestimo_id: id,
+                p_dias: dias,
+              });
+              if (error) throw error;
+              const novoPrazo = new Date(`${renovado.prazo_devolucao}T00:00:00`);
+
+              window.showNotification(
+                "success",
+                "Empréstimo renovado",
+                `Novo prazo: ${formatarDataBR(novoPrazo)}.`,
+              );
+              await carregarEmprestimosAtivos();
+            } catch (err) {
+              console.error(err);
+              window.showNotification(
+                "error",
+                "Erro ao renovar",
+                err.message || "Não foi possível renovar o empréstimo.",
+              );
+            }
+          },
+        );
+      }
+
+      // ============================================
+      // CANCELAMENTO
+      // ============================================
+      async function cancelar(id) {
+        const e = emprestimosAtivos.find((x) => x.id === id);
+        if (!e) return;
+
+        window.showPrompt(
+          "Cancelar empréstimo",
+          `Cancelar <strong>${escaparHtml(e.codigo)}</strong> de <strong>${escaparHtml(e.leitor?.nome || "—")}</strong>?<br/>
+           Os exemplares serão liberados novamente.`,
+          async (motivo) => {
+            if (!motivo || motivo.length < 3) {
+              window.showNotification(
+                "warning",
+                "Motivo obrigatório",
+                "Informe um motivo com pelo menos 3 caracteres.",
+              );
+              return;
+            }
+
+            try {
+              // Atualiza o empréstimo
+              const { error: err1 } = await supabase
+                .from("bib_emprestimos")
+                .update({
+                  status: "CANCELADO",
+                  observacoes: motivo,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq("id", id);
+              if (err1) throw err1;
+
+              // Libera os exemplares que ainda não foram devolvidos
+              const exemplaresParaLiberar = (e.itens || [])
+                .filter((i) => !i.data_devolucao)
+                .map((i) => i.exemplar?.id)
+                .filter(Boolean);
+
+              if (exemplaresParaLiberar.length > 0) {
+                const { error: err2 } = await supabase
+                  .from("bib_exemplares")
+                  .update({
+                    situacao: "DISPONIVEL",
+                    updated_at: new Date().toISOString(),
+                  })
+                  .in("id", exemplaresParaLiberar);
+                if (err2) throw err2;
+              }
+
+              window.showNotification(
+                "success",
+                "Empréstimo cancelado",
+                `${exemplaresParaLiberar.length} exemplar(es) liberado(s).`,
+              );
+              await carregarEmprestimosAtivos();
+            } catch (err) {
+              console.error(err);
+              window.showNotification(
+                "error",
+                "Erro ao cancelar",
+                err.message || "Não foi possível cancelar o empréstimo.",
+              );
+            }
+          },
+        );
+      }
+
+      // ============================================
+      // ABAS
+      // ============================================
+      document.querySelectorAll(".aba").forEach((aba) => {
+        aba.addEventListener("click", () => {
+          const destino = aba.dataset.aba;
+          if (destino === abaAtual) return;
+
+          document
+            .querySelectorAll(".aba")
+            .forEach((a) => a.classList.remove("ativa"));
+          document
+            .querySelectorAll(".aba-conteudo")
+            .forEach((a) => a.classList.remove("ativa"));
+
+          aba.classList.add("ativa");
+          document.getElementById(`aba-${destino}`).classList.add("ativa");
+          abaAtual = destino;
+
+          if (destino === "ativos") {
+            carregarEmprestimosAtivos();
+          }
+        });
+      });
+
+      // ============================================
+      // EVENTOS GERAIS
+      // ============================================
+      document
+        .getElementById("inputBuscaAtivos")
+        .addEventListener("input", aplicarFiltrosAtivos);
+      document
+        .getElementById("filtroStatusAtivos")
+        .addEventListener("change", aplicarFiltrosAtivos);
+      document
+        .getElementById("filtroPeriodoAtivos")
+        .addEventListener("change", aplicarFiltrosAtivos);
+      document
+        .getElementById("btnAtualizarAtivos")
+        .addEventListener("click", carregarEmprestimosAtivos);
+
+      // Fecha autocompletes ao clicar fora
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest("#acLeitorWrapper")) {
+          acLeitorResultados.classList.remove("ativo");
+        }
+        if (!e.target.closest("#acExemplarWrapper")) {
+          acExemplarResultados.classList.remove("ativo");
+        }
+      });
+
+      // ESC fecha autocompletes
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          acLeitorResultados.classList.remove("ativo");
+          acExemplarResultados.classList.remove("ativo");
+        }
+      });
+
+      // Toggle sidebar mobile
+      const btnToggle = document.getElementById("btnToggleSidebar");
+      const sidebar = document.getElementById("sidebar");
+      if (btnToggle && sidebar) {
+        btnToggle.addEventListener("click", () =>
+          sidebar.classList.toggle("aberta"),
+        );
+        sidebar.querySelectorAll("a").forEach((a) => {
+          a.addEventListener("click", () => sidebar.classList.remove("aberta"));
+        });
+      }
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        try {
+          const usuario = await verificarSessao();
+          if (!usuario) return;
+
+          renderizarUsuario();
+          configurarMenuAvatar();
+          await carregarConfiguracoes();
+          atualizarPrazoDisplay();
+          renderizarCarrinho();
+          document.getElementById("inputBuscaLeitor").focus();
+        } catch (err) {
+          console.error("Erro na inicialização:", err);
+          window.showNotification(
+            "error",
+            "Erro inesperado",
+            "Não foi possível inicializar a página.",
+          );
+        } finally {
+          esconderLoading();
+        }
+      }
+
+      init();
+    </script>
+      <script type="module" src="./biblioteca-saas.js"></script>
+  </body>
+</html>

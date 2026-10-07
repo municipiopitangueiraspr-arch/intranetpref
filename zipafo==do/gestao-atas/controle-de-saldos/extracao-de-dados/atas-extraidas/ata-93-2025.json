@@ -1,0 +1,91 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "264",
+    "processo_origem": "86/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "93/2025",
+    "numero_contratacao": "1364 | 93/2025",
+    "numero_processo": "86/2025",
+    "numero_pregao": "44",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-11-18",
+    "vigencia_inicio": "2025-11-18",
+    "vigencia_fim": "2026-11-18",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual fornecimento de materiais de fachada.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CAMILA HERMENEGILDO DA SILVA",
+    "cnpj": "37.578.662/0001-53"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "M² DE ACM (PVDF 4MM) FIXAÇÃO NA DUPLA FACE DE ALTA PERFORMACE COM ESTRUTURA METÁLICA E INSTALAÇÃO NO LOCAL SOLICITADO COM MEDIDAS E DETALHES PRÉ APROVADOS PELO CONTRATANTE E DE TOTAL RESPONSABILIDADE DO CONTRATADO A QUESTÃO DE MEDIDAS COMPATÍVEIS A INSTALAÇÕES - 150 M² - M² DE ACM (PVDF 4MM) FIXAÇÃO NA DUPLA FACE DE ALTA PERFORMACE COM ESTRUTURA METÁLICA E INSTALAÇÃO NO LOCAL SOLICITADO COM MEDIDAS E DETALHES PRÉ APROVADOS PELO CONTRATANTE E DE TOTAL RESPONSABILIDADE DO CONTRATADO A QUESTÃO DE MEDIDAS COMPATÍVEIS A INSTALAÇÕES - 150 M²",
+      "unidade_medida": "M²",
+      "valor_unitario": 389.97,
+      "quantidade_contratada": 130.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 113.0,
+      "quantidade_saldo": 17.0,
+      "valor_total": 50696.1,
+      "valor_aditivo": 0.0,
+      "valor_executado": 44066.61,
+      "valor_saldo": 6629.49,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "M² DE LETRAS CAIXA PVC 10MM RECORTADAS COM ACABAMENTO DE PINTURA FIXAÇÃO EM DIVERSAS SUPERFÍCIES (ACM, PAREDE RUSTICA EXTERNAS, CHAPAS METÁLICA E PAREDES PREDIAIS INTERNAS - 100 M² - M² DE LETRAS CAIXA PVC 10MM RECORTADAS COM ACABAMENTO DE PINTURA FIXAÇÃO EM DIVERSAS SUPERFÍCIES (ACM, PAREDE RUSTICA EXTERNAS, CHAPAS METÁLICA E PAREDES PREDIAIS INTERNAS - 100 M²",
+      "unidade_medida": "M²",
+      "valor_unitario": 162.95,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 75.0,
+      "quantidade_saldo": 25.0,
+      "valor_total": 16295.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 12221.25,
+      "valor_saldo": 4073.75,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "3",
+      "descricao": "M² CONFECÇÃO DE LONGAS COLORIDAS, COM IMPRESSÃO DIGITAL 280 GR. FAXADAS COM ESTRUTURA METALICA E INSTALAÇÃO CONFORME A SOLICITAÇÃO - 100 M² - M² CONFECÇÃO DE LONGAS COLORIDAS, COM IMPRESSÃO DIGITAL 280 GR. FAXADAS COM ESTRUTURA METALICA E INSTALAÇÃO CONFORME A SOLICITAÇÃO - 100 M²",
+      "unidade_medida": "M²",
+      "valor_unitario": 50.91,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 92.0,
+      "valor_total": 5091.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 407.28,
+      "valor_saldo": 4683.72,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 3,
+    "valor_contratado_geral": 72082.1,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 56695.14,
+    "valor_saldo_geral": 15386.96
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem com o PDF: R$ 72.082,10 contratado, R$ 56.695,14 executado e R$ 15.386,96 de saldo.",
+  "anexos": []
+}

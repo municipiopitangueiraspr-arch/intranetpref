@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>painel-estrategico-do-prefeito</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="painel-prefeito.css">
+<script type="importmap">{"imports":{"@supabase/supabase-js":"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"}}</script>
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark"><i class="fa-solid fa-landmark"></i></div><div><strong>Gestão Municipal</strong><span>Painel estratégico</span></div></div>
+    <nav><a class="active" href="#visao-geral"><i class="fa-solid fa-grid-2"></i> Visão geral</a><a href="#biblioteca"><i class="fa-solid fa-book-open"></i> Biblioteca</a><a href="#compras"><i class="fa-solid fa-cart-shopping"></i> Compras e atas</a><a href="#alertas"><i class="fa-solid fa-bell"></i> Alertas executivos</a></nav>
+    <div class="sidebar-note"><i class="fa-solid fa-shield-halved"></i><strong>Visão protegida</strong><span>Indicadores agregados. Nenhum dado pessoal individual é exibido.</span></div>
+    <a class="back-link" href="../intranet.html"><i class="fa-solid fa-arrow-left"></i> Voltar à intranet</a>
+  </aside>
+  <main class="content">
+    <header class="topbar"><div><span class="eyebrow">Centro Integrado de Gestão</span><h1>Painel Estratégico</h1><p>Visão executiva do Município com dados de Biblioteca e Compras.</p></div><div class="top-actions"><div class="period"><label for="inicio">Período</label><input id="inicio" type="date" aria-label="inicio"><span>até</span><input id="fim" type="date" aria-label="fim"><button id="atualizar" class="btn-primary" type="button"><i class="fa-solid fa-arrows-rotate"></i> Atualizar</button></div><div class="user-chip"><div class="avatar">P</div><div><strong id="userName">Gestor</strong><small>Visão executiva</small></div></div></div></header>
+    <div id="loading" class="state loading"><span class="spinner"></span> Carregando indicadores consolidados...</div>
+    <div id="erro" class="state error" hidden><i class="fa-solid fa-circle-exclamation"></i><div><strong>Não foi possível carregar o painel</strong><span id="erroTexto"></span></div><button id="tentar" type="button">Tentar novamente</button></div>
+    <section id="dashboard" hidden>
+      <div class="privacy-strip"><i class="fa-solid fa-lock"></i><span><strong>Dados executivos agregados</strong> · O painel não exibe nomes, CPF, endereços, prontuários, histórico individual de leitura ou detalhes pessoais de cidadãos.</span><span class="updated" id="updated">—</span></div>
+      <section id="visao-geral" class="hero-grid"><div class="hero-card"><span class="eyebrow">Visão do período</span><h2>Decisões baseadas em evidências</h2><p>Use tendências e alertas para acompanhar a execução dos serviços municipais e priorizar ações das secretarias.</p><div class="hero-stats"><div><strong id="heroPedidos">—</strong><span>pedidos registrados</span></div><div><strong id="heroEmprestimos">—</strong><span>empréstimos realizados</span></div><div><strong id="heroAlertas">—</strong><span>alertas ativos</span></div></div></div><div class="trend-card"><div class="section-head"><div><span class="eyebrow">Ritmo operacional</span><h3>Biblioteca e Compras</h3></div><span class="legend"><i class="dot green"></i> Biblioteca <i class="dot blue"></i> Compras</span></div><div id="trendChart" class="trend-chart"></div></div></section>
+      <section id="biblioteca" class="module-section"><div class="module-heading"><div class="module-icon library"><i class="fa-solid fa-book-open"></i></div><div><span class="eyebrow">Módulo setorial</span><h2>Biblioteca Municipal</h2><p>Circulação do acervo, atendimento e capacidade de serviço.</p></div><a href="../biblioteca/dashboard.html" class="module-link">Abrir módulo <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div><div class="metric-grid" id="bibCards"></div><div class="detail-grid"><div class="insight-card"><div class="section-head"><h3>Leitura executiva</h3><i class="fa-solid fa-lightbulb"></i></div><div id="bibInsight" class="insight-text">—</div></div><div class="progress-card"><div class="section-head"><h3>Disponibilidade do acervo</h3><span id="bibAvailabilityPct">—</span></div><div class="progress-track"><div id="bibAvailabilityBar"></div></div><div class="progress-labels"><span>Disponíveis</span><span>Emprestados</span></div></div></div></section>
+      <section id="compras" class="module-section"><div class="module-heading"><div class="module-icon procurement"><i class="fa-solid fa-cart-shopping"></i></div><div><span class="eyebrow">Módulo setorial</span><h2>Compras, Atas e Saldos</h2><p>Execução de pedidos, contratos vigentes e pontos de atenção.</p></div><a href="../controle-de-saldos/gestao-atas.html" class="module-link">Abrir módulo <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div><div class="metric-grid" id="buyCards"></div><div class="split-cards"><div class="donut-card"><div class="section-head"><h3>Status dos pedidos</h3><span id="orderTotal">—</span></div><div class="status-bars" id="orderBars"></div></div><div class="insight-card"><div class="section-head"><h3>Leitura executiva</h3><i class="fa-solid fa-lightbulb"></i></div><div id="buyInsight" class="insight-text">—</div></div></div></section>
+      <section id="alertas" class="module-section alerts-section"><div class="module-heading"><div class="module-icon alerts"><i class="fa-solid fa-bell"></i></div><div><span class="eyebrow">Gestão por exceção</span><h2>Alertas executivos</h2><p>Ocorrências que merecem acompanhamento da administração.</p></div></div><div id="alertsList" class="alerts-list"></div></section>
+      <footer><span><i class="fa-solid fa-circle-check"></i> Dados consultados com escopo de tenant</span><span>Atualização sob demanda · Visão somente leitura</span></footer>
+    </section>
+  </main>
+</div>
+<script type="module" src="painel-prefeito.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+</body></html>

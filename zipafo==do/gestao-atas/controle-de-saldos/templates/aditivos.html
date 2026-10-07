@@ -1,0 +1,54 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="aditivos-container">
+  <div class="aditivos-header">
+    <h3 style="font-size: 1.1rem">
+      <i class="fas fa-file-contract"></i> Gestão de Aditivos de Atas
+    </h3>
+    <button class="btn-novo-aditivo" onclick="sistema.abrirModalAditivo()" type="button">
+      <i class="fas fa-plus-circle"></i> Novo Aditivo
+    </button>
+  </div>
+  <div class="filtros-container" style="margin-bottom: 20px">
+    <div class="filtros-grid">
+      <div class="filtro-grupo">
+        <label class="filtro-label">Buscar</label>
+        <input
+          type="text"
+          id="buscaAditivos"
+          class="filtro-input"
+          placeholder="Nº Ata, Nº Aditivo..."
+          onkeyup="sistema.filtrarAditivos()"
+        / aria-label="Nº Ata, Nº Aditivo...">
+      </div>
+      <div class="filtro-grupo">
+        <label class="filtro-label">Tipo</label>
+        <select
+          id="filtroTipoAditivo"
+          class="filtro-select"
+          onchange="sistema.filtrarAditivos()"
+         aria-label="filtroTipoAditivo">
+          <option value="todos">Todos</option>
+          <option value="PRAZO">Prazo</option>
+          <option value="VALOR">Valor</option>
+          <option value="AMBOS">Prazo e Valor</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <label class="filtro-label">Status</label>
+        <select
+          id="filtroStatusAditivo"
+          class="filtro-select"
+          onchange="sistema.filtrarAditivos()"
+         aria-label="filtroStatusAditivo">
+          <option value="todos">Todos</option>
+          <option value="aplicado">Aplicados</option>
+          <option value="pendente">Pendentes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div id="aditivosLista" class="aditivos-grid"></div>
+</div>

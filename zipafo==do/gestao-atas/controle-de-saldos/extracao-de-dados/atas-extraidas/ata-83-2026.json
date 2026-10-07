@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "66",
+    "processo_origem": "57/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "83/2026",
+    "numero_contratacao": "1543",
+    "numero_processo": "57/2026",
+    "numero_pregao": "28",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-09-03",
+    "vigencia_inicio": "2026-09-03",
+    "vigencia_fim": "2027-09-03",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de medicamentos.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "MEDIGRAM COMERCIO DE MEDICAMENTOS LTDA",
+    "cnpj": "04.470.877/0001-05"
+  },
+  "itens": [
+    {
+      "numero": "3",
+      "descricao": "DULOXETINA 30MG",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.65,
+      "quantidade_contratada": 6000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 300.0,
+      "quantidade_saldo": 5700.0,
+      "valor_total": 3900.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 195.0,
+      "valor_saldo": 3705.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "12",
+      "descricao": "TOPIRAMATO 50MG",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.14,
+      "quantidade_contratada": 6000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 300.0,
+      "quantidade_saldo": 5700.0,
+      "valor_total": 840.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 42.0,
+      "valor_saldo": 798.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 4740.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 237.0,
+    "valor_saldo_geral": 4503.0
+  },
+  "observacoes": "Ata 83/2026 — MEDIGRAM (Processo 57/2026). 2 medicamentos: Duloxetina, Topiramato. Saldo do PDF: R$ 4.503,00.",
+  "anexos": []
+}

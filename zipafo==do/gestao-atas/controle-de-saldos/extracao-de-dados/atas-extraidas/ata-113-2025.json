@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "271-272",
+    "processo_origem": "95/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor LEANDRO ANTONIO OZANA LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "113/2025",
+    "numero_contratacao": "1411 | 113/2025",
+    "numero_processo": "95/2025",
+    "numero_pregao": "46",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-11-19",
+    "vigencia_inicio": "2025-11-19",
+    "vigencia_fim": "2026-11-19",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual aquisição de eletrodomésticos, móveis e equipamentos.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "LEANDRO ANTONIO OZANA LTDA",
+    "cnpj": "29.199.991/0001-65"
+  },
+  "itens": [
+    {
+      "numero": "5",
+      "descricao": "FOGÃO INDUSTRIAL 4 BOCAS, FOGÃO INDUSTRIAL COM 4 BOCAS EM AÇO INOX OU AÇO CARBONO COM PINTURA EPÓXI. QUEIMADORES COM POTÊNCIA MÍNIMA DE 4.000 KCAL/H CADA. ACENDIMENTO MANUAL OU AUTOMÁTICO COM SISTEMA DE SEGURANÇA. BOTÕES FRONTAIS PARA CONTROLE INDIVIDUAL DA CHAMA. COMPATÍVEL COM GÁS GLP OU GN. FÁCIL LIMPEZA COM PARTES DESMONTÁVEIS. PÉS REGULÁVEIS PARA ESTABILIDADE. DIMENSÕES APROXIMADAS: 70X75X90 CM. USO INDICADO PARA COZINHAS INDUSTRIAIS, RESTAURANTES E INSTITUIÇÕES.",
+      "unidade_medida": "UN",
+      "valor_unitario": 649.76,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 649.76,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 649.76,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 649.76,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 649.76
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Todos os itens com saldo integral (nada executado). Totais conferem com o PDF: R$ 649,76 contratado.",
+  "anexos": []
+}

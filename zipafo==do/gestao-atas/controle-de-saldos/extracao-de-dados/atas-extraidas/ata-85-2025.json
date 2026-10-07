@@ -1,0 +1,91 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "215-216",
+    "processo_origem": "67/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor 62.160.310 PATRICIA STOSKI|AVENIDA TIRADENTES."
+  },
+  "cabecalho": {
+    "numero_ata": "85/2025",
+    "numero_contratacao": "1344 | 85/2025",
+    "numero_processo": "67/2025",
+    "numero_pregao": "32",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-10-07",
+    "vigencia_inicio": "2025-10-07",
+    "vigencia_fim": "2026-10-07",
+    "objeto": "Eventual aquisição de materiais de expediente.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "62.160.310 PATRICIA STOSKI|AVENIDA TIRADENTES",
+    "cnpj": "62.160.310/0001-20"
+  },
+  "itens": [
+    {
+      "numero": "8",
+      "descricao": "COLA ADESIVO INSTANTÂNEO 20 GRAMAS. ADESIVO PARA COLAGEM INSTANTÂNEA, INDICADO PARA COLAGEM DE MDF, MADEIRA, COMPENSADO, BORRACHA, PAPEL, CARTOLINA, COURO, CORTIÇA, PORCELANA E PLÁSTICOS (EXCETO PE, PP E PS). VALIDADE MÍNIMA DO PRODUTO NO ATO DA COMPRA 06 MESES.",
+      "unidade_medida": "UN",
+      "valor_unitario": 11.9,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 20.0,
+      "quantidade_saldo": 80.0,
+      "valor_total": 1190.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 238.0,
+      "valor_saldo": 952.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "46",
+      "descricao": "TINTA FACIAL COLOR FLUORESCENTE; PRODUTO É A BASE DE ÁGUA, TEM SECAGEM RÁPIDA E TOTAL; CORES VARIADAS - TINTA FACIAL COLOR FLUORESCENTE; PRODUTO É A BASE DE ÁGUA, TEM SECAGEM RÁPIDA E TOTAL; CORES VARIADAS",
+      "unidade_medida": "UN",
+      "valor_unitario": 11.18,
+      "quantidade_contratada": 30.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 6.0,
+      "quantidade_saldo": 24.0,
+      "valor_total": 335.4,
+      "valor_aditivo": 0.0,
+      "valor_executado": 67.08,
+      "valor_saldo": 268.32,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "47",
+      "descricao": "TINTA RELEVO 3D 35ML PRATA. - TINTA RELEVO 3D 35ML PRATA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 13.0,
+      "quantidade_contratada": 40.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 40.0,
+      "valor_total": 520.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 520.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 3,
+    "valor_contratado_geral": 2045.4,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 305.08,
+    "valor_saldo_geral": 1740.32
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem com o PDF: R$ 2.045,40 contratado, R$ 305,08 executado e R$ 1.740,32 de saldo.",
+  "anexos": []
+}

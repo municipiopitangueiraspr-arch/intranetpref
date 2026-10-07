@@ -1,0 +1,1749 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu Perfil · Intranet Pitangueiras</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* =====================================================================
+         RESET + VARIÁVEIS
+         ===================================================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      :root {
+        --verde: #0d5e3a;
+        --verde-escuro: #0a4a2e;
+        --verde-claro: #e8f5e9;
+        --verde-suave: #f0fdf4;
+        --azul: #1a3a6b;
+        --azul-claro: #ebf4ff;
+        --cinza-texto: #475569;
+        --cinza-suave: #f1f5f9;
+        --cinza-borda: #e2e8f0;
+        --vermelho: #e53e3e;
+        --vermelho-suave: #fff5f5;
+        --amarelo: #d69e2e;
+        --amarelo-suave: #fffff0;
+      }
+
+      body {
+        background: linear-gradient(145deg, #e8f5e9 0%, #e2eaf1 100%);
+        min-height: 100vh;
+        padding: 2rem 1.5rem;
+        color: var(--cinza-texto);
+      }
+
+      /* =====================================================================
+         CONTAINER
+         ===================================================================== */
+      .perfil-container {
+        max-width: 820px;
+        margin: 0 auto;
+      }
+
+      /* =====================================================================
+         HEADER DA PÁGINA
+         ===================================================================== */
+      .perfil-header {
+        background: white;
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        border: 1px solid var(--cinza-borda);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .perfil-avatar {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.8rem;
+        flex-shrink: 0;
+        border: 3px solid white;
+        box-shadow: 0 6px 20px -6px rgba(13, 94, 58, 0.3);
+      }
+
+      .perfil-header-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .perfil-header-info h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 0.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .perfil-header-info h1 i {
+        color: var(--verde);
+        font-size: 1rem;
+      }
+
+      .perfil-header-info .linha-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-top: 0.4rem;
+      }
+
+      .perfil-header-info .linha-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .perfil-header-info .linha-meta i {
+        color: var(--verde);
+        font-size: 0.75rem;
+      }
+
+      .badge-perfil-acesso {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        background: var(--azul-claro);
+        color: var(--azul);
+        border: 1px solid #bee3f8;
+      }
+
+      .perfil-header-acoes {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+
+      /* =====================================================================
+         ABAS
+         ===================================================================== */
+      .abas {
+        background: white;
+        border-radius: 24px 24px 0 0;
+        border: 1px solid var(--cinza-borda);
+        border-bottom: none;
+        padding: 0.5rem 0.5rem 0;
+        display: flex;
+        gap: 4px;
+      }
+
+      .aba {
+        flex: 1;
+        padding: 0.9rem 1rem;
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #718096;
+        cursor: pointer;
+        border-radius: 12px 12px 0 0;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .aba:hover {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+
+      .aba.ativa {
+        background: white;
+        color: var(--verde);
+        box-shadow: 0 -3px 0 var(--verde) inset;
+      }
+
+      .aba i {
+        font-size: 0.9rem;
+      }
+
+      /* =====================================================================
+         PAINEL DE CONTEÚDO
+         ===================================================================== */
+      .painel {
+        background: white;
+        border: 1px solid var(--cinza-borda);
+        border-top: none;
+        border-radius: 0 0 24px 24px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      }
+
+      .aba-conteudo {
+        display: none;
+        animation: fadeIn 0.25s ease;
+      }
+
+      .aba-conteudo.ativa {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* =====================================================================
+         SEÇÕES DO FORMULÁRIO
+         ===================================================================== */
+      .secao-titulo {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--verde);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid var(--verde-suave);
+      }
+
+      .secao-titulo i {
+        font-size: 0.85rem;
+      }
+
+      .secao-titulo + .secao-titulo {
+        margin-top: 2rem;
+      }
+
+      /* =====================================================================
+         FORMULÁRIO
+         ===================================================================== */
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem 1.2rem;
+      }
+
+      .form-grid .full {
+        grid-column: 1 / -1;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #4a5568;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .form-label .required {
+        color: var(--vermelho);
+      }
+
+      .form-label .cadeado {
+        color: #94a3b8;
+        font-size: 0.7rem;
+        margin-left: auto;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--cinza-borda);
+        border-radius: 12px;
+        font-size: 0.9rem;
+        background: white;
+        outline: none;
+        transition: all 0.2s;
+        font-family: inherit;
+        color: #1e293b;
+      }
+
+      .form-input:focus {
+        border-color: var(--verde);
+        box-shadow: 0 0 0 3px rgba(13, 94, 58, 0.1);
+      }
+
+      .form-input:disabled,
+      .form-input.somente-leitura {
+        background: #f8fafc;
+        cursor: not-allowed;
+        color: #94a3b8;
+        border-style: dashed;
+      }
+
+      .form-input.com-toggle {
+        padding-right: 2.8rem;
+      }
+
+      .input-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+
+      .input-icon:hover {
+        color: var(--verde);
+      }
+
+      .form-hint {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        line-height: 1.4;
+      }
+
+      /* =====================================================================
+         BOTÕES
+         ===================================================================== */
+      .btn {
+        padding: 0.75rem 1.3rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--verde);
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: var(--verde-escuro);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px -6px rgba(13, 94, 58, 0.4);
+      }
+
+      .btn-primary:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .btn-secondary {
+        background: var(--cinza-suave);
+        color: var(--cinza-texto);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .btn-secondary:hover {
+        background: var(--cinza-borda);
+      }
+
+      .btn-outline {
+        background: white;
+        border: 2px solid var(--verde);
+        color: var(--verde);
+      }
+
+      .btn-outline:hover {
+        background: var(--verde-suave);
+      }
+
+      .acoes-form {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--cinza-borda);
+        flex-wrap: wrap;
+      }
+
+      /* =====================================================================
+         ALERTAS / INFO
+         ===================================================================== */
+      .alerta {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 1rem 1.2rem;
+        border-radius: 14px;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+      }
+
+      .alerta i {
+        font-size: 1.1rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+
+      .alerta-info {
+        background: var(--azul-claro);
+        color: #1e3a5f;
+        border: 1px solid #bee3f8;
+      }
+
+      .alerta-info i {
+        color: var(--azul);
+      }
+
+      .alerta-info strong {
+        display: block;
+        margin-bottom: 3px;
+        color: var(--azul);
+      }
+
+      .alerta-aviso {
+        background: var(--amarelo-suave);
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+
+      .alerta-aviso i {
+        color: var(--amarelo);
+      }
+
+      /* =====================================================================
+         MEDIDOR DE FORÇA DA SENHA
+         ===================================================================== */
+      .forca-senha {
+        margin-top: 0.6rem;
+      }
+
+      .forca-barra {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 6px;
+      }
+
+      .forca-barra .segmento {
+        flex: 1;
+        height: 5px;
+        background: var(--cinza-borda);
+        border-radius: 3px;
+        transition: background 0.2s;
+      }
+
+      .forca-barra.score-1 .segmento:nth-child(-n + 1) {
+        background: var(--vermelho);
+      }
+      .forca-barra.score-2 .segmento:nth-child(-n + 2) {
+        background: var(--amarelo);
+      }
+      .forca-barra.score-3 .segmento:nth-child(-n + 3) {
+        background: #38a169;
+      }
+      .forca-barra.score-4 .segmento {
+        background: var(--verde);
+      }
+
+      .forca-texto {
+        font-size: 0.75rem;
+        color: #718096;
+      }
+
+      .forca-texto.score-1 {
+        color: var(--vermelho);
+      }
+      .forca-texto.score-2 {
+        color: var(--amarelo);
+      }
+      .forca-texto.score-3 {
+        color: #38a169;
+      }
+      .forca-texto.score-4 {
+        color: var(--verde);
+        font-weight: 600;
+      }
+
+      /* =====================================================================
+         BLOCO DE AUDITORIA (aba Segurança)
+         ===================================================================== */
+      .auditoria-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-top: 0.5rem;
+      }
+
+      .auditoria-item {
+        background: #f8fafc;
+        border: 1px solid var(--cinza-borda);
+        border-radius: 14px;
+        padding: 1rem 1.2rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .auditoria-item .icone {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--verde-suave);
+        color: var(--verde);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+
+      .auditoria-item .info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .auditoria-item .info .label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.3px;
+        margin-bottom: 3px;
+      }
+
+      .auditoria-item .info .valor {
+        font-size: 0.92rem;
+        color: #0f172a;
+        font-weight: 600;
+        word-break: break-word;
+      }
+
+      /* =====================================================================
+         NOTIFICAÇÕES TOAST
+         ===================================================================== */
+      .notification-center {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .notification-toast {
+        pointer-events: all;
+        background: white;
+        border-radius: 16px;
+        padding: 16px 24px;
+        min-width: 320px;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        animation: notificationSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .notification-toast.removing {
+        animation: notificationSlideDown 0.3s ease-in forwards;
+      }
+
+      @keyframes notificationSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes notificationSlideDown {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+      }
+
+      .notification-toast.notification-success {
+        border-left-color: var(--verde);
+        background: var(--verde-suave);
+      }
+      .notification-toast.notification-error {
+        border-left-color: var(--vermelho);
+        background: var(--vermelho-suave);
+      }
+      .notification-toast.notification-warning {
+        border-left-color: var(--amarelo);
+        background: var(--amarelo-suave);
+      }
+      .notification-toast.notification-info {
+        border-left-color: var(--azul);
+        background: var(--azul-claro);
+      }
+
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .notification-content {
+        flex: 1;
+      }
+      .notification-title {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .notification-success .notification-title {
+        color: var(--verde);
+      }
+      .notification-error .notification-title {
+        color: var(--vermelho);
+      }
+      .notification-warning .notification-title {
+        color: var(--amarelo);
+      }
+      .notification-info .notification-title {
+        color: var(--azul);
+      }
+      .notification-message {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        line-height: 1.4;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #a0aec0;
+        flex-shrink: 0;
+        margin-top: -2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .notification-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+      }
+
+      /* =====================================================================
+         LOADING
+         ===================================================================== */
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99998;
+        transition: opacity 0.3s;
+      }
+
+      .loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid var(--cinza-borda);
+        border-top-color: var(--verde);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* =====================================================================
+         RESPONSIVIDADE
+         ===================================================================== */
+      @media (max-width: 640px) {
+        body {
+          padding: 1rem;
+        }
+
+        .perfil-header {
+          padding: 1.5rem;
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .perfil-header-info h1 {
+          justify-content: center;
+          font-size: 1.3rem;
+        }
+
+        .perfil-header-info .linha-meta {
+          justify-content: center;
+        }
+
+        .perfil-header-acoes {
+          width: 100%;
+        }
+
+        .perfil-header-acoes .btn {
+          flex: 1;
+        }
+
+        .painel {
+          padding: 1.5rem;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .acoes-form {
+          flex-direction: column-reverse;
+        }
+
+        .acoes-form .btn {
+          width: 100%;
+        }
+
+        .aba {
+          font-size: 0.82rem;
+          padding: 0.8rem 0.6rem;
+        }
+
+        .notification-toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+      }
+      .perfil-avatar-wrap { position: relative; display: inline-block; }
+      .btn-foto-perfil { position: absolute; right: -3px; bottom: -3px; width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; background: var(--verde); color: white; cursor: pointer; box-shadow: 0 2px 7px rgba(0,0,0,.18); }
+      .perfil-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+    </style>
+<link rel="stylesheet" href="shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="shared/css/acessibilidade-intranet.css">
+<script src="shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- LOADING -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- =====================================================================
+         CONTAINER
+         ===================================================================== -->
+    <div class="perfil-container">
+      <!-- =====================================================================
+           HEADER DA PÁGINA
+           ===================================================================== -->
+      <div class="perfil-header">
+        <div class="perfil-avatar-wrap">
+          <div class="perfil-avatar" id="perfilAvatar">?</div>
+          <button type="button" class="btn-foto-perfil" id="btnEscolherFoto" title="Alterar foto"><i class="fas fa-camera"></i></button>
+          <input type="file" id="inputFotoPerfil" accept="image/jpeg,image/png,image/webp" hidden aria-label="inputFotoPerfil">
+        </div>
+
+        <div class="perfil-header-info">
+          <h1 id="perfilHeaderNome">
+            Carregando...
+            <i class="fas fa-circle-check" style="display: none"></i>
+          </h1>
+          <div class="linha-meta">
+            <span id="perfilHeaderEmail">
+              <i class="fas fa-envelope"></i> —
+            </span>
+            <span id="perfilHeaderOrgao">
+              <i class="fas fa-building"></i> —
+            </span>
+            <span>
+              <i class="fas fa-user-tag"></i>
+              <span class="badge-perfil-acesso" id="perfilHeaderPerfil">—</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="perfil-header-acoes">
+          <button
+            class="btn btn-outline"
+            id="btnVoltarIntranet"
+            title="Voltar à intranet"
+           type="button">
+            <i class="fas fa-arrow-left"></i> Voltar
+          </button>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           ABAS
+           ===================================================================== -->
+      <div class="abas">
+        <button class="aba ativa" data-aba="dados" type="button">
+          <i class="fas fa-user-circle"></i> Dados pessoais
+        </button>
+        <button class="aba" data-aba="seguranca" type="button">
+          <i class="fas fa-shield-halved"></i> Segurança
+        </button>
+      </div>
+
+      <!-- =====================================================================
+           CONTEÚDO DAS ABAS
+           ===================================================================== -->
+      <div class="painel">
+        <!-- ============ ABA 1 · DADOS PESSOAIS ============ -->
+        <div class="aba-conteudo ativa" id="aba-dados">
+          <div class="secao-titulo">
+            <i class="fas fa-user-edit"></i> Informações editáveis
+          </div>
+
+          <div class="alerta alerta-info">
+            <i class="fas fa-circle-info"></i>
+            <div>
+              <strong>Você pode editar estes dados</strong>
+              Suas alterações serão salvas imediatamente e ficarão visíveis em
+              todos os módulos do sistema.
+            </div>
+          </div>
+
+          <form id="formDados" novalidate>
+            <div class="form-grid">
+              <!-- Nome -->
+              <div class="form-group full">
+                <label class="form-label" for="inputNome">
+                  Nome completo <span class="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="inputNome"
+                  class="form-input"
+                  placeholder="Seu nome completo"
+                  maxlength="200"
+                  required
+                / aria-label="Seu nome completo">
+              </div>
+
+              <!-- Cargo -->
+              <div class="form-group">
+                <label class="form-label" for="inputCargo"
+                  >Cargo / Função</label
+                >
+                <input
+                  type="text"
+                  id="inputCargo"
+                  class="form-input"
+                  placeholder="Ex: Assessor, Secretário"
+                  maxlength="100"
+                / aria-label="Ex: Assessor, Secretário">
+              </div>
+
+              <!-- Telefone -->
+              <div class="form-group">
+                <label class="form-label" for="inputTelefone">Telefone</label>
+                <input
+                  type="tel"
+                  id="inputTelefone"
+                  class="form-input"
+                  placeholder="(43) 99999-9999"
+                  maxlength="20"
+                / aria-label="(43) 99999 9999">
+              </div>
+            </div>
+
+            <!-- ============ DADOS SOMENTE LEITURA ============ -->
+            <div class="secao-titulo" style="margin-top: 2rem">
+              <i class="fas fa-lock"></i> Informações gerenciadas pelo
+              administrador
+            </div>
+
+            <div class="alerta alerta-aviso">
+              <i class="fas fa-triangle-exclamation"></i>
+              <div>
+                Estes dados <strong>não podem ser alterados por você</strong>.
+                Caso precise atualizar algum deles, entre em contato com o
+                suporte de TI.
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <!-- E-mail -->
+              <div class="form-group">
+                <label class="form-label" for="inputEmail">
+                  E-mail
+                  <span class="cadeado"><i class="fas fa-lock"></i></span>
+                </label>
+                <input
+                  type="email"
+                  id="inputEmail"
+                  class="form-input somente-leitura"
+                  disabled
+                / aria-label="inputEmail">
+              </div>
+
+              <!-- Órgão -->
+              <div class="form-group">
+                <label class="form-label" for="inputOrgao">
+                  Órgão
+                  <span class="cadeado"><i class="fas fa-lock"></i></span>
+                </label>
+                <input
+                  type="text"
+                  id="inputOrgao"
+                  class="form-input somente-leitura"
+                  disabled
+                / aria-label="inputOrgao">
+              </div>
+
+              <!-- Perfil de acesso -->
+              <div class="form-group full">
+                <label class="form-label" for="inputPerfilAcesso">
+                  Perfil de acesso
+                  <span class="cadeado"><i class="fas fa-lock"></i></span>
+                </label>
+                <input
+                  type="text"
+                  id="inputPerfilAcesso"
+                  class="form-input somente-leitura"
+                  disabled
+                / aria-label="inputPerfilAcesso">
+                <span class="form-hint">
+                  O perfil de acesso define quais módulos você pode acessar e é
+                  definido pelo administrador do sistema.
+                </span>
+              </div>
+            </div>
+
+            <div class="acoes-form">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="btnDescartarDados"
+              >
+                <i class="fas fa-undo-alt"></i> Descartar
+              </button>
+              <button type="submit" class="btn btn-primary" id="btnSalvarDados">
+                <i class="fas fa-save"></i> Salvar alterações
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ============ ABA 2 · SEGURANÇA ============ -->
+        <div class="aba-conteudo" id="aba-seguranca">
+          <div class="secao-titulo">
+            <i class="fas fa-key"></i> Trocar senha
+          </div>
+
+          <div class="alerta alerta-info">
+            <i class="fas fa-circle-info"></i>
+            <div>
+              <strong>Recomendações de segurança</strong>
+              Use uma senha forte com pelo menos 8 caracteres, incluindo letras
+              maiúsculas, minúsculas e números. Não compartilhe sua senha com
+              ninguém.
+            </div>
+          </div>
+
+          <form id="formSenha" novalidate>
+            <div class="form-grid">
+              <!-- Senha atual -->
+              <div class="form-group full">
+                <label class="form-label" for="inputSenhaAtual">
+                  Senha atual <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <input
+                    type="password"
+                    id="inputSenhaAtual"
+                    class="form-input com-toggle"
+                    placeholder="Digite sua senha atual"
+                    autocomplete="current-password"
+                    required
+                  / aria-label="Digite sua senha atual">
+                  <i
+                    class="fas fa-eye input-icon"
+                    data-toggle="inputSenhaAtual"
+                    title="Mostrar/ocultar"
+                  ></i>
+                </div>
+              </div>
+
+              <!-- Nova senha -->
+              <div class="form-group full">
+                <label class="form-label" for="inputNovaSenha">
+                  Nova senha <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <input
+                    type="password"
+                    id="inputNovaSenha"
+                    class="form-input com-toggle"
+                    placeholder="Mínimo 8 caracteres"
+                    autocomplete="new-password"
+                    required
+                  / aria-label="Mínimo 8 caracteres">
+                  <i
+                    class="fas fa-eye input-icon"
+                    data-toggle="inputNovaSenha"
+                    title="Mostrar/ocultar"
+                  ></i>
+                </div>
+
+                <!-- Medidor de força -->
+                <div class="forca-senha">
+                  <div class="forca-barra" id="forcaBarra">
+                    <div class="segmento"></div>
+                    <div class="segmento"></div>
+                    <div class="segmento"></div>
+                    <div class="segmento"></div>
+                  </div>
+                  <div class="forca-texto" id="forcaTexto">
+                    Digite uma senha para ver a força
+                  </div>
+                </div>
+              </div>
+
+              <!-- Confirmar nova senha -->
+              <div class="form-group full">
+                <label class="form-label" for="inputConfirmaSenha">
+                  Confirmar nova senha <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <input
+                    type="password"
+                    id="inputConfirmaSenha"
+                    class="form-input com-toggle"
+                    placeholder="Repita a nova senha"
+                    autocomplete="new-password"
+                    required
+                  / aria-label="Repita a nova senha">
+                  <i
+                    class="fas fa-eye input-icon"
+                    data-toggle="inputConfirmaSenha"
+                    title="Mostrar/ocultar"
+                  ></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="acoes-form">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="btnLimparSenha"
+              >
+                <i class="fas fa-eraser"></i> Limpar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="btnTrocarSenha"
+                disabled
+              >
+                <i class="fas fa-key"></i> Trocar senha
+              </button>
+            </div>
+          </form>
+
+          <!-- ============ AUDITORIA ============ -->
+          <div class="secao-titulo" style="margin-top: 2.5rem">
+            <i class="fas fa-clock-rotate-left"></i> Histórico de segurança
+          </div>
+
+          <div class="auditoria-grid">
+            <div class="auditoria-item">
+              <div class="icone"><i class="fas fa-right-to-bracket"></i></div>
+              <div class="info">
+                <div class="label">Último acesso</div>
+                <div class="valor" id="infoUltimoAcesso">—</div>
+              </div>
+            </div>
+
+            <div class="auditoria-item">
+              <div class="icone"><i class="fas fa-key"></i></div>
+              <div class="info">
+                <div class="label">Senha alterada em</div>
+                <div class="valor" id="infoSenhaAlterada">—</div>
+              </div>
+            </div>
+
+            <div class="auditoria-item">
+              <div class="icone"><i class="fas fa-user-check"></i></div>
+              <div class="info">
+                <div class="label">Conta criada em</div>
+                <div class="valor" id="infoCriadoEm">—</div>
+              </div>
+            </div>
+
+            <div class="auditoria-item">
+              <div class="icone"><i class="fas fa-file-signature"></i></div>
+              <div class="info">
+                <div class="label">Termos aceitos em</div>
+                <div class="valor" id="infoTermos">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div class="notification-center" id="notificationCenter"></div>
+
+    <!-- =====================================================================
+         SUPABASE SDK + LÓGICA
+         ===================================================================== -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // ============================================
+      // CONFIGURAÇÃO SUPABASE
+      // ============================================
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // SERVIÇOS (import dinâmico)
+      // ============================================
+      let AuthGuard = null;
+      let OnboardingService = null;
+
+      async function carregarServicos() {
+        try {
+          const g = await import("/shared/js/auth-guard.js");
+          AuthGuard = g.AuthGuard || g.default;
+        } catch (err) {
+          console.error("[Perfil] Falha ao carregar AuthGuard:", err);
+        }
+        try {
+          const s = await import("/shared/js/services/onboarding-service.js");
+          OnboardingService = s.OnboardingService || s.default;
+        } catch (err) {
+          console.error("[Perfil] Falha ao carregar OnboardingService:", err);
+        }
+      }
+
+      // ============================================
+      // ESTADO
+      // ============================================
+      let perfil = null;
+      let dadosOriginais = {};
+
+      // ============================================
+      // NOTIFICAÇÕES
+      // ============================================
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      // ============================================
+      // HELPERS
+      // ============================================
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function formatarDataHora(iso) {
+        if (!iso) return "—";
+        try {
+          const d = new Date(iso);
+          if (isNaN(d.getTime())) return "—";
+          return d.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        } catch {
+          return "—";
+        }
+      }
+
+      function labelPerfil(p) {
+        const map = {
+          ADMIN: "Administrador",
+          SECRETARIO: "Secretário",
+          SOLICITANTE: "Solicitante",
+          ESTAGIARIO: "Estagiário",
+        };
+        return map[p] || p || "—";
+      }
+
+      function esconderLoading() {
+        document.getElementById("loadingOverlay")?.classList.add("hidden");
+      }
+
+      // ============================================
+      // TOGGLE DE SENHA (olho)
+      // ============================================
+      document.querySelectorAll("[data-toggle]").forEach((icon) => {
+        icon.addEventListener("click", () => {
+          const alvoId = icon.dataset.toggle;
+          const input = document.getElementById(alvoId);
+          if (!input) return;
+          const tipoAtual = input.getAttribute("type");
+          const novoTipo = tipoAtual === "password" ? "text" : "password";
+          input.setAttribute("type", novoTipo);
+          icon.classList.toggle("fa-eye", novoTipo === "password");
+          icon.classList.toggle("fa-eye-slash", novoTipo === "text");
+        });
+      });
+
+      // ============================================
+      // ABAS
+      // ============================================
+      document.querySelectorAll(".aba").forEach((aba) => {
+        aba.addEventListener("click", () => {
+          const destino = aba.dataset.aba;
+
+          document
+            .querySelectorAll(".aba")
+            .forEach((a) => a.classList.remove("ativa"));
+          document
+            .querySelectorAll(".aba-conteudo")
+            .forEach((c) => c.classList.remove("ativa"));
+
+          aba.classList.add("ativa");
+          document.getElementById(`aba-${destino}`).classList.add("ativa");
+        });
+      });
+
+      async function comprimirFoto(file) {
+        if (!file || !file.type.startsWith("image/")) throw new Error("Selecione uma imagem válida.");
+        const bitmap = await createImageBitmap(file);
+        const max = 320;
+        const escala = Math.min(1, max / Math.max(bitmap.width, bitmap.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(bitmap.width * escala));
+        canvas.height = Math.max(1, Math.round(bitmap.height * escala));
+        canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL("image/jpeg", 0.78);
+      }
+      function aplicarFotoAvatar(url, nome) {
+        const el = document.getElementById("perfilAvatar");
+        if (!el) return;
+        el.innerHTML = url ? `<img src="${escaparHtml(url)}" alt="Foto de ${escaparHtml(nome || "usuário")}">` : escaparHtml(iniciais(nome));
+      }
+
+      // ============================================
+      // CARREGAR PERFIL
+      // ============================================
+      async function carregarPerfil() {
+        if (!OnboardingService) {
+          window.showNotification(
+            "error",
+            "Erro",
+            "Serviço de perfil não disponível.",
+          );
+          return false;
+        }
+
+        try {
+          perfil = await OnboardingService.obterPerfilCompleto();
+
+          // Guarda originais para o botão "Descartar"
+          dadosOriginais = {
+            nome: perfil.nome || "",
+            cargo: perfil.cargo || "",
+            telefone: perfil.telefone || "",
+          };
+
+          // ============ HEADER ============
+          aplicarFotoAvatar(perfil.foto_url, perfil.nome);
+          document.getElementById("perfilHeaderNome").innerHTML = `
+            ${escaparHtml(perfil.nome || "—")}
+            ${perfil.perfil_completo ? '<i class="fas fa-circle-check" title="Cadastro completo" style="display:inline;"></i>' : ""}
+          `;
+          document.getElementById("perfilHeaderEmail").innerHTML =
+            `<i class="fas fa-envelope"></i> ${escaparHtml(perfil.email || "—")}`;
+          document.getElementById("perfilHeaderOrgao").innerHTML =
+            `<i class="fas fa-building"></i> ${escaparHtml(perfil.orgao?.nome || "—")}`;
+          document.getElementById("perfilHeaderPerfil").textContent =
+            labelPerfil(perfil.perfil);
+
+          // ============ ABA DADOS ============
+          document.getElementById("inputNome").value = perfil.nome || "";
+          document.getElementById("inputCargo").value = perfil.cargo || "";
+          document.getElementById("inputTelefone").value =
+            perfil.telefone || "";
+          document.getElementById("inputEmail").value = perfil.email || "";
+          document.getElementById("inputOrgao").value = perfil.orgao
+            ? `${perfil.orgao.nome}${perfil.orgao.sigla ? " (" + perfil.orgao.sigla + ")" : ""}`
+            : "—";
+          document.getElementById("inputPerfilAcesso").value = labelPerfil(
+            perfil.perfil,
+          );
+
+          // ============ ABA SEGURANÇA · AUDITORIA ============
+          document.getElementById("infoUltimoAcesso").textContent =
+            formatarDataHora(perfil.ultimo_acesso);
+          document.getElementById("infoSenhaAlterada").textContent =
+            formatarDataHora(perfil.senha_alterada_em);
+          document.getElementById("infoCriadoEm").textContent =
+            formatarDataHora(perfil.created_at);
+          document.getElementById("infoTermos").textContent = formatarDataHora(
+            perfil.aceitou_termos_em,
+          );
+
+          return true;
+        } catch (err) {
+          console.error("[Perfil] Erro ao carregar:", err);
+          window.showNotification(
+            "error",
+            "Erro",
+            err.message || "Não foi possível carregar seu perfil.",
+          );
+          return false;
+        }
+      }
+
+      // ============================================
+      // VALIDAÇÕES — ABA DADOS
+      // ============================================
+      function dadosAlterados() {
+        const atual = {
+          nome: document.getElementById("inputNome").value.trim(),
+          cargo: document.getElementById("inputCargo").value.trim(),
+          telefone: document.getElementById("inputTelefone").value.trim(),
+        };
+        return (
+          atual.nome !== dadosOriginais.nome ||
+          atual.cargo !== dadosOriginais.cargo ||
+          atual.telefone !== dadosOriginais.telefone
+        );
+      }
+
+      ["inputNome", "inputCargo", "inputTelefone"].forEach((id) => {
+        document.getElementById(id).addEventListener("input", () => {
+          // Habilita/desabilita botão salvar
+          document.getElementById("btnSalvarDados").disabled =
+            !dadosAlterados() ||
+            document.getElementById("inputNome").value.trim().length < 3;
+        });
+      });
+
+      // Máscara de telefone
+      document
+        .getElementById("inputTelefone")
+        .addEventListener("input", (e) => {
+          let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+          if (v.length > 10) {
+            v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+          } else if (v.length > 6) {
+            v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+          } else if (v.length > 2) {
+            v = v.replace(/(\d{2})(\d{0,5})/, "($1) $2");
+          } else if (v.length > 0) {
+            v = v.replace(/(\d{0,2})/, "($1");
+          }
+          e.target.value = v;
+        });
+
+      document.getElementById("btnEscolherFoto")?.addEventListener("click", () => document.getElementById("inputFotoPerfil")?.click());
+      document.getElementById("inputFotoPerfil")?.addEventListener("change", async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        try {
+          const foto = await comprimirFoto(file);
+          await OnboardingService.atualizarPerfilProprio({ foto_url: foto });
+          if (perfil) perfil.foto_url = foto;
+          aplicarFotoAvatar(foto, perfil?.nome);
+          window.showNotification("success", "Foto atualizada", "A imagem foi compactada e salva no seu perfil.");
+        } catch (err) {
+          window.showNotification("error", "Não foi possível salvar a foto", err.message || "Tente outra imagem.");
+        } finally { event.target.value = ""; }
+      });
+
+      // ============================================
+      // SALVAR DADOS
+      // ============================================
+      document
+        .getElementById("formDados")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const nome = document.getElementById("inputNome").value.trim();
+          if (nome.length < 3) {
+            window.showNotification(
+              "warning",
+              "Nome inválido",
+              "Informe seu nome completo (mínimo 3 caracteres).",
+            );
+            return;
+          }
+
+          const btn = document.getElementById("btnSalvarDados");
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Salvando...`;
+
+          try {
+            await OnboardingService.atualizarPerfilProprio({
+              nome,
+              cargo: document.getElementById("inputCargo").value.trim(),
+              telefone: document.getElementById("inputTelefone").value.trim(),
+            });
+
+            window.showNotification(
+              "success",
+              "Perfil atualizado",
+              "Suas alterações foram salvas com sucesso.",
+            );
+
+            // Recarrega para atualizar header e originais
+            await carregarPerfil();
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-save"></i> Salvar alterações`;
+          } catch (err) {
+            console.error(err);
+            window.showNotification(
+              "error",
+              "Erro ao salvar",
+              err.message || "Não foi possível salvar suas alterações.",
+            );
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-save"></i> Salvar alterações`;
+          }
+        });
+
+      // ============================================
+      // DESCARTAR ALTERAÇÕES
+      // ============================================
+      document
+        .getElementById("btnDescartarDados")
+        .addEventListener("click", () => {
+          if (!dadosAlterados()) return;
+
+          document.getElementById("inputNome").value = dadosOriginais.nome;
+          document.getElementById("inputCargo").value = dadosOriginais.cargo;
+          document.getElementById("inputTelefone").value =
+            dadosOriginais.telefone;
+          document.getElementById("btnSalvarDados").disabled = true;
+
+          window.showNotification(
+            "info",
+            "Alterações descartadas",
+            "Os campos voltaram aos valores originais.",
+          );
+        });
+
+      // ============================================
+      // MEDIDOR DE FORÇA DA SENHA
+      // ============================================
+      const inputNovaSenha = document.getElementById("inputNovaSenha");
+      const inputConfirmaSenha = document.getElementById("inputConfirmaSenha");
+      const inputSenhaAtual = document.getElementById("inputSenhaAtual");
+      const forcaBarra = document.getElementById("forcaBarra");
+      const forcaTexto = document.getElementById("forcaTexto");
+      const btnTrocarSenha = document.getElementById("btnTrocarSenha");
+
+      function atualizarForcaSenha() {
+        const senha = inputNovaSenha.value;
+        const resultado = OnboardingService
+          ? OnboardingService.validarForcaSenha(senha)
+          : { score: 0, mensagem: "—", requisitos: {} };
+
+        forcaBarra.className = "forca-barra";
+        if (senha.length > 0) {
+          forcaBarra.classList.add(`score-${resultado.score}`);
+        }
+
+        forcaTexto.className = "forca-texto";
+        if (senha.length > 0) {
+          forcaTexto.classList.add(`score-${resultado.score}`);
+          forcaTexto.textContent = resultado.mensagem;
+        } else {
+          forcaTexto.textContent = "Digite uma senha para ver a força";
+        }
+
+        validarTrocaSenha();
+      }
+
+      function validarTrocaSenha() {
+        const atual = inputSenhaAtual.value;
+        const nova = inputNovaSenha.value;
+        const confirma = inputConfirmaSenha.value;
+
+        const forca = OnboardingService
+          ? OnboardingService.validarForcaSenha(nova)
+          : { score: 0 };
+
+        const ok =
+          atual.length >= 6 &&
+          forca.score >= 3 &&
+          nova === confirma &&
+          nova.length > 0 &&
+          nova !== atual;
+
+        btnTrocarSenha.disabled = !ok;
+      }
+
+      inputNovaSenha.addEventListener("input", atualizarForcaSenha);
+      inputSenhaAtual.addEventListener("input", validarTrocaSenha);
+      inputConfirmaSenha.addEventListener("input", validarTrocaSenha);
+
+      // ============================================
+      // TROCAR SENHA
+      // ============================================
+      document
+        .getElementById("formSenha")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const atual = inputSenhaAtual.value;
+          const nova = inputNovaSenha.value;
+          const confirma = inputConfirmaSenha.value;
+
+          if (nova !== confirma) {
+            window.showNotification(
+              "warning",
+              "Senhas diferentes",
+              "A nova senha e a confirmação não coincidem.",
+            );
+            inputConfirmaSenha.focus();
+            return;
+          }
+
+          const btn = btnTrocarSenha;
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Trocando...`;
+
+          try {
+            await OnboardingService.trocarSenhaPropria(atual, nova);
+
+            window.showNotification(
+              "success",
+              "Senha alterada",
+              "Sua nova senha já está ativa. Use-a no próximo acesso.",
+              5000,
+            );
+
+            // Limpa o form
+            document.getElementById("formSenha").reset();
+            atualizarForcaSenha();
+            validarTrocaSenha();
+
+            // Atualiza a auditoria
+            await carregarPerfil();
+          } catch (err) {
+            console.error(err);
+            window.showNotification(
+              "error",
+              "Erro ao trocar senha",
+              err.message || "Não foi possível trocar a senha.",
+            );
+          } finally {
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-key"></i> Trocar senha`;
+          }
+        });
+
+      // Limpar form de senha
+      document
+        .getElementById("btnLimparSenha")
+        .addEventListener("click", () => {
+          document.getElementById("formSenha").reset();
+          atualizarForcaSenha();
+          validarTrocaSenha();
+        });
+
+      // ============================================
+      // VOLTAR À INTRANET
+      // ============================================
+      document
+        .getElementById("btnVoltarIntranet")
+        .addEventListener("click", () => {
+          if (dadosAlterados()) {
+            if (
+              !confirm(
+                "Você tem alterações não salvas. Deseja sair mesmo assim?",
+              )
+            )
+              return;
+          }
+          const retorno = new URLSearchParams(window.location.search).get("returnTo");
+          if (retorno && retorno.startsWith("/")) window.location.href = retorno;
+          else window.location.href = "/intranet.html";
+        });
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        try {
+          // 1. Carrega serviços
+          await carregarServicos();
+
+          // 2. Guard: exige sessão + perfil completo
+          if (AuthGuard) {
+            const resultado = await AuthGuard.protegerRota({
+              permitirOnboarding: false,
+              registrarAcesso: false, // já foi registrado no login/intranet
+            });
+
+            if (!resultado.ok) return;
+          } else {
+            // Fallback: sem guard, checa sessão
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
+            if (!session) {
+              window.location.href = "/index.html";
+              return;
+            }
+          }
+
+          // 3. Carrega dados
+          const ok = await carregarPerfil();
+          if (!ok) return;
+
+          // 4. Estado inicial dos botões
+          document.getElementById("btnSalvarDados").disabled = true;
+          btnTrocarSenha.disabled = true;
+
+          // 5. Foco inicial
+          setTimeout(() => {
+            document.getElementById("inputNome")?.focus();
+          }, 300);
+        } catch (err) {
+          console.error("[Perfil] Erro na inicialização:", err);
+          window.showNotification(
+            "error",
+            "Erro inesperado",
+            "Não foi possível inicializar a página.",
+          );
+        } finally {
+          esconderLoading();
+        }
+      }
+
+      init();
+
+      // ============================================
+      // EXPOR GLOBAIS
+      // ============================================
+      window.showNotification = window.showNotification;
+    </script>
+  </body>
+</html>

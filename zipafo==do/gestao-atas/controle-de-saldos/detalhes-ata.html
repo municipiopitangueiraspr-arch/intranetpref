@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalhes da Ata · Gestão de Atas</title>
+
+    <!-- ============================================================ -->
+    <!-- FONT AWESOME 6                                                -->
+    <!-- ============================================================ -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <!-- ============================================================ -->
+    <!-- DESIGN SYSTEM COMPARTILHADO DA INTRANET                       -->
+    <!-- Fornece: variáveis, reset, body, botões, cards, tabelas,      -->
+    <!-- badges, modais, toasts, alertas, empty states, etc.           -->
+    <!-- ============================================================ -->
+    <link rel="stylesheet" href="../shared/css/intranet-base.css" />
+    <link rel="stylesheet" href="../shared/css/componentes.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+      /* ============================================================
+         ESTILOS ESPECÍFICOS DE DETALHES-ATA
+         ------------------------------------------------------------
+         O design system (../shared/css/*) já fornece:
+           · Variáveis (--primary-600, --neutral-*, --shadow-*, …)
+           · Reset universal
+           · Background do body
+           · Botões .btn / .btn-primary / .btn-secondary
+           · Tabelas .tabela / .tabela-wrapper
+           · Badges .badge / .badge-verde / etc.
+           · Spinner e loading-overlay
+           · Notification-center (toasts do design system)
+
+         Aqui ficam só os elementos PRÓPRIOS desta página:
+           · Header customizado (com botão voltar + carrinho)
+           · Card de info da ata
+           · Tabela de itens com progresso
+           · Toast legado (compatível com detalhes-ata.js)
+         ============================================================ */
+
+      /* ============================================ */
+      /* HEADER CUSTOMIZADO                            */
+      /* ============================================ */
+      .page-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-600) 0%,
+          #0a4a2e 100%
+        );
+        color: white;
+        padding: 16px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        box-shadow: 0 10px 25px rgba(13, 94, 58, 0.15);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Detalhe decorativo (mesmo padrão do header do gestaoatas) */
+      .page-header::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.08) 0%,
+          transparent 70%
+        );
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .page-header > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .page-header .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .page-header .header-left h1 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+      }
+
+      .page-header .header-left h1 i {
+        color: #bfdbfe;
+        flex-shrink: 0;
+      }
+
+      .page-header .header-left .btn-voltar {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 8px 16px;
+        border-radius: var(--border-radius-lg);
+        cursor: pointer;
+        transition: var(--transition-base);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-family: inherit;
+        font-weight: 600;
+      }
+
+      .page-header .header-left .btn-voltar:hover {
+        background: rgba(255, 255, 255, 0.22);
+        transform: translateX(-2px);
+      }
+
+      .page-header .header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      /* ============================================ */
+      /* BOTÃO CARRINHO NO HEADER                     */
+      /* ============================================ */
+      .carrinho-btn {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 8px 16px;
+        border-radius: var(--border-radius-lg);
+        cursor: pointer;
+        transition: var(--transition-base);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-family: inherit;
+        font-weight: 600;
+        position: relative;
+      }
+
+      .carrinho-btn:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      .carrinho-btn .badge-carrinho {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: var(--error-600);
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 700;
+        min-width: 20px;
+        height: 20px;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #0a4a2e;
+        padding: 0 4px;
+        line-height: 1;
+      }
+
+      /* ============================================ */
+      /* USER INFO + BOTÃO LOGOUT                     */
+      /* ============================================ */
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.12);
+        padding: 6px 14px;
+        border-radius: 40px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .user-avatar {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-300),
+          var(--primary-400)
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--neutral-900);
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      .btn-logout {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: var(--transition-base);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        font-family: inherit;
+      }
+
+      .btn-logout:hover {
+        background: rgba(229, 62, 62, 0.35);
+        border-color: rgba(229, 62, 62, 0.6);
+      }
+
+      /* ============================================ */
+      /* CONTEÚDO PRINCIPAL                           */
+      /* ============================================ */
+      .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+        width: 100%;
+      }
+
+      /* ============================================ */
+      /* CARD DE INFO DA ATA                          */
+      /* ============================================ */
+      .ata-info-card {
+        background: white;
+        border-radius: var(--border-radius-2xl);
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--neutral-200);
+        margin-bottom: 24px;
+        transition: var(--transition-base);
+      }
+
+      .ata-info-card:hover {
+        box-shadow: var(--shadow-md);
+      }
+
+      .ata-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px 24px;
+      }
+
+      .ata-info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .ata-info-item .label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--neutral-500);
+        letter-spacing: 0.5px;
+      }
+
+      .ata-info-item .value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--neutral-900);
+        word-break: break-word;
+      }
+
+      /* Reusa as classes .status-ativa/.status-proxima/.status-vencida
+         do design system — mantidas aqui para segurança caso o DS
+         não as inclua por algum motivo. */
+      .status-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: var(--border-radius-full);
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .status-ativa {
+        background: var(--success-100);
+        color: var(--success-800);
+        border: 1px solid var(--success-200);
+      }
+
+      .status-proxima {
+        background: var(--warning-100);
+        color: var(--warning-800);
+        border: 1px solid var(--warning-200);
+      }
+
+      .status-vencida {
+        background: var(--error-100);
+        color: var(--error-800);
+        border: 1px solid var(--error-200);
+      }
+
+      /* ============================================ */
+      /* RESUMO DA ATA                                */
+      /* ============================================ */
+      .ata-resumo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px 32px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--neutral-200);
+      }
+
+      .ata-resumo-item {
+        font-size: 0.85rem;
+        color: var(--neutral-600);
+      }
+
+      .ata-resumo-item strong {
+        color: var(--neutral-700);
+        font-weight: 600;
+      }
+
+      .ata-resumo-item .destaque {
+        color: var(--primary-600);
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+
+      /* ============================================ */
+      /* SEÇÃO DE ITENS                               */
+      /* ============================================ */
+      .itens-section {
+        background: white;
+        border-radius: var(--border-radius-2xl);
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--neutral-200);
+      }
+
+      .itens-section .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--neutral-200);
+      }
+
+      .itens-section .section-header h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--neutral-900);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+      }
+
+      .itens-section .section-header h2 i {
+        color: var(--primary-600);
+      }
+
+      .itens-section .section-header .qtd-itens {
+        font-size: 0.82rem;
+        color: var(--neutral-500);
+        background: var(--neutral-50);
+        padding: 4px 14px;
+        border-radius: var(--border-radius-full);
+        border: 1px solid var(--neutral-200);
+        font-weight: 600;
+      }
+
+      /* ============================================ */
+      /* TABELA DE ITENS (mantém classe .tabela-itens) */
+      /* ============================================ */
+      .tabela-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--neutral-200);
+      }
+
+      .tabela-itens {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+
+      .tabela-itens th {
+        background: linear-gradient(135deg, var(--primary-600), #0a4a2e);
+        padding: 12px 14px;
+        text-align: left;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      .tabela-itens td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--neutral-200);
+        vertical-align: middle;
+        background: white;
+        color: var(--neutral-700);
+      }
+
+      .tabela-itens tbody tr {
+        transition: background 0.15s;
+      }
+
+      .tabela-itens tbody tr:hover td {
+        background: var(--neutral-50);
+      }
+
+      .tabela-itens tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .tabela-itens .numeric {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .tabela-itens .saldo-alto {
+        color: var(--success-600);
+        font-weight: 700;
+      }
+
+      .tabela-itens .saldo-baixo {
+        color: var(--warning-600);
+        font-weight: 700;
+      }
+
+      .tabela-itens .saldo-zerado {
+        color: var(--error-600);
+        font-weight: 700;
+      }
+
+      /* Progresso */
+      .tabela-itens .progresso-container {
+        width: 80px;
+        height: 6px;
+        background: var(--neutral-200);
+        border-radius: var(--border-radius-full);
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 8px;
+      }
+
+      .tabela-itens .progresso-bar {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--primary-500),
+          var(--primary-600)
+        );
+        border-radius: var(--border-radius-full);
+        transition: width 0.3s ease;
+      }
+
+      /* Ações por item */
+      .tabela-itens .acoes-item {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .tabela-itens .qtd-input {
+        width: 60px;
+        padding: 6px 8px;
+        border: 2px solid var(--neutral-200);
+        border-radius: var(--border-radius-md);
+        font-size: 0.8rem;
+        text-align: center;
+        transition: var(--transition-base);
+        background: white;
+        font-family: inherit;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .tabela-itens .qtd-input:focus {
+        outline: none;
+        border-color: var(--primary-600);
+        box-shadow: 0 0 0 3px rgba(13, 94, 58, 0.1);
+      }
+
+      .tabela-itens .qtd-input:disabled {
+        background: var(--neutral-100);
+        cursor: not-allowed;
+      }
+
+      /* Esconde as setinhas do input number */
+      .tabela-itens .qtd-input::-webkit-inner-spin-button,
+      .tabela-itens .qtd-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      .tabela-itens .qtd-input[type="number"] {
+        -moz-appearance: textfield;
+      }
+
+      /* Botão adicionar ao carrinho */
+      .btn-add-carrinho {
+        padding: 6px 14px;
+        background: var(--primary-600);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-md);
+        font-weight: 600;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: var(--transition-base);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: inherit;
+        white-space: nowrap;
+      }
+
+      .btn-add-carrinho:hover:not(:disabled) {
+        background: #0a4a2e;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .btn-add-carrinho:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-add-carrinho.adicionado {
+        background: var(--success-600);
+      }
+
+      .btn-add-carrinho.adicionado:hover {
+        background: var(--success-700);
+      }
+
+      .status-esgotado {
+        color: var(--error-600);
+        font-weight: 700;
+        font-size: 0.75rem;
+        background: var(--error-50);
+        padding: 4px 12px;
+        border-radius: var(--border-radius-full);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border: 1px solid var(--error-200);
+      }
+
+      /* ============================================ */
+      /* NOT FOUND                                    */
+      /* ============================================ */
+      .not-found {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: var(--border-radius-2xl);
+        border: 1px solid var(--neutral-200);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .not-found .not-found-icon {
+        font-size: 64px;
+        display: block;
+        margin-bottom: 16px;
+        color: var(--neutral-300);
+      }
+
+      .not-found h2 {
+        font-size: 1.4rem;
+        color: var(--neutral-700);
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+
+      .not-found p {
+        color: var(--neutral-500);
+        margin-bottom: 20px;
+      }
+
+      .not-found .btn-voltar-notfound {
+        padding: 12px 26px;
+        background: var(--primary-600);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-lg);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        font-family: inherit;
+        transition: var(--transition-base);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .not-found .btn-voltar-notfound:hover {
+        background: #0a4a2e;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* ============================================ */
+      /* TOAST LEGADO                                  */
+      /* Compatível com mostrarToast() do detalhes-ata.js */
+      /* Estilo unificado com o design system.         */
+      /* ============================================ */
+      .toast-container {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .toast {
+        pointer-events: all;
+        min-width: 320px;
+        max-width: 500px;
+        padding: 16px 24px;
+        border-radius: var(--border-radius-xl);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        background: white;
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+        animation: toastSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: inherit;
+      }
+
+      @keyframes toastSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .toast.sucesso {
+        border-left-color: var(--success-600);
+        background: var(--success-50);
+      }
+      .toast.erro {
+        border-left-color: var(--error-600);
+        background: var(--error-50);
+      }
+      .toast.aviso {
+        border-left-color: var(--warning-600);
+        background: var(--warning-50);
+      }
+      .toast.info {
+        border-left-color: var(--primary-700);
+        background: var(--primary-50);
+      }
+
+      .toast i {
+        font-size: 1.2rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+      .toast.sucesso i {
+        color: var(--success-600);
+      }
+      .toast.erro i {
+        color: var(--error-600);
+      }
+      .toast.aviso i {
+        color: var(--warning-600);
+      }
+      .toast.info i {
+        color: var(--primary-700);
+      }
+
+      .toast span {
+        flex: 1;
+        font-size: 0.88rem;
+        color: var(--neutral-700);
+        line-height: 1.45;
+      }
+
+      .toast span strong {
+        display: block;
+        font-weight: 700;
+        color: var(--neutral-900);
+        margin-bottom: 2px;
+      }
+
+      .toast .btn-fechar {
+        background: none;
+        border: none;
+        color: var(--neutral-400);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        border-radius: var(--border-radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-fast);
+        flex-shrink: 0;
+      }
+
+      .toast .btn-fechar:hover {
+        background: rgba(0, 0, 0, 0.06);
+        color: var(--neutral-700);
+      }
+
+      /* ============================================ */
+      /* FAB · CARRINHO FLUTUANTE (aparece no mobile)  */
+      /* ============================================ */
+      .btn-carrinho-flutuante {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        color: white;
+        border: none;
+        box-shadow: 0 10px 25px rgba(13, 94, 58, 0.4);
+        cursor: pointer;
+        display: none; /* escondido por padrão; aparece no mobile */
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        z-index: 900;
+        transition: var(--transition-base);
+      }
+
+      .btn-carrinho-flutuante:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(13, 94, 58, 0.5);
+      }
+
+      .btn-carrinho-flutuante .badge-carrinho-flutuante {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 22px;
+        height: 22px;
+        background: var(--error-600);
+        color: white;
+        border-radius: 9999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+        padding: 0 4px;
+        line-height: 1;
+      }
+
+      /* ============================================ */
+      /* RESPONSIVIDADE                                */
+      /* ============================================ */
+      @media (max-width: 768px) {
+        .page-header {
+          padding: 12px 16px;
+        }
+
+        .page-header .header-left h1 {
+          font-size: 1rem;
+        }
+
+        .page-header .header-left .btn-voltar span {
+          display: none;
+        }
+
+        .user-info span:not(.user-avatar) {
+          display: none;
+        }
+
+        .carrinho-btn {
+          display: none; /* esconde no header */
+        }
+
+        .btn-carrinho-flutuante {
+          display: flex; /* mostra o FAB */
+        }
+
+        .main-content {
+          padding: 16px;
+        }
+
+        .ata-info-card {
+          padding: 20px;
+        }
+
+        .itens-section {
+          padding: 20px;
+        }
+
+        .ata-info-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+
+        .ata-resumo {
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .tabela-itens {
+          font-size: 0.75rem;
+        }
+
+        .tabela-itens th,
+        .tabela-itens td {
+          padding: 8px 10px;
+        }
+
+        .tabela-itens .qtd-input {
+          width: 50px;
+          font-size: 0.7rem;
+        }
+
+        .btn-add-carrinho {
+          font-size: 0.7rem;
+          padding: 4px 10px;
+        }
+
+        .itens-section .section-header h2 {
+          font-size: 1rem;
+        }
+
+        .toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .ata-info-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .page-header .header-left h1 {
+          font-size: 0.9rem;
+        }
+
+        .tabela-itens .progresso-container {
+          width: 50px;
+        }
+
+        .btn-carrinho-flutuante {
+          width: 52px;
+          height: 52px;
+          font-size: 1.15rem;
+          bottom: 16px;
+          right: 16px;
+        }
+      }
+
+      /* ============================================ */
+      /* IMPRESSÃO                                    */
+      /* ============================================ */
+      @media print {
+        .page-header {
+          position: static !important;
+          background: #eee !important;
+          color: #000 !important;
+          box-shadow: none !important;
+        }
+
+        .page-header::before {
+          display: none;
+        }
+
+        .page-header .header-left .btn-voltar,
+        .page-header .header-right .btn-logout,
+        .page-header .header-right .carrinho-btn,
+        .btn-carrinho-flutuante,
+        .toast-container {
+          display: none !important;
+        }
+
+        .main-content {
+          padding: 0 !important;
+          max-width: 100% !important;
+        }
+
+        .ata-info-card,
+        .itens-section {
+          box-shadow: none !important;
+          border: 1px solid #ccc !important;
+          border-radius: 8px !important;
+        }
+
+        .tabela-itens th {
+          background: #eee !important;
+          color: #000 !important;
+        }
+
+        .tabela-itens td {
+          border-bottom: 1px solid #ddd !important;
+        }
+
+        .btn-add-carrinho,
+        .qtd-input,
+        .status-esgotado {
+          display: none !important;
+        }
+
+        .progresso-container {
+          background: #ddd !important;
+        }
+
+        .progresso-bar {
+          background: #666 !important;
+        }
+      }
+    </style>
+
+    <link rel="stylesheet" href="css/gestaoatas-theme.css" />
+
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ============================================ -->
+    <!-- HEADER                                       -->
+    <!-- ============================================ -->
+    <header class="page-header">
+      <div class="header-left">
+        <button
+          class="btn-voltar"
+          onclick="window.location.href = 'gestao-atas.html'"
+         type="button">
+          <i class="fas fa-arrow-left"></i>
+          <span>Voltar</span>
+        </button>
+        <h1>
+          <i class="fas fa-file-contract"></i>
+          <span id="ataTitulo">Detalhes da Ata</span>
+        </h1>
+      </div>
+      <div class="header-right">
+        <button
+          class="carrinho-btn"
+          id="btnCarrinho"
+          onclick="abrirDrawerCarrinho()"
+          title="Abrir carrinho"
+         type="button">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Carrinho</span>
+          <span class="badge-carrinho" id="carrinhoBadge">0</span>
+        </button>
+        <div class="user-info">
+          <span class="user-avatar" id="userAvatar">U</span>
+          <span id="userName">Carregando...</span>
+        </div>
+        <button class="btn-logout" id="btnLogout" title="Sair" type="button">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- FAB · CARRINHO FLUTUANTE (aparece no mobile)  -->
+    <!-- ============================================ -->
+    <button
+      class="btn-carrinho-flutuante"
+      id="btnCarrinhoMobile"
+      onclick="abrirDrawerCarrinho()"
+      title="Abrir carrinho"
+      aria-label="Abrir carrinho"
+     type="button">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="badge-carrinho-flutuante" id="carrinhoBadgeMobile">0</span>
+    </button>
+
+    <!-- ============================================ -->
+    <!-- CONTEÚDO PRINCIPAL                           -->
+    <!-- ============================================ -->
+    <main class="main-content">
+      <!-- Loading -->
+      <div class="loading-container" id="loadingContainer">
+        <div class="loading-spinner"></div>
+        <p>Carregando ata...</p>
+      </div>
+
+      <!-- Conteúdo da ata -->
+      <div id="ataContent" style="display: none">
+        <!-- Info da Ata -->
+        <div class="ata-info-card">
+          <div class="ata-info-grid">
+            <div class="ata-info-item">
+              <span class="label">Número da Ata</span>
+              <span class="value" id="ataNumero">—</span>
+            </div>
+            <div class="ata-info-item">
+              <span class="label">Nº Pregão</span>
+              <span class="value" id="ataPregao">—</span>
+            </div>
+            <div class="ata-info-item">
+              <span class="label">Modalidade</span>
+              <span class="value" id="ataModalidade">—</span>
+            </div>
+            <div class="ata-info-item">
+              <span class="label">Fornecedor</span>
+              <span class="value" id="ataFornecedor">—</span>
+            </div>
+            <div class="ata-info-item">
+              <span class="label">CNPJ</span>
+              <span class="value" id="ataCnpj">—</span>
+            </div>
+            <div class="ata-info-item">
+              <span class="label">Status</span>
+              <span class="value" id="ataStatus">—</span>
+            </div>
+            <div class="ata-info-item">
+              <span class="label">Processo</span>
+              <span class="value" id="ataProcesso">—</span>
+            </div>
+            <div class="ata-info-item">
+              <span class="label">Categoria</span>
+              <span class="value" id="ataCategoria">—</span>
+            </div>
+          </div>
+          <div class="ata-resumo">
+            <span class="ata-resumo-item"
+              ><strong>Vigência:</strong> <span id="ataVigencia">—</span></span
+            >
+            <span class="ata-resumo-item"
+              ><strong>Valor Global:</strong>
+              <span class="destaque" id="ataValorGlobal">—</span></span
+            >
+            <span class="ata-resumo-item"
+              ><strong>Consumido:</strong>
+              <span id="ataConsumido">—</span></span
+            >
+            <span class="ata-resumo-item"
+              ><strong>Saldo:</strong>
+              <span class="destaque" id="ataSaldo">—</span></span
+            >
+          </div>
+        </div>
+
+        <!-- Itens da Ata -->
+        <div class="itens-section">
+          <div class="section-header">
+            <h2><i class="fas fa-boxes"></i> Itens da Ata</h2>
+            <span class="qtd-itens" id="qtdItens">0 itens</span>
+          </div>
+          <div class="tabela-container">
+            <table class="tabela-itens" aria-label="Tabela de dados">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Descrição</th>
+                  <th>Qtd Contratada</th>
+                  <th>Saldo</th>
+                  <th>Valor Unit.</th>
+                  <th>Valor Total</th>
+                  <th>% Consumido</th>
+                  <th style="min-width: 180px">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="itensTableBody">
+                <!-- Renderizado via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Not Found -->
+      <div id="notFound" style="display: none">
+        <div class="not-found">
+          <span class="not-found-icon">
+            <i class="fas fa-file-contract"></i>
+          </span>
+          <h2>Ata não encontrada</h2>
+          <p>Não foi possível encontrar a ata solicitada.</p>
+          <button
+            class="btn-voltar-notfound"
+            onclick="window.location.href = 'gestao-atas.html'"
+           type="button">
+            <i class="fas fa-arrow-left"></i> Voltar para lista de atas
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- TOAST CONTAINER                              -->
+    <!-- Usado por mostrarToast() do detalhes-ata.js  -->
+    <!-- ============================================ -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS                                      -->
+    <!-- ============================================ -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module" src="js/modules/detalhes-ata.js"></script>
+  <script src="module-avatar.js"></script>
+</body>
+</html>

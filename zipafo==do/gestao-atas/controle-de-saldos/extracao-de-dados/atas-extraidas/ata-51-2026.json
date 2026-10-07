@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "28-29",
+    "processo_origem": "34/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "51/2026",
+    "numero_contratacao": "1504",
+    "numero_processo": "34/2026",
+    "numero_pregao": "7",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Maior Desconto Sobre Tabela/catálogo - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-09",
+    "vigencia_inicio": "2026-07-09",
+    "vigencia_fim": "2027-07-09",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para credenciamento de pessoa jurídica para prestação de serviços de pintura, serviços de eletricista e serviços de pedreiro, conforme valores da tabela SINAPI.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "J FARAMIGLIO MATERIAIS ELETRICOS LTDA",
+    "cnpj": "07.538.893/0001-72"
+  },
+  "itens": [
+    {
+      "numero": "5",
+      "descricao": "PRESTAÇÃO DE SERVIÇOS ELÉTRICOS, CONFORME TABELA SINAPI - LOTE EXCLUSIVO PARA ME E EPP",
+      "unidade_medida": "UN",
+      "valor_unitario": 2500.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 2500.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 2500.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "6",
+      "descricao": "PRESTAÇÃO DE SERVIÇOS ELÉTRICOS, CONFORME TABELA SINAPI - LOTE DE AMPLA CONCORRÊNCIA",
+      "unidade_medida": "UN",
+      "valor_unitario": 625.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 625.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 625.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 3125.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 3125.0
+  },
+  "observacoes": "Ata 51/2026 — J FARAMIGLIO (Processo 34/2026). Serviços elétricos (2 lotes). Nada executado. ⚠️ Nº Ata 51/2026 vai colidir com o Processo 6/2026 (TREDE CENTER).",
+  "anexos": []
+}

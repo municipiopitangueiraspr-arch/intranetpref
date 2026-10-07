@@ -1,0 +1,231 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="cadastro-container">
+  <!-- ============================================================ -->
+  <!-- INDICADORES RÁPIDOS                                           -->
+  <!-- ============================================================ -->
+  <div class="cadastro-indicadores">
+    <div class="indicador-card">
+      <span class="indicador-numero" id="totalCadastro">0</span>
+      <span class="indicador-label">Total de Atas</span>
+    </div>
+    <div class="indicador-card indicador-ativa">
+      <span class="indicador-numero" id="ativasCadastro">0</span>
+      <span class="indicador-label">Ativas</span>
+    </div>
+    <div class="indicador-card indicador-proxima">
+      <span class="indicador-numero" id="proximasCadastro">0</span>
+      <span class="indicador-label">Próximas</span>
+    </div>
+    <div class="indicador-card indicador-vencida">
+      <span class="indicador-numero" id="vencidasCadastro">0</span>
+      <span class="indicador-label">Vencidas</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FILTROS E AÇÕES                                              -->
+  <!-- ============================================================ -->
+  <div class="cadastro-filtros">
+    <div class="filtro-busca">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        id="buscaCadastro"
+        class="filtro-input"
+        placeholder="Buscar por nº da ata, fornecedor, CPF/CNPJ, objeto ou vigência..."
+        oninput="sistema.cadastro.filtrarListaAtas()"
+      / aria-label="Buscar por nº da ata, fornecedor, CPF/CNPJ, objeto ou vigência...">
+    </div>
+    <select
+      id="filtroStatusCadastro"
+      class="filtro-select"
+      onchange="sistema.cadastro.filtrarListaAtas()"
+     aria-label="filtroStatusCadastro">
+      <option value="todos">Todos os status</option>
+      <option value="ATIVA">🟢 Ativa</option>
+      <option value="PROXIMA">🟡 Próxima</option>
+      <option value="VENCIDA">🔴 Vencida</option>
+    </select>
+    <button class="btn-nova-ata" onclick="sistema.cadastro.novaAta()" type="button">
+      <i class="fas fa-plus"></i> Nova Ata
+    </button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- LISTA DE ATAS CADASTRADAS                                    -->
+  <!-- ============================================================ -->
+  <div id="listaAtasCadastro" class="atas-grid">
+    <!-- Cards serão inseridos via JavaScript -->
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SEPARADOR                                                    -->
+  <!-- ============================================================ -->
+  <div class="cadastro-divider">
+    <span><i class="fas fa-arrow-down"></i> Formulário de Cadastro</span>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FORMULÁRIO DE CADASTRO (EXISTENTE)                           -->
+  <!-- ============================================================ -->
+  <div class="cadastro-form-wrapper">
+    <div class="cadastro-header">
+      <div class="cadastro-titulo">
+        <i class="fas fa-file-signature"></i> Cadastrar Ata
+      </div>
+      <button
+        id="btnExtracao"
+        class="btn-extracao"
+        onclick="sistema.carregarArquivoJson()"
+       type="button">
+        <i class="fas fa-file-code"></i> Carregar JSON
+      </button>
+    </div>
+    <input
+      type="file"
+      id="fileJsonInput"
+      accept=".json,application/json"
+      style="display: none"
+      onchange="sistema.processarArquivoJson(this.files[0])"
+    / aria-label="fileJsonInput">
+    <form
+      id="formCadastroAta"
+      onsubmit="
+        event.preventDefault();
+        sistema.salvarAta();
+      "
+    >
+      <div class="cadastro-secao">
+        <div class="secao-titulo"><i class="fas fa-gavel"></i> Processo</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nº Processo</label
+            ><input type="text" id="processoNumero" required / aria-label="processoNumero">
+          </div>
+          <div class="form-group">
+            <label>Nº Pregão</label><input type="text" id="pregaoNumero" / aria-label="pregaoNumero">
+          </div>
+          <div class="form-group">
+            <label>Modalidade (conforme edital)</label>
+            <input type="text" id="modalidade" list="modalidadesSugestao" required placeholder="Ex.: Pregão eletrônico" / aria-label="Ex.: Pregão eletrônico">
+            <datalist id="modalidadesSugestao">
+              <option value="Pregão eletrônico"></option>
+              <option value="Pregão presencial"></option>
+              <option value="Concorrência eletrônica"></option>
+              <option value="Concorrência presencial"></option>
+              <option value="Concurso"></option>
+              <option value="Leilão"></option>
+              <option value="Diálogo competitivo"></option>
+              <option value="Dispensa de licitação"></option>
+              <option value="Inexigibilidade de licitação"></option>
+              <option value="Registro de preços"></option>
+              <option value="Credenciamento"></option>
+            </datalist>
+            <small class="campo-ajuda-modalidade">Use a denominação que consta no edital ou na ata; mantenha procedimentos como registro de preços conforme o documento.</small>
+          </div>
+          <div class="form-group">
+            <label>Nº Ata</label><input type="text" id="ataNumero" required / aria-label="ataNumero">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Assinatura</label
+            ><input type="date" id="dataAssinatura" required / aria-label="dataAssinatura">
+          </div>
+          <div class="form-group">
+            <label>Início Vigência</label
+            ><input type="date" id="vigenciaInicio" required / aria-label="vigenciaInicio">
+          </div>
+          <div class="form-group">
+            <label>Fim Vigência</label
+            ><input type="date" id="vigenciaFim" required / aria-label="vigenciaFim">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Objeto</label
+            ><textarea id="objeto" rows="2" required aria-label="objeto"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Categoria/Gênero</label>
+            <input
+              type="text"
+              id="categoriaInput"
+              list="categoriasList"
+              class="filtro-input"
+              placeholder="Digite ou selecione uma categoria"
+            / aria-label="Digite ou selecione uma categoria">
+            <datalist id="categoriasList"></datalist>
+          </div>
+        </div>
+      </div>
+
+      <div class="cadastro-secao">
+        <div class="secao-titulo">
+          <i class="fas fa-building"></i> Fornecedor
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Razão Social</label
+            ><input type="text" id="fornecedorRazao" required / aria-label="fornecedorRazao">
+          </div>
+          <div class="form-group">
+            <label>CPF/CNPJ</label
+            ><input type="text" id="fornecedorCnpj" required inputmode="numeric" maxlength="18" placeholder="Digite CPF ou CNPJ" / aria-label="Digite CPF ou CNPJ">
+          </div>
+        </div>
+      </div>
+
+      <div class="cadastro-secao">
+        <div class="secao-titulo"><i class="fas fa-boxes"></i> Itens</div>
+        <div class="itens-cadastro-header">
+          <span>Total: <span id="totalItensCadastro">0</span></span>
+          <button
+            type="button"
+            class="btn-adicionar-item"
+            onclick="sistema.adicionarItemCadastro()"
+          >
+            <i class="fas fa-plus"></i> Adicionar
+          </button>
+        </div>
+        <div class="tabela-container">
+          <table class="tabela-itens-cadastro" id="tabelaItensCadastro" aria-label="Tabela de dados">
+            <thead>
+              <tr>
+                <th>Nº</th>
+                <th>Descrição</th>
+                <th>Qtd</th>
+                <th>Valor Unit.</th>
+                <th>Valor Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="itensCadastroBody"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" style="text-align: right; font-weight: 700">
+                  VALOR TOTAL:
+                </td>
+                <td
+                  id="valorTotalAta"
+                  style="text-align: right; color: var(--success-600)"
+                >
+                  R$ 0,00
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <button type="submit" class="btn-salvar-ata">
+        <i class="fas fa-save"></i> Salvar Ata
+      </button>
+    </form>
+  </div>
+</div>

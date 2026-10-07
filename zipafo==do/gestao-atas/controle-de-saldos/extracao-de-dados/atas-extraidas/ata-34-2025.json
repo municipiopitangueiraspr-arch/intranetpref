@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "8-9",
+    "processo_origem": "15/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor DNZ SERVICOS E LOCACOES LTDA (itens 1 e 2)."
+  },
+  "cabecalho": {
+    "numero_ata": "34/2025",
+    "numero_contratacao": "1224 | 34/2025",
+    "numero_processo": "15/2025",
+    "numero_pregao": "10",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-04-09",
+    "vigencia_inicio": "2026-04-09",
+    "vigencia_fim": "2027-04-09",
+    "objeto": "Contratação de empresa para eventual locação mensal de tendas",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "DNZ SERVICOS E LOCACOES LTDA",
+    "cnpj": "02.898.065/0001-21"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "LOCAÇÃO DE TENDAS PROFISSIONAIS COM DIMENSÕES DE 03X03m APRESENTANDO COBERTURA MODELO CHAPÉU DE BRUXA, CONFECCIONADAS EM LONAS ANTICHAMAS NA COR BRANCA EQUIPADA COM FECHAMENTO PERIMETRAL COMPLETO EM TODOS OS LADOS, COM ALTURA DE NO MÍNIMO 2 METROS, GARANTINDO MAIOR PROTEÇÃO E CONFORTO AOS USUÁRIOS. O FECHAMENTO É COMPOSTO POR PAINÉIS MODULARES EM ESTRUTURA GALVANIZADA, REVESTIDOS COM LONA ANTICHAMAS NA COR BRANCA. ESTRUTURA REFORÇADA EM CHAPA DE AÇO GALVANIZADO DE ALTA RESISTÊNCIA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 778.0,
+      "quantidade_contratada": 24.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 12.0,
+      "valor_total": 18672.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 9336.0,
+      "valor_saldo": 9336.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "LOCAÇÃO DE TENDAS PROFISSIONAIS COM DIMENSÕES DE 05X05m APRESENTANDO COBERTURA MODELO CHAPÉU DE BRUXA, CONFECCIONADAS EM LONAS ANTICHAMAS NA COR BRANCA. ESTRUTURA REFORÇADA EM CHAPA DE AÇO GALVANIZADO DE ALTA RESISTÊNCIA, OFERECENDO VE - LOCAÇÃO DE TENDAS PROFISSIONAIS COM DIMENSÕES DE 05X05m APRESENTANDO COBERTURA MODELO CHAPÉU DE BRUXA, CONFECCIONADAS EM LONAS ANTICHAMAS NA COR BRANCA EQUIPADA COM FECHAMENTO PERIMETRAL COMPLETO EM TODOS OS LADOS, COM ALTURA DE NO MÍNIMO 2 METROS.",
+      "unidade_medida": "UN",
+      "valor_unitario": 978.0,
+      "quantidade_contratada": 24.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 12.0,
+      "valor_total": 23472.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 11736.0,
+      "valor_saldo": 11736.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 42144.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 21072.0,
+    "valor_saldo_geral": 21072.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original. Processo 15/2025 possui múltiplos fornecedores; este JSON cobre apenas o fornecedor DNZ SERVICOS E LOCACOES LTDA (itens 1 e 2).",
+  "anexos": []
+}

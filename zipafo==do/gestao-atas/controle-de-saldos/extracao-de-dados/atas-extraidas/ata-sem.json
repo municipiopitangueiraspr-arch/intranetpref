@@ -1,0 +1,17 @@
+{
+  "arquivo_origem": "relatorio-de-saldos-das-contratacoes-8.csv",
+  "data_extracao": "2026-04-27T15:34:08.744588",
+  "numero_processo": "21/2026",
+  "numero_ata": "Sem",
+  "cnpj_fornecedor": "51.915.732/0001-42",
+  "razao_social": "A. C. SERVIÇOS EDUCACIONAIS E EVENTOS LTDA  (CNPJ/CPF:",
+  "itens": [
+    {
+      "item": "1",
+      "descricao": "CURSO DE CAPACITAÇÃO SOBRE ATUAÇÃO NOS TRIBUNAIS SUPERIORES - CURSO DE CAPACITAÇÃO SOBRE ATUAÇÃO NOS TRIBUNAIS SUPERIORES (UND)",
+      "quant_contratada": 1.0,
+      "valor_unitario": 2497.0,
+      "valor_total": 2497.0
+    }
+  ]
+}

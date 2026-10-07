@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "32",
+    "processo_origem": "35/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "30/2026",
+    "numero_contratacao": "1454",
+    "numero_processo": "35/2026",
+    "numero_pregao": "8",
+    "modalidade": "Dispensa de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-02",
+    "vigencia_inicio": "2026-06-02",
+    "vigencia_fim": "2027-06-02",
+    "objeto": "Obedecido o disposto na Lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para eventual aquisição de sacolas para coleta de lixo reciclável.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "C R ZAGO FILHO SACOLAS ECOLOGICAS",
+    "cnpj": "37.241.906/0001-08"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "SACOLAS PARA COLETA DE RESÍDUO, LIXO RECICLÁVEL",
+      "unidade_medida": "UN",
+      "valor_unitario": 18.29,
+      "quantidade_contratada": 1000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 200.0,
+      "quantidade_saldo": 800.0,
+      "valor_total": 18290.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 3658.0,
+      "valor_saldo": 14632.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 18290.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 3658.0,
+    "valor_saldo_geral": 14632.0
+  },
+  "observacoes": "Ata 30/2026 — C R ZAGO FILHO (Processo 35/2026). Sacolas recicláveis. 1 item. Saldo do PDF: R$ 14.632,00.",
+  "anexos": []
+}

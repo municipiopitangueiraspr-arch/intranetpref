@@ -1,0 +1,107 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "53",
+    "processo_origem": "5/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "38/2026",
+    "numero_contratacao": "1523",
+    "numero_processo": "5/2026",
+    "numero_pregao": "5",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-08-14",
+    "vigencia_inicio": "2026-08-14",
+    "vigencia_fim": "2027-08-14",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual aquisição de fórmulas nutricionais considerando a necessidade de garantir a continuidade do atendimento aos pacientes assistidos pela Secretaria Municipal de Saúde, conforme anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "FAGANNUTRI COMERCIO DE PRODUTOS NUTRICIONAIS LTDA",
+    "cnpj": "38.540.669/0001-49"
+  },
+  "itens": [
+    {
+      "numero": "5",
+      "descricao": "APTAMIL RR 800G",
+      "unidade_medida": "UN",
+      "valor_unitario": 84.25,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 100.0,
+      "valor_total": 8425.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 8425.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "8",
+      "descricao": "APTAMIL SOJA 0-12 MESES 800G",
+      "unidade_medida": "UN",
+      "valor_unitario": 75.15,
+      "quantidade_contratada": 50.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 50.0,
+      "valor_total": 3757.5,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 3757.5,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "9",
+      "descricao": "APTAMIL SOJA 1-3 ANOS 800G",
+      "unidade_medida": "UN",
+      "valor_unitario": 73.22,
+      "quantidade_contratada": 50.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 50.0,
+      "valor_total": 3661.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 3661.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "11",
+      "descricao": "NEO ADVANCE 400G",
+      "unidade_medida": "UN",
+      "valor_unitario": 164.28,
+      "quantidade_contratada": 50.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 50.0,
+      "valor_total": 8214.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 8214.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 4,
+    "valor_contratado_geral": 24057.5,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 24057.5
+  },
+  "observacoes": "Ata 38/2026 — FAGANNUTRI (Processo 5/2026). Fórmulas nutricionais (4 itens). Nada executado. ⚠️ Nº Ata 38/2026 em conflito com Ata 38/2026 do DIVINO DE OLIVEIRA (Processo 40/2026).",
+  "anexos": []
+}

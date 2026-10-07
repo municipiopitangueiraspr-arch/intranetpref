@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Auditoria e Logs · Core</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="/core/css/admin-pages-theme.css?v=20261002-admin-pages-v3">
+  <link rel="stylesheet" href="/shared/css/system-mother.css?v=20261004-system-mother-v1">
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+<body class="saas-admin">
+<div class="app-layout">
+<aside class="sidebar" id="sidebar" aria-label="Navegação de governança"><div class="sidebar-brand"><div class="brand-icon"><i class="fas fa-shield-halved"></i></div><div class="brand-text"><h2>Governança</h2><span>Administração central</span></div></div><div class="admin-tenant-chip"><i class="fas fa-building-columns"></i><span>Ambiente municipal</span><b>ADMIN</b></div><nav class="sidebar-nav"><div class="nav-section">Visão central</div><a href="/core/index.html"><i class="fas fa-grid-2"></i> Painel executivo</a><a href="/core/modulos/index.html"><i class="fas fa-cubes"></i> Catálogo de módulos</a><a href="/core/auditoria/index.html" class="active"><i class="fas fa-clock-rotate-left"></i> Auditoria e logs</a><div class="nav-section">Identidades e acesso</div><a href="/core/usuarios/index.html"><i class="fas fa-users"></i> Usuários</a><a href="/core/orgaos/index.html"><i class="fas fa-building"></i> Órgãos e unidades</a><a href="/core/permissoes/index.html"><i class="fas fa-key"></i> Perfis e permissões</a><div class="nav-section">Sistema</div><a href="/core/modulos/index.html"><i class="fas fa-sliders"></i> Configurar módulos</a><a href="/intranet.html"><i class="fas fa-arrow-left"></i> Voltar à intranet</a></nav><div class="sidebar-voltar"><i class="fas fa-lock"></i><span><strong>Acesso protegido</strong><small>Somente perfil ADMIN</small></span></div></aside>
+<div class="main-area"><header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="btn-toggle-sidebar" id="btnToggleSidebar" aria-label="Abrir menu" type="button"><i class="fas fa-bars"></i></button><div class="topbar-titulo"><h1><i class="fas fa-clock-rotate-left"></i> Auditoria e logs</h1><p>Rastreabilidade dos eventos administrativos do sistema</p></div></div><div class="topbar-direita"><div class="topbar-info"><strong id="topbarNome">—</strong><span id="topbarData">—</span></div><div class="avatar-usuario" id="avatarIniciais">?</div><button class="btn-sair" id="btnSair" title="Sair" type="button"><i class="fas fa-right-from-bracket"></i></button></div></header>
+<main class="conteudo"><section class="page-header"><div><h2>Trilha de auditoria</h2><p>Eventos canônicos, responsáveis e origem das alterações relevantes.</p></div><button class="btn btn-primary" id="btnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar eventos</button></section><div class="card" id="auditCard"><div class="loading-container" id="loadingAudit"><div class="loading-spinner"></div><p>Carregando eventos de auditoria…</p></div><div class="table-container" id="auditTableWrap" hidden><table class="table" aria-label="Tabela de dados"><thead><tr><th>Evento</th><th>Entidade</th><th>Responsável</th><th>Origem</th><th>Data e hora</th></tr></thead><tbody id="auditBody"></tbody></table></div></div></main></div></div>
+<script type="module" src="/core/auditoria.js?v=20261002-audit-v2"></script>
+  <script src="/core/admin-navigation.js?v=20261003-shared-nav-v2"></script>
+  <script src="/shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+</body></html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#163b63" />
+    <meta name="description" content="Compras Públicas — planejamento, processos, contratos e conexão com atas e saldos." />
+    <title>Compras Públicas | Intranet Municipal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="../shared/css/intranet-base.css" />
+    <link rel="stylesheet" href="../shared/css/componentes.css" />
+    <link rel="stylesheet" href="./compras.css" />
+    <link rel="stylesheet" href="/shared/css/system-mother.css?v=20261004-system-mother-v1">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar" id="sidebar" aria-label="Menu do módulo"></aside>
+      <div class="main-area">
+        <header class="topbar" id="topbar"></header>
+        <main class="conteudo compras-main" id="conteudo-principal">
+          <section class="hero-panel" id="painel" aria-labelledby="page-title">
+            <div class="hero-copy">
+              <p class="eyebrow"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Planejamento · contratação · execução</p>
+              <h1 id="page-title">Compras Públicas</h1>
+              <p class="hero-lead">Do pedido da secretaria ao contrato, com responsáveis, prazos e documentos num só lugar.</p>
+              <p class="hero-note">O sistema organiza o trabalho. As decisões administrativas e jurídicas continuam com as pessoas responsáveis.</p>
+            </div>
+            <div class="hero-actions">
+              <button class="button button-primary" type="button" data-action="new-demand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Registrar uma necessidade</button>
+              <button class="button button-light" type="button" data-action="new-process" id="hero-new-process"><i class="fa-solid fa-folder-plus" aria-hidden="true"></i> Abrir processo</button>
+            </div>
+          </section>
+
+          <div class="notice-bar" id="status-message" role="status" aria-live="polite" hidden></div>
+          <div class="context-bar" id="context-bar" hidden></div>
+
+          <section class="kpi-grid" aria-label="Resumo de acompanhamento">
+            <article class="kpi-card kpi-green"><span class="kpi-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></span><div><p>Pedidos aguardando</p><strong id="kpi-demands">—</strong><small>necessidades enviadas</small></div></article>
+            <article class="kpi-card kpi-blue"><span class="kpi-icon"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span><div><p>Processos em andamento</p><strong id="kpi-processes">—</strong><small>em qualquer etapa</small></div></article>
+            <article class="kpi-card kpi-amber"><span class="kpi-icon"><i class="fa-regular fa-clock" aria-hidden="true"></i></span><div><p>Tarefas pendentes</p><strong id="kpi-tasks">—</strong><small>com prazo ou responsável</small></div></article>
+            <article class="kpi-card kpi-slate"><span class="kpi-icon"><i class="fa-solid fa-file-signature" aria-hidden="true"></i></span><div><p>Contratos vigentes</p><strong id="kpi-contracts">—</strong><small>cadastros ativos</small></div></article>
+          </section>
+
+          <nav class="section-tabs" aria-label="Seções de Compras Públicas" role="tablist">
+            <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-tab="overview"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Visão geral</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-tab="demands"><i class="fa-solid fa-inbox" aria-hidden="true"></i> Necessidades</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-tab="pca"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Planejamento anual</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-tab="processes"><i class="fa-solid fa-folder-tree" aria-hidden="true"></i> Processos</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-tab="publications"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Publicações</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-tab="contracts"><i class="fa-solid fa-file-contract" aria-hidden="true"></i> Contratos</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-tab="agenda"><i class="fa-regular fa-calendar" aria-hidden="true"></i> Agenda</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-tab="settings" id="settings-tab"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Configuração</button>
+            <a class="section-tab" href="./operacao.html"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Central operacional</a>
+            <a class="section-tab" href="./artefatos.html"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> ETP / TR</a>
+            <a class="section-tab" href="./decisoes.html"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Decisões</a>
+            <a class="section-tab" href="./governanca.html"><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i> Regras e fontes</a>
+            <a class="section-tab" href="./auditoria.html"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Auditoria</a>
+            <a class="section-tab section-link" href="../intranet.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Voltar à Intranet</a>
+          </nav>
+
+          <section class="tab-panel is-active" id="tab-overview" role="tabpanel" aria-label="Visão geral">
+            <div class="content-grid">
+              <article class="surface-card">
+                <div class="card-heading"><div><p class="eyebrow">Acompanhe o trabalho</p><h2>O que precisa de atenção</h2></div><span class="heading-icon"><i class="fa-solid fa-bell" aria-hidden="true"></i></span></div>
+                <div id="attention-list" class="attention-list"><div class="loading-line"><span class="spinner" aria-hidden="true"></span> Carregando seus dados…</div></div>
+              </article>
+              <article class="surface-card quick-access-card">
+                <div class="card-heading"><div><p class="eyebrow">Atalhos</p><h2>Comece por aqui</h2></div><span class="heading-icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span></div>
+                <div class="quick-actions">
+                  <button type="button" class="quick-action" data-action="new-demand"><span class="quick-icon qi-green"><i class="fa-solid fa-cart-plus" aria-hidden="true"></i></span><span><strong>Registrar uma necessidade</strong><small>Informe o que sua unidade precisa e por quê.</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                  <button type="button" class="quick-action" data-action="search"><span class="quick-icon qi-blue"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span><span><strong>Localizar um processo</strong><small>Busque por número, objeto ou modalidade.</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                  <button type="button" class="quick-action" data-action="export-report"><span class="quick-icon qi-amber"><i class="fa-solid fa-file-csv" aria-hidden="true"></i></span><span><strong>Baixar relatório CSV</strong><small>Exporte processos, necessidades, PCA e contratos do seu acesso.</small></span><i class="fa-solid fa-download" aria-hidden="true"></i></button>
+                  <a class="quick-action" href="../intranet.html"><span class="quick-icon qi-slate"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span><strong>Escolher outro módulo</strong><small>Volte à Intranet para acessar Biblioteca, Atas e demais módulos.</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                </div>
+              </article>
+            </div>
+            <article class="surface-card recent-card">
+              <div class="card-heading card-heading-row"><div><p class="eyebrow">Atualização recente</p><h2>Processos em andamento</h2><p class="muted-text">Clique em um processo para ver etapas, tarefas e documentos vinculados.</p></div><button type="button" class="button button-outline" data-tab-link="processes">Ver todos os processos <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
+              <div class="table-wrap"><table class="data-table" aria-label="Tabela de dados"><thead><tr><th>Nº / ano</th><th>Objeto</th><th>Modalidade / procedimento</th><th>Etapa atual</th><th>Situação</th><th><span class="sr-only">Ações</span></th></tr></thead><tbody id="overview-processes"><tr><td colspan="6" class="table-empty">Carregando processos…</td></tr></tbody></table></div>
+            </article>
+          </section>
+
+          <section class="tab-panel" id="tab-demands" role="tabpanel" aria-label="Necessidades de compra" hidden>
+            <div class="list-toolbar"><div><p class="eyebrow">Planejamento da unidade</p><h2>Necessidades registradas</h2><p class="muted-text">Descreva o que precisa ser comprado; Compras acompanha o próximo passo.</p></div><button type="button" class="button button-primary" data-action="new-demand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Registrar necessidade</button></div>
+            <div class="filter-row"><label class="search-field"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="sr-only">Buscar necessidades</span><input id="demand-search" type="search" placeholder="Buscar por objeto ou unidade…" autocomplete="off" / aria-label="Buscar por objeto ou unidade…"></label><select id="demand-status-filter" aria-label="Filtrar necessidades por situação"><option value="">Todas as situações</option><option value="rascunho">Rascunho</option><option value="enviada">Enviada</option><option value="em_analise">Em análise</option><option value="convertida">Convertida em processo</option></select></div>
+            <div class="surface-card"><div class="table-wrap"><table class="data-table" aria-label="Tabela de dados"><thead><tr><th>Necessidade</th><th>Unidade</th><th>Prioridade</th><th>Valor estimado</th><th>Precisa até</th><th>Situação</th><th><span class="sr-only">Ações</span></th></tr></thead><tbody id="demands-table"><tr><td colspan="7" class="table-empty">Carregando…</td></tr></tbody></table></div></div>
+          </section>
+
+          <section class="tab-panel" id="tab-pca" role="tabpanel" aria-label="Planejamento anual de contratações" hidden>
+            <div class="list-toolbar"><div><p class="eyebrow">PCA · previsão e organização</p><h2>Planejamento anual de contratações</h2><p class="muted-text">Registre itens previstos. A previsão organiza o trabalho e não autoriza, por si só, a contratação.</p></div><button type="button" class="button button-primary" data-action="new-pca" id="new-pca-button"><i class="fa-solid fa-plus" aria-hidden="true"></i> Adicionar previsão</button></div>
+            <div class="surface-card"><div class="table-wrap"><table class="data-table" aria-label="Tabela de dados"><thead><tr><th>Ano</th><th>Unidade</th><th>Item previsto</th><th>Quantidade</th><th>Valor estimado</th><th>Previsão</th><th>Prioridade</th><th>Situação</th></tr></thead><tbody id="pca-table"><tr><td colspan="8" class="table-empty">Carregando…</td></tr></tbody></table></div></div>
+          </section>
+
+          <section class="tab-panel" id="tab-processes" role="tabpanel" aria-label="Processos de compra" hidden>
+            <div class="list-toolbar"><div><p class="eyebrow">Visibilidade de ponta a ponta</p><h2>Processos de compra</h2><p class="muted-text">Etapas, documentos, responsáveis, prazos e conexões com atas.</p></div><button type="button" class="button button-primary" data-action="new-process" id="new-process-button"><i class="fa-solid fa-folder-plus" aria-hidden="true"></i> Abrir processo</button></div>
+            <div class="filter-row"><label class="search-field"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="sr-only">Buscar processos</span><input id="process-search" type="search" placeholder="Buscar por número, objeto ou modalidade…" autocomplete="off" / aria-label="Buscar por número, objeto ou modalidade…"></label><select id="process-status-filter" aria-label="Filtrar processos por situação"><option value="">Todas as situações</option><option value="planejamento">Planejamento</option><option value="em_instrucao">Em instrução</option><option value="em_selecao">Em seleção</option><option value="homologado">Homologado</option><option value="formalizado">Formalizado</option><option value="encerrado">Encerrado</option></select></div>
+            <div class="surface-card"><div class="table-wrap"><table class="data-table" aria-label="Tabela de dados"><thead><tr><th>Nº / ano</th><th>Objeto e unidade</th><th>Modalidade / procedimento</th><th>Valor estimado</th><th>Situação</th><th>Prazo</th><th><span class="sr-only">Ações</span></th></tr></thead><tbody id="processes-table"><tr><td colspan="7" class="table-empty">Carregando…</td></tr></tbody></table></div></div>
+          </section>
+
+          <section class="tab-panel" id="tab-contracts" role="tabpanel" aria-label="Contratos" hidden>
+            <div class="list-toolbar"><div><p class="eyebrow">Acompanhamento da execução</p><h2>Contratos cadastrados</h2><p class="muted-text">Vigência, gestor, fiscal e eventos registrados.</p></div><button type="button" class="button button-outline" data-tab-link="processes">Abrir um processo <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
+            <div class="surface-card"><div class="table-wrap"><table class="data-table" aria-label="Tabela de dados"><thead><tr><th>Contrato</th><th>Objeto</th><th>Fornecedor</th><th>Valor atual</th><th>Vigência</th><th>Situação</th><th><span class="sr-only">Ações</span></th></tr></thead><tbody id="contracts-table"><tr><td colspan="7" class="table-empty">Carregando…</td></tr></tbody></table></div></div>
+          </section>
+
+          <section class="tab-panel" id="tab-publications" role="tabpanel" aria-label="Publicações e PNCP" hidden>
+            <div class="list-toolbar"><div><p class="eyebrow">Acompanhamento de divulgação</p><h2>Publicações e comprovantes</h2><p class="muted-text">Registre onde e quando a equipe publicou. Este painel não envia dados ao PNCP nem a outros portais.</p></div><button type="button" class="button button-primary" data-action="new-publication" id="new-publication-button"><i class="fa-solid fa-plus" aria-hidden="true"></i> Registrar publicação</button></div>
+            <div class="surface-card"><div class="table-wrap"><table class="data-table" aria-label="Tabela de dados"><thead><tr><th>Processo</th><th>Canal / tipo</th><th>Data</th><th>Protocolo</th><th>Situação</th><th>Link/comprovante</th></tr></thead><tbody id="publications-table"><tr><td colspan="6" class="table-empty">Carregando…</td></tr></tbody></table></div></div>
+          </section>
+
+          <section class="tab-panel" id="tab-agenda" role="tabpanel" aria-label="Agenda de prazos" hidden>
+            <div class="list-toolbar"><div><p class="eyebrow">Prazos e compromissos registrados</p><h2>Agenda de acompanhamento</h2><p class="muted-text">Reúne tarefas e obrigações por data. A contagem de dias úteis depende da parametrização do calendário municipal.</p></div><div class="agenda-actions"><button type="button" class="button button-primary" data-action="new-obligation" id="new-obligation-button"><i class="fa-solid fa-plus" aria-hidden="true"></i> Registrar obrigação</button><button type="button" class="button button-outline" data-action="export-report"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> Baixar relatório</button></div></div>
+            <div id="agenda-list" class="agenda-list"><div class="loading-line"><span class="spinner" aria-hidden="true"></span> Carregando prazos…</div></div>
+          </section>
+
+          <section class="tab-panel" id="tab-settings" role="tabpanel" aria-label="Configuração de calendário e fluxos" hidden>
+            <div class="list-toolbar"><div><p class="eyebrow">Parâmetros internos</p><h2>Calendário e fluxos</h2><p class="muted-text">Configure feriados do tenant e versões dos fluxos de trabalho. Publicar uma versão só afeta processos criados depois da publicação.</p></div><div class="agenda-actions"><button type="button" class="button button-primary" data-action="new-flow"><i class="fa-solid fa-plus" aria-hidden="true"></i> Novo fluxo</button><button type="button" class="button button-outline" data-action="new-flow-version"><i class="fa-solid fa-code-branch" aria-hidden="true"></i> Nova versão</button></div></div>
+            <div class="content-grid">
+              <article class="surface-card">
+                <div class="card-heading card-heading-row"><div><p class="eyebrow">Dias sem expediente</p><h3>Feriados municipais</h3></div><button type="button" class="button button-primary button-small" data-action="new-holiday" id="new-holiday-button"><i class="fa-solid fa-plus" aria-hidden="true"></i> Adicionar</button></div>
+                <div id="holidays-list" class="agenda-list"><div class="loading-line">Carregando calendário…</div></div>
+              </article>
+              <article class="surface-card">
+                <div class="card-heading"><div><p class="eyebrow">Modelos de trabalho</p><h3>Subetapas do fluxo</h3></div></div>
+                <div id="flow-editor"><div class="loading-line">Carregando fluxos…</div></div>
+              </article>
+            </div>
+          </section>
+
+          <footer class="module-footer"><span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Acesso restrito à sua unidade e às permissões atribuídas.</span><span>Compras Públicas · Intranet Municipal</span></footer>
+        </main>
+      </div>
+    </div>
+
+    <dialog class="app-dialog" id="app-dialog" aria-labelledby="dialog-title"><div id="dialog-content"></div></dialog>
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <script type="module" src="./compras.js"></script>
+    <script src="/shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+</body>
+</html>

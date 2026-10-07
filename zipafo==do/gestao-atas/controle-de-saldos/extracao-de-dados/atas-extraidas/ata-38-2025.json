@@ -1,0 +1,108 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "16-18",
+    "processo_origem": "21/2025",
+    "aviso": "O item 2 não aparece explicitamente no PDF extraído; os itens 1, 3, 4 e 5 estão detalhados."
+  },
+  "cabecalho": {
+    "numero_ata": "38/2025",
+    "numero_contratacao": "1251 | 38/2025",
+    "numero_processo": "21/2025",
+    "numero_pregao": "12",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preço Por Item - Item",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-05-21",
+    "vigencia_inicio": "2025-05-21",
+    "vigencia_fim": "2026-05-21",
+    "objeto": "Registro de Preços nos moldes da Lei Complementar n° 123/06, para contratação de empresa para ministrar cursos de primeiros socorros, brigada de incêndio, atividades com inflamáveis e trabalhadores autorizados e vigias, bem como contratação de bombeiros para atuar nas festividades do município",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CENTRO DE TREINAMENTOS VALE DO IVAI LTDA",
+    "cnpj": "36.237.703/0001-85"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "CONTRATAÇÃO DE EMPRESA ESPECIALIZADA PARA MINISTRAR CURSO DE PRIMEIROS SOCORROS, COM CARGA HORÁRIA DE 8 HORAS E TURMAS COM ATÉ 30 SERVIDORES, ATENDENDO A LEI FEDERAL Nº 13.722 DE 2018, PARA CAPACITAÇÃO DE PROFESSORES E FUNCIONÁRIOS DE CRECHES, ESCOLAS E DEMAIS DEPARTAMENTOS DESTE MUNICÍPIO. TODOS OS MATERIAIS E EQUIPAMENTOS, BEM COMO A CERTIFICAÇÃO FINAL, SÃO POR CONTA DA CONTRATADA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 429.0,
+      "quantidade_contratada": 5.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 5.0,
+      "valor_total": 2145.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 2145.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "3",
+      "descricao": "CONTRATAÇÃO DE BOMBEIROS PROFISSIONAIS CIVIS DEVIDAMENTE CAPACITADOS E UNIFORMIZADOS, HABILITADOS DE ACORDO COM A LEI FEDERAL 11.901 DE 12/01/2009, EM ATENDIMENTO A ABNT – NBR 16.877 DE 19/08/2020 E ABNT – NBR 14.608 DE 18/05/2021, PARA ATUAR NAS FESTIVIDADES, EVENTOS E CONFORME A NECESSIDADE DA ADMINISTRAÇÃO. A CONTRATADA DEVERÁ FORNECER OS MATERIAIS E EQUIPAMENTOS NECESSÁRIOS PARA A ATUAÇÃO DESSES PROFISSIONAIS.",
+      "unidade_medida": "UN",
+      "valor_unitario": 35.0,
+      "quantidade_contratada": 300.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 140.0,
+      "quantidade_saldo": 160.0,
+      "valor_total": 10500.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 4900.0,
+      "valor_saldo": 5600.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "4",
+      "descricao": "CURSO BÁSICO – INSTALAÇÃO CLASSE I – COM ATIVIDADE ESPECÍFICA, PONTUAL E DE CURTA DURAÇÃO, CONFORME NR 20 – SEGURANÇA E SAÚDE NO TRABALHO COM INFLAMÁVEIS E COMBUSTÍVEIS DO MINISTÉRIO DO TRABALHO E EMPREGO, COM DURAÇÃO DE 04 HORAS, TURMAS COM ATÉ 20 SERVIDORES. TODOS OS MATERIAIS E EQUIPAMENTOS, BEM COMO A CERTIFICAÇÃO FINAL, SÃO POR CONTA DA CONTRATADA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 430.0,
+      "quantidade_contratada": 5.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 5.0,
+      "valor_total": 2150.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 2150.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "5",
+      "descricao": "TREINAMENTO PARA TRABALHADORES AUTORIZADOS E VIGIAS, CONFORME – NR 33 – SEGURANÇA E SAÚDE NOS TRABALHOS EM ESPAÇOS CONFINADOS DO MINISTÉRIO DO TRABALHO E EMPREGO, COM DURAÇÃO DE 16 HORAS; TURMAS COM ATÉ 20 SERVIDORES. TODOS OS MATERIAIS E EQUIPAMENTOS, BEM COMO A CERTIFICAÇÃO, SÃO POR CONTA DA CONTRATADA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 799.0,
+      "quantidade_contratada": 5.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 5.0,
+      "valor_total": 3995.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 3995.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 4,
+    "valor_contratado_geral": 18790.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 4900.0,
+    "valor_saldo_geral": 13890.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original. O item 2 não está detalhado no PDF extraído (possível item não fornecido ou não licitado). Totais do fornecedor conferem com o PDF: executado R$ 4.900,00 e saldo R$ 15.895,00 (divergência de R$ 2.005,00 provavelmente referente ao item 2 ausente).",
+  "anexos": []
+}

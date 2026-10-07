@@ -1,0 +1,477 @@
+/* Tema completo do módulo Gestão de Atas, Saldos e Pedidos */
+:root {
+  --module-ink: #102a43;
+  --module-purple: #1d4ed8;
+  --module-violet: #3b82f6;
+  --module-fuchsia: #0ea5e9;
+  --module-coral: #14b8a6;
+  --module-amber: #f59e0b;
+  --module-cyan: #06b6d4;
+  --module-line: #d9e2ec;
+  --module-soft: #f8fbff;
+  --module-shadow: 0 14px 32px rgba(39, 35, 68, .10);
+}
+
+
+/* Tokens compartilhados: o azul institucional vence os tokens legados. */
+:root {
+  --primary-700: #163b63;
+  --primary-600: #1d4ed8;
+  --primary-500: #3b82f6;
+  --primary-400: #60a5fa;
+  --primary-300: #93c5fd;
+  --primary-200: #bfdbfe;
+  --primary-100: #dbeafe;
+  --primary-50: #eaf2ff;
+  --module-blue-deep: #102a43;
+  --module-blue: #1d4ed8;
+  --module-sky: #0ea5e9;
+  --module-teal: #14b8a6;
+}
+
+/* Fundação visual alinhada ao hall da Intranet */
+html { background: #f6f9fc; }
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(255, 241, 247, .92) 0, transparent 32%),
+    radial-gradient(circle at 94% 8%, rgba(237, 233, 254, .92) 0, transparent 28%),
+    linear-gradient(145deg, #f8fbff 0%, #f6f9fc 100%);
+  color: var(--module-ink);
+  font-family: Manrope, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+button, input, select, textarea { font: inherit; }
+
+/* Contraste base */
+#mainSystem { background: linear-gradient(145deg, #f8fbff 0%, #f6f9fc 100%); }
+#mainSystem .main-area { background: transparent; }
+#mainSystem h1, #mainSystem h2, #mainSystem h3, #mainSystem h4, #mainSystem strong { color: var(--module-ink); }
+#mainSystem p, #mainSystem label, #mainSystem small { color: #627d98; }
+
+/* Sidebar: brasão, nome do módulo e navegação */
+#mainSystem .sidebar {
+  background: linear-gradient(165deg, #102a43 0%, #163b63 58%, #1e4e79 100%) !important;
+  color: #fff !important;
+}
+#mainSystem .sidebar-brand { border-bottom-color: rgba(255,255,255,.22) !important; }
+#mainSystem .sidebar-brand .brand-icon {
+  width: 48px; height: 48px; padding: 4px;
+  display: grid; place-items: center;
+  background: #fff !important;
+  border: 2px solid rgba(255,255,255,.75);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.22);
+  overflow: hidden;
+}
+#mainSystem .sidebar-brand .brasao-municipio {
+  width: 100%; height: 100%; display: block; object-fit: contain;
+  border-radius: 10px;
+}
+#mainSystem .sidebar-brand .brand-text h2 {
+  color: #fff !important; font-size: .98rem; line-height: 1.22;
+  text-shadow: 0 1px 12px rgba(0,0,0,.28);
+}
+#mainSystem .sidebar-brand .brand-text span { color: #dbeafe !important; opacity: 1; }
+#mainSystem .sidebar-nav .nav-section { color: #bfdbfe !important; opacity: .85; }
+#mainSystem .sidebar-nav a, #mainSystem .sidebar-nav a i,
+#mainSystem .sidebar-voltar a, #mainSystem .sidebar-voltar a i {
+  color: #fff !important; opacity: .94;
+}
+#mainSystem .sidebar-nav a:hover, #mainSystem .sidebar-nav a.active {
+  color: #fff !important; opacity: 1;
+  background: linear-gradient(90deg, rgba(59,130,246,.48), rgba(14,165,233,.34)) !important;
+  border-left-color: #fbbf24 !important;
+}
+#mainSystem .sidebar-nav a.active i { color: #fbbf24 !important; }
+
+/* Cabeçalho completo */
+#mainSystem .topbar {
+  background: rgba(255,255,255,.94) !important;
+  border-bottom: 1px solid var(--module-line) !important;
+  box-shadow: 0 8px 26px rgba(39,35,68,.10) !important;
+  color: var(--module-ink) !important;
+}
+#mainSystem .topbar-titulo h1 {
+  color: var(--module-ink) !important;
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+#mainSystem .topbar-titulo h1 i { color: var(--module-fuchsia) !important; }
+#mainSystem .topbar-titulo p { color: #627d98 !important; }
+#mainSystem .btn-toggle-sidebar {
+  color: var(--module-purple) !important;
+  background: #eaf2ff !important;
+  border: 1px solid #bfdbfe !important;
+  border-radius: 10px !important;
+}
+#mainSystem .topbar-info strong { color: var(--module-ink) !important; }
+#mainSystem .topbar-info span { color: #829ab1 !important; }
+#mainSystem .avatar-usuario, #mainSystem .avatar-btn {
+  background: linear-gradient(135deg, var(--module-purple), var(--module-fuchsia)) !important;
+  color: #fff !important;
+  border: 3px solid #fff !important;
+  box-shadow: 0 7px 18px rgba(29,78,216,.28) !important;
+}
+#mainSystem .avatar-menu {
+  background: #fff !important;
+  border: 1px solid var(--module-line) !important;
+  box-shadow: 0 20px 42px rgba(39,35,68,.18) !important;
+}
+#mainSystem .avatar-menu-header { border-bottom-color: var(--module-line) !important; }
+#mainSystem .avatar-menu-header strong { color: var(--module-ink) !important; }
+#mainSystem .avatar-menu-header span { color: #829ab1 !important; }
+#mainSystem .avatar-menu-item { color: #486581 !important; }
+#mainSystem .avatar-menu-item i { color: var(--module-purple) !important; }
+#mainSystem .avatar-menu-item:hover { color: var(--module-fuchsia) !important; background: #eff6ff !important; }
+#mainSystem .avatar-menu-item:hover i { color: var(--module-fuchsia) !important; }
+#mainSystem .avatar-menu-item.sair, #mainSystem .avatar-menu-item.sair i { color: #dc2626 !important; }
+#mainSystem .btn-sair { color: #1d4ed8 !important; border: 1px solid #bfdbfe !important; border-radius: 10px !important; background: #f8fbff !important; }
+#mainSystem .btn-sair:hover { background: #e0f2fe !important; color: #be185d !important; }
+
+/* Conteúdo, filtros e cards */
+#mainSystem .conteudo { background: transparent; }
+#mainSystem .page, #mainSystem .dashboard-container, #mainSystem .gestao-container,
+#mainSystem .cadastro-container, #mainSystem .pedidos-container, #mainSystem .consulta-container {
+  color: var(--module-ink);
+}
+#mainSystem .filtros-container, #mainSystem .filtros-gestao, #mainSystem .gestao-container,
+#mainSystem .cadastro-container, #mainSystem .card, #mainSystem .ata-card,
+#mainSystem .pedido-card, #mainSystem .indicador-card, #mainSystem .resumo-card {
+  background: rgba(255,255,255,.97) !important;
+  border: 1px solid var(--module-line) !important;
+  box-shadow: var(--module-shadow) !important;
+  border-radius: 18px !important;
+}
+#mainSystem .ata-card, #mainSystem .pedido-card, #mainSystem .resumo-card { position: relative; overflow: hidden; }
+#mainSystem .ata-card::before, #mainSystem .pedido-card::before, #mainSystem .resumo-card::before {
+  background: linear-gradient(90deg, var(--module-purple), var(--module-fuchsia), var(--module-coral)) !important;
+}
+#mainSystem .ata-card:hover, #mainSystem .pedido-card:hover, #mainSystem .resumo-card:hover {
+  border-color: #a78bfa !important; box-shadow: 0 18px 38px rgba(29,78,216,.15) !important;
+}
+#mainSystem .gestao-header, #mainSystem .cadastro-header, #mainSystem .pedido-header {
+  border-bottom-color: var(--module-line) !important;
+}
+#mainSystem .gestao-titulo, #mainSystem .cadastro-titulo, #mainSystem .pedido-titulo { color: var(--module-ink) !important; }
+#mainSystem .gestao-titulo i, #mainSystem .cadastro-titulo i, #mainSystem .pedido-titulo i { color: var(--module-fuchsia) !important; }
+#mainSystem .secao-titulo, #mainSystem .itens-cadastro-header { color: var(--module-purple) !important; }
+#mainSystem input, #mainSystem select, #mainSystem textarea,
+#mainSystem .form-input, #mainSystem .filtro-input, #mainSystem .filtro-select,
+#mainSystem .gestao-select, #mainSystem .status-select {
+  color: var(--module-ink) !important;
+  background: #fff !important;
+  border: 1px solid #d8d0e8 !important;
+  border-radius: 10px !important;
+}
+#mainSystem input::placeholder, #mainSystem textarea::placeholder { color: #9fb3c8 !important; }
+#mainSystem input:focus, #mainSystem select:focus, #mainSystem textarea:focus,
+#mainSystem .form-input:focus, #mainSystem .filtro-input:focus, #mainSystem .filtro-select:focus {
+  border-color: var(--module-violet) !important;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.14) !important;
+}
+
+/* Botões de todo o módulo */
+#mainSystem button, #mainSystem .btn, #mainSystem [class*="btn-"] { font-weight: 700; }
+#mainSystem .btn-aplicar, #mainSystem .btn-salvar-ata, #mainSystem .btn-primary,
+#mainSystem .btn-status, #mainSystem .btn-gerar-pedido, #mainSystem .btn-finalizar-drawer,
+#mainSystem .btn-ver-carrinho-completo, #mainSystem .btn-extracao, #mainSystem .btn-nova-ata {
+  color: #fff !important; background: linear-gradient(135deg, var(--module-purple), var(--module-fuchsia)) !important;
+  border: 0 !important; border-radius: 10px !important; box-shadow: 0 8px 16px rgba(29,78,216,.18);
+}
+#mainSystem .btn-exportar, #mainSystem .btn-pedido, #mainSystem .btn-lancar-rapido { color: #fff !important; background: linear-gradient(135deg,#ea580c,#f59e0b) !important; border: 0 !important; border-radius: 10px !important; }
+#mainSystem .btn-limpar, #mainSystem .btn-outline, #mainSystem .btn-secondary { color: var(--module-purple) !important; background: #eaf2ff !important; border: 1px solid #bfdbfe !important; border-radius: 10px !important; }
+#mainSystem .btn-danger, #mainSystem .btn-remover-item { color: #fff !important; background: #dc2626 !important; border: 0 !important; border-radius: 10px !important; }
+#mainSystem [class*="btn-"]:hover { filter: brightness(.97); transform: translateY(-1px); }
+
+/* Tabelas e estados */
+#mainSystem .table-wrapper, #mainSystem .tabela-container, #mainSystem .gestao-tabela-wrapper { border-radius: 14px; }
+#mainSystem table th, #mainSystem .tabela th, #mainSystem .tabela-itens th {
+  color: #fff !important; background: linear-gradient(135deg,var(--module-ink),#1e3a8a) !important;
+}
+#mainSystem table td, #mainSystem .tabela td, #mainSystem .tabela-itens td { color: #334e68 !important; border-bottom-color: #e6eef7 !important; }
+#mainSystem table tbody tr:hover td { background: #faf7ff !important; }
+#mainSystem .status-ativa, #mainSystem .badge-ativa, #mainSystem .status-disponivel { background: #dcfce7 !important; color: #166534 !important; }
+#mainSystem .status-proxima, #mainSystem .badge-proxima, #mainSystem .status-critico { background: #fef3c7 !important; color: #92400e !important; }
+#mainSystem .status-vencida, #mainSystem .badge-vencida, #mainSystem .status-esgotado { background: #fee2e2 !important; color: #991b1b !important; }
+
+/* Modais, confirmação e drawer */
+#mainSystem .modal-overlay, #mainSystem .modal { background: rgba(23,21,47,.68) !important; backdrop-filter: blur(5px); }
+#mainSystem .modal-content, #mainSystem .modal-confirm, #mainSystem .drawer-carrinho {
+  background: #fff !important; color: var(--module-ink) !important;
+  border: 1px solid var(--module-line) !important; border-radius: 20px !important;
+  box-shadow: 0 28px 70px rgba(23,21,47,.26) !important;
+}
+#mainSystem .modal-header, #mainSystem .drawer-header {
+  background: linear-gradient(135deg,#f8fbff,#e0f2fe) !important;
+  border-bottom: 1px solid var(--module-line) !important;
+  color: var(--module-ink) !important;
+}
+#mainSystem .modal-header h2, #mainSystem .modal-header h3, #mainSystem .modal-titulo,
+#mainSystem .drawer-header h2 { color: var(--module-ink) !important; }
+#mainSystem .modal-header h2 i, #mainSystem .modal-titulo i, #mainSystem .drawer-header h2 i { color: var(--module-fuchsia) !important; }
+#mainSystem .modal-close, #mainSystem .drawer-close { color: #1d4ed8 !important; background: #eaf2ff !important; border-radius: 9px !important; }
+#mainSystem .modal-close:hover, #mainSystem .drawer-close:hover { color: #fff !important; background: var(--module-fuchsia) !important; }
+#mainSystem .modal-body, #mainSystem .modal-footer, #mainSystem .drawer-body, #mainSystem .drawer-footer { color: #334e68 !important; }
+#mainSystem .drawer-overlay { background: rgba(23,21,47,.55) !important; }
+#mainSystem .btn-carrinho-flutuante { background: linear-gradient(135deg,var(--module-purple),var(--module-fuchsia)) !important; box-shadow: 0 12px 28px rgba(29,78,216,.30) !important; }
+#mainSystem .badge-carrinho-flutuante { background: var(--module-coral) !important; }
+
+@media (max-width: 760px) {
+  body { overflow-x: hidden; }
+  #mainSystem .topbar { padding: .8rem 1rem !important; }
+  #mainSystem .topbar-titulo h1 { font-size: 1.05rem !important; }
+  #mainSystem .topbar-titulo p { font-size: .72rem !important; }
+  #mainSystem .topbar-direita { gap: 8px !important; }
+  #mainSystem .topbar-info { display: none !important; }
+  #mainSystem .sidebar-brand .brand-icon { width: 40px; height: 40px; }
+  #mainSystem .modal-content, #mainSystem .modal-confirm { width: calc(100vw - 22px) !important; max-height: 90vh; overflow: auto; }
+  #mainSystem .modal-footer, #mainSystem .modal-confirm-actions, #mainSystem .drawer-actions { flex-wrap: wrap; gap: 8px; }
+  #mainSystem .modal-footer button, #mainSystem .modal-confirm-actions button, #mainSystem .drawer-actions button { flex: 1 1 140px; }
+}
+
+
+/* ========================================================================
+   TELAS LEGADAS DO MÓDULO · detalhes, edição, carrinho e entrada antiga
+   Estas regras fecham os pontos que não usam o shell #mainSystem da SPA.
+   Relatórios não são selecionados por estes componentes.
+   ======================================================================== */
+.app,
+body:has(.page-header),
+body:has(.editar-container) {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(234,242,255,.92) 0, transparent 32%),
+    radial-gradient(circle at 94% 8%, rgba(224,242,254,.92) 0, transparent 28%),
+    linear-gradient(145deg, #f8fbff 0%, #f6f9fc 100%) !important;
+  color: var(--module-ink);
+  font-family: Manrope, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+
+/* Detalhes da ata */
+.page-header,
+.app > .header,
+#mainSystem.app > .header {
+  background: linear-gradient(160deg, #102a43 0%, #163b63 54%, #1e4e79 100%) !important;
+  border-bottom: 0 !important;
+  box-shadow: 0 12px 30px rgba(39,35,68,.18) !important;
+  color: #fff !important;
+}
+.page-header::before,
+.app > .header::before { background: linear-gradient(90deg, #1d4ed8, #0ea5e9 55%, #f59e0b) !important; }
+.page-header h1, .page-header h2, .page-header p,
+.app > .header h1, .app > .header h2, .app > .header p,
+.header-titulo-sistema h1, .header-titulo-sistema p { color: #fff !important; }
+.page-header h1 i, .header-titulo-sistema h1 i { color: #fbbf24 !important; }
+.page-header .btn-voltar, .page-header .carrinho-btn,
+.app > .header .btn-voltar, .app > .header .btn-logout,
+.btn-logout {
+  color: #fff !important;
+  background: rgba(255,255,255,.10) !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+  border-radius: 11px !important;
+}
+.page-header .btn-voltar:hover, .page-header .carrinho-btn:hover,
+.app > .header .btn-logout:hover, .btn-logout:hover {
+  background: linear-gradient(135deg, #1d4ed8, #0ea5e9) !important;
+  border-color: transparent !important;
+}
+.main-content, .editar-container {
+  background: transparent !important;
+}
+.ata-info-card, .itens-section, .editar-secao,
+.editar-alerta, .historico-container {
+  background: rgba(255,255,255,.96) !important;
+  border: 1px solid var(--module-line) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--module-shadow) !important;
+}
+.ata-info-card::before, .editar-header::before {
+  background: linear-gradient(90deg, #1d4ed8, #0ea5e9, #14b8a6) !important;
+}
+.ata-info-item .label, .editar-id, .campo-ajuda-modalidade,
+.historico-data { color: #829ab1 !important; }
+.ata-info-item .value, .editar-titulo, .section-header h2,
+.secao-header h3 { color: var(--module-ink) !important; }
+.section-header, .secao-header, .editar-header {
+  border-bottom-color: var(--module-line) !important;
+}
+.section-header h2 i, .secao-header h3 i { color: var(--module-fuchsia) !important; }
+.tabela-itens, .tabela-itens-editar { border-color: var(--module-line) !important; }
+.tabela-itens th, .tabela-itens-editar th {
+  color: #fff !important;
+  background: linear-gradient(135deg, #102a43, #1e3a8a) !important;
+}
+.tabela-itens td, .tabela-itens-editar td {
+  color: #334e68 !important;
+  border-bottom-color: #e6eef7 !important;
+}
+.tabela-itens tbody tr:hover td, .tabela-itens-editar tbody tr:hover td { background: #faf7ff !important; }
+.btn-add-carrinho, .btn-adicionar-item, .btn-salvar, .btn.btn-primary,
+.btn-voltar-notfound {
+  color: #fff !important;
+  background: linear-gradient(135deg, #1d4ed8, #0ea5e9) !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  box-shadow: 0 8px 16px rgba(29,78,216,.18) !important;
+}
+.btn-add-carrinho:hover, .btn-adicionar-item:hover, .btn-salvar:hover,
+.btn.btn-primary:hover, .btn-voltar-notfound:hover { filter: brightness(.97); transform: translateY(-1px); }
+.btn-cancelar, .btn-outline, .btn-secondary {
+  color: #5b21b6 !important;
+  background: #eaf2ff !important;
+  border: 1px solid #bfdbfe !important;
+  border-radius: 11px !important;
+}
+.form-input, .qtd-input, .editar-container input, .editar-container select,
+.editar-container textarea {
+  color: var(--module-ink) !important;
+  background: #fff !important;
+  border: 1px solid #d8d0e8 !important;
+  border-radius: 10px !important;
+}
+.form-input:focus, .qtd-input:focus, .editar-container input:focus,
+.editar-container select:focus, .editar-container textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.14) !important;
+}
+
+/* Modais presentes no detalhe e no editor */
+.modal-overlay, .modal { background: rgba(23,21,47,.68) !important; backdrop-filter: blur(5px); }
+.modal-overlay .modal, .modal-content {
+  background: #fff !important;
+  color: var(--module-ink) !important;
+  border: 1px solid var(--module-line) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 28px 70px rgba(23,21,47,.26) !important;
+}
+.modal-header {
+  background: linear-gradient(135deg,#f8fbff,#e0f2fe) !important;
+  border-bottom: 1px solid var(--module-line) !important;
+}
+.modal-header h2, .modal-header h3, .modal-titulo { color: var(--module-ink) !important; }
+.modal-header h2 i, .modal-header h3 i, .modal-titulo i { color: var(--module-fuchsia) !important; }
+.modal-close { color: #1d4ed8 !important; background: #eaf2ff !important; border-radius: 9px !important; }
+.modal-close:hover { color: #fff !important; background: #0ea5e9 !important; }
+.modal-footer { background: #f8fbff !important; border-top-color: var(--module-line) !important; }
+
+/* Entrada legada index - Copy */
+#loginScreen.login-container {
+  background: rgba(255,255,255,.96) !important;
+  border: 1px solid var(--module-line) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 20px 55px rgba(39,35,68,.14) !important;
+}
+#loginScreen .login-header h1, #loginScreen .login-header p { color: var(--module-ink) !important; }
+#loginScreen .login-header i { color: var(--module-fuchsia) !important; }
+#loginScreen .btn-login { background: linear-gradient(135deg,#1d4ed8,#0ea5e9) !important; border-radius: 11px !important; }
+#mainSystem.app .tabs-principais { background: rgba(255,255,255,.92) !important; border-color: var(--module-line) !important; }
+#mainSystem.app .tab-principal.active, #mainSystem.app .tab-principal:hover { color: #1d4ed8 !important; border-color: #3b82f6 !important; background: #eaf2ff !important; }
+
+@media (max-width: 760px) {
+  .page-header, .app > .header { padding: 14px 16px !important; }
+  .ata-info-card, .itens-section, .editar-secao { border-radius: 15px !important; }
+  .main-content, .editar-container { padding: 16px !important; }
+}
+
+
+/* ========================================================================
+   IDENTIDADE COMPARTILHADA · mesma linguagem do hall e da Biblioteca
+   ======================================================================== */
+:root {
+  --system-navy: #102a43;
+  --system-blue: #1d4ed8;
+  --system-sky: #0ea5e9;
+  --system-teal: #14b8a6;
+  --system-soft: #eaf2ff;
+  --system-line: #d9e2ec;
+}
+body { color: #334e68 !important; background: #f6f9fc !important; }
+#mainSystem .sidebar, #mainSystem .sidebar * { color: #fff; }
+#mainSystem .sidebar .nav-section, #mainSystem .sidebar .brand-text span { color: #bfdbfe !important; }
+#mainSystem .topbar-titulo h1, #mainSystem .topbar-info strong { color: #102a43 !important; }
+#mainSystem .topbar-titulo h1 i, #mainSystem .gestao-titulo i, #mainSystem .cadastro-titulo i, #mainSystem .pedido-titulo i { color: #1d4ed8 !important; }
+#mainSystem .btn-primary, #mainSystem .btn-aplicar, #mainSystem .btn-salvar-ata,
+#mainSystem .btn-status, #mainSystem .btn-gerar-pedido, #mainSystem .btn-finalizar-drawer,
+#mainSystem .btn-ver-carrinho-completo, #mainSystem .btn-nova-ata, #mainSystem .btn-carrinho-flutuante {
+  background: linear-gradient(135deg,#1d4ed8,#0ea5e9) !important; color: #fff !important;
+}
+#mainSystem .btn-outline, #mainSystem .btn-secondary, #mainSystem .btn-limpar {
+  background: #eaf2ff !important; color: #1e3a8a !important; border-color: #bfdbfe !important;
+}
+#mainSystem .ata-card::before, #mainSystem .pedido-card::before, #mainSystem .resumo-card::before {
+  background: linear-gradient(90deg,#1d4ed8,#0ea5e9,#14b8a6) !important;
+}
+#mainSystem .ata-card:hover, #mainSystem .pedido-card:hover, #mainSystem .resumo-card:hover { border-color: #93c5fd !important; }
+#mainSystem table tbody tr:hover td { background: #f8fbff !important; }
+#mainSystem .modal-overlay, #mainSystem .modal, #mainSystem .drawer-overlay { background: rgba(16,42,67,.68) !important; }
+#mainSystem .modal-content, #mainSystem .modal-confirm, #mainSystem .drawer-carrinho { color: #102a43 !important; background: #fff !important; }
+#mainSystem .modal-content h1, #mainSystem .modal-content h2, #mainSystem .modal-content h3,
+#mainSystem .modal-confirm h1, #mainSystem .modal-confirm h2, #mainSystem .modal-confirm h3,
+#mainSystem .drawer-carrinho h1, #mainSystem .drawer-carrinho h2, #mainSystem .drawer-carrinho h3 { color: #102a43 !important; }
+#mainSystem .modal-content p, #mainSystem .modal-content label, #mainSystem .modal-confirm p,
+#mainSystem .drawer-carrinho p, #mainSystem .drawer-carrinho label { color: #486581 !important; }
+#mainSystem .modal-header, #mainSystem .drawer-header { background: linear-gradient(135deg,#f8fbff,#eaf2ff) !important; }
+#mainSystem .modal-header h2 i, #mainSystem .modal-titulo i, #mainSystem .drawer-header h2 i { color: #1d4ed8 !important; }
+#mainSystem .modal-close, #mainSystem .drawer-close { color: #1d4ed8 !important; background: #eaf2ff !important; }
+
+
+/* Navegação consistente: itens sem permissão continuam no mesmo lugar, mas ficam claramente bloqueados. */
+.sidebar-nav a.menu-item-bloqueado { opacity: .48; filter: saturate(.45); cursor: not-allowed; }
+.sidebar-nav a.menu-item-bloqueado:hover { transform: none; background: transparent; }
+.sidebar-nav a.menu-item-bloqueado::after { content: "\f023"; font-family: "Font Awesome 6 Free"; font-weight: 900; margin-left: auto; font-size: .68rem; color: #bfdbfe; }
+.avatar-wrapper { position: relative; }
+.avatar-btn { cursor: pointer; }
+.avatar-menu { z-index: 100; }
+
+
+/* Avatar dropdown comum das telas legadas */
+.legacy-avatar-wrapper { position: relative; display: inline-flex; }
+.legacy-avatar-btn { padding: 0; border: 0; background: transparent; cursor: pointer; }
+.legacy-avatar-btn .user-avatar { margin: 0; }
+.legacy-avatar-menu { position: absolute; right: 0; top: calc(100% + 10px); z-index: 100; min-width: 220px; padding: 8px; display: none; border: 1px solid #d9e2ec; border-radius: 14px; background: #fff; box-shadow: 0 18px 42px rgba(16,42,67,.18); }
+.legacy-avatar-menu.is-open { display: block; }
+.legacy-avatar-head { padding: 8px 10px 10px; border-bottom: 1px solid #e6eef7; }
+.legacy-avatar-head strong,.legacy-avatar-head span { display:block; }
+.legacy-avatar-head strong { color:#102a43; font-size:12px; }
+.legacy-avatar-head span { margin-top:3px; color:#627d98; font-size:10px; }
+.legacy-avatar-menu a,.legacy-avatar-menu button { width:100%; display:flex; gap:8px; align-items:center; padding:10px; border:0; border-radius:9px; background:transparent; color:#334e68; text-decoration:none; font:inherit; font-size:12px; font-weight:700; text-align:left; cursor:pointer; }
+.legacy-avatar-menu a:hover,.legacy-avatar-menu button:hover { background:#eaf2ff; color:#1e3a8a; }
+.legacy-avatar-menu i { width:16px; color:#1d4ed8; text-align:center; }
+.legacy-avatar-line { height:1px; margin:4px 2px; background:#e6eef7; }
+.legacy-avatar-exit { color:#b42318 !important; }
+
+
+/* Correções de consistência visual — cadastro e marca do módulo */
+#mainSystem .sidebar-brand .brand-icon {
+  background: linear-gradient(135deg, #eaf2ff, #dbeafe) !important;
+  border: 1px solid #93c5fd !important;
+  box-shadow: 0 8px 20px rgba(16,42,67,.18) !important;
+}
+#mainSystem .sidebar-brand .brand-icon i { color: #1d4ed8 !important; font-size: 1.2rem; }
+#mainSystem .cadastro-container {
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  border-radius: 0 !important; padding: 0 !important; max-width: 1600px; margin: 0 auto;
+}
+#mainSystem .cadastro-indicadores { margin-bottom: 14px; }
+#mainSystem .cadastro-filtros { margin-bottom: 18px; background: rgba(255,255,255,.92) !important; }
+#mainSystem .atas-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px;
+  align-items: stretch; margin-bottom: 24px; min-width: 0;
+}
+#mainSystem .ata-card { min-width: 0; height: 100%; display: flex; flex-direction: column; }
+#mainSystem .ata-header { flex: 1; min-width: 0; }
+#mainSystem .ata-numero, #mainSystem .ata-fornecedor, #mainSystem .ata-contexto-modalidade {
+  overflow-wrap: anywhere; word-break: break-word;
+}
+#mainSystem .cadastro-form-wrapper {
+  margin-top: 24px; background: rgba(255,255,255,.98) !important;
+  border: 1px solid #d9e2ec !important; border-radius: 18px !important;
+  box-shadow: 0 12px 30px rgba(16,42,67,.08) !important;
+}
+#mainSystem .cadastro-form-wrapper .cadastro-header {
+  background: linear-gradient(135deg,#fff,#f8fbff); border-bottom: 1px solid #d9e2ec !important;
+}
+#mainSystem .cadastro-form-wrapper .cadastro-titulo i,
+#mainSystem .cadastro-form-wrapper .secao-titulo i { color: #1d4ed8 !important; }
+@media (max-width: 980px) { #mainSystem .atas-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { #mainSystem .atas-grid { grid-template-columns: 1fr; } }

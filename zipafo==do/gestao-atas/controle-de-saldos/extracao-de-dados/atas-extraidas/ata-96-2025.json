@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "270-271",
+    "processo_origem": "95/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor A. ROMANO DA SILVA AMBROZIO."
+  },
+  "cabecalho": {
+    "numero_ata": "96/2025",
+    "numero_contratacao": "1368 | 96/2025",
+    "numero_processo": "95/2025",
+    "numero_pregao": "46",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-12-01",
+    "vigencia_inicio": "2025-12-01",
+    "vigencia_fim": "2026-12-01",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual aquisição de eletrodomésticos, móveis e equipamentos.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "A. ROMANO DA SILVA AMBROZIO",
+    "cnpj": "33.072.590/0001-17"
+  },
+  "itens": [
+    {
+      "numero": "2",
+      "descricao": "COOKTOP A GÁS PRETO, TAMPO EM VIDRO TEMPERADO, ACENDIMENTO AUTOMÁTICO, 4 QUEIMADORES, TREMPES ESMALTADOS. ALIMENTAÇÃO A GÁS.",
+      "unidade_medida": "UN",
+      "valor_unitario": 448.0,
+      "quantidade_contratada": 2.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 1.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 896.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 448.0,
+      "valor_saldo": 448.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "7",
+      "descricao": "BICICLETA ARO: 26'' EM ALUMÍNIO, LEVE E RESISTENTE, IDEAL PARA DIFERENTES TIPOS DE TERRENO; QUADRO: AÇO CARBONO OU ALUMÍNIO (VARIA CONFORME MODELO), COM GEOMETRIA ERGONÔMICA PARA MAIOR CONFORTO; MARCHAS: 18, 21 OU 24 VELOCIDADES (DEPENDENDO DO MODELO), COM CÂMBIO SHIMANO OU SIMILAR; FREIOS: V-BRAKE OU A DISCO MECÂNICO PROPORCIONANDO FRENAGEM EFICIENTE E SEGURA; SUSPENSÃO: DIANTEIRA COM AMORTECIMENTO, IDEAL PARA TERRENO IRREGULARES; PNEUS: CRAVADOR OU SEMI-SLICK, OFERECENDO BOA ADERÊNCIA TANTO NO",
+      "unidade_medida": "UN",
+      "valor_unitario": 838.0,
+      "quantidade_contratada": 2.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 2.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 1676.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 1676.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 2572.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 2124.0,
+    "valor_saldo_geral": 448.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem com o PDF: R$ 2.572,00 contratado, R$ 2.124,00 executado e R$ 448,00 de saldo. Item 7 com saldo zerado individualmente, mas o fornecedor como um todo tem saldo.",
+  "anexos": []
+}

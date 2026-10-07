@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "14",
+    "processo_origem": "2/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor MARIA APARECIDA SIMONI FRANZON - TREINAMENTO PERSONALIZADO (contratação 1181 | 18/2025)."
+  },
+  "cabecalho": {
+    "numero_ata": "18/2025",
+    "numero_contratacao": "1181 | 18/2025",
+    "numero_processo": "2/2025",
+    "numero_pregao": "1",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-02-14",
+    "vigencia_inicio": "2025-02-14",
+    "vigencia_fim": "2026-02-14",
+    "objeto": "Credenciamento de clínicas (pessoas jurídicas) especializadas em serviços de fisioterapia, para atendimento das necessidades da Secretaria de Saúde e Vigilância Sanitária.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "MARIA APARECIDA SIMONI FRANZON - TREINAMENTO PERSONALIZADO",
+    "cnpj": "36.932.113/0001-72"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "SESSÃO DE FISIOTERAPIA - SESSÃO DE FISIOTERAPIA",
+      "unidade_medida": "UN",
+      "valor_unitario": 18.0,
+      "quantidade_contratada": 3600.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 330.0,
+      "quantidade_saldo": 3270.0,
+      "valor_total": 64800.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 5940.0,
+      "valor_saldo": 58860.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 64800.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 5940.0,
+    "valor_saldo_geral": 58860.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original.",
+  "anexos": []
+}

@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualizar Ato · Portal da Transparência</title>
+
+    <!-- SEO / Open Graph -->
+    <meta
+      name="description"
+      content="Visualize na íntegra os atos oficiais do município."
+    />
+    <meta name="theme-color" content="#0d5e3a" />
+    <meta
+      property="og:title"
+      content="Visualizar Ato · Portal da Transparência"
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://www.prefeitura.gov.br/visualizar-ato"
+    />
+    <meta
+      property="og:image"
+      content="https://www.prefeitura.gov.br/brasao-social.png"
+    />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <!-- CSS do portal (reutilizado) + estilos específicos -->
+    <link rel="stylesheet" href="portal-atos-oficiais.css" />
+
+    <style>
+      /* ========== ESTILOS ESPECÍFICOS DA PÁGINA DE VISUALIZAÇÃO ========== */
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* PÁGINA DE VISUALIZAÇÃO */
+      .view-page {
+        padding: 32px 0;
+      }
+
+      /* CABEÇALHO DO ATO */
+      .view-header {
+        background: white;
+        border-radius: var(--border-radius-2xl);
+        padding: 32px;
+        margin-bottom: 24px;
+        border: 1px solid var(--neutral-200);
+        box-shadow: var(--shadow-md);
+      }
+
+      .view-header .ato-titulo {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--neutral-900);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .view-header .ato-titulo .tipo-badge {
+        font-size: 14px;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-weight: 700;
+      }
+
+      .view-header .ato-meta {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        color: var(--neutral-600);
+        font-size: 14px;
+        margin-top: 8px;
+      }
+
+      .view-header .ato-meta span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .view-header .ato-meta .status-badge {
+        font-size: 13px;
+        padding: 4px 14px;
+      }
+
+      /* SEÇÃO GENÉRICA */
+      .view-section {
+        background: white;
+        border-radius: var(--border-radius-2xl);
+        padding: 32px;
+        margin-bottom: 24px;
+        border: 1px solid var(--neutral-200);
+        box-shadow: var(--shadow-md);
+      }
+
+      .view-section h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--neutral-900);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .view-section h2 i {
+        color: var(--primary-600);
+      }
+
+      .view-section .ementa-texto {
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--neutral-700);
+        background: var(--neutral-50);
+        padding: 20px;
+        border-radius: var(--border-radius-lg);
+        border-left: 4px solid var(--primary-600);
+      }
+
+      .view-section .texto-completo {
+        font-size: 15px;
+        line-height: 1.8;
+        color: var(--neutral-800);
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: var(--neutral-50);
+        padding: 24px;
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--neutral-200);
+        max-height: 600px;
+        overflow-y: auto;
+      }
+
+      .view-section .texto-completo p {
+        margin-bottom: 12px;
+      }
+
+      /* TAGS */
+      .tags-list {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .tag-item {
+        background: var(--primary-50);
+        color: var(--primary-700);
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid var(--primary-200);
+      }
+
+      /* RELACIONAMENTOS */
+      .relacionamentos-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .relacionamento-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--neutral-50);
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--neutral-200);
+        transition: var(--transition-base);
+        cursor: pointer;
+      }
+
+      .relacionamento-item:hover {
+        border-color: var(--primary-600);
+        background: var(--primary-50);
+      }
+
+      .relacionamento-item .rel-tipo {
+        font-weight: 700;
+        color: var(--primary-700);
+        min-width: 100px;
+      }
+
+      .relacionamento-item .rel-ato {
+        font-weight: 600;
+        color: var(--neutral-900);
+      }
+
+      .relacionamento-item .rel-ato:hover {
+        color: var(--primary-600);
+      }
+
+      .relacionamento-item .rel-link {
+        margin-left: auto;
+        color: var(--neutral-400);
+      }
+
+      /* LINHA DO TEMPO */
+      .timeline-view {
+        position: relative;
+        padding-left: 32px;
+      }
+
+      .timeline-view::before {
+        content: "";
+        position: absolute;
+        left: 8px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--neutral-200);
+      }
+
+      .timeline-view .timeline-item {
+        position: relative;
+        padding: 12px 0 12px 24px;
+        border-left: 2px solid transparent;
+        margin-bottom: 4px;
+      }
+
+      .timeline-view .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -6px;
+        top: 16px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--primary-600);
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px var(--primary-600);
+      }
+
+      .timeline-view .timeline-item.revogado::before {
+        background: var(--error-600);
+        box-shadow: 0 0 0 2px var(--error-600);
+      }
+
+      .timeline-view .timeline-item.alterado::before {
+        background: var(--warning-600);
+        box-shadow: 0 0 0 2px var(--warning-600);
+      }
+
+      .timeline-view .timeline-item .timeline-titulo {
+        font-weight: 700;
+        color: var(--neutral-900);
+        font-size: 15px;
+      }
+
+      .timeline-view .timeline-item .timeline-desc {
+        color: var(--neutral-600);
+        font-size: 14px;
+        margin-top: 2px;
+      }
+
+      .timeline-view .timeline-item .timeline-data {
+        color: var(--neutral-400);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+
+      .timeline-view .timeline-item .timeline-link {
+        color: var(--primary-600);
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .timeline-view .timeline-item .timeline-link:hover {
+        text-decoration: underline;
+      }
+
+      /* AÇÕES */
+      .view-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+
+      .view-actions .btn {
+        padding: 10px 24px;
+        font-size: 14px;
+      }
+
+      .view-actions .btn-secondary {
+        background: var(--neutral-100);
+        color: var(--neutral-700);
+        border: 1px solid var(--neutral-200);
+      }
+
+      .view-actions .btn-secondary:hover {
+        background: var(--neutral-200);
+      }
+
+      .view-actions .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        color: white;
+      }
+
+      .view-actions .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .view-actions .btn-outline {
+        background: transparent;
+        border: 2px solid var(--primary-600);
+        color: var(--primary-600);
+      }
+
+      .view-actions .btn-outline:hover {
+        background: var(--primary-50);
+      }
+
+      /* EMPTY STATE */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--neutral-400);
+      }
+
+      .empty-state .empty-icon {
+        font-size: 48px;
+        display: block;
+        margin-bottom: 16px;
+      }
+
+      /* LOADING */
+      .loading-container {
+        text-align: center;
+        padding: 80px 20px;
+      }
+
+      .loading-container .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid var(--neutral-200);
+        border-top-color: var(--primary-600);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 16px;
+      }
+
+      .loading-container p {
+        color: var(--neutral-500);
+        font-size: 16px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* RESPONSIVIDADE */
+      @media (max-width: 768px) {
+        .view-header {
+          padding: 24px;
+        }
+
+        .view-header .ato-titulo {
+          font-size: 22px;
+        }
+
+        .view-section {
+          padding: 24px;
+        }
+
+        .view-section .texto-completo {
+          font-size: 14px;
+          padding: 16px;
+          max-height: 400px;
+        }
+
+        .relacionamento-item {
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .relacionamento-item .rel-link {
+          margin-left: 0;
+          width: 100%;
+          text-align: right;
+        }
+
+        .view-actions {
+          flex-direction: column;
+        }
+
+        .view-actions .btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .timeline-view {
+          padding-left: 24px;
+        }
+
+        .timeline-view .timeline-item {
+          padding-left: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .view-header .ato-titulo {
+          font-size: 18px;
+        }
+
+        .view-header .ato-meta {
+          font-size: 12px;
+          gap: 10px;
+        }
+
+        .view-section {
+          padding: 16px;
+        }
+
+        .view-section .ementa-texto {
+          font-size: 14px;
+          padding: 16px;
+        }
+
+        .view-section .texto-completo {
+          font-size: 13px;
+          padding: 12px;
+          max-height: 300px;
+        }
+
+        .relacionamento-item {
+          padding: 10px 12px;
+          font-size: 13px;
+        }
+
+        .relacionamento-item .rel-tipo {
+          min-width: 70px;
+        }
+      }
+    </style>
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ============================================ -->
+    <!-- CONTAINER DE NOTIFICAÇÕES (toasts)           -->
+    <!-- ============================================ -->
+    <div
+      id="notificationContainer"
+      class="notification-center"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <!-- ============================================ -->
+    <!-- HEADER (mesmo do portal)                     -->
+    <!-- ============================================ -->
+    <header class="portal-header" role="banner">
+      <div class="header-top">
+        <div class="container">
+          <div class="header-top-content">
+            <div class="header-brand">
+              <div class="brasao-wrapper">
+                <img
+                  src="brasao-pref.png"
+                  alt="Brasão da Prefeitura Municipal"
+                  class="brasao-img"
+                  onerror="
+                    this.onerror = null;
+                    this.src =
+                      'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%23f8fafc\' stroke=\'%230d5e3a\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'58\' font-size=\'12\' text-anchor=\'middle\' fill=\'%230f172a\' font-weight=\'bold\'%3EPMG%3C/text%3E%3C/svg%3E';
+                  "
+                />
+              </div>
+              <div class="header-titles">
+                <h1 class="header-title">Portal da Transparência</h1>
+                <p class="header-subtitle">
+                  Atos Oficiais · Prefeitura Municipal
+                </p>
+              </div>
+            </div>
+            <div class="header-accessibility">
+              <button
+                class="btn btn-outline btn-sm btn-accessibility"
+                onclick="toggleContrast()"
+                title="Alto Contraste"
+                aria-label="Ativar alto contraste"
+               type="button">
+                <i class="fas fa-adjust"></i> Contraste
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="header-bottom">
+        <div class="container">
+          <nav class="portal-nav" aria-label="Navegação principal">
+            <a href="portal-atos-oficiais.html#home" class="nav-link"
+              ><i class="fas fa-home"></i> Início</a
+            >
+            <a href="portal-atos-oficiais.html#busca" class="nav-link"
+              ><i class="fas fa-search"></i> Buscar Atos</a
+            >
+            <a href="portal-atos-oficiais.html#orgaos" class="nav-link"
+              ><i class="fas fa-building"></i> Órgãos</a
+            >
+            <a href="portal-atos-oficiais.html#estatisticas" class="nav-link"
+              ><i class="fas fa-chart-bar"></i> Estatísticas</a
+            >
+            <a href="portal-atos-oficiais.html#sobre" class="nav-link"
+              ><i class="fas fa-info-circle"></i> Sobre</a
+            >
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- CONTEÚDO PRINCIPAL                          -->
+    <!-- ============================================ -->
+    <main class="portal-main" role="main">
+      <div class="container">
+        <!-- BREADCRUMB -->
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="portal-atos-oficiais.html#home">Início</a>
+          <span class="separator">/</span>
+          <a href="portal-atos-oficiais.html#busca">Buscar Atos</a>
+          <span class="separator">/</span>
+          <span class="current" id="breadcrumbCurrent">Visualizar Ato</span>
+        </nav>
+
+        <!-- LOADING -->
+        <div id="loadingContainer" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Carregando ato...</p>
+        </div>
+
+        <!-- CONTEÚDO DO ATO -->
+        <div id="conteudoAto" style="display: none">
+          <div class="view-page">
+            <!-- CABEÇALHO -->
+            <div class="view-header">
+              <div class="ato-titulo">
+                <span id="atoTipoNome">Ato</span>
+                <span id="atoNumeroAno">—</span>
+                <span class="tipo-badge status-badge" id="atoStatusBadge"
+                  >—</span
+                >
+              </div>
+              <div class="ato-meta">
+                <span
+                  ><i class="fas fa-building"></i>
+                  <span id="atoOrgao">—</span></span
+                >
+                <span
+                  ><i class="fas fa-calendar"></i> Publicado em
+                  <span id="atoDataPublicacao">—</span></span
+                >
+                <span
+                  ><i class="fas fa-tag"></i> Versão
+                  <span id="atoVersao">1</span></span
+                >
+                <span id="atoDiarioContainer" style="display: none"
+                  ><i class="fas fa-newspaper"></i> Diário:
+                  <span id="atoDiario">—</span></span
+                >
+              </div>
+            </div>
+
+            <!-- EMENTA -->
+            <div class="view-section">
+              <h2><i class="fas fa-file-alt"></i> Ementa</h2>
+              <div class="ementa-texto" id="atoEmenta">—</div>
+            </div>
+
+            <!-- TEXTO COMPLETO -->
+            <div class="view-section" id="textoCompletoSection">
+              <h2><i class="fas fa-file-signature"></i> Texto Completo</h2>
+              <div class="texto-completo" id="atoTextoCompleto">
+                <em>Nenhum texto completo cadastrado.</em>
+              </div>
+            </div>
+
+            <!-- TAGS -->
+            <div class="view-section" id="tagsSection" style="display: none">
+              <h2><i class="fas fa-tags"></i> Palavras-chave</h2>
+              <div class="tags-list" id="atoTags"></div>
+            </div>
+
+            <!-- RELACIONAMENTOS -->
+            <div
+              class="view-section"
+              id="relacionamentosSection"
+              style="display: none"
+            >
+              <h2><i class="fas fa-link"></i> Relacionamentos</h2>
+              <div class="relacionamentos-list" id="atoRelacionamentos"></div>
+            </div>
+
+            <!-- LINHA DO TEMPO -->
+            <div
+              class="view-section"
+              id="timelineSection"
+              style="display: none"
+            >
+              <h2><i class="fas fa-history"></i> Linha do Tempo</h2>
+              <div class="timeline-view" id="atoTimeline"></div>
+            </div>
+
+            <!-- AÇÕES -->
+            <div class="view-actions">
+              <button
+                class="btn btn-primary"
+                id="btnDownloadPDF"
+                onclick="baixarPDF()"
+               type="button">
+                <i class="fas fa-download"></i> Baixar PDF
+              </button>
+              <button class="btn btn-outline" onclick="compartilhar()" type="button">
+                <i class="fas fa-share-alt"></i> Compartilhar
+              </button>
+              <button class="btn btn-secondary" onclick="window.history.back()" type="button">
+                <i class="fas fa-arrow-left"></i> Voltar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ERRO -->
+        <div id="erroContainer" style="display: none">
+          <div class="empty-state">
+            <span class="empty-icon">⚠️</span>
+            <p id="erroMensagem">Ato não encontrado.</p>
+            <p style="margin-top: 12px">
+              <a href="portal-atos-oficiais.html" class="btn btn-primary"
+                >Voltar para o portal</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- RODAPÉ                                      -->
+    <!-- ============================================ -->
+    <footer class="portal-footer" role="contentinfo">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-col">
+            <h4>🏛️ Portal da Transparência</h4>
+            <p>Prefeitura Municipal</p>
+            <p class="footer-small">
+              Compromisso com a publicidade e o acesso à informação.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>🔗 Links Úteis</h4>
+            <ul class="footer-links">
+              <li><a href="#">Portal da Prefeitura</a></li>
+              <li><a href="#" id="footerDiarioLink">Diário Oficial</a></li>
+              <li><a href="#">Lei de Acesso à Informação</a></li>
+              <li>
+                <a href="#" id="footerOuvidoriaLink">Ouvidoria Municipal</a>
+              </li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>📞 Contato</h4>
+            <p>📧 <span id="footerEmail">—</span></p>
+            <p>📱 <span id="footerTelefone">—</span></p>
+          </div>
+          <div class="footer-col">
+            <h4>📅 Atualização</h4>
+            <p id="footerDataAtualizacao">—</p>
+            <p class="footer-small">Versão 2.0</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>
+            © <span id="currentYear"></span> Prefeitura Municipal. Todos os
+            direitos reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ============================================ -->
+    <!-- BOTÃO VOLTAR AO TOPO                        -->
+    <!-- ============================================ -->
+    <button
+      class="btn btn-primary btn-back-to-top"
+      id="btnBackToTop"
+      onclick="voltarAoTopo()"
+      title="Voltar ao topo"
+      aria-label="Voltar ao topo da página"
+     type="button">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS                                     -->
+    <!-- ============================================ -->
+    <script>
+      // ============================================
+      // FUNÇÕES GLOBAIS (UI, contraste, etc.)
+      // ============================================
+      function toggleContrast() {
+        document.body.classList.toggle("high-contrast");
+        const btn = document.querySelector(".btn-accessibility");
+        btn.innerHTML = document.body.classList.contains("high-contrast")
+          ? '<i class="fas fa-sun"></i> Normal'
+          : '<i class="fas fa-adjust"></i> Contraste';
+        localStorage.setItem(
+          "portalHighContrast",
+          document.body.classList.contains("high-contrast"),
+        );
+      }
+
+      function voltarAoTopo() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function compartilhar() {
+        const url = window.location.href;
+        if (navigator.share) {
+          navigator
+            .share({
+              title: document.title,
+              url: url,
+            })
+            .catch(() => {});
+        } else {
+          navigator.clipboard
+            .writeText(url)
+            .then(() => {
+              showNotification(
+                "success",
+                "Link copiado",
+                "URL copiada para a área de transferência.",
+              );
+            })
+            .catch(() => {
+              prompt("Copie o link:", url);
+            });
+        }
+      }
+
+      // ============================================
+      // NOTIFICAÇÕES
+      // ============================================
+      function showNotification(type, title, message, duration = 4000) {
+        const container = document.getElementById("notificationContainer");
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+                <span class="notification-icon">${icons[type]}</span>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close" type="button">✕</button>
+            `;
+        container.appendChild(toast);
+        const closeBtn = toast.querySelector(".notification-close");
+        closeBtn.addEventListener("click", () => toast.remove());
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) toast.remove();
+          }, duration);
+        }
+      }
+
+      // ============================================
+      // FORMATADORES
+      // ============================================
+      function formatarData(data) {
+        if (!data) return "—";
+        const partes = data.split("-");
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+      }
+
+      function formatarMoeda(valor) {
+        if (!valor) return "R$ 0,00";
+        return new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(valor);
+      }
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      document.addEventListener("DOMContentLoaded", () => {
+        // Ano no rodapé
+        document.getElementById("currentYear").textContent =
+          new Date().getFullYear();
+
+        // Alto contraste
+        if (localStorage.getItem("portalHighContrast") === "true") {
+          document.body.classList.add("high-contrast");
+          document.querySelector(".btn-accessibility").innerHTML =
+            '<i class="fas fa-sun"></i> Normal';
+        }
+
+        // Botão back to top
+        window.addEventListener("scroll", () => {
+          document.getElementById("btnBackToTop").style.display =
+            window.scrollY > 500 ? "flex" : "none";
+        });
+      });
+    </script>
+
+    <!-- ============================================ -->
+    <!-- JS PRINCIPAL DA PÁGINA (módulo ES6)          -->
+    <!-- ============================================ -->
+    <script type="module">
+      import { supabase } from "./supabase.js";
+
+      // ============================================
+      // VARIÁVEIS
+      // ============================================
+      let atoAtual = null;
+      let currentAtoId = null;
+
+      // ============================================
+      // BUSCAR ATO
+      // ============================================
+      async function carregarAto() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
+
+        if (!id) {
+          mostrarErro("ID do ato não informado.");
+          return;
+        }
+
+        currentAtoId = parseInt(id);
+
+        try {
+          const { data: ato, error } = await supabase
+            .from("atos_oficiais")
+            .select(
+              `
+                        id,
+                        numero,
+                        ano,
+                        ementa,
+                        texto_completo,
+                        status,
+                        data_publicacao,
+                        pdf_url,
+                        palavras_chave,
+                        versao,
+                        edicao_diario,
+                        pagina_diario,
+                        tipo_id,
+                        orgao_id,
+                        tipos_ato!inner (id, nome, sigla),
+                        orgaos!inner (id, nome)
+                    `,
+            )
+            .eq("id", currentAtoId)
+            .single();
+
+          if (error) {
+            console.error("Erro ao buscar ato:", error);
+            mostrarErro("Erro ao carregar o ato: " + error.message);
+            return;
+          }
+
+          if (!ato) {
+            mostrarErro("Ato não encontrado.");
+            return;
+          }
+
+          atoAtual = ato;
+          renderizarAto(ato);
+          carregarRelacionamentos(ato.id);
+          carregarTimeline(ato.id);
+        } catch (err) {
+          console.error("Erro:", err);
+          mostrarErro("Falha ao carregar o ato.");
+        }
+      }
+
+      // ============================================
+      // RENDERIZAR ATO
+      // ============================================
+      function renderizarAto(ato) {
+        const tipoNome = ato.tipos_ato?.nome || "Ato";
+        const tipoSigla = ato.tipos_ato?.sigla || "ATO";
+        const orgaoNome = ato.orgaos?.nome || "—";
+
+        // Título
+        document.getElementById("atoTipoNome").textContent = tipoNome;
+        document.getElementById("atoNumeroAno").textContent =
+          `${ato.numero}/${ato.ano}`;
+
+        // Status
+        const statusBadge = document.getElementById("atoStatusBadge");
+        statusBadge.textContent = ato.status;
+        statusBadge.className = `tipo-badge status-badge status-${ato.status.toLowerCase()}`;
+
+        // Meta
+        document.getElementById("atoOrgao").textContent = orgaoNome;
+        document.getElementById("atoDataPublicacao").textContent = formatarData(
+          ato.data_publicacao,
+        );
+        document.getElementById("atoVersao").textContent = ato.versao || 1;
+
+        // Diário
+        const diarioContainer = document.getElementById("atoDiarioContainer");
+        if (ato.edicao_diario) {
+          diarioContainer.style.display = "inline";
+          document.getElementById("atoDiario").textContent =
+            `Ed. ${ato.edicao_diario}, Pág. ${ato.pagina_diario}`;
+        } else {
+          diarioContainer.style.display = "none";
+        }
+
+        // Ementa
+        document.getElementById("atoEmenta").textContent = ato.ementa;
+
+        // Texto completo
+        const textoContainer = document.getElementById("atoTextoCompleto");
+        if (ato.texto_completo) {
+          textoContainer.innerHTML = ato.texto_completo.replace(/\n/g, "<br>");
+        } else {
+          textoContainer.innerHTML =
+            "<em>Nenhum texto completo cadastrado.</em>";
+        }
+
+        // Tags
+        const tagsSection = document.getElementById("tagsSection");
+        const tagsList = document.getElementById("atoTags");
+        tagsList.innerHTML = "";
+        if (ato.palavras_chave && ato.palavras_chave.length > 0) {
+          tagsSection.style.display = "block";
+          ato.palavras_chave.forEach((tag) => {
+            const span = document.createElement("span");
+            span.className = "tag-item";
+            span.textContent = tag;
+            tagsList.appendChild(span);
+          });
+        } else {
+          tagsSection.style.display = "none";
+        }
+
+        // Atualizar título da página
+        document.title = `${tipoNome} ${ato.numero}/${ato.ano} · Portal da Transparência`;
+
+        // Esconder loading, mostrar conteúdo
+        document.getElementById("loadingContainer").style.display = "none";
+        document.getElementById("conteudoAto").style.display = "block";
+      }
+
+      // ============================================
+      // CARREGAR RELACIONAMENTOS
+      // ============================================
+      async function carregarRelacionamentos(atoId) {
+        const section = document.getElementById("relacionamentosSection");
+        const container = document.getElementById("atoRelacionamentos");
+
+        const [relOrigemRes, relDestinoRes] = await Promise.all([
+          supabase
+            .from("relacionamentos_atos")
+            .select(
+              `
+                        tipo,
+                        ato_destino:ato_destino_id(
+                            id, numero, ano,
+                            tipos_ato (nome, sigla),
+                            orgaos (nome)
+                        )
+                    `,
+            )
+            .eq("ato_origem_id", atoId),
+          supabase
+            .from("relacionamentos_atos")
+            .select(
+              `
+                        tipo,
+                        ato_origem:ato_origem_id(
+                            id, numero, ano,
+                            tipos_ato (nome, sigla),
+                            orgaos (nome)
+                        )
+                    `,
+            )
+            .eq("ato_destino_id", atoId),
+        ]);
+
+        const relsOrigem = relOrigemRes.data || [];
+        const relsDestino = relDestinoRes.data || [];
+
+        if (relsOrigem.length === 0 && relsDestino.length === 0) {
+          section.style.display = "none";
+          return;
+        }
+
+        section.style.display = "block";
+        let html = "";
+
+        // Relações de origem (este ato afeta outros)
+        if (relsOrigem.length > 0) {
+          relsOrigem.forEach((rel) => {
+            const dest = rel.ato_destino;
+            if (!dest) return;
+            const tipoLabel =
+              {
+                revoga: "Revoga",
+                altera: "Altera",
+                regulamenta: "Regulamenta",
+              }[rel.tipo] || rel.tipo;
+            html += `
+                        <div class="relacionamento-item" onclick="window.location.href='visualizar-ato.html?id=${dest.id}'">
+                            <span class="rel-tipo">➡️ ${tipoLabel}</span>
+                            <span class="rel-ato">${dest.tipos_ato?.nome || "Ato"} ${dest.numero}/${dest.ano}</span>
+                            <span style="color:var(--neutral-400);font-size:13px;">${dest.orgaos?.nome || ""}</span>
+                            <span class="rel-link"><i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    `;
+          });
+        }
+
+        // Relações de destino (outros atos afetam este)
+        if (relsDestino.length > 0) {
+          relsDestino.forEach((rel) => {
+            const orig = rel.ato_origem;
+            if (!orig) return;
+            const tipoLabel =
+              {
+                revoga: "Revogado por",
+                altera: "Alterado por",
+                regulamenta: "Regulamentado por",
+              }[rel.tipo] || rel.tipo;
+            html += `
+                        <div class="relacionamento-item" onclick="window.location.href='visualizar-ato.html?id=${orig.id}'">
+                            <span class="rel-tipo">⬅️ ${tipoLabel}</span>
+                            <span class="rel-ato">${orig.tipos_ato?.nome || "Ato"} ${orig.numero}/${orig.ano}</span>
+                            <span style="color:var(--neutral-400);font-size:13px;">${orig.orgaos?.nome || ""}</span>
+                            <span class="rel-link"><i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    `;
+          });
+        }
+
+        container.innerHTML = html;
+      }
+
+      // ============================================
+      // CARREGAR LINHA DO TEMPO
+      // ============================================
+      async function carregarTimeline(atoId) {
+        const section = document.getElementById("timelineSection");
+        const container = document.getElementById("atoTimeline");
+
+        // Buscar eventos
+        const { data: ato } = await supabase
+          .from("atos_oficiais")
+          .select("id, numero, ano, data_publicacao, tipos_ato (nome, sigla)")
+          .eq("id", atoId)
+          .single();
+
+        if (!ato) {
+          section.style.display = "none";
+          return;
+        }
+
+        const [relOrigemRes, relDestinoRes, alteracoesRes] = await Promise.all([
+          supabase
+            .from("relacionamentos_atos")
+            .select(
+              `
+                        tipo,
+                        ato_destino:ato_destino_id(
+                            id, numero, ano, data_publicacao,
+                            tipos_ato (nome, sigla)
+                        )
+                    `,
+            )
+            .eq("ato_origem_id", atoId),
+          supabase
+            .from("relacionamentos_atos")
+            .select(
+              `
+                        tipo,
+                        ato_origem:ato_origem_id(
+                            id, numero, ano, data_publicacao,
+                            tipos_ato (nome, sigla)
+                        )
+                    `,
+            )
+            .eq("ato_destino_id", atoId),
+          supabase
+            .from("alteracoes_dispositivos")
+            .select(
+              `
+                        id, tipo, identificador_dispositivo,
+                        ato_alterador:ato_alterador_id(
+                            id, numero, ano, data_publicacao,
+                            tipos_ato (nome, sigla)
+                        )
+                    `,
+            )
+            .eq("ato_origem_id", atoId),
+        ]);
+
+        const eventos = [];
+
+        // Publicação
+        eventos.push({
+          data: ato.data_publicacao,
+          titulo: "📅 Publicação",
+          descricao: `${ato.tipos_ato?.nome || "Ato"} nº ${ato.numero}/${ato.ano} publicado.`,
+          tipo: "publicacao",
+          linkAtoId: null,
+        });
+
+        // Relações de origem
+        if (relOrigemRes.data) {
+          relOrigemRes.data.forEach((rel) => {
+            const dest = rel.ato_destino;
+            if (!dest) return;
+            const tipoLabel =
+              {
+                revoga: "🚫 Revogou",
+                altera: "✏️ Alterou",
+                regulamenta: "📋 Regulamentou",
+              }[rel.tipo] || rel.tipo;
+            eventos.push({
+              data: dest.data_publicacao || ato.data_publicacao,
+              titulo: tipoLabel,
+              descricao: `${ato.tipos_ato?.nome || "Ato"} ${ato.numero}/${ato.ano} ${rel.tipo} ${dest.tipos_ato?.nome || "Ato"} ${dest.numero}/${dest.ano}.`,
+              tipo: rel.tipo === "revoga" ? "revogado" : "alterado",
+              linkAtoId: dest.id,
+            });
+          });
+        }
+
+        // Relações de destino
+        if (relDestinoRes.data) {
+          relDestinoRes.data.forEach((rel) => {
+            const orig = rel.ato_origem;
+            if (!orig) return;
+            const tipoLabel =
+              {
+                revoga: "🚫 Revogado por",
+                altera: "✏️ Alterado por",
+                regulamenta: "📋 Regulamentado por",
+              }[rel.tipo] || rel.tipo;
+            eventos.push({
+              data: orig.data_publicacao || ato.data_publicacao,
+              titulo: tipoLabel,
+              descricao: `${orig.tipos_ato?.nome || "Ato"} ${orig.numero}/${orig.ano} ${rel.tipo} ${ato.tipos_ato?.nome || "Ato"} ${ato.numero}/${ato.ano}.`,
+              tipo: rel.tipo === "revoga" ? "revogado" : "alterado",
+              linkAtoId: orig.id,
+            });
+          });
+        }
+
+        // Alterações de dispositivos
+        if (alteracoesRes.data) {
+          alteracoesRes.data.forEach((alt) => {
+            const alterador = alt.ato_alterador;
+            if (!alterador) return;
+            const tipoLabel =
+              {
+                revogado: "🚫 Dispositivo revogado",
+                alterado: "✏️ Dispositivo alterado",
+                acrescentado: "➕ Dispositivo acrescentado",
+              }[alt.tipo] || alt.tipo;
+            eventos.push({
+              data: alterador.data_publicacao || ato.data_publicacao,
+              titulo: tipoLabel,
+              descricao: `O dispositivo "${alt.identificador_dispositivo}" foi ${alt.tipo} por ${alterador.tipos_ato?.nome || "Ato"} ${alterador.numero}/${alterador.ano}.`,
+              tipo: alt.tipo === "revogado" ? "revogado" : "alterado",
+              linkAtoId: alterador.id,
+            });
+          });
+        }
+
+        // Ordenar por data
+        eventos.sort((a, b) => (a.data || "").localeCompare(b.data || ""));
+
+        if (eventos.length === 0) {
+          section.style.display = "none";
+          return;
+        }
+
+        section.style.display = "block";
+        let html = "";
+        eventos.forEach((ev) => {
+          const dotClass =
+            ev.tipo === "revogado"
+              ? "revogado"
+              : ev.tipo === "alterado"
+                ? "alterado"
+                : "";
+          html += `
+                    <div class="timeline-item ${dotClass}">
+                        <div class="timeline-titulo">${ev.titulo}</div>
+                        <div class="timeline-desc">
+                            ${ev.descricao}
+                            ${ev.linkAtoId ? `<br><a href="visualizar-ato.html?id=${ev.linkAtoId}" class="timeline-link"><i class="fas fa-external-link-alt"></i> Ver ato</a>` : ""}
+                        </div>
+                        <div class="timeline-data">${formatarData(ev.data)}</div>
+                    </div>
+                `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // ============================================
+      // BAIXAR PDF
+      // ============================================
+      window.baixarPDF = function () {
+        if (!atoAtual || !atoAtual.pdf_url) {
+          showNotification(
+            "warning",
+            "PDF indisponível",
+            "Este ato não possui PDF anexado.",
+          );
+          return;
+        }
+        window.open(atoAtual.pdf_url, "_blank");
+      };
+
+      // ============================================
+      // MOSTRAR ERRO
+      // ============================================
+      function mostrarErro(mensagem) {
+        document.getElementById("loadingContainer").style.display = "none";
+        document.getElementById("conteudoAto").style.display = "none";
+        document.getElementById("erroMensagem").textContent = mensagem;
+        document.getElementById("erroContainer").style.display = "block";
+      }
+
+      // ============================================
+      // CARREGAR CONFIGURAÇÕES DO PORTAL
+      // ============================================
+      async function carregarConfiguracoesPortal() {
+        const { data, error } = await supabase
+          .from("configuracoes_portal")
+          .select("*")
+          .eq("id", 1)
+          .maybeSingle();
+
+        const padrao = {
+          email_contato: "transparencia@prefeitura.gov.br",
+          telefone_contato: "(00) 0000-0000",
+          diario_oficial_url: "https://www.diarioficial.gov.br",
+          ouvidoria_email: "ouvidoria@prefeitura.gov.br",
+        };
+
+        const cfg = data || padrao;
+
+        document.getElementById("footerEmail").textContent =
+          cfg.email_contato || padrao.email_contato;
+        document.getElementById("footerTelefone").textContent =
+          cfg.telefone_contato || padrao.telefone_contato;
+        document.getElementById("footerDiarioLink").href =
+          cfg.diario_oficial_url || padrao.diario_oficial_url;
+        document.getElementById("footerOuvidoriaLink").href =
+          `mailto:${cfg.ouvidoria_email || padrao.ouvidoria_email}`;
+        document.getElementById("footerDataAtualizacao").textContent =
+          new Date().toLocaleDateString("pt-BR");
+      }
+
+      // ============================================
+      // INICIALIZAR
+      // ============================================
+      async function init() {
+        await carregarConfiguracoesPortal();
+        await carregarAto();
+      }
+
+      // Expor funções globalmente
+      window.toggleContrast = toggleContrast;
+      window.voltarAoTopo = voltarAoTopo;
+      window.compartilhar = compartilhar;
+      window.baixarPDF = window.baixarPDF;
+
+      init();
+    </script>
+  </body>
+</html>

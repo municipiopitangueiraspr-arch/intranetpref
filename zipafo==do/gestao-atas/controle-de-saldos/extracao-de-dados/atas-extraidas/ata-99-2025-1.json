@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "263",
+    "processo_origem": "85/2025",
+    "aviso": "O número da contratação (99/2025) coincide com o do Processo 84/2025 — possível erro de digitação no PDF original. O PDF apresenta dados de quantidade/valor confusos nesta ata."
+  },
+  "cabecalho": {
+    "numero_ata": "99/2025",
+    "numero_contratacao": "1341 | 99/2025",
+    "numero_processo": "85/2025",
+    "numero_pregao": "29",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-09-25",
+    "vigencia_inicio": "2026-09-03",
+    "vigencia_fim": "2027-09-03",
+    "objeto": "Credenciamento de pessoa jurídica para prestação de serviços odontológicos.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "PASQUALI CONSULTORIO ODONTOLOGICO LTDA",
+    "cnpj": "59.692.027/0001-35"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "CREDENCIAMENTO DE PESSOA JURÍDICA PARA PRESTAÇÃO DE SERVIÇOS ODONTOLÓGICOS, INCLUINDO EXTRAÇÃO DO SISO (EXTRAÇÃO DO TERCEIRO MOLAR) COM CARGA HORÁRIA DE 20 (VINTE) HORAS SEMANAIS.",
+      "unidade_medida": "UN",
+      "valor_unitario": 3030.17,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 36362.04,
+      "valor_aditivo": 0.0,
+      "valor_executado": 36362.04,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 36362.04,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 36362.04,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. O número da contratação (99/2025) coincide com o do Processo 84/2025 — possível erro de digitação no PDF original. O PDF apresenta os dados repetidos de forma confusa (12 original, 12 aditivo, 12 executado, 12 saldo, com valores repetidos); consolidei como 12 contratadas e 12 executadas, com saldo zerado. Recomendo conferir no sistema de origem.",
+  "anexos": []
+}

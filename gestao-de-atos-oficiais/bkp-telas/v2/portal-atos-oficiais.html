@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO / Open Graph -->
+    <title>
+      Portal da Transparência · Atos Oficiais · Prefeitura Municipal
+    </title>
+    <meta
+      name="description"
+      content="Consulte leis, decretos, portarias, resoluções e instruções normativas do município de forma rápida, transparente e acessível."
+    />
+    <meta name="theme-color" content="#0d5e3a" />
+    <meta
+      property="og:title"
+      content="Portal da Transparência · Atos Oficiais"
+    />
+    <meta
+      property="og:description"
+      content="Acesso público aos atos oficiais da Prefeitura Municipal."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://www.prefeitura.gov.br/atosoficiais"
+    />
+    <meta
+      property="og:image"
+      content="https://www.prefeitura.gov.br/brasao-social.png"
+    />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Font Awesome 6 (ícones) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <!-- Chart.js 4 (gráficos estatísticos) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"
+      defer
+    ></script>
+
+    <!-- CSS UNIFICADO DO PORTAL -->
+    <link rel="stylesheet" href="portal-atos-oficiais.css" />
+
+    <style>
+      /* ========== ESTILOS AUXILIARES (podem ser movidos para o CSS externo depois) ========== */
+
+      /* Breadcrumb */
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 12px 0;
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+        color: var(--neutral-500);
+        background: transparent;
+        border-radius: 0;
+      }
+      .breadcrumb a {
+        color: var(--primary-600);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+      .breadcrumb a:hover {
+        color: var(--primary-700);
+        text-decoration: underline;
+      }
+      .breadcrumb .separator {
+        color: var(--neutral-400);
+        user-select: none;
+      }
+      .breadcrumb .current {
+        color: var(--neutral-700);
+        font-weight: 600;
+        pointer-events: none;
+      }
+
+      /* Scroll margin para compensar header fixo */
+      .portal-section {
+        scroll-margin-top: 110px;
+      }
+
+      /* ========== NOVO MODAL DE VISUALIZAÇÃO (DUAS ÁREAS) ========== */
+      .modal-ato-layout {
+        display: flex;
+        gap: 24px;
+        flex: 1;
+        min-height: 0;
+      }
+      .modal-ato-sidebar {
+        width: 240px;
+        flex-shrink: 0;
+        border-right: 1px solid var(--neutral-200);
+        padding-right: 24px;
+        overflow-y: auto;
+      }
+      .modal-ato-main {
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .ato-meta-item {
+        margin-bottom: 16px;
+      }
+      .ato-meta-item .label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--neutral-500);
+        margin-bottom: 2px;
+      }
+      .ato-meta-item .value {
+        font-size: 0.9rem;
+        color: var(--neutral-900);
+        font-weight: 500;
+        word-break: break-word;
+      }
+
+      .ato-tags-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .ato-tag {
+        background: var(--primary-50);
+        color: var(--primary-700);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        border: 1px solid var(--primary-200);
+      }
+      .ato-tag:hover {
+        background: var(--primary-100);
+      }
+
+      .ato-actions-sidebar {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .ato-actions-sidebar .btn {
+        width: 100%;
+      }
+
+      /* Busca dentro do texto */
+      .texto-search-box {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .texto-search-box input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid var(--neutral-200);
+        border-radius: var(--border-radius-md);
+        font-size: 0.85rem;
+      }
+
+      /* Cards de relacionamentos/alteracoes */
+      .rel-card,
+      .alt-card {
+        background: var(--neutral-50);
+        border-radius: var(--border-radius-lg);
+        padding: 12px 16px;
+        margin-bottom: 12px;
+        border: 1px solid var(--neutral-200);
+        font-size: 0.9rem;
+      }
+      .alt-card {
+        background: #fff5eb;
+        border-color: var(--warning-200);
+      }
+      .rel-card .rel-icon,
+      .alt-card .alt-icon {
+        font-size: 1.2rem;
+        margin-right: 8px;
+      }
+
+      /* Menu de compartilhamento (dropdown) */
+      .share-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+      .share-dropdown-menu {
+        display: none;
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        background: white;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--neutral-200);
+        padding: 8px 0;
+        min-width: 200px;
+        z-index: 1100;
+        margin-bottom: 8px;
+      }
+      .share-dropdown-menu.show {
+        display: block;
+      }
+      .share-dropdown-menu a,
+      .share-dropdown-menu button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 8px 16px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: var(--neutral-700);
+        text-decoration: none;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+      .share-dropdown-menu a:hover,
+      .share-dropdown-menu button:hover {
+        background: var(--neutral-100);
+      }
+
+      /* Responsivo para o modal */
+      @media (max-width: 700px) {
+        .modal-ato-layout {
+          flex-direction: column;
+        }
+        .modal-ato-sidebar {
+          width: 100%;
+          border-right: none;
+          border-bottom: 1px solid var(--neutral-200);
+          padding-right: 0;
+          padding-bottom: 16px;
+        }
+      }
+
+      /* Esconde elementos apenas visualmente (para leitores de tela) */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+
+      /* Impressão (já presente no CSS externo, mas garantido) */
+      @media print {
+        .portal-header,
+        .header-top,
+        .header-bottom,
+        .portal-nav,
+        .hero-search,
+        .hero-tags,
+        .btn-back-to-top,
+        .filtros-avancados,
+        .pagination,
+        .modal-overlay,
+        .notification-center,
+        .btn,
+        .btn-sm,
+        .btn-page,
+        .loading-placeholder,
+        .loading-spinner,
+        .empty-icon,
+        .hero-search-box,
+        .search-input-group,
+        .tag-link,
+        .footer-links a[href]:after,
+        .nav-link,
+        .header-accessibility,
+        .btn-share,
+        .breadcrumb,
+        .btn-accessibility,
+        .share-dropdown,
+        .texto-search-box {
+          display: none !important;
+        }
+        body {
+          background: white !important;
+          color: black !important;
+          font-size: 12pt;
+        }
+        .section-card,
+        .card,
+        .stat-item,
+        .stat-detail-card,
+        .resultado-item,
+        .ato-card,
+        .orgao-card {
+          box-shadow: none !important;
+          border: 1px solid #ccc !important;
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+        .portal-footer {
+          background: white !important;
+          color: black !important;
+          border-top: 2px solid #000;
+        }
+        .container {
+          max-width: 100%;
+          padding: 0;
+        }
+        a {
+          color: black;
+          text-decoration: underline;
+        }
+        a[href]:after {
+          content: " (" attr(href) ") ";
+          font-size: 0.8em;
+        }
+        .stats-bar,
+        .stats-cards-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+<link rel="stylesheet" href="../../../shared/css/identidade-intranet.css?v=20261004-canonico-2">
+
+<link rel="stylesheet" href="../../../shared/css/acessibilidade-intranet.css?v=20261004-shell-fix-4">
+<script src="../../../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ============================================ -->
+    <!-- CONTAINER DE NOTIFICAÇÕES (toasts)           -->
+    <!-- ============================================ -->
+    <div
+      id="notificationContainer"
+      class="notification-center"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE VISUALIZAÇÃO DO ATO (NOVO DESIGN)   -->
+    <!-- ============================================ -->
+    <div
+      id="viewAtoModal"
+      class="modal-overlay"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="viewAtoTitle"
+    >
+      <div class="modal-container modal-xl" style="max-width: 1000px">
+        <div class="modal-header">
+          <h2 id="viewAtoTitle">Visualizar Ato</h2>
+          <button
+            class="modal-close"
+            onclick="closeViewAtoModal()"
+            aria-label="Fechar modal"
+           type="button">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body" style="padding: 24px">
+          <!-- Loading -->
+          <div id="viewAtoLoading" class="loading-placeholder" role="status">
+            <div class="loading-spinner"></div>
+            <p>Carregando detalhes do ato…</p>
+          </div>
+
+          <!-- Conteúdo estruturado (inicialmente oculto) -->
+          <div id="viewAtoData" style="display: none; flex: 1; min-height: 0">
+            <div class="modal-ato-layout">
+              <!-- SIDEBAR ESQUERDA: Metadados e ações -->
+              <div class="modal-ato-sidebar">
+                <div class="ato-meta-item">
+                  <div class="label">Status</div>
+                  <div class="value" id="viewAtoStatusSidebar">
+                    <span id="viewAtoStatusBadge" class="status-badge">—</span>
+                  </div>
+                </div>
+                <div class="ato-meta-item">
+                  <div class="label">Órgão</div>
+                  <div class="value" id="viewAtoOrgaoSidebar">—</div>
+                </div>
+                <div class="ato-meta-item">
+                  <div class="label">Data de Publicação</div>
+                  <div class="value" id="viewAtoDataPubSidebar">—</div>
+                </div>
+                <div
+                  class="ato-meta-item"
+                  id="viewAtoDiarioSidebarContainer"
+                  style="display: none"
+                >
+                  <div class="label">📰 Diário Oficial</div>
+                  <div class="value" id="viewAtoDiarioSidebar">—</div>
+                </div>
+                <div
+                  class="ato-meta-item"
+                  id="viewAtoTagsSidebarContainer"
+                  style="display: none"
+                >
+                  <div class="label">🏷️ Tags</div>
+                  <div class="ato-tags-list" id="viewAtoTagsSidebarList"></div>
+                </div>
+
+                <div class="ato-actions-sidebar">
+                  <button
+                    class="btn btn-primary"
+                    id="btnDownloadPDFSidebar"
+                    onclick="downloadPDF()"
+                   type="button">
+                    <i class="fas fa-download"></i> Baixar PDF
+                  </button>
+
+                  <!-- Compartilhar (dropdown) -->
+                  <div class="share-dropdown" id="shareDropdownContainer">
+                    <button
+                      class="btn btn-outline"
+                      id="btnShareSidebar"
+                      onclick="toggleShareMenu(event)"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                     type="button">
+                      <i class="fas fa-share-alt"></i> Compartilhar
+                    </button>
+                    <div
+                      class="share-dropdown-menu"
+                      id="shareDropdownMenu"
+                      role="menu"
+                      aria-label="Opções de compartilhamento"
+                    >
+                      <button role="menuitem" onclick="shareCopiarLink(event)" type="button">
+                        <i class="fas fa-link"></i> Copiar link
+                      </button>
+                      <a
+                        role="menuitem"
+                        href="#"
+                        target="_blank"
+                        rel="noopener"
+                        onclick="shareWhatsApp(event)"
+                        ><i class="fab fa-whatsapp"></i> WhatsApp</a
+                      >
+                      <a
+                        role="menuitem"
+                        href="#"
+                        target="_blank"
+                        rel="noopener"
+                        onclick="shareEmail(event)"
+                        ><i class="fas fa-envelope"></i> E-mail</a
+                      >
+                      <a
+                        role="menuitem"
+                        href="#"
+                        target="_blank"
+                        rel="noopener"
+                        onclick="shareTwitter(event)"
+                        ><i class="fab fa-twitter"></i> Twitter</a
+                      >
+                      <a
+                        role="menuitem"
+                        href="#"
+                        target="_blank"
+                        rel="noopener"
+                        onclick="shareFacebook(event)"
+                        ><i class="fab fa-facebook"></i> Facebook</a
+                      >
+                      <button role="menuitem" onclick="shareImprimir(event)" type="button">
+                        <i class="fas fa-print"></i> Imprimir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ÁREA PRINCIPAL: Conteúdo do ato -->
+              <div class="modal-ato-main">
+                <h4 style="margin-bottom: 8px">Ementa</h4>
+                <p
+                  id="viewAtoEmentaMain"
+                  style="font-size: 1rem; font-weight: 500; margin-bottom: 24px"
+                >
+                  —
+                </p>
+
+                <!-- Texto completo com busca interna -->
+                <div id="viewAtoTextoContainer" style="display: none">
+                  <h4>Texto Completo</h4>
+                  <div class="texto-search-box">
+                    <input
+                      type="text"
+                      id="textoSearchInput"
+                      placeholder="Buscar no texto..."
+                      oninput="filtrarTextoCompleto()"
+                      aria-label="Buscar no texto completo"
+                    />
+                    <button
+                      class="btn btn-sm btn-outline"
+                      onclick="limparBuscaTexto()"
+                      title="Limpar busca"
+                     type="button">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  <div
+                    class="texto-completo-view"
+                    id="viewAtoTextoCompletoMain"
+                    style="max-height: 400px"
+                  ></div>
+                </div>
+
+                <!-- Relacionamentos (cards) -->
+                <div
+                  id="viewAtoRelacionamentosMain"
+                  style="margin-top: 24px; display: none"
+                >
+                  <h4>🔗 Relacionamentos</h4>
+                  <div id="viewAtoRelacionamentosOrigemMain"></div>
+                  <div id="viewAtoRelacionamentosDestinoMain"></div>
+                </div>
+
+                <!-- Alterações em dispositivos (cards) -->
+                <div
+                  id="viewAtoAlteracoesMain"
+                  style="margin-top: 24px; display: none"
+                >
+                  <h4>✏️ Alterações em Dispositivos</h4>
+                  <div id="viewAtoAlteracoesListaMain"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="justify-content: space-between">
+          <small
+            id="viewAtoTipoNumeroRodape"
+            style="color: var(--neutral-500)"
+          ></small>
+          <div>
+            <button class="btn btn-outline" onclick="closeViewAtoModal()" type="button">
+              Fechar
+            </button>
+            <!-- Os botões principais já estão na sidebar, aqui fica apenas fechar -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TOPO DO PORTAL (header unificado)            -->
+    <!-- ============================================ -->
+    <header class="portal-header" role="banner">
+      <div class="header-top">
+        <div class="container">
+          <div class="header-top-content">
+            <div class="header-brand">
+              <div class="brasao-wrapper">
+                <img
+                  src="brasao-pref.png"
+                  alt="Brasão da Prefeitura Municipal"
+                  class="brasao-img"
+                  onerror="
+                    this.onerror = null;
+                    this.src =
+                      'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%23f8fafc\' stroke=\'%230d5e3a\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'58\' font-size=\'12\' text-anchor=\'middle\' fill=\'%230f172a\' font-weight=\'bold\'%3EPMG%3C/text%3E%3C/svg%3E';
+                  "
+                />
+              </div>
+              <div class="header-titles">
+                <h1 class="header-title">Portal da Transparência</h1>
+                <p class="header-subtitle">
+                  Atos Oficiais · Prefeitura Municipal
+                </p>
+              </div>
+            </div>
+            <div class="header-accessibility">
+              <button
+                class="btn btn-outline btn-sm btn-accessibility"
+                onclick="toggleContrast()"
+                title="Alto Contraste"
+                aria-label="Ativar alto contraste"
+               type="button">
+                <i class="fas fa-adjust"></i> Contraste
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegação principal -->
+      <div class="header-bottom">
+        <div class="container">
+          <nav class="portal-nav" aria-label="Navegação principal">
+            <a href="#home" class="nav-link active" data-section="home">
+              <i class="fas fa-home"></i> Início
+            </a>
+            <a href="#busca" class="nav-link" data-section="busca">
+              <i class="fas fa-search"></i> Buscar Atos
+            </a>
+            <a href="#orgaos" class="nav-link" data-section="orgaos">
+              <i class="fas fa-building"></i> Órgãos
+            </a>
+            <a
+              href="#estatisticas"
+              class="nav-link"
+              data-section="estatisticas"
+            >
+              <i class="fas fa-chart-bar"></i> Estatísticas
+            </a>
+            <a href="#sobre" class="nav-link" data-section="sobre">
+              <i class="fas fa-info-circle"></i> Sobre
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- CONTEÚDO PRINCIPAL                          -->
+    <!-- ============================================ -->
+    <main class="portal-main" role="main">
+      <div class="container">
+        <!-- Breadcrumb dinâmico -->
+        <nav
+          class="breadcrumb"
+          id="breadcrumb"
+          aria-label="Breadcrumb"
+          style="display: none"
+        >
+          <a href="#" data-nav="home">Início</a>
+          <span class="separator">/</span>
+          <span class="current" id="breadcrumbCurrent"></span>
+        </nav>
+
+        <!-- ============================================ -->
+        <!-- SEÇÃO: HOME                                 -->
+        <!-- ============================================ -->
+        <section
+          class="portal-section"
+          id="secaoHome"
+          aria-labelledby="homeHeading"
+        >
+          <h2 id="homeHeading" class="sr-only">Início</h2>
+          <!-- Hero search -->
+          <div class="hero-search">
+            <div class="hero-content">
+              <h3 class="hero-title">Atos Oficiais do Município</h3>
+              <p class="hero-description">
+                Consulte leis, decretos, portarias, resoluções e instruções
+                normativas de forma rápida e transparente.
+              </p>
+              <div class="hero-search-box">
+                <div class="search-input-group">
+                  <input
+                    type="text"
+                    id="heroSearchInput"
+                    class="form-input search-input-hero"
+                    placeholder="Digite o número, ano, ementa ou palavra-chave..."
+                    aria-label="Buscar atos oficiais"
+                  />
+                  <button
+                    class="btn btn-primary btn-search-hero"
+                    id="btnHeroSearch"
+                    aria-label="Buscar"
+                   type="button">
+                    <i class="fas fa-search"></i> Buscar
+                  </button>
+                </div>
+              </div>
+              <div class="hero-tags">
+                <span>Buscas rápidas:</span>
+                <a href="#" class="tag-link" data-search="Lei">Leis</a>
+                <a href="#" class="tag-link" data-search="Decreto">Decretos</a>
+                <a href="#" class="tag-link" data-search="Portaria"
+                  >Portarias</a
+                >
+                <a href="#" class="tag-link" data-search="Resolução"
+                  >Resoluções</a
+                >
+                <a href="#" class="tag-link" data-search="2025">2025</a>
+                <a href="#" class="tag-link" data-search="2024">2024</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats rápidas -->
+          <div class="stats-bar" id="homeStatsBar">
+            <div class="stat-item">
+              <span class="stat-icon"><i class="fas fa-file-alt"></i></span>
+              <span class="stat-value" id="homeTotalAtos">—</span>
+              <span class="stat-desc">Atos Publicados</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon"><i class="fas fa-check-circle"></i></span>
+              <span class="stat-value" id="homeVigentes">—</span>
+              <span class="stat-desc">Vigentes</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon"><i class="fas fa-building"></i></span>
+              <span class="stat-value" id="homeOrgaos">—</span>
+              <span class="stat-desc">Órgãos</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon"><i class="fas fa-calendar-alt"></i></span>
+              <span class="stat-value" id="homeAtualizacao">—</span>
+              <span class="stat-desc">Última Atualização</span>
+            </div>
+          </div>
+
+          <!-- Atos Recentes -->
+          <div class="section-card">
+            <div class="section-header">
+              <h3>📋 Atos Recentes</h3>
+              <a
+                href="#busca"
+                class="btn btn-sm btn-outline"
+                data-navigate="busca"
+                >Ver Todos <i class="fas fa-arrow-right"></i
+              ></a>
+            </div>
+            <div class="atos-recentes-grid" id="atosRecentesGrid">
+              <div class="loading-placeholder">
+                <div class="loading-spinner"></div>
+                <p>Carregando atos recentes…</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Órgãos em Destaque -->
+          <div class="section-card">
+            <div class="section-header">
+              <h3>🏛️ Órgãos Municipais</h3>
+              <a
+                href="#orgaos"
+                class="btn btn-sm btn-outline"
+                data-navigate="orgaos"
+                >Ver Todos <i class="fas fa-arrow-right"></i
+              ></a>
+            </div>
+            <div class="orgaos-grid" id="orgaosGridHome">
+              <div class="loading-placeholder">
+                <div class="loading-spinner"></div>
+                <p>Carregando órgãos…</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SEÇÃO: BUSCA AVANÇADA                      -->
+        <!-- ============================================ -->
+        <section
+          class="portal-section"
+          id="secaoBusca"
+          style="display: none"
+          aria-labelledby="buscaHeading"
+        >
+          <h2 id="buscaHeading" class="sr-only">Buscar Atos</h2>
+          <div class="section-card">
+            <div class="section-header">
+              <h3><i class="fas fa-search"></i> Buscar Atos Oficiais</h3>
+            </div>
+            <div class="filtros-avancados" id="buscaFiltrosContainer">
+              <div class="filtro-row">
+                <div class="filtro-group filtro-grande">
+                  <label class="filtro-label" for="buscaTexto"
+                    >Buscar por texto</label
+                  >
+                  <input
+                    type="text"
+                    id="buscaTexto"
+                    class="form-input"
+                    placeholder="Número, ementa, palavra-chave, texto completo..."
+                  / aria-label="Número, ementa, palavra chave, texto completo...">
+                </div>
+              </div>
+              <div class="filtro-row filtro-row-4">
+                <div class="filtro-group">
+                  <label class="filtro-label" for="buscaTipo"
+                    >Tipo de Ato</label
+                  >
+                  <select id="buscaTipo" class="form-input" aria-label="buscaTipo">
+                    <option value="">Todos os tipos</option>
+                  </select>
+                </div>
+                <div class="filtro-group">
+                  <label class="filtro-label" for="buscaAno">Ano</label>
+                  <select id="buscaAno" class="form-input" aria-label="buscaAno">
+                    <option value="">Todos os anos</option>
+                  </select>
+                </div>
+                <div class="filtro-group">
+                  <label class="filtro-label" for="buscaOrgao">Órgão</label>
+                  <select id="buscaOrgao" class="form-input" aria-label="buscaOrgao">
+                    <option value="">Todos os órgãos</option>
+                  </select>
+                </div>
+                <div class="filtro-group">
+                  <label class="filtro-label" for="buscaStatus">Status</label>
+                  <select id="buscaStatus" class="form-input" aria-label="buscaStatus">
+                    <option value="">Todos</option>
+                    <option value="Vigente">✅ Vigente</option>
+                    <option value="Revogado">❌ Revogado</option>
+                    <option value="Alterado">⚠️ Alterado</option>
+                  </select>
+                </div>
+              </div>
+              <div class="filtro-actions">
+                <button class="btn btn-outline btn-sm" id="btnLimparFiltros" type="button">
+                  <i class="fas fa-undo-alt"></i> Limpar Filtros
+                </button>
+                <span class="resultados-info" id="resultadosInfo"
+                  >Total: — resultado(s)</span
+                >
+              </div>
+            </div>
+            <div class="resultados-busca" id="resultadosBusca">
+              <div class="empty-state">
+                <span class="empty-icon"><i class="fas fa-search"></i></span>
+                <p>Utilize os filtros acima para buscar atos oficiais.</p>
+              </div>
+            </div>
+            <div class="pagination" id="paginationBusca" style="display: none">
+              <button
+                class="btn-page"
+                id="btnPagAnterior"
+                disabled
+                aria-label="Página anterior"
+               type="button">
+                <i class="fas fa-chevron-left"></i> Anterior
+              </button>
+              <span class="page-info" id="pageInfoBusca">Página 1 de 1</span>
+              <button
+                class="btn-page"
+                id="btnPagProximo"
+                disabled
+                aria-label="Próxima página"
+               type="button">
+                Próximo <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SEÇÃO: ÓRGÃOS                              -->
+        <!-- ============================================ -->
+        <section
+          class="portal-section"
+          id="secaoOrgaos"
+          style="display: none"
+          aria-labelledby="orgaosHeading"
+        >
+          <h2 id="orgaosHeading" class="sr-only">Órgãos</h2>
+          <div class="section-card">
+            <div class="section-header">
+              <h3><i class="fas fa-building"></i> Órgãos Municipais</h3>
+              <p class="section-description">
+                Consulte os atos oficiais por órgão responsável.
+              </p>
+            </div>
+            <div class="orgaos-lista-completa" id="orgaosListaCompleta">
+              <div class="loading-placeholder">
+                <div class="loading-spinner"></div>
+                <p>Carregando órgãos…</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SEÇÃO: ESTATÍSTICAS                        -->
+        <!-- ============================================ -->
+        <section
+          class="portal-section"
+          id="secaoEstatisticas"
+          style="display: none"
+          aria-labelledby="estatisticasHeading"
+        >
+          <h2 id="estatisticasHeading" class="sr-only">Estatísticas</h2>
+          <div class="section-card">
+            <div class="section-header">
+              <h3>
+                <i class="fas fa-chart-bar"></i> Estatísticas de Atos Oficiais
+              </h3>
+            </div>
+            <div class="stats-detalhadas">
+              <div class="stats-cards-grid" id="estatCardsGrid">
+                <div class="stat-detail-card">
+                  <span class="stat-detail-icon"
+                    ><i class="fas fa-file-alt"></i
+                  ></span>
+                  <span class="stat-detail-value" id="estatTotal">—</span>
+                  <span class="stat-detail-label">Total de Atos</span>
+                </div>
+                <div class="stat-detail-card stat-verde">
+                  <span class="stat-detail-icon"
+                    ><i class="fas fa-check-circle"></i
+                  ></span>
+                  <span class="stat-detail-value" id="estatVigentes">—</span>
+                  <span class="stat-detail-label">Vigentes</span>
+                </div>
+                <div class="stat-detail-card stat-vermelho">
+                  <span class="stat-detail-icon"
+                    ><i class="fas fa-times-circle"></i
+                  ></span>
+                  <span class="stat-detail-value" id="estatRevogados">—</span>
+                  <span class="stat-detail-label">Revogados</span>
+                </div>
+                <div class="stat-detail-card stat-amarelo">
+                  <span class="stat-detail-icon"
+                    ><i class="fas fa-exclamation-triangle"></i
+                  ></span>
+                  <span class="stat-detail-value" id="estatAlterados">—</span>
+                  <span class="stat-detail-label">Alterados</span>
+                </div>
+              </div>
+              <div class="estat-chart-container">
+                <h4>Distribuição por Tipo</h4>
+                <div class="chart-canvas-wrapper">
+                  <canvas
+                    id="chartTiposCanvas"
+                    aria-label="Gráfico de distribuição por tipo de ato"
+                    role="img"
+                  ></canvas>
+                </div>
+                <div id="chartTiposFallback" class="sr-only"></div>
+              </div>
+              <div class="estat-chart-container">
+                <h4>Publicações por Ano</h4>
+                <div class="chart-canvas-wrapper">
+                  <canvas
+                    id="chartAnosCanvas"
+                    aria-label="Gráfico de publicações por ano"
+                    role="img"
+                  ></canvas>
+                </div>
+                <div id="chartAnosFallback" class="sr-only"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SEÇÃO: SOBRE                               -->
+        <!-- ============================================ -->
+        <section
+          class="portal-section"
+          id="secaoSobre"
+          style="display: none"
+          aria-labelledby="sobreHeading"
+        >
+          <h2 id="sobreHeading" class="sr-only">Sobre</h2>
+          <div class="section-card">
+            <div class="section-header">
+              <h3><i class="fas fa-info-circle"></i> Sobre o Portal</h3>
+            </div>
+            <div class="sobre-content">
+              <div class="sobre-texto">
+                <h4>Portal da Transparência - Atos Oficiais</h4>
+                <p>
+                  Este portal tem como objetivo garantir o acesso público e
+                  transparente aos atos oficiais do município, em conformidade
+                  com a Lei de Acesso à Informação (Lei nº 12.527/2011) e a Lei
+                  de Responsabilidade Fiscal.
+                </p>
+                <p>
+                  Aqui você encontra leis, decretos, portarias, resoluções,
+                  instruções normativas e demais atos oficiais publicados pelos
+                  órgãos da administração pública municipal.
+                </p>
+                <h4>📋 Tipos de Atos Disponíveis</h4>
+                <ul class="sobre-lista">
+                  <li>
+                    <strong>Leis:</strong> Normas aprovadas pelo Poder
+                    Legislativo
+                  </li>
+                  <li><strong>Decretos:</strong> Atos do Poder Executivo</li>
+                  <li>
+                    <strong>Portarias:</strong> Atos administrativos internos
+                  </li>
+                  <li>
+                    <strong>Resoluções:</strong> Deliberações de conselhos e
+                    órgãos colegiados
+                  </li>
+                  <li>
+                    <strong>Instruções Normativas:</strong> Orientações e
+                    regulamentações técnicas
+                  </li>
+                </ul>
+                <h4>📞 Contato</h4>
+                <div class="contato-info">
+                  <p>
+                    <strong>E-mail:</strong> transparencia@prefeitura.gov.br
+                  </p>
+                  <p><strong>Telefone:</strong> (00) 0000-0000</p>
+                  <p>
+                    <strong>Endereço:</strong> Praça Municipal, s/n - Centro
+                  </p>
+                  <p>
+                    <strong>Horário de Atendimento:</strong> Segunda a Sexta,
+                    das 8h às 17h
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- RODAPÉ                                      -->
+    <!-- ============================================ -->
+    <footer class="portal-footer" role="contentinfo">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-col">
+            <h4>🏛️ Portal da Transparência</h4>
+            <p>Prefeitura Municipal</p>
+            <p class="footer-small">
+              Compromisso com a publicidade e o acesso à informação.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>🔗 Links Úteis</h4>
+            <ul class="footer-links">
+              <li><a href="#">Portal da Prefeitura</a></li>
+              <li><a href="#">Diário Oficial</a></li>
+              <li><a href="#">Lei de Acesso à Informação</a></li>
+              <li><a href="#">Ouvidoria Municipal</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>📞 Contato</h4>
+            <p>📧 transparencia@prefeitura.gov.br</p>
+            <p>📱 (00) 0000-0000</p>
+          </div>
+          <div class="footer-col">
+            <h4>📅 Atualização</h4>
+            <p id="footerDataAtualizacao">—</p>
+            <p class="footer-small">Versão 1.0</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>
+            © <span id="currentYear"></span> Prefeitura Municipal. Todos os
+            direitos reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ============================================ -->
+    <!-- BOTÃO VOLTAR AO TOPO                        -->
+    <!-- ============================================ -->
+    <button
+      class="btn btn-primary btn-back-to-top"
+      id="btnBackToTop"
+      onclick="voltarAoTopo()"
+      title="Voltar ao topo"
+      aria-label="Voltar ao topo da página"
+     type="button">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS INLINE (UI, navegação, compartilhar) -->
+    <!-- ============================================ -->
+    <script>
+      // ---- funções básicas de UI (navegação, contraste, etc.) ----
+
+      function navegarSecao(secao) {
+        document
+          .querySelectorAll(".portal-section")
+          .forEach((s) => (s.style.display = "none"));
+        const target = document.getElementById(
+          `secao${secao.charAt(0).toUpperCase() + secao.slice(1)}`,
+        );
+        if (target) target.style.display = "block";
+
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          link.classList.remove("active");
+          if (link.getAttribute("data-section") === secao)
+            link.classList.add("active");
+        });
+
+        const breadcrumb = document.getElementById("breadcrumb");
+        const currentEl = document.getElementById("breadcrumbCurrent");
+        const nomes = {
+          home: "Início",
+          busca: "Buscar Atos",
+          orgaos: "Órgãos",
+          estatisticas: "Estatísticas",
+          sobre: "Sobre",
+        };
+        if (secao === "home") {
+          breadcrumb.style.display = "none";
+        } else {
+          breadcrumb.style.display = "flex";
+          currentEl.textContent = nomes[secao] || secao;
+        }
+
+        if (target) target.scrollIntoView({ behavior: "smooth" });
+
+        window.dispatchEvent(
+          new CustomEvent("portalSectionChanged", { detail: secao }),
+        );
+      }
+
+      function toggleContrast() {
+        document.body.classList.toggle("high-contrast");
+        const btn = document.querySelector(".btn-accessibility");
+        btn.innerHTML = document.body.classList.contains("high-contrast")
+          ? '<i class="fas fa-sun"></i> Normal'
+          : '<i class="fas fa-adjust"></i> Contraste';
+        localStorage.setItem(
+          "portalHighContrast",
+          document.body.classList.contains("high-contrast"),
+        );
+      }
+
+      function voltarAoTopo() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // ---- compartilhamento customizado (menu dropdown) ----
+      function toggleShareMenu(e) {
+        e.stopPropagation();
+        const menu = document.getElementById("shareDropdownMenu");
+        const btn = document.getElementById("btnShareSidebar");
+        const isOpen = menu.classList.contains("show");
+        menu.classList.toggle("show", !isOpen);
+        btn.setAttribute("aria-expanded", !isOpen);
+        if (!isOpen) {
+          // fecha ao clicar fora
+          setTimeout(() => {
+            window.addEventListener("click", closeShareMenuOnClickOutside, {
+              once: true,
+            });
+            window.addEventListener("focusin", closeShareMenuOnFocusOut);
+          }, 0);
+        }
+      }
+
+      function closeShareMenuOnClickOutside(e) {
+        const container = document.getElementById("shareDropdownContainer");
+        if (!container.contains(e.target)) {
+          document.getElementById("shareDropdownMenu").classList.remove("show");
+          document
+            .getElementById("btnShareSidebar")
+            .setAttribute("aria-expanded", "false");
+        }
+      }
+
+      function closeShareMenuOnFocusOut(e) {
+        const container = document.getElementById("shareDropdownContainer");
+        if (!container.contains(document.activeElement)) {
+          document.getElementById("shareDropdownMenu").classList.remove("show");
+          document
+            .getElementById("btnShareSidebar")
+            .setAttribute("aria-expanded", "false");
+          window.removeEventListener("focusin", closeShareMenuOnFocusOut);
+        }
+      }
+
+      function getShareData() {
+        const title =
+          document.getElementById("viewAtoTitle")?.textContent || "Ato Oficial";
+        const url = window.location.href;
+        return { title, url };
+      }
+
+      window.shareCopiarLink = function (e) {
+        e.preventDefault();
+        const { url } = getShareData();
+        navigator.clipboard
+          .writeText(url)
+          .then(() => {
+            showToast("Link copiado!", "success");
+          })
+          .catch(() => {
+            prompt("Copie o link:", url);
+          });
+        document.getElementById("shareDropdownMenu").classList.remove("show");
+      };
+
+      window.shareWhatsApp = function (e) {
+        e.preventDefault();
+        const { title, url } = getShareData();
+        window.open(
+          `https://wa.me/?text=${encodeURIComponent(title + " " + url)}`,
+          "_blank",
+        );
+        document.getElementById("shareDropdownMenu").classList.remove("show");
+      };
+
+      window.shareEmail = function (e) {
+        e.preventDefault();
+        const { title, url } = getShareData();
+        window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent("Confira: " + url)}`;
+        document.getElementById("shareDropdownMenu").classList.remove("show");
+      };
+
+      window.shareTwitter = function (e) {
+        e.preventDefault();
+        const { title, url } = getShareData();
+        window.open(
+          `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+          "_blank",
+        );
+        document.getElementById("shareDropdownMenu").classList.remove("show");
+      };
+
+      window.shareFacebook = function (e) {
+        e.preventDefault();
+        const { url } = getShareData();
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+          "_blank",
+        );
+        document.getElementById("shareDropdownMenu").classList.remove("show");
+      };
+
+      window.shareImprimir = function (e) {
+        e.preventDefault();
+        window.print();
+        document.getElementById("shareDropdownMenu").classList.remove("show");
+      };
+
+      function showToast(message, type = "info") {
+        const container = document.getElementById("notificationContainer");
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `<span class="notification-icon">${icons[type]}</span><div class="notification-content"><div class="notification-title">${message}</div></div><button class="notification-close" type="button">✕</button>`;
+        container.appendChild(toast);
+        const closeBtn = toast.querySelector(".notification-close");
+        closeBtn.addEventListener("click", () => toast.remove());
+        setTimeout(() => {
+          if (toast.parentElement) toast.remove();
+        }, 3000);
+      }
+
+      // ---- inicialização mínima ----
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("currentYear").textContent =
+          new Date().getFullYear();
+
+        if (localStorage.getItem("portalHighContrast") === "true") {
+          document.body.classList.add("high-contrast");
+          document.querySelector(".btn-accessibility").innerHTML =
+            '<i class="fas fa-sun"></i> Normal';
+        }
+
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const secao = link.getAttribute("data-section");
+            if (secao) navegarSecao(secao);
+          });
+        });
+
+        document.querySelectorAll("[data-navigate]").forEach((el) => {
+          el.addEventListener("click", (e) => {
+            e.preventDefault();
+            const secao = el.getAttribute("data-navigate");
+            if (secao) navegarSecao(secao);
+          });
+        });
+
+        document
+          .getElementById("breadcrumb")
+          ?.querySelector("a")
+          ?.addEventListener("click", (e) => {
+            e.preventDefault();
+            navegarSecao("home");
+          });
+
+        document.querySelectorAll(".hero-tags .tag-link").forEach((tag) => {
+          tag.addEventListener("click", (e) => {
+            e.preventDefault();
+            const termo = tag.getAttribute("data-search");
+            if (termo) {
+              document.getElementById("buscaTexto").value = termo;
+              navegarSecao("busca");
+              window.dispatchEvent(
+                new CustomEvent("portalSearch", { detail: termo }),
+              );
+            }
+          });
+        });
+
+        const heroInput = document.getElementById("heroSearchInput");
+        const heroBtn = document.getElementById("btnHeroSearch");
+        function heroSearchAction() {
+          const termo = heroInput.value.trim();
+          if (termo) {
+            document.getElementById("buscaTexto").value = termo;
+            navegarSecao("busca");
+            window.dispatchEvent(
+              new CustomEvent("portalSearch", { detail: termo }),
+            );
+          }
+        }
+        heroInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") heroSearchAction();
+        });
+        heroBtn.addEventListener("click", heroSearchAction);
+
+        window.addEventListener("scroll", () => {
+          document.getElementById("btnBackToTop").style.display =
+            window.scrollY > 500 ? "flex" : "none";
+        });
+
+        navegarSecao("home");
+      });
+
+      // Placeholders para funções que serão sobrescritas pelo módulo JS (fechar modal, download, etc.)
+      function closeViewAtoModal() {
+        document.getElementById("viewAtoModal").style.display = "none";
+      }
+      function downloadPDF() {
+        // será implementado no JS principal
+      }
+      // Funções auxiliares para o texto (busca interna) – podem ser sobrescritas
+      function filtrarTextoCompleto() {
+        const input = document.getElementById("textoSearchInput");
+        const container = document.getElementById("viewAtoTextoCompletoMain");
+        if (!input || !container) return;
+        const termo = input.value.toLowerCase();
+        const original = container.dataset.originalHtml || container.innerHTML;
+        if (!container.dataset.originalHtml)
+          container.dataset.originalHtml = original;
+        if (!termo) {
+          container.innerHTML = container.dataset.originalHtml;
+          return;
+        }
+        // simples highlight
+        const regex = new RegExp(
+          `(${termo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+          "gi",
+        );
+        container.innerHTML = container.dataset.originalHtml.replace(
+          regex,
+          '<mark style="background:#fef08a;padding:0 2px;">$1</mark>',
+        );
+      }
+      function limparBuscaTexto() {
+        const input = document.getElementById("textoSearchInput");
+        const container = document.getElementById("viewAtoTextoCompletoMain");
+        if (input) input.value = "";
+        if (container && container.dataset.originalHtml) {
+          container.innerHTML = container.dataset.originalHtml;
+        }
+      }
+      window.filtrarTextoCompleto = filtrarTextoCompleto;
+      window.limparBuscaTexto = limparBuscaTexto;
+    </script>
+
+    <!--
+      =============================================
+      O ARQUIVO PRINCIPAL DE JAVASCRIPT
+      (portal-atos-oficiais.js) SERÁ INCLUÍDO AQUI
+      E DEVERÁ SER ADAPTADO PARA PREENCHER O NOVO
+      LAYOUT DO MODAL.
+      =============================================
+    -->
+    <script type="module" src="portal-atos-oficiais.js"></script>
+  </body>
+</html>

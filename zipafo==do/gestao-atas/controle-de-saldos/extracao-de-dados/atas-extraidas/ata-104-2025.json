@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "227",
+    "processo_origem": "72/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor MRP INDUSTRIA E COMERCIO LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "104/2025",
+    "numero_contratacao": "1381 | 104/2025",
+    "numero_processo": "72/2025",
+    "numero_pregao": "33",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-12-12",
+    "vigencia_inicio": "2025-12-12",
+    "vigencia_fim": "2026-12-12",
+    "objeto": "Registro de preços, com lotes exclusivos para empresas constituídas nos moldes da Lei Complementar n° 123/06 e lote de ampla concorrência, para eventual aquisição de uniformes para os alunos da rede municipal de ensino deste Município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "MRP INDUSTRIA E COMERCIO LTDA",
+    "cnpj": "13.382.079/0001-04"
+  },
+  "itens": [
+    {
+      "numero": "5",
+      "descricao": "CAMISETA – DESCRIÇÃO CONFORME EDITAL - CAMISETA – DESCRIÇÃO CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 25.3,
+      "quantidade_contratada": 1000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1000.0,
+      "valor_total": 25300.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 25300.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "6",
+      "descricao": "REGATA – DESCRIÇÃO CONFORME EDITAL - REGATA – DESCRIÇÃO CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 23.2,
+      "quantidade_contratada": 500.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 500.0,
+      "valor_total": 11600.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 11600.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 36900.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 36900.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Todos os itens com saldo integral (nada executado). Totais conferem com o PDF: R$ 36.900,00 contratado.",
+  "anexos": []
+}

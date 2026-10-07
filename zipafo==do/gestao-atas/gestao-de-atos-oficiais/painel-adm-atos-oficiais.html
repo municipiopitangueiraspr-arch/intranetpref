@@ -1,0 +1,1794 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo · Atos Oficiais</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <!-- CSS do painel -->
+    <link rel="stylesheet" href="painel-adm-atos-oficiais.css" />
+
+    <!-- Bibliotecas para extração de PDF (úteis para upload manual) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ============================================ -->
+    <!-- OVERLAY DE CARREGAMENTO                      -->
+    <!-- ============================================ -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none">
+      <div class="loading-spinner-large"></div>
+      <p class="loading-text">Processando...</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- NOTIFICAÇÕES (toasts) – CENTRALIZADAS        -->
+    <!-- ============================================ -->
+    <div id="notificationCenter" class="notification-center"></div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE CONFIRMAÇÃO GENÉRICO (ESTILIZADO)   -->
+    <!-- ============================================ -->
+    <div id="confirmModal" class="modal-overlay" style="display: none">
+      <div class="modal-confirm">
+        <div class="modal-confirm-icon" id="confirmIcon">⚠️</div>
+        <h3 class="modal-confirm-title" id="confirmTitle">Confirmar ação</h3>
+        <p class="modal-confirm-message" id="confirmMessage">
+          Tem certeza que deseja continuar?
+        </p>
+        <div class="modal-confirm-actions">
+          <button class="btn btn-secondary" id="confirmCancelBtn" type="button">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-primary" id="confirmOkBtn" type="button">
+            <i class="fas fa-check"></i> Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE ATO (CRIAÇÃO / EDIÇÃO)              -->
+    <!-- ============================================ -->
+    <div id="atoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-xl">
+        <div class="modal-header">
+          <h2 id="atoModalTitle">Cadastrar Novo Ato</h2>
+          <button
+            class="modal-close"
+            onclick="closeAtoModal()"
+            aria-label="Fechar"
+           type="button">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <div
+            id="unsavedWarning"
+            style="
+              display: none;
+              background: #fff3cd;
+              padding: 8px 16px;
+              border-radius: 8px;
+              margin-bottom: 16px;
+              font-size: 0.8rem;
+              color: #856404;
+            "
+          >
+            <i class="fas fa-exclamation-triangle"></i> Há alterações não salvas
+            neste formulário.
+          </div>
+
+          <form id="atoForm" novalidate>
+            <input type="hidden" id="atoId" />
+            <input type="hidden" id="atoVersion" />
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="tipoAto"
+                  >Tipo do Ato</label
+                >
+                <select id="tipoAto" class="form-input" required aria-label="tipoAto">
+                  <option value="">Carregando...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="numeroAto"
+                  >Número</label
+                >
+                <input
+                  type="number"
+                  id="numeroAto"
+                  class="form-input"
+                  placeholder="Nº"
+                  required
+                  min="1"
+                / aria-label="Nº">
+              </div>
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="anoAto">Ano</label>
+                <input
+                  type="number"
+                  id="anoAto"
+                  class="form-input"
+                  placeholder="AAAA"
+                  required
+                  min="1900"
+                  max="2100"
+                / aria-label="AAAA">
+              </div>
+            </div>
+
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="orgaoAto"
+                  >Órgão Responsável</label
+                >
+                <select id="orgaoAto" class="form-input" required aria-label="orgaoAto">
+                  <option value="">Carregando...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="dataPublicacao"
+                  >Data de Publicação</label
+                >
+                <input
+                  type="date"
+                  id="dataPublicacao"
+                  class="form-input"
+                  required
+                / aria-label="dataPublicacao">
+              </div>
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="statusAto"
+                  >Status</label
+                >
+                <select id="statusAto" class="form-input" required aria-label="statusAto">
+                  <option value="Vigente">✅ Vigente</option>
+                  <option value="Revogado">❌ Revogado</option>
+                  <option value="Alterado">⚠️ Alterado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="ementaAto"
+                >Ementa (Resumo)</label
+              >
+              <textarea
+                id="ementaAto"
+                class="form-input"
+                rows="3"
+                placeholder="Descreva o resumo do ato..."
+                required
+               aria-label="Descreva o resumo do ato..."></textarea>
+            </div>
+
+            <!-- EDITOR DE TEXTO COM ÍCONES MODERNOS E TABELAS -->
+            <div class="form-group" id="editorContainer">
+              <label class="form-label" for="textoCompletoAto"
+                >Texto Completo</label
+              >
+              <div class="editor-wrapper">
+                <div class="editor-toolbar" id="editorToolbar">
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="bold"
+                    title="Negrito (Ctrl+B)"
+                  >
+                    <i class="fas fa-bold"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="italic"
+                    title="Itálico (Ctrl+I)"
+                  >
+                    <i class="fas fa-italic"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="underline"
+                    title="Sublinhado (Ctrl+U)"
+                  >
+                    <i class="fas fa-underline"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="strikethrough"
+                    title="Tachado"
+                  >
+                    <i class="fas fa-strikethrough"></i>
+                  </button>
+                  <span class="toolbar-divider"></span>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="justifyleft"
+                    title="Alinhar à esquerda"
+                  >
+                    <i class="fas fa-align-left"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="justifycenter"
+                    title="Centralizar"
+                  >
+                    <i class="fas fa-align-center"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="justifyright"
+                    title="Alinhar à direita"
+                  >
+                    <i class="fas fa-align-right"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="justifyfull"
+                    title="Justificar"
+                  >
+                    <i class="fas fa-align-justify"></i>
+                  </button>
+                  <span class="toolbar-divider"></span>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="insertUnorderedList"
+                    title="Lista com marcadores"
+                  >
+                    <i class="fas fa-list-ul"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="insertOrderedList"
+                    title="Lista numerada"
+                  >
+                    <i class="fas fa-list-ol"></i>
+                  </button>
+                  <span class="toolbar-divider"></span>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="createLink"
+                    title="Inserir âncora (ID)"
+                  >
+                    <i class="fas fa-link"></i>
+                  </button>
+                  <span class="toolbar-divider"></span>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="insertTable"
+                    title="Inserir tabela"
+                  >
+                    <i class="fas fa-table"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="addRowAbove"
+                    title="Adicionar linha acima"
+                  >
+                    <i class="fas fa-arrow-up"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="addRowBelow"
+                    title="Adicionar linha abaixo"
+                  >
+                    <i class="fas fa-arrow-down"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="addColLeft"
+                    title="Adicionar coluna à esquerda"
+                  >
+                    <i class="fas fa-arrow-left"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="addColRight"
+                    title="Adicionar coluna à direita"
+                  >
+                    <i class="fas fa-arrow-right"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="deleteRow"
+                    title="Excluir linha"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="deleteCol"
+                    title="Excluir coluna"
+                  >
+                    <i class="fas fa-columns"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="deleteTable"
+                    title="Excluir tabela"
+                  >
+                    <i class="fas fa-times-circle"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="toolbar-btn"
+                    data-command="mergeCells"
+                    title="Mesclar células selecionadas"
+                  >
+                    <i class="fas fa-object-group"></i>
+                  </button>
+                </div>
+                <div
+                  id="textoCompletoEditor"
+                  class="editor-content"
+                  contenteditable="true"
+                ></div>
+                <input type="hidden" id="textoCompletoAto" />
+                <div
+                  class="form-text"
+                  style="font-size: 0.7rem; margin-top: 4px"
+                >
+                  Dica: utilize a barra de tabelas para inserir e formatar
+                  tabelas. Para criar âncoras (IDs), selecione um texto e clique
+                  no ícone <i class="fas fa-link"></i>.
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="pdfUpload"
+                  ><i class="fas fa-file-pdf"></i> PDF Oficial</label
+                >
+                <div class="upload-area" id="pdfUploadArea">
+                  <input
+                    type="file"
+                    id="pdfUpload"
+                    accept=".pdf"
+                    style="display: none"
+                  / aria-label="pdfUpload">
+                  <div class="upload-placeholder" id="pdfPlaceholder">
+                    <span class="upload-icon"
+                      ><i class="fas fa-cloud-upload-alt"></i
+                    ></span>
+                    <p>Arraste ou clique para fazer upload</p>
+                    <small>PDF (máx. 10MB)</small>
+                  </div>
+                  <div
+                    class="upload-preview"
+                    id="pdfPreview"
+                    style="display: none"
+                  >
+                    <span class="preview-icon"
+                      ><i class="fas fa-file-pdf"></i
+                    ></span>
+                    <span class="preview-name" id="pdfName"></span>
+                    <button
+                      type="button"
+                      class="preview-remove"
+                      onclick="removeFile('pdf')"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="pdfPreviewContainer"
+                  style="display: none; margin-top: 8px"
+                >
+                  <iframe
+                    id="pdfPreviewFrame"
+                    class="pdf-preview-embed"
+                    title="Pré-visualização do PDF"
+                  ></iframe>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="docUpload"
+                  ><i class="fas fa-file-word"></i> Documento Editável</label
+                >
+                <div class="upload-area" id="docUploadArea">
+                  <input
+                    type="file"
+                    id="docUpload"
+                    accept=".doc,.docx"
+                    style="display: none"
+                  / aria-label="docUpload">
+                  <div class="upload-placeholder" id="docPlaceholder">
+                    <span class="upload-icon"
+                      ><i class="fas fa-cloud-upload-alt"></i
+                    ></span>
+                    <p>Arraste ou clique para fazer upload</p>
+                    <small>DOC/DOCX (máx. 10MB)</small>
+                  </div>
+                  <div
+                    class="upload-preview"
+                    id="docPreview"
+                    style="display: none"
+                  >
+                    <span class="preview-icon"
+                      ><i class="fas fa-file-word"></i
+                    ></span>
+                    <span class="preview-name" id="docName"></span>
+                    <button
+                      type="button"
+                      class="preview-remove"
+                      onclick="removeFile('doc')"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-divider">
+              <h3>
+                <i class="fas fa-newspaper"></i> Publicação no Diário Oficial
+              </h3>
+            </div>
+            <div class="form-row-4">
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="nomeDiario"
+                  class="form-input"
+                  placeholder="Nome do Diário"
+                / aria-label="Nome do Diário">
+              </div>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="edicaoDiario"
+                  class="form-input"
+                  placeholder="Edição"
+                / aria-label="Edição">
+              </div>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="paginaDiario"
+                  class="form-input"
+                  placeholder="Página"
+                / aria-label="Página">
+              </div>
+              <div class="form-group">
+                <input
+                  type="url"
+                  id="linkDiario"
+                  class="form-input"
+                  placeholder="Link"
+                / aria-label="Link">
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="tagsAto"
+                  ><i class="fas fa-tags"></i> Palavras-chave</label
+                >
+                <div class="tags-input-wrapper">
+                  <input
+                    type="text"
+                    id="tagInput"
+                    placeholder="Digite e pressione Enter"
+                  / aria-label="Digite e pressione Enter">
+                  <div class="tags-list" id="tagsList"></div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="observacoesAto"
+                  ><i class="fas fa-sticky-note"></i> Observações</label
+                >
+                <textarea
+                  id="observacoesAto"
+                  class="form-input"
+                  rows="3"
+                 aria-label="observacoesAto"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeAtoModal()" type="button">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button
+            class="btn btn-primary"
+            id="btnSalvarAto"
+            onclick="salvarAto()"
+           type="button">
+            <i class="fas fa-save"></i> Salvar Ato
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE VISUALIZAÇÃO RÁPIDA                 -->
+    <!-- ============================================ -->
+    <div
+      id="viewAtoModal"
+      class="modal-overlay modal-full"
+      style="display: none"
+    >
+      <div class="modal-container modal-xl" style="max-width: 1100px">
+        <div class="modal-header">
+          <h2 id="viewAtoTitle">Visualizar Ato</h2>
+          <button
+            class="modal-close"
+            onclick="closeViewAtoModal()"
+            aria-label="Fechar"
+           type="button">
+            ✕
+          </button>
+        </div>
+
+        <div class="view-header-ato" id="viewAtoHeaderInfo">
+          <span id="viewAtoHeaderTexto"></span>
+        </div>
+
+        <div class="modal-body" style="padding: 0">
+          <div class="rel-layout-duas-colunas">
+            <div class="rel-col-form view-sidebar">
+              <div class="ato-meta-item">
+                <div class="label">Status</div>
+                <div class="value">
+                  <span id="viewAtoStatus" class="status-badge">—</span>
+                </div>
+              </div>
+              <div class="ato-meta-item">
+                <div class="label">Órgão</div>
+                <div class="value" id="viewAtoOrgao">—</div>
+              </div>
+              <div class="ato-meta-item">
+                <div class="label">Data de Publicação</div>
+                <div class="value" id="viewAtoDataPub">—</div>
+              </div>
+              <div
+                class="ato-meta-item"
+                id="viewAtoDiarioContainer"
+                style="display: none"
+              >
+                <div class="label">
+                  <i class="fas fa-newspaper"></i> Diário Oficial
+                </div>
+                <div class="value" id="viewAtoDiario">—</div>
+              </div>
+              <div
+                class="ato-meta-item"
+                id="viewAtoTagsContainer"
+                style="display: none"
+              >
+                <div class="label"><i class="fas fa-tags"></i> Tags</div>
+                <div class="value" id="viewAtoTags">—</div>
+              </div>
+              <div class="ato-meta-item">
+                <div class="label">Versão</div>
+                <div class="value" id="viewAtoVersao">—</div>
+              </div>
+
+              <div
+                class="ato-actions-sidebar"
+                style="
+                  margin-top: 24px;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 8px;
+                "
+              >
+                <button
+                  class="btn btn-primary btn-sm"
+                  id="viewBtnDownloadPDF"
+                  onclick="downloadPDFAdmin()"
+                 type="button">
+                  <i class="fas fa-download"></i> Baixar PDF
+                </button>
+                <button
+                  class="btn btn-outline btn-sm"
+                  onclick="copiarLinkPublico()"
+                 type="button">
+                  <i class="fas fa-copy"></i> Copiar Link Público
+                </button>
+                <button
+                  class="btn btn-outline btn-sm"
+                  onclick="abrirLinkPublico()"
+                 type="button">
+                  <i class="fas fa-external-link-alt"></i> Ver no Portal
+                </button>
+                <hr style="margin: 8px 0" />
+                <button
+                  class="btn btn-outline btn-sm"
+                  id="viewBtnEditar"
+                  onclick="editarAtoDoView()"
+                 type="button">
+                  <i class="fas fa-edit"></i> Editar Ato
+                </button>
+                <button
+                  class="btn btn-outline btn-sm"
+                  id="viewBtnGerenciarRels"
+                  onclick="gerenciarRelacionamentosDoView()"
+                 type="button">
+                  <i class="fas fa-link"></i> Gerenciar Relacionamentos
+                </button>
+              </div>
+            </div>
+
+            <div class="rel-col-list">
+              <div class="view-tabs">
+                <button class="view-tab active" data-tab="detalhes" type="button">
+                  <i class="fas fa-info-circle"></i> Detalhes
+                </button>
+                <button class="view-tab" data-tab="texto" type="button">
+                  <i class="fas fa-file-alt"></i> Texto Completo
+                </button>
+                <button class="view-tab" data-tab="linhatempo" type="button">
+                  <i class="fas fa-history"></i> Linha do Tempo
+                </button>
+                <button class="view-tab" data-tab="relacionamentos" type="button">
+                  <i class="fas fa-link"></i> Relacionamentos
+                </button>
+                <button class="view-tab" data-tab="alteracoes" type="button">
+                  <i class="fas fa-edit"></i> Alterações
+                </button>
+              </div>
+
+              <div class="view-tab-panel" id="tabDetalhes">
+                <div class="view-ato-detalhes">
+                  <p><strong>Tipo:</strong> <span id="viewAtoTipo">—</span></p>
+                  <p>
+                    <strong>Número/Ano:</strong>
+                    <span id="viewAtoNumeroAno">—</span>
+                  </p>
+                  <hr />
+                  <h4>Ementa</h4>
+                  <p
+                    id="viewAtoEmenta"
+                    style="font-size: 1rem; font-weight: 500"
+                  >
+                    —
+                  </p>
+                </div>
+              </div>
+
+              <div class="view-tab-panel hidden" id="tabTexto">
+                <h4>Texto Completo</h4>
+                <div
+                  class="texto-completo-view"
+                  id="viewAtoTextoCompleto"
+                  style="max-height: 500px"
+                ></div>
+              </div>
+
+              <div class="view-tab-panel hidden" id="tabLinhatempo">
+                <h4><i class="fas fa-history"></i> Linha do Tempo Normativa</h4>
+                <div id="viewAtoTimeline"></div>
+              </div>
+
+              <div class="view-tab-panel hidden" id="tabRelacionamentos">
+                <h4><i class="fas fa-link"></i> Relacionamentos</h4>
+                <div
+                  id="viewAtoRelacionamentosOrigem"
+                  style="margin-bottom: 16px"
+                ></div>
+                <div id="viewAtoRelacionamentosDestino"></div>
+              </div>
+
+              <div class="view-tab-panel hidden" id="tabAlteracoes">
+                <h4><i class="fas fa-edit"></i> Alterações em Dispositivos</h4>
+                <div id="viewAtoAlteracoesLista"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeViewAtoModal()" type="button">
+            <i class="fas fa-times"></i> Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE RELACIONAMENTOS                     -->
+    <!-- ============================================ -->
+    <div id="relacionamentoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-xl" style="max-width: 1100px">
+        <div class="modal-header">
+          <h2><i class="fas fa-link"></i> Gerenciar Relacionamentos</h2>
+          <button class="modal-close" onclick="closeRelacionamentoModal()" type="button">
+            ✕
+          </button>
+        </div>
+
+        <div class="rel-header-ato" id="relacionamentoAtoInfo">
+          <span id="relAtoInfoTexto"></span>
+        </div>
+
+        <div class="rel-modal-tabs">
+          <button class="rel-tab active" data-reltab="vinculos" type="button">
+            <i class="fas fa-link"></i> Vínculos entre Atos
+          </button>
+          <button class="rel-tab" data-reltab="dispositivos" type="button">
+            <i class="fas fa-edit"></i> Alterações em Dispositivos
+          </button>
+        </div>
+
+        <div class="modal-body" style="padding: 0">
+          <div class="rel-panel active" id="relPanelVinculos">
+            <div class="rel-layout-duas-colunas">
+              <div class="rel-col-form">
+                <h4 style="margin-bottom: 16px">Adicionar Vínculo</h4>
+                <div class="form-group">
+                  <label>Tipo</label>
+                  <select id="relTipo" class="form-input" aria-label="relTipo">
+                    <option value="revoga">Revoga</option>
+                    <option value="altera">Altera</option>
+                    <option value="regulamenta">Regulamenta</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Ato Relacionado</label>
+                  <select id="relAtoId" class="form-input" aria-label="relAtoId"></select>
+                </div>
+                <div
+                  class="checkbox-opcao"
+                  id="checkboxAtualizarStatusContainer"
+                  style="display: none"
+                >
+                  <input type="checkbox" id="chkAtualizarStatus" / aria-label="chkAtualizarStatus">
+                  <label for="chkAtualizarStatus"
+                    >Atualizar o status do ato alvo automaticamente (ex.: marcar
+                    como "Revogado")</label
+                  >
+                </div>
+                <button
+                  class="btn btn-primary btn-sm"
+                  onclick="adicionarRelacionamento()"
+                  style="margin-top: 12px"
+                 type="button">
+                  <i class="fas fa-plus-circle"></i> Adicionar Vínculo
+                </button>
+              </div>
+
+              <div class="rel-col-list">
+                <h4 style="margin-bottom: 12px">Vínculos Existentes</h4>
+                <div id="relacionamentosList">
+                  <p class="empty-state">Nenhum vínculo cadastrado.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rel-panel" id="relPanelDispositivos">
+            <div class="rel-layout-duas-colunas">
+              <div class="rel-col-form">
+                <h4 style="margin-bottom: 16px">Adicionar Alteração</h4>
+                <div class="form-group">
+                  <label>Ato Alvo</label>
+                  <select id="relDispositivoAtoId" class="form-input" aria-label="relDispositivoAtoId"></select>
+                </div>
+                <div class="form-group">
+                  <label>Identificador do Dispositivo</label>
+                  <input
+                    type="text"
+                    id="relIdentificadorDispositivo"
+                    class="form-input"
+                    placeholder="Ex: artigo1"
+                    autocomplete="off"
+                  / aria-label="Ex: artigo1">
+                  <small style="color: var(--neutral-500)"
+                    >Deve corresponder exatamente ao ID da âncora no texto
+                    completo do ato alvo.</small
+                  >
+                </div>
+                <div class="form-group">
+                  <label>Tipo</label>
+                  <select id="relTipoDispositivo" class="form-input" aria-label="relTipoDispositivo">
+                    <option value="revogado">Revogar</option>
+                    <option value="alterado">Alterar</option>
+                    <option value="acrescentado">Acrescentar</option>
+                  </select>
+                </div>
+                <div
+                  class="form-group"
+                  id="relNovoTextoGroup"
+                  style="display: none"
+                >
+                  <label>Novo Texto</label>
+                  <textarea
+                    id="relNovoTexto"
+                    class="form-input"
+                    rows="3"
+                    placeholder="Digite o novo texto do dispositivo..."
+                   aria-label="Digite o novo texto do dispositivo..."></textarea>
+                </div>
+                <button
+                  class="btn btn-primary btn-sm"
+                  onclick="adicionarAlteracaoDispositivo()"
+                 type="button">
+                  <i class="fas fa-pen"></i> Adicionar Alteração
+                </button>
+              </div>
+
+              <div class="rel-col-list">
+                <h4 style="margin-bottom: 12px">Alterações Existentes</h4>
+                <div id="alteracoesList">
+                  <p class="empty-state">Nenhuma alteração pontual.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeRelacionamentoModal()" type="button">
+            <i class="fas fa-times"></i> Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE ANEXOS                              -->
+    <!-- ============================================ -->
+    <div id="anexosModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2><i class="fas fa-paperclip"></i> Anexos</h2>
+          <button class="modal-close" onclick="closeAnexosModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="anexos-upload-area" id="anexosUploadArea">
+            <input
+              type="file"
+              id="anexoFileInput"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+              style="display: none"
+              multiple
+            / aria-label="anexoFileInput">
+            <div class="anexos-upload-label">
+              <i class="fas fa-cloud-upload-alt"></i> Arraste arquivos ou clique
+              para fazer upload
+            </div>
+            <div class="anexos-upload-hint">
+              Formatos aceitos: PDF, Word, Excel, Imagens (máx. 10MB cada)
+            </div>
+          </div>
+          <div
+            id="anexosUploadProgress"
+            style="
+              display: none;
+              margin-bottom: 16px;
+              background: var(--neutral-100);
+              border-radius: 20px;
+              overflow: hidden;
+            "
+          >
+            <div
+              id="anexosProgressBar"
+              style="
+                height: 6px;
+                background: var(--primary-600);
+                width: 0%;
+                transition: width 0.3s;
+              "
+            ></div>
+          </div>
+
+          <div class="anexos-lista" id="anexosLista">
+            <p class="empty-state">Carregando anexos...</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeAnexosModal()" type="button">
+            <i class="fas fa-times"></i> Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE HISTÓRICO (placeholder)             -->
+    <!-- ============================================ -->
+    <div id="historicoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2><i class="fas fa-history"></i> Histórico</h2>
+          <button class="modal-close" onclick="closeHistoricoModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="empty-state">Em desenvolvimento</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE TIPO DE ATO                         -->
+    <!-- ============================================ -->
+    <div id="tipoAtoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-sm">
+        <div class="modal-header">
+          <h2 id="tipoAtoModalTitle">Novo Tipo</h2>
+          <button class="modal-close" onclick="closeTipoAtoModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="tipoAtoForm">
+            <input type="hidden" id="tipoAtoId" />
+            <div class="form-group">
+              <label>Nome</label
+              ><input
+                type="text"
+                id="tipoAtoNome"
+                class="form-input"
+                required
+              / aria-label="tipoAtoNome">
+            </div>
+            <div class="form-group">
+              <label>Sigla</label
+              ><input
+                type="text"
+                id="tipoAtoSigla"
+                class="form-input"
+                required
+              / aria-label="tipoAtoSigla">
+            </div>
+            <div class="form-group">
+              <label>Ordem</label
+              ><input
+                type="number"
+                id="tipoAtoOrdem"
+                class="form-input"
+                value="0"
+              / aria-label="tipoAtoOrdem">
+            </div>
+            <div class="form-group">
+              <label>Ativo</label
+              ><select id="tipoAtoAtivo" class="form-input" aria-label="tipoAtoAtivo">
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeTipoAtoModal()" type="button">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-primary" onclick="salvarTipoAto()" type="button">
+            <i class="fas fa-save"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE ÓRGÃO (MANTIDO PARA COMPATIBILIDADE) -->
+    <!-- ============================================ -->
+    <div id="orgaoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2 id="orgaoModalTitle">Novo Órgão</h2>
+          <button class="modal-close" onclick="closeOrgaoModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="orgaoForm">
+            <input type="hidden" id="orgaoId" />
+            <div class="form-group">
+              <label>Nome</label
+              ><input type="text" id="orgaoNome" class="form-input" required / aria-label="orgaoNome">
+            </div>
+            <div class="form-group">
+              <label>Sigla</label
+              ><input
+                type="text"
+                id="orgaoSigla"
+                class="form-input"
+                placeholder="Ex: SEMAS"
+                required
+              / aria-label="Ex: SEMAS">
+            </div>
+            <div class="form-group">
+              <label>Tipo</label
+              ><select id="orgaoTipo" class="form-input" aria-label="orgaoTipo">
+                <option value="SECRETARIA">Secretaria</option>
+                <option value="PREFEITURA">Prefeitura</option>
+                <option value="CAMARA">Câmara</option>
+                <option value="SAAE">SAAE</option>
+                <option value="AUTARQUIA">Autarquia</option>
+                <option value="FUNDACAO">Fundação</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Gestor Atual</label
+              ><input
+                list="listaGestores"
+                id="orgaoGestor"
+                class="form-input"
+                placeholder="Digite ou selecione"
+              / aria-label="Digite ou selecione"><datalist id="listaGestores"></datalist
+              ><small>Novo gestor será cadastrado automaticamente</small>
+            </div>
+            <div class="form-group">
+              <label>Status</label
+              ><select id="orgaoStatus" class="form-input" aria-label="orgaoStatus">
+                <option value="true">Ativo</option>
+                <option value="false">Inativo</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeOrgaoModal()" type="button">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-primary" onclick="salvarOrgao()" type="button">
+            <i class="fas fa-save"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE GESTORES                            -->
+    <!-- ============================================ -->
+    <div id="gestoresModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2><i class="fas fa-users"></i> Gerenciar Gestores</h2>
+          <button class="modal-close" onclick="closeGestoresModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <div
+            id="orgaoGestorInfo"
+            style="margin-bottom: 15px; font-weight: bold"
+          ></div>
+          <button class="btn btn-primary btn-sm" onclick="abrirFormGestor()" type="button">
+            <i class="fas fa-plus-circle"></i> Novo Gestor
+          </button>
+          <div id="gestoresList" style="margin-top: 15px"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeGestoresModal()" type="button">
+            <i class="fas fa-times"></i> Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="gestorFormModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-sm">
+        <div class="modal-header">
+          <h2 id="gestorFormModalTitle">Novo Gestor</h2>
+          <button class="modal-close" onclick="closeGestorFormModal()" type="button">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="gestorForm">
+            <input type="hidden" id="gestorId" />
+            <input type="hidden" id="gestorOrgaoId" />
+            <div class="form-group">
+              <label>Nome</label
+              ><input type="text" id="gestorNome" class="form-input" required / aria-label="gestorNome">
+            </div>
+            <div class="form-group">
+              <label>Cargo</label
+              ><input type="text" id="gestorCargo" class="form-input" / aria-label="gestorCargo">
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label>Data Início</label
+                ><input
+                  type="date"
+                  id="gestorDataInicio"
+                  class="form-input"
+                  required
+                / aria-label="gestorDataInicio">
+              </div>
+              <div class="form-group">
+                <label>Data Fim</label
+                ><input type="date" id="gestorDataFim" class="form-input" / aria-label="gestorDataFim">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Observação</label
+              ><textarea
+                id="gestorObservacao"
+                class="form-input"
+                rows="2"
+               aria-label="gestorObservacao"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeGestorFormModal()" type="button">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-primary" onclick="salvarGestorHandler()" type="button">
+            <i class="fas fa-save"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE USUÁRIO (MANTIDO PARA COMPATIBILIDADE) -->
+    <!-- ============================================ -->
+    <div id="usuarioModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-sm">
+        <div class="modal-header">
+          <h2 id="usuarioModalTitle">Novo Usuário</h2>
+          <button class="modal-close" onclick="closeUsuarioModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="usuarioForm">
+            <input type="hidden" id="usuarioId" />
+            <div class="form-group">
+              <label>Nome</label
+              ><input
+                type="text"
+                id="usuarioNome"
+                class="form-input"
+                required
+              / aria-label="usuarioNome">
+            </div>
+            <div class="form-group">
+              <label>E-mail</label
+              ><input
+                type="email"
+                id="usuarioEmail"
+                class="form-input"
+                required
+              / aria-label="usuarioEmail">
+            </div>
+            <div class="form-group" id="senhaGroup">
+              <label>Senha</label
+              ><input
+                type="password"
+                id="usuarioSenha"
+                class="form-input"
+                placeholder="Mínimo 6 caracteres"
+                autocomplete="new-password"
+              / aria-label="Mínimo 6 caracteres">
+            </div>
+            <div class="form-group">
+              <label>Perfil</label
+              ><select id="usuarioPerfil" class="form-input" aria-label="usuarioPerfil">
+                <option value="ADMIN">Administrador</option>
+                <option value="SECRETARIO">Secretário</option>
+                <option value="SOLICITANTE">Solicitante</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeUsuarioModal()" type="button">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-primary" onclick="salvarUsuario()" type="button">
+            <i class="fas fa-save"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- LAYOUT PRINCIPAL                            -->
+    <!-- ============================================ -->
+    <div class="admin-layout">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <img
+            src="../brasao-pref.png"
+            alt="Brasão"
+            class="brasao-img"
+            onerror="
+              this.src =
+                'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%23f8fafc\' stroke=\'%230d5e3a\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'58\' font-size=\'12\' text-anchor=\'middle\' fill=\'%230f172a\'%3EPMG%3C/text%3E%3C/svg%3E'
+            "
+          />
+          <h2 id="pageTitle">Gestão de Atos Oficiais</h2>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-user">
+            <i class="fas fa-user-circle"></i> <span id="topbarUserName"></span>
+            <span class="badge-perfil" id="topbarUserPerfil"></span>
+          </div>
+          <button class="btn btn-outline btn-sm" id="logoutBtn" type="button">
+            <i class="fas fa-sign-out-alt"></i> Sair
+          </button>
+        </div>
+      </header>
+
+      <!-- CARDS DE NAVEGAÇÃO -->
+      <div class="cards-nav">
+        <div class="card-nav active" data-page="dashboard">
+          <div class="card-nav-icon"><i class="fas fa-chart-pie"></i></div>
+          <div class="card-nav-title">Dashboard</div>
+          <div class="card-nav-desc">Visão analítica</div>
+        </div>
+        <div class="card-nav" data-page="atos">
+          <div class="card-nav-icon"><i class="fas fa-file-signature"></i></div>
+          <div class="card-nav-title">Atos</div>
+          <div class="card-nav-desc">Registro e consulta</div>
+        </div>
+        <div class="card-nav" data-page="configuracoes">
+          <div class="card-nav-icon"><i class="fas fa-sliders-h"></i></div>
+          <div class="card-nav-title">Configurações</div>
+          <div class="card-nav-desc">Parâmetros</div>
+        </div>
+        <!-- ============================================================ -->
+        <!-- REMOVIDO: Card "Órgãos" e "Usuários" das configurações       -->
+        <!-- Agora gerenciados pelo módulo Core                           -->
+        <!-- ============================================================ -->
+      </div>
+
+      <!-- CONTEÚDO PRINCIPAL -->
+      <div class="content-area">
+        <nav
+          class="painel-breadcrumb"
+          id="painelBreadcrumb"
+          aria-label="Breadcrumb"
+        >
+          <a href="#" data-nav="dashboard">Painel</a>
+          <span class="separator">/</span>
+          <span class="current" id="painelBreadcrumbCurrent">Dashboard</span>
+        </nav>
+
+        <!-- DASHBOARD -->
+        <div class="page" id="pageDashboard">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-clock"></i> Atos Recentes</h3>
+              <button class="btn btn-primary btn-sm" id="novoAtoDashboardBtn" type="button">
+                <i class="fas fa-plus-circle"></i> Novo Ato
+              </button>
+            </div>
+            <div class="card-body table-wrapper">
+              <table class="table" id="tableAtosRecentes" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Nº/Ano</th>
+                    <th>Órgão</th>
+                    <th>Ementa</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card stat-verde">
+              <div style="display: flex; align-items: center; gap: 16px">
+                <div class="stat-icon-wrapper">
+                  <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number" id="statTotalAtos">0</span>
+                  <span class="stat-label">Total de Atos</span>
+                </div>
+              </div>
+              <div class="stat-breakdown" id="breakdownTotal">
+                <div class="breakdown-loading">Carregando...</div>
+              </div>
+            </div>
+            <div class="stat-card stat-azul">
+              <div style="display: flex; align-items: center; gap: 16px">
+                <div class="stat-icon-wrapper">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number" id="statVigentes">0</span>
+                  <span class="stat-label">Vigentes</span>
+                </div>
+              </div>
+              <div class="stat-breakdown" id="breakdownVigentes">
+                <div class="breakdown-loading">Carregando...</div>
+              </div>
+            </div>
+            <div class="stat-card stat-vermelho">
+              <div style="display: flex; align-items: center; gap: 16px">
+                <div class="stat-icon-wrapper">
+                  <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number" id="statRevogados">0</span>
+                  <span class="stat-label">Revogados</span>
+                </div>
+              </div>
+              <div class="stat-breakdown" id="breakdownRevogados">
+                <div class="breakdown-loading">Carregando...</div>
+              </div>
+            </div>
+            <div class="stat-card stat-amarelo">
+              <div style="display: flex; align-items: center; gap: 16px">
+                <div class="stat-icon-wrapper">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number" id="statAlterados">0</span>
+                  <span class="stat-label">Alterados</span>
+                </div>
+              </div>
+              <div class="stat-breakdown" id="breakdownAlterados">
+                <div class="breakdown-loading">Carregando...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PÁGINA DE ATOS -->
+        <div class="page" id="pageAtos" style="display: none">
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <button class="btn btn-primary" id="novoAtoBtn" type="button">
+                <i class="fas fa-plus-circle"></i> Novo Ato
+              </button>
+              <button class="btn btn-outline" onclick="exportarLista('pdf')" type="button">
+                <i class="fas fa-file-pdf"></i> Exportar PDF
+              </button>
+              <button class="btn btn-outline" onclick="exportarLista('excel')" type="button">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+              </button>
+            </div>
+            <div class="toolbar-right" id="totalRegistros">Total: 0</div>
+          </div>
+
+          <!-- Busca Reversa -->
+          <div class="busca-reversa-container" id="buscaReversaContainer">
+            <h4>
+              <i class="fas fa-search"></i> Busca Reversa: "Quais atos afetam um
+              dispositivo?"
+            </h4>
+            <div class="busca-reversa-input-group">
+              <input
+                type="text"
+                id="buscaReversaInput"
+                class="form-input"
+                placeholder="Identificador (ex.: artigo5)"
+              / aria-label="Identificador (ex.: artigo5)">
+              <div class="busca-reversa-autocomplete-wrapper">
+                <input
+                  type="text"
+                  id="buscaReversaAtoInput"
+                  class="form-input"
+                  placeholder="Nº do Ato (opcional)"
+                  autocomplete="off"
+                / aria-label="Nº do Ato (opcional)">
+                <div
+                  class="busca-reversa-sugestoes"
+                  id="buscaReversaSugestoes"
+                ></div>
+              </div>
+              <button
+                class="btn btn-primary btn-sm"
+                onclick="executarBuscaReversa()"
+               type="button">
+                <i class="fas fa-search"></i> Buscar
+              </button>
+            </div>
+            <div
+              class="busca-reversa-resultados"
+              id="buscaReversaResultados"
+            ></div>
+          </div>
+
+          <div class="filtros-bar">
+            <div class="filtro-group">
+              <label>Tipo</label
+              ><select id="filtroTipo" class="form-input" aria-label="filtroTipo">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="filtro-group">
+              <label>Ano</label
+              ><select id="filtroAno" class="form-input" aria-label="filtroAno">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="filtro-group">
+              <label>Órgão</label
+              ><select id="filtroOrgao" class="form-input" aria-label="filtroOrgao">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="filtro-group">
+              <label>Status</label
+              ><select id="filtroStatus" class="form-input" aria-label="filtroStatus">
+                <option value="">Todos</option>
+                <option value="Vigente">Vigente</option>
+                <option value="Revogado">Revogado</option>
+                <option value="Alterado">Alterado</option>
+              </select>
+            </div>
+            <div class="filtro-group">
+              <label>Buscar</label
+              ><input
+                type="text"
+                id="filtroBusca"
+                class="form-input"
+                placeholder="Nº, ementa..."
+              / aria-label="Nº, ementa...">
+            </div>
+            <button class="btn btn-outline btn-sm" id="btnLimparFiltros" type="button">
+              <i class="fas fa-undo-alt"></i> Limpar
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-body table-wrapper">
+              <table class="table" id="tableAtos" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Número/Ano</th>
+                    <th>Órgão</th>
+                    <th>Ementa</th>
+                    <th>Status</th>
+                    <th>Data Pub.</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tableAtosBody"></tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <button class="btn-page" id="btnPagAnterior" disabled type="button">
+                <i class="fas fa-chevron-left"></i> Anterior
+              </button>
+              <span class="page-info" id="pageInfoAtos">Página 1 de 1</span>
+              <button class="btn-page" id="btnPagProximo" disabled type="button">
+                Próximo <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PÁGINA DE CONFIGURAÇÕES -->
+        <div class="page" id="pageConfiguracoes" style="display: none">
+          <div class="config-inline-wrapper">
+            <div class="config-tabs">
+              <button class="config-tab active" data-tab="tipos" type="button">
+                <i class="fas fa-tags"></i> Tipos de Ato
+              </button>
+              <!-- ============================================================ -->
+              <!-- REMOVIDOS: Abas "Órgãos" e "Usuários" das configurações      -->
+              <!-- Agora gerenciados pelo módulo Core                           -->
+              <!-- ============================================================ -->
+              <!-- <button class="config-tab" data-tab="orgaos" type="button">               -->
+              <!--   <i class="fas fa-building"></i> Órgãos                    -->
+              <!-- </button>                                                  -->
+              <!-- <button class="config-tab" data-tab="usuarios" type="button">             -->
+              <!--   <i class="fas fa-users"></i> Usuários                    -->
+              <!-- </button>                                                  -->
+              <button class="config-tab" data-tab="portal" type="button">
+                <i class="fas fa-globe"></i> Portal
+              </button>
+            </div>
+            <div class="config-panels">
+              <!-- Tipos de Ato -->
+              <div class="config-panel active" id="configTiposPanel">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <h3>Tipos de Ato</h3>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    onclick="abrirModalTipoAto()"
+                   type="button">
+                    <i class="fas fa-plus-circle"></i> Novo Tipo
+                  </button>
+                </div>
+                <div class="table-wrapper">
+                  <table class="table" id="tableTiposAtoInline" aria-label="Tabela de dados">
+                    <thead>
+                      <tr>
+                        <th style="width: 40px">
+                          <span class="sr-only">Reordenar</span>
+                        </th>
+                        <th>Nome</th>
+                        <th>Sigla</th>
+                        <th>Ordem</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableTiposAtoBodyInline">
+                      <tr>
+                        <td colspan="6" class="empty-state">Carregando...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- Órgãos - REMOVIDO, agora no Core -->
+              <!-- Usuários - REMOVIDO, agora no Core -->
+              <!-- Portal -->
+              <div
+                class="config-panel"
+                id="configPortalPanel"
+                style="display: none"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <h3>
+                    <i class="fas fa-globe"></i> Configurações do Portal Público
+                  </h3>
+                </div>
+                <form id="portalConfigForm">
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>E-mail de Contato</label>
+                      <input
+                        type="email"
+                        id="cfgEmail"
+                        class="form-input"
+                        placeholder="transparencia@prefeitura.gov.br"
+                      / aria-label="transparencia@prefeitura.gov.br">
+                    </div>
+                    <div class="form-group">
+                      <label>Telefone de Contato</label>
+                      <input
+                        type="text"
+                        id="cfgTelefone"
+                        class="form-input"
+                        placeholder="(00) 0000-0000"
+                      / aria-label="(00) 0000 0000">
+                    </div>
+                  </div>
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>Endereço</label>
+                      <input
+                        type="text"
+                        id="cfgEndereco"
+                        class="form-input"
+                        placeholder="Praça Municipal, s/n — Centro"
+                      / aria-label="Praça Municipal, s/n — Centro">
+                    </div>
+                    <div class="form-group">
+                      <label>Horário de Atendimento</label>
+                      <input
+                        type="text"
+                        id="cfgHorario"
+                        class="form-input"
+                        placeholder="Seg a Sex, 8h às 17h"
+                      / aria-label="Seg a Sex, 8h às 17h">
+                    </div>
+                  </div>
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>E-mail da Ouvidoria</label>
+                      <input
+                        type="email"
+                        id="cfgOuvidoria"
+                        class="form-input"
+                        placeholder="ouvidoria@prefeitura.gov.br"
+                      / aria-label="ouvidoria@prefeitura.gov.br">
+                    </div>
+                    <div class="form-group">
+                      <label>URL do Diário Oficial</label>
+                      <input
+                        type="url"
+                        id="cfgDiarioUrl"
+                        class="form-input"
+                        placeholder="https://www.diariomunicipal.com.br/amp/"
+                      / aria-label="https://www.diariomunicipal.com.br/amp/">
+                    </div>
+                  </div>
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>CNPJ da Prefeitura</label>
+                      <input
+                        type="text"
+                        id="cfgCnpj"
+                        class="form-input"
+                        placeholder="XX.XXX.XXX/0001-XX"
+                      / aria-label="XX.XXX.XXX/0001 XX">
+                    </div>
+                    <div class="form-group">
+                      <label>Nome do Prefeito(a)</label>
+                      <input
+                        type="text"
+                        id="cfgPrefeito"
+                        class="form-input"
+                        placeholder="Nome do atual gestor"
+                      / aria-label="Nome do atual gestor">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Responsável pelo Portal</label>
+                    <input
+                      type="text"
+                      id="cfgResponsavel"
+                      class="form-input"
+                      placeholder="Departamento de TI / Setor de Transparência"
+                    / aria-label="Departamento de TI / Setor de Transparência">
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="salvarConfiguracoesPortal()"
+                  >
+                    <i class="fas fa-save"></i> Salvar Configurações
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SCRIPT DE PLACEHOLDERS GLOBAIS              -->
+    <!-- ============================================ -->
+    <script>
+      // Placeholders para evitar ReferenceError antes do módulo carregar
+      function noop() {}
+      function closeAtoModal() {
+        if (window.formAlterado) {
+          if (confirm("Há alterações não salvas. Deseja realmente fechar?")) {
+            document.getElementById("atoModal").style.display = "none";
+            window.desmarcarFormAlterado && window.desmarcarFormAlterado();
+          }
+        } else {
+          document.getElementById("atoModal").style.display = "none";
+        }
+      }
+      function closeViewAtoModal() {
+        document.getElementById("viewAtoModal").style.display = "none";
+      }
+      function closeRelacionamentoModal() {
+        document.getElementById("relacionamentoModal").style.display = "none";
+      }
+      function closeAnexosModal() {
+        document.getElementById("anexosModal").style.display = "none";
+      }
+      function closeHistoricoModal() {
+        document.getElementById("historicoModal").style.display = "none";
+      }
+      function closeTipoAtoModal() {
+        document.getElementById("tipoAtoModal").style.display = "none";
+      }
+      function closeOrgaoModal() {
+        document.getElementById("orgaoModal").style.display = "none";
+      }
+      function closeGestoresModal() {
+        document.getElementById("gestoresModal").style.display = "none";
+      }
+      function closeGestorFormModal() {
+        document.getElementById("gestorFormModal").style.display = "none";
+      }
+      function closeUsuarioModal() {
+        document.getElementById("usuarioModal").style.display = "none";
+      }
+      function downloadPDFAdmin() {}
+      function salvarAto() {}
+      function exportarLista() {}
+      function copiarLinkPublico() {}
+      function abrirLinkPublico() {}
+      function editarAtoDoView() {}
+      function gerenciarRelacionamentosDoView() {}
+      function executarBuscaReversa() {}
+      function salvarConfiguracoesPortal() {}
+      function visualizarAto() {}
+      function editarAto() {}
+      function gerenciarRelacionamentos() {}
+      function abrirAnexosModal() {}
+      function abrirHistoricoModal() {}
+      function confirmarExcluirAto() {}
+      function editarTipoAto() {}
+      function excluirTipoAto() {}
+      function editarOrgao() {}
+      function excluirOrgao() {}
+      function gerenciarGestores() {}
+      function editarGestor() {}
+      function excluirGestorHandler() {}
+      function editarUsuario() {}
+      function excluirUsuario() {}
+      function abrirAtoModal() {}
+      function removerRelacionamento() {}
+      function removerAlteracaoDispositivo() {}
+      function excluirAnexo() {}
+      function fazerLogout() {}
+      function downloadPDF() {}
+
+      // Exposição global
+      Object.assign(window, {
+        closeAtoModal,
+        closeViewAtoModal,
+        closeRelacionamentoModal,
+        closeAnexosModal,
+        closeHistoricoModal,
+        closeTipoAtoModal,
+        closeOrgaoModal,
+        closeGestoresModal,
+        closeGestorFormModal,
+        closeUsuarioModal,
+        downloadPDFAdmin,
+        salvarAto,
+        exportarLista,
+        copiarLinkPublico,
+        abrirLinkPublico,
+        editarAtoDoView,
+        gerenciarRelacionamentosDoView,
+        executarBuscaReversa,
+        salvarConfiguracoesPortal,
+        visualizarAto,
+        editarAto,
+        gerenciarRelacionamentos,
+        abrirAnexosModal,
+        abrirHistoricoModal,
+        confirmarExcluirAto,
+        editarTipoAto,
+        excluirTipoAto,
+        editarOrgao,
+        excluirOrgao,
+        gerenciarGestores,
+        editarGestor,
+        excluirGestorHandler,
+        editarUsuario,
+        excluirUsuario,
+        abrirAtoModal,
+        removerRelacionamento,
+        removerAlteracaoDispositivo,
+        excluirAnexo,
+        fazerLogout,
+        downloadPDF,
+      });
+    </script>
+
+    <!-- SortableJS (CDN) para drag-and-drop -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"
+      defer
+    ></script>
+
+    <!-- Módulo principal do painel -->
+    <script type="module" src="painel-adm-atos-oficiais.js"></script>
+  </body>
+</html>

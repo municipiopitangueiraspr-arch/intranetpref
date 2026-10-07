@@ -1,0 +1,236 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<!-- ============================================================ -->
+<!-- MÓDULO · RELATÓRIOS                                          -->
+<!-- ------------------------------------------------------------ -->
+<!-- Este arquivo é o ESQUELETO da view de Relatórios.            -->
+<!-- Ele contém apenas a ESTRUTURA vazia dos dois "modos" da      -->
+<!-- tela:                                                         -->
+<!--                                                               -->
+<!--   · MODO ÍNDICE     → lista de cards com os 6 relatórios     -->
+<!--   · MODO ATIVO      → cabeçalho + filtros + KPIs + gráfico   -->
+<!--                        + tabela + ações (exportar)            -->
+<!--                                                               -->
+<!-- TODO o conteúdo dinâmico (cards, resultados, gráficos) é     -->
+<!-- injetado pelo módulo relatorios.js em tempo de execução.     -->
+<!--                                                               -->
+<!-- O JS usa os IDs / classes abaixo como "contrato":            -->
+<!--   · #relatoriosContent          (container principal)         -->
+<!--   · #relatoriosIndice           (área do índice de cards)     -->
+<!--   · #relatoriosAtivo            (área do relatório aberto)    -->
+<!--                                                               -->
+<!-- Padrão visual espelha o restante do sistema:                  -->
+<!--   · Cards clicáveis com hover (igual aos indicadores)         -->
+<!--   · Header com botão voltar (igual ao detalhes-ata)           -->
+<!--   · Filtros em linha (igual aos filtros de pedidos)           -->
+<!--   · Tabela com o mesmo estilo `.tabela-itens` do sistema      -->
+<!--   · Botões de exportar idênticos aos de pedidos               -->
+<!-- ============================================================ -->
+
+<div class="relatorios-container" id="relatoriosContent">
+  <!-- ============================================================ -->
+  <!-- MODO 1 · ÍNDICE DE RELATÓRIOS                                  -->
+  <!-- ------------------------------------------------------------ -->
+  <!-- Este bloco é o que o usuário vê ao clicar em "Relatórios"    -->
+  <!-- no menu lateral. Contém 6 cards, um por relatório.            -->
+  <!-- O JS preenche o #relatoriosIndiceGrid com os cards.           -->
+  <!--                                                              -->
+  <!-- Estrutura:                                                    -->
+  <!--   · Header com título + subtítulo                            -->
+  <!--   · Grid responsivo com os cards                              -->
+  <!--                                                              -->
+  <!-- Ao clicar num card, o JS esconde este bloco e mostra o        -->
+  <!-- #relatoriosAtivo, que é o "modo 2".                          -->
+  <!-- ============================================================ -->
+  <div class="relatorios-indice" id="relatoriosIndice">
+    <!-- ---------- Cabeçalho do índice ---------- -->
+    <div class="relatorios-indice-header">
+      <div class="relatorios-indice-titulo-wrapper">
+        <h2 class="relatorios-indice-titulo">
+          <i class="fas fa-chart-bar"></i>
+          Relatórios
+        </h2>
+        <p class="relatorios-indice-subtitulo">
+          Selecione um relatório para visualizar e exportar
+        </p>
+      </div>
+    </div>
+
+    <!-- ---------- Grid de cards (preenchido pelo JS) ---------- -->
+    <!--
+      O JS injeta os 6 cards aqui. Cada card tem:
+        · data-relatorio="atas_vencendo" (id único)
+        · ícone + título + descrição curta
+        · classe .relatorio-card (hover/elevação)
+      O clique é tratado por DELEGAÇÃO (um único listener no grid).
+    -->
+    <div class="relatorios-indice-grid" id="relatoriosIndiceGrid">
+      <!-- Conteúdo dinâmico renderizado por relatorios.js -->
+      <!-- Skeleton inicial (substituído assim que o JS monta os cards) -->
+      <div class="relatorio-card-skeleton">
+        <div class="skeleton-line skeleton-line-lg"></div>
+        <div class="skeleton-line skeleton-line-md"></div>
+      </div>
+      <div class="relatorio-card-skeleton">
+        <div class="skeleton-line skeleton-line-lg"></div>
+        <div class="skeleton-line skeleton-line-md"></div>
+      </div>
+      <div class="relatorio-card-skeleton">
+        <div class="skeleton-line skeleton-line-lg"></div>
+        <div class="skeleton-line skeleton-line-md"></div>
+      </div>
+      <div class="relatorio-card-skeleton">
+        <div class="skeleton-line skeleton-line-lg"></div>
+        <div class="skeleton-line skeleton-line-md"></div>
+      </div>
+      <div class="relatorio-card-skeleton">
+        <div class="skeleton-line skeleton-line-lg"></div>
+        <div class="skeleton-line skeleton-line-md"></div>
+      </div>
+      <div class="relatorio-card-skeleton">
+        <div class="skeleton-line skeleton-line-lg"></div>
+        <div class="skeleton-line skeleton-line-md"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODO 2 · RELATÓRIO ATIVO                                      -->
+  <!-- ------------------------------------------------------------ -->
+  <!-- Este bloco começa OCULTO (style="display: none") e é         -->
+  <!-- mostrado pelo JS quando o usuário clica num card.             -->
+  <!--                                                              -->
+  <!-- Estrutura:                                                    -->
+  <!--   1. Header com botão ← Voltar + título + subtítulo          -->
+  <!--   2. Área de filtros (injetada dinamicamente pelo JS)         -->
+  <!--   3. Área de KPIs (injetada pelo JS)                          -->
+  <!--   4. Área do gráfico (injetada pelo JS quando aplicável)      -->
+  <!--   5. Área da tabela (injetada pelo JS)                        -->
+  <!--   6. Rodapé com botões de exportação                          -->
+  <!--                                                              -->
+  <!-- Os blocos 2 a 5 têm IDs próprios para o JS referenciar.       -->
+  <!-- ============================================================ -->
+  <div class="relatorios-ativo" id="relatoriosAtivo" style="display: none">
+    <!-- ---------- Cabeçalho do relatório ativo ---------- -->
+    <div class="relatorios-ativo-header">
+      <!-- Botão Voltar (delegação — data-action="voltar-indice") -->
+      <button
+        type="button"
+        class="btn-voltar-relatorio"
+        id="btnVoltarRelatorio"
+        data-action="voltar-indice"
+        title="Voltar para a lista de relatórios"
+      >
+        <i class="fas fa-arrow-left"></i>
+        <span>Voltar</span>
+      </button>
+
+      <!-- Título + subtítulo (preenchidos pelo JS) -->
+      <div class="relatorios-ativo-titulo-wrapper">
+        <h2 class="relatorios-ativo-titulo" id="relatoriosAtivoTitulo">
+          <!-- Preenchido pelo JS: ex: "Atas Vencendo em X Dias" -->
+          <i class="fas fa-chart-bar"></i>
+          <span class="relatorios-ativo-titulo-texto">Relatório</span>
+        </h2>
+        <p class="relatorios-ativo-subtitulo" id="relatoriosAtivoSubtitulo">
+          <!-- Preenchido pelo JS: ex: "Atas que vencem nos próximos X dias" -->
+        </p>
+      </div>
+    </div>
+
+    <!-- ---------- Área de filtros (dinâmica) ---------- -->
+    <!--
+      O JS injeta aqui o formulário de filtros específico do
+      relatório ativo. Cada relatório tem seus próprios campos:
+        · "atas_vencendo"          → [X] dias
+        · "consumo_por_orgao"      → data início + data fim
+        · "consumo_por_categoria"  → data início + data fim
+        · "pedidos_por_status"     → data início + data fim
+        · "pedidos_pendentes"      → [X] dias
+        · "ranking_fornecedores"   → data início + data fim + ordenação
+    -->
+    <div class="relatorios-filtros" id="relatoriosFiltros">
+      <!-- Conteúdo dinâmico renderizado por relatorios.js -->
+    </div>
+
+    <!-- ---------- Área de KPIs (dinâmica) ---------- -->
+    <!--
+      Cards compactos com números-chave do relatório.
+      Ex: total de atas, valor somado, ticket médio.
+      O JS injeta 2-4 KPIs conforme o relatório.
+    -->
+    <div class="relatorios-kpis" id="relatoriosKpis" style="display: none">
+      <!-- Conteúdo dinâmico renderizado por relatorios.js -->
+    </div>
+
+    <!-- ---------- Área do gráfico (dinâmica, opcional) ---------- -->
+    <!--
+      Presente em todos os relatórios EXCETO "pedidos_pendentes".
+      O JS mostra/esconde este bloco conforme o relatório ativo
+      e injeta um <canvas> para o Chart.js desenhar.
+    -->
+    <div
+      class="relatorios-grafico-wrapper"
+      id="relatoriosGraficoWrapper"
+      style="display: none"
+    >
+      <div class="relatorios-grafico-card">
+        <div class="relatorios-grafico-header">
+          <h3 class="relatorios-grafico-titulo" id="relatoriosGraficoTitulo">
+            <i class="fas fa-chart-pie"></i>
+            Visualização
+          </h3>
+        </div>
+        <div class="relatorios-grafico-body" id="relatoriosGraficoBody">
+          <!-- O JS injeta um <canvas id="relatoriosGraficoCanvas"> aqui -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- Área da tabela (dinâmica) ---------- -->
+    <!--
+      O JS injeta a tabela com os resultados formatados.
+      O contador mostra "N registros encontrados".
+    -->
+    <div class="relatorios-resultado" id="relatoriosResultado">
+      <div class="relatorios-resultado-header">
+        <span class="relatorios-contador" id="relatoriosContador">
+          Carregando...
+        </span>
+      </div>
+
+      <div class="relatorios-tabela-container" id="relatoriosTabelaContainer">
+        <!-- Conteúdo dinâmico renderizado por relatorios.js -->
+      </div>
+    </div>
+
+    <!-- ---------- Rodapé de ações (exportação) ---------- -->
+    <!--
+      Botões de exportar SEMPRE visíveis no rodapé do relatório ativo.
+      O JS desabilita-os se não houver dados carregados.
+    -->
+    <div class="relatorios-acoes">
+      <button
+        type="button"
+        class="btn-exportar-relatorio btn-exportar-csv"
+        id="btnExportarRelatorioCSV"
+        title="Exportar resultado para CSV"
+      >
+        <i class="fas fa-file-csv"></i>
+        <span>Exportar CSV</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn-exportar-relatorio btn-exportar-pdf"
+        id="btnExportarRelatorioPDF"
+        title="Exportar resultado para PDF"
+      >
+        <i class="fas fa-file-pdf"></i>
+        <span>Exportar PDF</span>
+      </button>
+    </div>
+  </div>
+</div>

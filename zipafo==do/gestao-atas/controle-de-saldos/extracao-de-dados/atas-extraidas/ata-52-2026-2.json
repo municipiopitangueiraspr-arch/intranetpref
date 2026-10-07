@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "71-72",
+    "processo_origem": "6/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "52/2026",
+    "numero_contratacao": "1481",
+    "numero_processo": "6/2026",
+    "numero_pregao": "6",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-26",
+    "vigencia_inicio": "2026-06-26",
+    "vigencia_fim": "2027-06-26",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06 e Lei Municipal nº 690/2021, eventual aquisição de material de limpeza e higiene.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "LC COMERCIO DE EMBALAGENS LTDA.",
+    "cnpj": "47.190.313/0001-13"
+  },
+  "itens": [
+    {
+      "numero": "31",
+      "descricao": "SACO PARA FREEZER, CAPACIDADE PARA 5 QUILOS COM 50 UNIDADES 28 CM X 42 CM.",
+      "unidade_medida": "UN",
+      "valor_unitario": 5.46,
+      "quantidade_contratada": 300.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 173.0,
+      "quantidade_saldo": 127.0,
+      "valor_total": 1638.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 944.58,
+      "valor_saldo": 693.42,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 1638.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 944.58,
+    "valor_saldo_geral": 693.42
+  },
+  "observacoes": "Ata 52/2026 — LC COMERCIO DE EMBALAGENS (Processo 6/2026). 1 item: Saco para freezer. Saldo do PDF: R$ 693,42. ⚠️ Nº Ata 52/2026 em conflito com Ata 52/2026 da RESIST CONSTRUÇÕES (Processo 34/2026).",
+  "anexos": []
+}

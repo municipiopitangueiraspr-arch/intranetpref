@@ -1,0 +1,524 @@
+/* ============================================ */
+/* controle-de-saldos/css/carrinho-page.css     */
+/* VIEW de Carrinho — SPA integrada ao layout.  */
+/*                                               */
+/* Herdado do design system (NÃO duplicar):      */
+/*   · shared/css/intranet-base.css              */
+/*     → .page-header, .topbar, .sidebar,       */
+/*       .main-area, .conteudo,                 */
+/*       .loading-container, .loading-spinner,  */
+/*       .btn-voltar, .user-info, .user-avatar, */
+/*       .btn-logout, variáveis CSS             */
+/*   · shared/css/componentes.css                */
+/*     → .btn, .toast, .notification-center,    */
+/*       .modal, .empty-state, .badge, etc.     */
+/*                                               */
+/* Este arquivo cobre APENAS o que é EXCLUSIVO   */
+/* da view de carrinho.                          */
+/*                                               */
+/* ✅ ATUALIZADO · O modal de finalização        */
+/* (`#modalFinalizacao`) foi MOVIDO para         */
+/* `gestao-atas.css` / `gestao-atas.html` — agora  */
+/* vive no HTML principal desde o boot.          */
+/* Aqui ficam só:                                */
+/*   · Wrapper da view                           */
+/*   · Breadcrumb                                */
+/*   · Estado vazio                              */
+/*   · Grupos por ATA                            */
+/*   · Tabela de itens                           */
+/*   · Resumo (subtotal + total + ações)         */
+/*   · Responsividade                            */
+/* ============================================ */
+
+/* ============================================ */
+/* WRAPPER DA VIEW                              */
+/* ============================================ */
+.carrinho-view {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+  animation: fadeInCarrinho 0.3s ease-out;
+}
+
+@keyframes fadeInCarrinho {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================ */
+/* BREADCRUMB                                   */
+/* ============================================ */
+.breadcrumb-carrinho {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--neutral-500);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-carrinho a {
+  color: var(--primary-600);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition-base);
+  cursor: pointer;
+}
+
+.breadcrumb-carrinho a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-carrinho .separator {
+  color: var(--neutral-300);
+}
+
+.breadcrumb-carrinho .current {
+  color: var(--neutral-700);
+  font-weight: 600;
+}
+
+/* ============================================ */
+/* CARRINHO VAZIO                               */
+/* ============================================ */
+.carrinho-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  background: white;
+  border-radius: var(--border-radius-2xl);
+  border: 1px solid var(--neutral-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.carrinho-empty .empty-icon {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--neutral-50);
+  color: var(--neutral-300);
+  font-size: 4.5rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carrinho-empty h2 {
+  font-size: 1.5rem;
+  color: var(--neutral-700);
+  margin-bottom: 8px;
+}
+
+.carrinho-empty p {
+  color: var(--neutral-500);
+  margin-bottom: 24px;
+  max-width: 400px;
+}
+
+/* ============================================ */
+/* BOTÃO CONTINUAR COMPRANDO                    */
+/* ============================================ */
+.btn-continuar-comprando {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-lg);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-continuar-comprando:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================================ */
+/* GRUPO DE ITENS POR ATA                       */
+/* ============================================ */
+.carrinho-grupo-ata {
+  background: white;
+  border-radius: var(--border-radius-2xl);
+  border: 1px solid var(--neutral-200);
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+}
+
+.carrinho-grupo-ata:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.carrinho-grupo-header {
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--neutral-50), white);
+  border-bottom: 1px solid var(--neutral-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.carrinho-grupo-titulo {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--neutral-800);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carrinho-grupo-titulo i {
+  color: var(--primary-600);
+}
+
+.carrinho-grupo-fornecedor {
+  font-size: 0.85rem;
+  color: var(--neutral-500);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.carrinho-grupo-fornecedor i {
+  color: var(--neutral-400);
+}
+
+/* ============================================ */
+/* TABELA DE ITENS                              */
+/* ============================================ */
+.tabela-container {
+  overflow-x: auto;
+}
+
+.tabela-carrinho {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabela-carrinho th {
+  background: var(--neutral-50);
+  padding: 14px 20px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.tabela-carrinho td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--neutral-100);
+  vertical-align: middle;
+  color: var(--neutral-700);
+}
+
+.tabela-carrinho tbody tr {
+  transition: background 0.2s;
+}
+
+.tabela-carrinho tbody tr:hover td {
+  background: var(--neutral-50);
+}
+
+.tabela-carrinho tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-carrinho .numeric {
+  text-align: right;
+}
+
+.tabela-carrinho .item-numero {
+  color: var(--neutral-500);
+  font-weight: 600;
+}
+
+.tabela-carrinho .item-descricao {
+  font-weight: 500;
+  color: var(--neutral-800);
+}
+
+.tabela-carrinho .item-total {
+  font-weight: 700;
+  color: var(--primary-700);
+}
+
+.tabela-carrinho .item-remover {
+  background: none;
+  border: none;
+  color: var(--neutral-400);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-base);
+  font-size: 0.9rem;
+}
+
+.tabela-carrinho .item-remover:hover {
+  color: var(--error-600);
+  background: var(--error-50);
+}
+
+/* ---------- Subtotal (tfoot) ---------- */
+.tabela-carrinho tfoot td {
+  padding: 14px 20px;
+  border-top: 2px solid var(--neutral-200);
+  background: var(--neutral-50);
+  font-weight: 600;
+}
+
+.tabela-carrinho tfoot .subtotal-valor {
+  color: var(--primary-700);
+  font-size: 1.05rem;
+}
+
+/* ============================================ */
+/* RESUMO DO CARRINHO (sticky no rodapé)        */
+/* ============================================ */
+.carrinho-resumo {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--border-radius-2xl);
+  border: 1px solid var(--neutral-200);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-md);
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: sticky;
+  bottom: 0;
+}
+
+.carrinho-resumo-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.carrinho-resumo-left .total-itens {
+  font-size: 0.85rem;
+  color: var(--neutral-500);
+}
+
+.carrinho-resumo-left .total-itens strong {
+  color: var(--neutral-700);
+  font-weight: 700;
+}
+
+.carrinho-total {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.carrinho-total .total-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+}
+
+.carrinho-total-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary-700);
+}
+
+.carrinho-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ============================================ */
+/* BOTÕES DE AÇÃO (Limpar / Finalizar)          */
+/* ============================================ */
+.btn-limpar-carrinho {
+  padding: 10px 20px;
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-lg);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.btn-limpar-carrinho:hover {
+  background: var(--neutral-200);
+}
+
+.btn-finalizar-pedido {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-lg);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: inherit;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-finalizar-pedido:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-finalizar-pedido:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ============================================ */
+/* ✅ NOVO · ESTILOS DO MODAL DE FINALIZAÇÃO    */
+/* ------------------------------------------------------------ */
+/* O modal `#modalFinalizacao` foi MOVIDO para gestao-atas.html  */
+/* e ganhou seus estilos em gestao-atas.css para reuso global.   */
+/* Este arquivo NÃO redefine mais o modal — apenas complementa  */
+/* com ajustes específicos da view SPA (ex: quando aberto       */
+/* a partir da própria tela do carrinho).                       */
+/*                                                              */
+/* Nada aqui para o modal — tudo em gestao-atas.css.             */
+/* ============================================ */
+
+/* ============================================ */
+/* RESPONSIVIDADE                               */
+/* ============================================ */
+@media (max-width: 768px) {
+  .carrinho-view {
+    padding: 16px;
+  }
+
+  .carrinho-grupo-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px 16px;
+  }
+
+  .tabela-carrinho {
+    font-size: 0.8rem;
+  }
+
+  .tabela-carrinho th,
+  .tabela-carrinho td {
+    padding: 10px 12px;
+  }
+
+  .carrinho-resumo {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+    gap: 12px;
+  }
+
+  .carrinho-resumo-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .carrinho-total {
+    justify-content: space-between;
+  }
+
+  .carrinho-total-value {
+    font-size: 1.4rem;
+  }
+
+  .carrinho-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .carrinho-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .carrinho-empty .empty-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 3rem;
+  }
+
+  .carrinho-empty h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .carrinho-view {
+    padding: 12px;
+  }
+
+  .tabela-carrinho th,
+  .tabela-carrinho td {
+    padding: 8px 10px;
+    font-size: 0.7rem;
+  }
+
+  .tabela-carrinho .item-remover {
+    padding: 4px;
+    font-size: 0.8rem;
+  }
+
+  .carrinho-total-value {
+    font-size: 1.2rem;
+  }
+
+  .btn-finalizar-pedido {
+    font-size: 0.85rem;
+    padding: 10px 20px;
+  }
+
+  .carrinho-resumo {
+    padding: 16px;
+  }
+
+  .carrinho-empty .empty-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 2.5rem;
+  }
+
+  .carrinho-empty h2 {
+    font-size: 1.05rem;
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "34",
+    "processo_origem": "4/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "11/2026",
+    "numero_contratacao": "1414",
+    "numero_processo": "4/2026",
+    "numero_pregao": "4",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-03-03",
+    "vigencia_inicio": "2026-03-03",
+    "vigencia_fim": "2027-03-03",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual prestação de serviços de arbitragem para a Secretaria de Esporte e Lazer, conforme anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "EDGAR JR. GESTAO E ASSESSORIA ESPORTIVA LTDA",
+    "cnpj": "56.689.424/0001-60"
+  },
+  "itens": [
+    {
+      "numero": "2",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO CAMPEONATO MUNICIPAL DE FUTSAL - CATEGORIA DE BASE",
+      "unidade_medida": "UN",
+      "valor_unitario": 100.0,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 100.0,
+      "valor_total": 10000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 10000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "3",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO CAMPEONATO MUNICIPAL DE FUTSAL ADULTO E VETERANO",
+      "unidade_medida": "UN",
+      "valor_unitario": 100.0,
+      "quantidade_contratada": 200.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 43.0,
+      "quantidade_saldo": 157.0,
+      "valor_total": 20000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 4300.0,
+      "valor_saldo": 15700.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "4",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO CAMPEONATO REGIONAL DE FUTEBOL DE CAMPO",
+      "unidade_medida": "UN",
+      "valor_unitario": 100.0,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 100.0,
+      "valor_total": 10000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 10000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 3,
+    "valor_contratado_geral": 40000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 4300.0,
+    "valor_saldo_geral": 35700.0
+  },
+  "observacoes": "Ata 11/2026 — EDGAR JR. (Processo 4/2026). Arbitragem esportiva (3 modalidades). Saldo do PDF: R$ 35.700,00.",
+  "anexos": []
+}

@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "2",
+    "processo_origem": "10/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "10/2025",
+    "numero_contratacao": "1180 | 17/2025",
+    "numero_processo": "10/2025",
+    "numero_pregao": "3",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-02-14",
+    "vigencia_inicio": "",
+    "vigencia_fim": "2026-02-14",
+    "objeto": "Contratação de profissional especializado para realização de formação em exercício para os professores.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "MIKE DE OLIVEIRA MADEIRA TREINAMENTOS",
+    "cnpj": "49.807.275/0001-20"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "Formação e Treinamento para a equipe da Secretaria Municipal de Educação incluindo os professores do ensino fundamental, abordando a fundamentação teórica e prática para conteúdos e metodologias. \"Língua Portuguesa-estruturação, leitura e gêneros textuais\".",
+      "unidade_medida": "UN",
+      "valor_unitario": 650.0,
+      "quantidade_contratada": 40.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 32.0,
+      "valor_total": 26000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 5200.0,
+      "valor_saldo": 20800.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 26000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 5200.0,
+    "valor_saldo_geral": 20800.0
+  },
+  "observacoes": "",
+  "anexos": []
+}

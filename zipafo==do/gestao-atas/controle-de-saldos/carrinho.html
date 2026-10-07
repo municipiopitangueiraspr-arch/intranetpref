@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecionando · Meu Carrinho · Gestão de Atas</title>
+
+    <!-- ============================================================ -->
+    <!-- REDIRECT AUTOMÁTICO                                          -->
+    <!-- ------------------------------------------------------------ -->
+    <!-- A página standalone do carrinho foi REMOVIDA na refatoração  -->
+    <!-- da Opção A. Agora o carrinho é uma VIEW SPA dentro do        -->
+    <!-- Painel Administrativo (gestao-atas.html#carrinho).            -->
+    <!--                                                              -->
+    <!-- Este arquivo é mantido apenas para:                          -->
+    <!--   · não quebrar bookmarks/links antigos                      -->
+    <!--   · redirecionar automaticamente para o destino correto      -->
+    <!-- ============================================================ -->
+
+    <!-- Redirecionamento instantâneo via meta refresh (fallback) -->
+    <meta http-equiv="refresh" content="0; url=gestao-atas.html#carrinho" />
+
+    <!-- Font Awesome (para o ícone do fallback visual) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <!-- ============================================================ -->
+    <!-- DESIGN SYSTEM COMPARTILHADO DA INTRANET                       -->
+    <!-- Fornece variáveis CSS + reset + body base                     -->
+    <!-- ============================================================ -->
+    <link rel="stylesheet" href="../shared/css/intranet-base.css" />
+    <link rel="stylesheet" href="../shared/css/componentes.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+      /* ============================================ */
+      /* FALLBACK VISUAL                              */
+      /* Mostrado apenas pelo tempo entre o carregamento  */
+      /* e o redirecionamento (quase instantâneo).        */
+      /* ============================================ */
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e6edf5 100%);
+        padding: 24px;
+      }
+
+      .redirect-card {
+        max-width: 420px;
+        width: 100%;
+        background: white;
+        border-radius: var(--border-radius-2xl);
+        padding: 40px 32px;
+        text-align: center;
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--neutral-200);
+        animation: fadeInCard 0.3s ease-out;
+      }
+
+      @keyframes fadeInCard {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .redirect-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        box-shadow: 0 8px 20px rgba(13, 94, 58, 0.25);
+        animation: pulseIcon 1.4s ease-in-out infinite;
+      }
+
+      @keyframes pulseIcon {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .redirect-card h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--neutral-900);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .redirect-card p {
+        font-size: 0.9rem;
+        color: var(--neutral-500);
+        margin-bottom: 24px;
+        line-height: 1.5;
+      }
+
+      .redirect-progress {
+        width: 100%;
+        height: 4px;
+        background: var(--neutral-100);
+        border-radius: 9999px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      .redirect-progress-bar {
+        height: 100%;
+        width: 30%;
+        background: linear-gradient(
+          90deg,
+          var(--primary-500),
+          var(--primary-700)
+        );
+        border-radius: 9999px;
+        animation: progressSlide 1.2s ease-in-out infinite;
+      }
+
+      @keyframes progressSlide {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(400%);
+        }
+      }
+
+      .btn-ir-agora {
+        padding: 12px 28px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-lg);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition-base);
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-ir-agora:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+    </style>
+
+    <link rel="stylesheet" href="css/gestaoatas-theme.css" />
+
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ============================================ -->
+    <!-- CARD DE FALLBACK (visível por milissegundos) -->
+    <!-- ============================================ -->
+    <div class="redirect-card">
+      <div class="redirect-icon">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+
+      <h1>
+        <i class="fas fa-arrow-right"></i>
+        Redirecionando...
+      </h1>
+
+      <p>
+        O carrinho agora faz parte do Painel Administrativo. Você será
+        redirecionado automaticamente para a nova localização.
+      </p>
+
+      <div class="redirect-progress">
+        <div class="redirect-progress-bar"></div>
+      </div>
+
+      <a href="gestao-atas.html#carrinho" class="btn-ir-agora">
+        <i class="fas fa-external-link-alt"></i>
+        Ir agora
+      </a>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SCRIPT DE REDIRECIONAMENTO                   -->
+    <!-- Executa imediatamente, antes do meta refresh -->
+    <!-- ter chance de disparar, garantindo redirect   -->
+    <!-- instantâneo mesmo em navegadores antigos.     -->
+    <!-- ============================================ -->
+    <script>
+      // Preserva a intenção de navegação: se o usuário tiver chegado
+      // aqui por um hash específico (#carrinho, #pedidos, etc.),
+      // ainda é redirecionado para a view correta do sistema.
+      (function () {
+        var destino = "gestao-atas.html#carrinho";
+        // window.location.replace não deixa a página atual no histórico,
+        // então o botão "voltar" não traz o usuário de volta pra cá.
+        window.location.replace(destino);
+      })();
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- FALLBACK FINAL (NOSCRIPT)                                    -->
+    <!-- Caso JavaScript esteja desabilitado, o meta refresh já        -->
+    <!-- cuidou do redirecionamento. Nada extra é necessário.          -->
+    <!-- ============================================================ -->
+    <noscript>
+      <div
+        style="
+          margin-top: 20px;
+          font-size: 0.8rem;
+          color: var(--neutral-500);
+          text-align: center;
+        "
+      >
+        Se você não for redirecionado automaticamente, clique em
+        <a href="gestao-atas.html#carrinho" style="color: var(--primary-600)">
+          Ir agora
+        </a>
+        .
+      </div>
+    </noscript>
+  </body>
+</html>

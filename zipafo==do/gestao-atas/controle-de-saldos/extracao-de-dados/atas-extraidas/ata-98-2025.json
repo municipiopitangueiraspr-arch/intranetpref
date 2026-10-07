@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "78",
+    "processo_origem": "101/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "98/2025",
+    "numero_contratacao": "1372 | 98/2025",
+    "numero_processo": "101/2025",
+    "numero_pregao": "51",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-12-04",
+    "vigencia_inicio": "2025-12-04",
+    "vigencia_fim": "2026-12-04",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06, para eventual locação de equipamentos de som para uso da Secretaria de Cultura e Turismo, conforme especificações do Anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "EVOLUTION EVENTOS LTDA",
+    "cnpj": "03.015.027/0001-46"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "LOCAÇÃO DE EQUIPAMENTOS DE SOM - DESCRIÇÃO DETALHADA NO EDITAL. - LOCAÇÃO DE EQUIPAMENTOS DE SOM - DESCRIÇÃO DETALHADA NO EDITAL.",
+      "unidade_medida": "UN",
+      "valor_unitario": 16100.0,
+      "quantidade_contratada": 3.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 1.6,
+      "quantidade_saldo": 1.4,
+      "valor_total": 48300.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 25760.0,
+      "valor_saldo": 22540.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 48300.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 25760.0,
+    "valor_saldo_geral": 22540.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem: R$ 48.300,00 contratado, R$ 25.760,00 executado e R$ 22.540,00 de saldo.",
+  "anexos": []
+}

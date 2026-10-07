@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "56-58",
+    "processo_origem": "51/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "41/2026",
+    "numero_contratacao": "1486",
+    "numero_processo": "51/2026",
+    "numero_pregao": "14",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-02",
+    "vigencia_inicio": "2026-07-02",
+    "vigencia_fim": "2027-07-02",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para adesão das Atas de Registro de Preços Nº 022/2024 e Nº 031/2024 do CONSÓRCIO INTERMUNICIPAL DA REGIÃO DO ALTO URUGUAI - CIRAU, para aquisição de 01 (uma) van e 01 (um) kit de acessibilidade em van para atender as demandas da Secretaria de Saúde deste município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "INGA CAMINHOES LTDA",
+    "cnpj": "23.008.729/0001-00"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "VEÍCULO AUTOMOTOR MINIBUS TETO ALTO 20+1 LUGARES COM AS SEGUINTES ESPECIFICAÇÕES: NOVO, ZERO KM, ANO FABRICAÇÃO/MODELO 2024/2025, COR PREDOMINANTE BRANCA, 02 PORTAS (MOTORISTA E PASSAGEIRO) E PORTA PARA EMBARQUE DE PASSAGEIROS, CABINE/CARROCERIA PARA 20+1 OCUPANTES, MINIBUS TETO ALTO DE SÉRIE, DIESEL, CAPACIDADE DO TANQUE DE COMBUSTÍVEL 71 LITROS, TRANSMISSÃO MANUAL DE 6 VELOCIDADES À FRENTE E UMA A RÉ.",
+      "unidade_medida": "UN",
+      "valor_unitario": 403620.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 1.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 403620.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 403620.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 403620.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 403620.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 41/2026 — INGA CAMINHOES (Processo 51/2026). 1 item: Minibus 20+1 lugares. Totalmente executada. ⚠️ Nº Ata 41/2026 em conflito com Ata 41/2026 da BOEING (Processo 6/2026).",
+  "anexos": []
+}

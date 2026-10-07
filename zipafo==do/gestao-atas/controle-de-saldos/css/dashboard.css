@@ -1,0 +1,2778 @@
+/* ============================================ */
+/* controle-de-saldos/css/dashboard.css         */
+/* Dashboard - Estilos para indicadores,        */
+/* gráficos, filtros e widgets                  */
+/* -------------------------------------------- */
+/* ESTRUTURA:                                    */
+/*   · Container e cabeçalho                     */
+/*   · Filtro global de período                  */
+/*   · KPIs (4 cards com sparkline)              */
+/*   · Faixa de alerta contextual                */
+/*   · Grid principal (12 colunas + dense)       */
+/*   · Cards do dashboard (base)                 */
+/*   · Blocos por perfil:                        */
+/*       - Fila de Aprovação em destaque         */
+/*       - Meus Pedidos (solicitante)            */
+/*       - Risco de Saldo (secretário)           */
+/*   · Widgets: Termômetro, Aging, Top Itens     */
+/*   · Gráficos (barras, linha)                  */
+/*   · Listas de itens                           */
+/*   · Skeleton, empty states, footnote          */
+/*   · Responsividade (1200 / 992 / 768 / 480)   */
+/*   · Print + Alto contraste                    */
+/* ============================================ */
+
+/* ============================================ */
+/* CONTAINER PRINCIPAL                          */
+/* ============================================ */
+.dashboard-container {
+  padding: 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+  animation: fadeInDashboard 0.5s ease-out;
+}
+
+@keyframes fadeInDashboard {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================ */
+/* CABEÇALHO DO DASHBOARD                       */
+/* ============================================ */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dashboard-header-left {
+  flex: 1;
+}
+
+.dashboard-titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin: 0 0 4px 0;
+}
+
+.dashboard-titulo i {
+  color: var(--primary-600);
+  margin-right: 10px;
+}
+
+.dashboard-subtitulo {
+  color: var(--neutral-500);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.dashboard-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dashboard-ultima-atualizacao {
+  font-size: 0.8rem;
+  color: var(--neutral-400);
+}
+
+.dashboard-ultima-atualizacao i {
+  margin-right: 4px;
+}
+
+/* ============================================ */
+/* AUTO-REFRESH TOGGLE                          */
+/* ============================================ */
+.auto-refresh-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--neutral-50);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+  user-select: none;
+}
+
+.auto-refresh-toggle:hover {
+  border-color: var(--primary-300);
+  background: var(--primary-50);
+}
+
+.auto-refresh-toggle input {
+  display: none;
+}
+
+.auto-refresh-slider {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  background: var(--neutral-300);
+  border-radius: 9999px;
+  transition: var(--transition-base);
+  flex-shrink: 0;
+}
+
+.auto-refresh-slider::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 2px;
+  top: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: var(--transition-base);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.auto-refresh-toggle input:checked + .auto-refresh-slider {
+  background: var(--primary-600);
+}
+
+.auto-refresh-toggle input:checked + .auto-refresh-slider::before {
+  transform: translateX(16px);
+}
+
+.auto-refresh-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================ */
+/* FILTRO GLOBAL DE PERÍODO                     */
+/* ============================================ */
+.filtro-global {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.filtro-global-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--neutral-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filtro-global-label i {
+  color: var(--primary-600);
+}
+
+.filtro-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pill {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: var(--neutral-100);
+  border: 1px solid var(--neutral-200);
+  color: var(--neutral-600);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.pill:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-300);
+  color: var(--primary-700);
+}
+
+.pill.ativo {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  border-color: var(--primary-600);
+  color: white;
+  box-shadow: 0 2px 6px rgba(13, 94, 58, 0.25);
+}
+
+.filtro-custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 14px;
+  background: var(--primary-50);
+  border: 1px dashed var(--primary-300);
+  border-radius: var(--border-radius-lg);
+  animation: fadeIn 0.2s ease;
+}
+
+.filtro-data-input {
+  padding: 6px 10px;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--border-radius-md);
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: var(--neutral-700);
+  background: white;
+  outline: none;
+  transition: var(--transition-base);
+}
+
+.filtro-data-input:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px var(--primary-100);
+}
+
+.filtro-data-sep {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+}
+
+.filtro-intervalo {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--neutral-500);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--neutral-50);
+  border-radius: 9999px;
+  border: 1px solid var(--neutral-200);
+}
+
+.filtro-intervalo i {
+  color: var(--primary-600);
+}
+
+.filtro-intervalo span {
+  font-weight: 600;
+  color: var(--neutral-700);
+}
+
+/* ============================================ */
+/* CARDS DE INDICADORES (KPIs) - 4 CARDS        */
+/* Com sparkline + comparativo                  */
+/* ============================================ */
+.dashboard-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: var(--border-radius-2xl);
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--neutral-200);
+  transition: var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  min-height: 110px;
+  cursor: pointer;
+}
+
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-300);
+}
+
+.kpi-card:focus-visible {
+  outline: 3px solid var(--primary-100);
+  outline-offset: 2px;
+}
+
+.kpi-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+}
+
+.kpi-ativas::after {
+  background: var(--primary-600);
+}
+
+.kpi-valores::after {
+  background: var(--success-600);
+}
+
+.kpi-saldos::after {
+  background: var(--warning-600);
+}
+
+.kpi-alertas::after {
+  background: var(--error-600);
+}
+
+.kpi-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.kpi-ativas .kpi-icon {
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+.kpi-valores .kpi-icon {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+
+.kpi-saldos .kpi-icon {
+  background: var(--warning-100);
+  color: var(--warning-700);
+}
+
+.kpi-alertas .kpi-icon {
+  background: var(--error-100);
+  color: var(--error-700);
+}
+
+.kpi-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.kpi-valor {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  line-height: 1.2;
+  transition: all 0.3s ease;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.kpi-valor.animado {
+  animation: pulseNumber 0.5s ease;
+}
+
+@keyframes pulseNumber {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.kpi-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.kpi-comparativo {
+  font-size: 0.68rem;
+  font-weight: 600;
+  margin-top: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--neutral-500);
+  transition: color 0.2s;
+}
+
+.kpi-comparativo.positivo {
+  color: var(--success-600);
+}
+
+.kpi-comparativo.negativo {
+  color: var(--error-600);
+}
+
+.kpi-comparativo i {
+  font-size: 0.6rem;
+}
+
+.kpi-detalhe {
+  font-size: 0.7rem;
+  color: var(--neutral-400);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.kpi-detalhe .badge {
+  font-size: 0.6rem;
+  padding: 1px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.kpi-detalhe .badge-success {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+
+.kpi-detalhe .badge-warning {
+  background: var(--warning-100);
+  color: var(--warning-700);
+}
+
+.kpi-detalhe .badge-danger {
+  background: var(--error-100);
+  color: var(--error-700);
+}
+
+.kpi-detalhe .badge-info {
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+.kpi-sparkline {
+  width: 80px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.kpi-card:hover .kpi-sparkline {
+  opacity: 1;
+}
+
+.kpi-sparkline canvas {
+  width: 80px !important;
+  height: 40px !important;
+  display: block;
+}
+
+/* ============================================================ */
+/* FAIXA DE ALERTA CONTEXTUAL                                   */
+/* ------------------------------------------------------------ */
+/* Aparece só quando o JS decide que há pendência.              */
+/* Estrutura:                                                    */
+/*   <div class="dashboard-faixa-alerta">                        */
+/*     <div class="dashboard-faixa-alerta-conteudo">             */
+/*       <button class="alerta-faixa-item alerta-faixa-aviso">   */
+/*         <i>...</i>                                            */
+/*         <span class="alerta-faixa-texto">...</span>           */
+/*         <i class="alerta-faixa-seta">→</i>                    */
+/*       </button>                                               */
+/*     </div>                                                    */
+/*   </div>                                                      */
+/* ============================================================ */
+.dashboard-faixa-alerta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fde68a;
+  border-left: 5px solid var(--warning-600);
+  border-radius: var(--border-radius-xl);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.08);
+  animation: faixaSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes faixaSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-faixa-alerta-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+}
+
+.alerta-faixa-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid transparent;
+  background: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: inherit;
+  color: var(--neutral-800);
+  text-align: left;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.alerta-faixa-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.alerta-faixa-item:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.alerta-faixa-aviso {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.alerta-faixa-aviso i:first-child {
+  color: var(--warning-600);
+}
+
+.alerta-faixa-critico {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.alerta-faixa-critico i:first-child {
+  color: var(--error-600);
+}
+
+.alerta-faixa-item .alerta-faixa-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.alerta-faixa-seta {
+  font-size: 0.7rem;
+  opacity: 0.55;
+  margin-left: 4px;
+  transition: transform 0.2s;
+}
+
+.alerta-faixa-item:hover .alerta-faixa-seta {
+  transform: translateX(3px);
+  opacity: 0.85;
+}
+
+/* ============================================================ */
+/* GRID PRINCIPAL DO DASHBOARD                                  */
+/* ------------------------------------------------------------ */
+/* Sistema de 12 colunas com `grid-auto-flow: dense`.            */
+/* O dense faz o grid preencher buracos automaticamente:         */
+/* se um card pequeno cabe num espaço deixado por um grande,     */
+/* ele é movido para lá.                                          */
+/*                                                              */
+/* Classes de largura:                                          */
+/*   · .card-largo    → span 12 (full width)                    */
+/*   · .card-medio    → span 6  (metade)                        */
+/*   · .card-estreito → span 4  (1/3)                           */
+/*   · (padrão)       → span 6                                  */
+/* ============================================================ */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-flow: dense;
+  gap: 20px;
+}
+
+.dashboard-grid > .dashboard-card {
+  grid-column: span 6;
+}
+
+.dashboard-grid > .card-largo {
+  grid-column: span 12;
+}
+
+.dashboard-grid > .card-medio {
+  grid-column: span 6;
+}
+
+.dashboard-grid > .card-estreito {
+  grid-column: span 4;
+}
+
+/* Linha de indicadores: auto-fit mantém a largura preenchida quando       */
+/* algum card não é renderizado por perfil ou por ausência de dados.       */
+.dashboard-grid > .dashboard-indicadores-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 20px;
+  min-width: 0;
+}
+
+.dashboard-indicadores-row > .dashboard-card {
+  grid-column: auto;
+  min-width: 0;
+}
+
+/* ============================================ */
+/* CARDS DO DASHBOARD (BASE)                    */
+/* ============================================ */
+.dashboard-card {
+  background: white;
+  border-radius: var(--border-radius-2xl);
+  border: 1px solid var(--neutral-200);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: var(--neutral-50);
+  border-bottom: 1px solid var(--neutral-200);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dashboard-card .card-header h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dashboard-card .card-header h3 i {
+  color: var(--primary-600);
+}
+
+.dashboard-card .card-header .card-badge {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+  background: var(--neutral-200);
+  padding: 2px 10px;
+  border-radius: 40px;
+  white-space: nowrap;
+}
+
+.dashboard-card .card-header .card-badge.card-badge-danger {
+  background: var(--error-100);
+  color: var(--error-700);
+  border: 1px solid var(--error-200);
+}
+
+.dashboard-card .card-header .card-link {
+  font-size: 0.75rem;
+  color: var(--primary-600);
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition-base);
+}
+
+.dashboard-card .card-header .card-link:hover {
+  color: var(--primary-700);
+  text-decoration: underline;
+}
+
+.dashboard-card .card-body {
+  padding: 16px 20px;
+  min-height: 100px;
+  flex: 1;
+}
+
+/* ============================================================ */
+/* FILA DE APROVAÇÃO EM DESTAQUE (ADMIN/SECRETARIO)             */
+/* ------------------------------------------------------------ */
+/* Card destacado que mostra os pedidos aguardando aprovação.   */
+/* Estrutura gerada pelo dashboard.js::carregarFilaAprovacao-    */
+/* Destaque().                                                  */
+/* ============================================================ */
+.card-fila-destaque {
+  border-color: #fed7aa;
+  background: linear-gradient(135deg, #fff 0%, #fff7ed 100%);
+}
+
+.card-fila-destaque .card-header {
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  border-bottom-color: #fed7aa;
+}
+
+.card-fila-destaque .card-header h3 i {
+  color: var(--warning-600);
+}
+
+.fila-destaque-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.fila-destaque-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--neutral-800);
+  font-weight: 600;
+}
+
+.fila-destaque-titulo i {
+  color: var(--warning-600);
+}
+
+.fila-destaque-titulo strong {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--warning-700);
+}
+
+.fila-destaque-total {
+  font-size: 0.78rem;
+  color: var(--neutral-600);
+  padding: 4px 12px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: 40px;
+}
+
+.fila-destaque-total strong {
+  color: var(--success-700);
+}
+
+.fila-destaque-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fila-destaque-item {
+  display: grid;
+  grid-template-columns: 110px 1fr 110px 50px 110px;
+  gap: 10px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-left: 3px solid var(--neutral-300);
+  border-radius: var(--border-radius-lg);
+  font-size: 0.82rem;
+  align-items: center;
+  transition: var(--transition-base);
+}
+
+.fila-destaque-item:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.fila-destaque-item[data-urgencia="ok"] {
+  border-left-color: var(--success-500);
+}
+.fila-destaque-item[data-urgencia="atencao"] {
+  border-left-color: var(--warning-500);
+}
+.fila-destaque-item[data-urgencia="urgente"] {
+  border-left-color: var(--error-500);
+  background: #fff5f5;
+}
+
+.fila-item-numero {
+  font-weight: 700;
+  color: var(--primary-700);
+  white-space: nowrap;
+}
+
+.fila-item-orgao,
+.fila-item-ata {
+  color: var(--neutral-600);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fila-item-orgao i,
+.fila-item-ata i {
+  color: var(--neutral-400);
+  margin-right: 4px;
+  font-size: 0.7rem;
+}
+
+.fila-item-dias {
+  font-weight: 700;
+  text-align: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+}
+
+.fila-item-dias.ok {
+  background: var(--success-100);
+  color: var(--success-800);
+}
+.fila-item-dias.atencao {
+  background: var(--warning-100);
+  color: var(--warning-800);
+}
+.fila-item-dias.urgente {
+  background: var(--error-100);
+  color: var(--error-800);
+}
+
+.fila-item-valor {
+  font-weight: 700;
+  color: var(--success-700);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.fila-destaque-mais {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--neutral-500);
+  font-style: italic;
+  padding: 4px 0;
+}
+
+.fila-destaque-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--neutral-200);
+}
+
+.btn-fila-ver-todos {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  background: linear-gradient(135deg, var(--warning-600), #b45309);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-lg);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: inherit;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-fila-ver-todos:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.fila-destaque-vazia {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 16px;
+  color: var(--neutral-500);
+}
+
+.fila-destaque-vazia i {
+  font-size: 2rem;
+  color: var(--success-500);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.fila-destaque-vazia strong {
+  display: block;
+  color: var(--neutral-700);
+  font-size: 0.9rem;
+}
+
+.fila-destaque-vazia p {
+  margin: 2px 0 0 0;
+  font-size: 0.78rem;
+}
+
+/* ============================================================ */
+/* MEUS PEDIDOS (SOLICITANTE)                                   */
+/* ------------------------------------------------------------ */
+/* Reusa .lista-item para cada pedido. Só damos estilo ao card   */
+/* pra dar identidade visual diferente.                          */
+/* ============================================================ */
+.card-meus-pedidos {
+  border-color: #bfdbfe;
+  background: linear-gradient(135deg, #fff 0%, #eff6ff 100%);
+}
+
+.card-meus-pedidos .card-header {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border-bottom-color: #bfdbfe;
+}
+
+.card-meus-pedidos .card-header h3 i {
+  color: #2563eb;
+}
+
+/* ============================================================ */
+/* RISCO DE SALDO (ADMIN/SECRETARIO)                            */
+/* ------------------------------------------------------------ */
+/* Só é mostrado quando há pedido pendente cujo item não tem    */
+/* saldo suficiente. O dashboard.js esconde se estiver vazio.   */
+/* ============================================================ */
+.card-estourando-saldo {
+  border-color: #fecaca;
+  background: linear-gradient(135deg, #fff 0%, #fef2f2 100%);
+}
+
+.card-estourando-saldo .card-header {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  border-bottom-color: #fecaca;
+}
+
+.card-estourando-saldo .card-header h3 i {
+  color: var(--error-600);
+}
+
+.risco-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.risco-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-left: 4px solid var(--error-500);
+  border-radius: var(--border-radius-lg);
+  transition: var(--transition-base);
+}
+
+.risco-item:hover {
+  background: #fff5f5;
+  border-color: #fecaca;
+}
+
+.risco-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.risco-item-linha-1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 3px;
+  flex-wrap: wrap;
+}
+
+.risco-item-linha-1 strong {
+  font-size: 0.85rem;
+  color: var(--primary-700);
+}
+
+.risco-item-orgao {
+  font-size: 0.72rem;
+  color: var(--neutral-500);
+  padding: 1px 8px;
+  background: var(--neutral-100);
+  border-radius: 20px;
+}
+
+.risco-item-linha-2 {
+  font-size: 0.75rem;
+  color: var(--neutral-600);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.risco-item-falta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.risco-falta-valor {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--error-600);
+  line-height: 1;
+}
+
+.risco-falta-label {
+  font-size: 0.62rem;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+
+.risco-mais {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--neutral-500);
+  font-style: italic;
+  padding: 4px 0;
+}
+
+/* ============================================ */
+/* TERMÔMETRO DE EXECUÇÃO                       */
+/* ============================================ */
+.card-termometro .card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.termometro-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 12px 0;
+  width: 100%;
+}
+
+.termometro-svg {
+  width: 180px;
+  height: 180px;
+  position: relative;
+}
+
+.termometro-svg svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.termometro-svg .track {
+  fill: none;
+  stroke: var(--neutral-200);
+  stroke-width: 12;
+}
+
+.termometro-svg .progress {
+  fill: none;
+  stroke: url(#gradienteTermometro);
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.termometro-valor-central {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.termometro-valor-central .percentual {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary-700);
+  line-height: 1;
+}
+
+.termometro-valor-central .rotulo {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.termometro-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+  padding: 0 8px;
+}
+
+.termometro-info-item {
+  text-align: center;
+  flex: 1;
+}
+
+.termometro-info-item .valor {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  line-height: 1.2;
+}
+
+.termometro-info-item .label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+
+.termometro-info-item .valor.consumido {
+  color: var(--success-600);
+}
+
+.termometro-info-item .valor.disponivel {
+  color: var(--primary-700);
+}
+
+/* ============================================ */
+/* AGING DE PEDIDOS                             */
+/* ============================================ */
+.aging-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aging-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.aging-item .aging-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--neutral-700);
+  min-width: 90px;
+  white-space: nowrap;
+}
+
+.aging-item .aging-bar-wrap {
+  flex: 1;
+  height: 24px;
+  background: var(--neutral-100);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.aging-item .aging-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: white;
+  min-width: 32px;
+}
+
+.aging-item .aging-bar.aging-ok {
+  background: linear-gradient(90deg, var(--success-500), var(--success-600));
+}
+
+.aging-item .aging-bar.aging-atencao {
+  background: linear-gradient(90deg, var(--warning-500), var(--warning-600));
+}
+
+.aging-item .aging-bar.aging-alerta {
+  background: linear-gradient(90deg, #f97316, #ea580c);
+}
+
+.aging-item .aging-bar.aging-critico {
+  background: linear-gradient(90deg, var(--error-500), var(--error-700));
+}
+
+.aging-item .aging-count {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--neutral-800);
+  min-width: 30px;
+  text-align: right;
+}
+
+.aging-vazio {
+  text-align: center;
+  padding: 20px 12px;
+  color: var(--neutral-400);
+  font-size: 0.82rem;
+}
+
+.aging-vazio i {
+  display: block;
+  font-size: 2rem;
+  opacity: 0.4;
+  margin-bottom: 8px;
+  color: var(--success-500);
+}
+
+/* ============================================ */
+/* TOP ITENS                                    */
+/* ============================================ */
+.top-itens-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.top-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--neutral-50);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--neutral-200);
+  transition: var(--transition-base);
+  cursor: default;
+}
+
+.top-item:hover {
+  background: white;
+  border-color: var(--primary-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.top-item .top-medalha {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  background: var(--neutral-200);
+  color: var(--neutral-600);
+  font-weight: 700;
+}
+
+.top-item.top-1 .top-medalha {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+.top-item.top-2 .top-medalha {
+  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  color: white;
+}
+
+.top-item.top-3 .top-medalha {
+  background: linear-gradient(135deg, #fb923c, #ea580c);
+  color: white;
+}
+
+.top-item .top-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.top-item .top-descricao {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin-bottom: 2px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.top-item .top-meta {
+  font-size: 0.7rem;
+  color: var(--neutral-500);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.top-item .top-meta i {
+  font-size: 0.65rem;
+  color: var(--neutral-400);
+}
+
+.top-item .top-quantidade {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--primary-700);
+  white-space: nowrap;
+  text-align: right;
+}
+
+.top-item .top-quantidade small {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================ */
+/* GRÁFICOS (barras + linha)                    */
+/* ============================================ */
+.grafico-container {
+  width: 100%;
+  min-height: 180px;
+  position: relative;
+}
+
+.grafico-container canvas {
+  width: 100% !important;
+  max-height: 240px;
+}
+
+.card-grafico .grafico-container {
+  min-height: 300px;
+}
+
+.card-grafico canvas {
+  max-height: 320px;
+}
+
+.card-evolucao .grafico-container {
+  min-height: 220px;
+}
+
+.card-evolucao canvas {
+  max-height: 240px;
+}
+
+/* ============================================ */
+/* LISTA DE ITENS (reuso)                       */
+/* ============================================ */
+.lista-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--neutral-100);
+  font-size: 0.85rem;
+  transition: var(--transition-base);
+  cursor: default;
+}
+
+.lista-item:last-child {
+  border-bottom: none;
+}
+
+.lista-item.clickable {
+  cursor: pointer;
+}
+
+.lista-item.clickable:hover {
+  background: var(--neutral-50);
+  margin: 0 -10px;
+  padding: 8px 10px;
+  border-radius: var(--border-radius-md);
+}
+
+.lista-item .item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.lista-item .item-titulo {
+  font-weight: 500;
+  color: var(--neutral-800);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lista-item .item-titulo .fa-check-circle {
+  color: var(--success-600);
+}
+
+.lista-item .item-titulo .fa-times-circle {
+  color: var(--error-600);
+}
+
+.lista-item .item-titulo .fa-clock {
+  color: var(--warning-600);
+}
+
+.lista-item .item-subtitulo {
+  font-size: 0.7rem;
+  color: var(--neutral-400);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 1px;
+}
+
+.lista-item .item-valor {
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+.lista-item .item-valor.urgente {
+  color: var(--error-600);
+}
+
+.lista-item .item-valor.warning {
+  color: var(--warning-600);
+}
+
+.lista-item .item-valor.success {
+  color: var(--success-600);
+}
+
+.lista-item .item-status {
+  font-size: 0.65rem;
+  padding: 2px 10px;
+  border-radius: 40px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+.item-status.pendente {
+  background: var(--warning-100);
+  color: var(--warning-700);
+}
+
+.item-status.aprovado {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+
+.item-status.critico {
+  background: var(--error-100);
+  color: var(--error-700);
+}
+
+.item-status.rejeitado {
+  background: var(--error-100);
+  color: var(--error-700);
+}
+
+/* ============================================ */
+/* PLACEHOLDERS E LOADING                       */
+/* ============================================ */
+.grafico-placeholder,
+.lista-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  color: var(--neutral-400);
+  text-align: center;
+  min-height: 80px;
+}
+
+.grafico-placeholder i,
+.lista-placeholder i {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.grafico-placeholder p,
+.lista-placeholder p {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.grafico-placeholder .fa-spinner,
+.lista-placeholder .fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================ */
+/* GRÁFICO SIMPLES (FALLBACK)                   */
+/* ============================================ */
+.grafico-simples {
+  width: 100%;
+}
+
+.grafico-ponto {
+  flex: 1;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease;
+  min-width: 20px;
+}
+
+/* ============================================ */
+/* SKELETON SHIMMER                             */
+/* ============================================ */
+.skeleton-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-line-sm {
+  width: 45%;
+}
+
+.skeleton-line-md {
+  width: 70%;
+}
+
+.skeleton-line-lg {
+  width: 95%;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 160px;
+  gap: 12px;
+  padding: 16px;
+}
+
+.skeleton-bar {
+  flex: 1;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 100%);
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  background-size: 100% 200%;
+}
+
+.skeleton-bar-1 {
+  height: 45%;
+}
+.skeleton-bar-2 {
+  height: 75%;
+}
+.skeleton-bar-3 {
+  height: 55%;
+}
+.skeleton-bar-4 {
+  height: 90%;
+}
+.skeleton-bar-5 {
+  height: 35%;
+}
+
+.skeleton-chart-line {
+  height: 140px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  margin: 16px;
+}
+
+.skeleton-doughnut {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  margin: 20px auto;
+  background: conic-gradient(
+    #e2e8f0 0deg 120deg,
+    #f1f5f9 120deg 240deg,
+    #e2e8f0 240deg 360deg
+  );
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  mask: radial-gradient(circle, transparent 55%, black 56%);
+  -webkit-mask: radial-gradient(circle, transparent 55%, black 56%);
+}
+
+.skeleton-circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  margin: 20px auto;
+  background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+/* ============================================ */
+/* EMPTY STATES RICOS                           */
+/* ============================================ */
+.empty-state {
+  text-align: center;
+  padding: 30px 16px;
+  color: var(--neutral-400);
+}
+
+.empty-state .empty-icon {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  opacity: 0.4;
+  display: block;
+  color: var(--neutral-400);
+}
+
+.empty-state .empty-titulo {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+  margin-bottom: 4px;
+}
+
+.empty-state .empty-descricao {
+  font-size: 0.78rem;
+  color: var(--neutral-400);
+  line-height: 1.5;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+/* ============================================ */
+/* DASHBOARD FOOTNOTE                           */
+/* ============================================ */
+.dashboard-footnote {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--neutral-200);
+  font-size: 0.75rem;
+  color: var(--neutral-400);
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+}
+
+.dashboard-footnote i {
+  color: var(--primary-600);
+}
+
+.dashboard-footnote-atalhos {
+  opacity: 0.85;
+}
+
+.dashboard-footnote kbd {
+  background: var(--neutral-100);
+  border: 1px solid var(--neutral-300);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: "Courier New", monospace;
+  font-size: 0.7rem;
+  color: var(--neutral-600);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================ */
+/* SCROLLBAR PERSONALIZADA PARA LISTAS          */
+/* ============================================ */
+.dashboard-card .card-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dashboard-card .card-body::-webkit-scrollbar-track {
+  background: var(--neutral-100);
+  border-radius: 10px;
+}
+
+.dashboard-card .card-body::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: 10px;
+}
+
+.dashboard-card .card-body::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
+}
+
+/* ============================================ */
+/* RESPONSIVIDADE                               */
+/* ============================================ */
+
+/* ---------- Tablets grandes / Desktop pequeno (≤ 1200px) ---------- */
+@media (max-width: 1200px) {
+  /* Grid: passa de 12 colunas pra 6 (dois cards por linha) */
+  .dashboard-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  /* Card largo vira largura total em 6 colunas */
+  .dashboard-grid > .card-largo {
+    grid-column: span 6;
+  }
+
+  /* Card médio vira meia largura em 6 colunas */
+  .dashboard-grid > .card-medio {
+    grid-column: span 3;
+  }
+
+  /* Card estreito sobe para 1/3 (2 de 6) */
+  .dashboard-grid > .card-estreito {
+    grid-column: span 2;
+  }
+
+  /* Padrão: meia largura */
+  .dashboard-grid > .dashboard-card {
+    grid-column: span 3;
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .kpi-sparkline {
+    width: 60px;
+  }
+
+  .kpi-sparkline canvas {
+    width: 60px !important;
+  }
+
+  /* Fila destaque: layout mais compacto */
+  .fila-destaque-item {
+    grid-template-columns: 100px 1fr 100px 45px 100px;
+    font-size: 0.78rem;
+  }
+}
+
+/* ---------- Tablets (≤ 992px) ---------- */
+@media (max-width: 992px) {
+  /* Grid: uma coluna (todos cards full) */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-indicadores-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid > .dashboard-card,
+  .dashboard-grid > .card-largo,
+  .dashboard-grid > .card-medio,
+  .dashboard-grid > .card-estreito {
+    grid-column: span 1;
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-container {
+    padding: 16px;
+  }
+
+  .filtro-intervalo {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Fila destaque: reorganiza pra 3 colunas */
+  .fila-destaque-item {
+    grid-template-columns: 100px 1fr 90px;
+    grid-template-rows: auto auto;
+    gap: 6px 10px;
+  }
+
+  .fila-item-orgao {
+    grid-column: 1 / -1;
+  }
+
+  .fila-item-dias {
+    justify-self: end;
+  }
+
+  .fila-item-valor {
+    grid-column: 1 / -1;
+    text-align: right;
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------- Mobile Grande (≤ 768px) ---------- */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 12px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .dashboard-header-right {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-titulo {
+    font-size: 1.2rem;
+  }
+
+  .dashboard-subtitulo {
+    font-size: 0.8rem;
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .kpi-card {
+    padding: 14px 16px;
+    gap: 12px;
+    min-height: 90px;
+  }
+
+  .kpi-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .kpi-valor {
+    font-size: 1rem;
+  }
+
+  .kpi-label {
+    font-size: 0.6rem;
+  }
+
+  .kpi-comparativo {
+    font-size: 0.6rem;
+  }
+
+  .kpi-sparkline {
+    display: none;
+  }
+
+  .dashboard-card .card-header {
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .dashboard-card .card-header h3 {
+    font-size: 0.8rem;
+  }
+
+  .dashboard-card .card-body {
+    padding: 10px 14px;
+    min-height: 60px;
+  }
+
+  .lista-item {
+    padding: 6px 0;
+    font-size: 0.75rem;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .lista-item .item-valor {
+    margin-left: 0;
+  }
+
+  .grafico-container {
+    min-height: 140px;
+  }
+
+  .grafico-container canvas {
+    max-height: 180px;
+  }
+
+  .dashboard-ultima-atualizacao {
+    font-size: 0.65rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Filtro global empilhado */
+  .filtro-global {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .filtro-global-label {
+    width: 100%;
+  }
+
+  .filtro-pills {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pill {
+    font-size: 0.72rem;
+    padding: 5px 12px;
+  }
+
+  .filtro-custom {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Faixa de alerta empilhada */
+  .dashboard-faixa-alerta {
+    padding: 12px 14px;
+  }
+
+  .dashboard-faixa-alerta-conteudo {
+    flex-direction: column;
+  }
+
+  .alerta-faixa-item {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Fila destaque: cards empilhados */
+  .fila-destaque-item {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .fila-item-numero,
+  .fila-item-orgao,
+  .fila-item-ata,
+  .fila-item-dias,
+  .fila-item-valor {
+    grid-column: 1;
+    text-align: left;
+  }
+
+  .fila-item-dias {
+    justify-self: start;
+    width: fit-content;
+  }
+
+  .fila-item-valor {
+    text-align: right;
+    font-size: 0.9rem;
+  }
+
+  .fila-destaque-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Fila destaque: ações empilhadas */
+  .fila-destaque-acoes {
+    flex-direction: column;
+  }
+
+  .btn-fila-ver-todos {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Risco de saldo empilhado */
+  .risco-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .risco-item-falta {
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  /* Termômetro reduzido */
+  .termometro-svg {
+    width: 150px;
+    height: 150px;
+  }
+
+  .termometro-valor-central .percentual {
+    font-size: 1.6rem;
+  }
+
+  /* Aging */
+  .aging-item .aging-label {
+    min-width: 70px;
+    font-size: 0.72rem;
+  }
+
+  /* Top itens */
+  .top-item .top-quantidade {
+    font-size: 0.85rem;
+  }
+
+  .top-item .top-descricao {
+    font-size: 0.8rem;
+  }
+}
+
+/* ---------- Mobile Pequeno (≤ 480px) ---------- */
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 8px;
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .kpi-card {
+    padding: 12px 14px;
+    gap: 10px;
+    min-height: 80px;
+  }
+
+  .kpi-valor {
+    font-size: 0.9rem;
+  }
+
+  .kpi-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
+  }
+
+  .dashboard-titulo {
+    font-size: 0.9rem;
+  }
+
+  .dashboard-card .card-header .card-badge {
+    font-size: 0.5rem;
+    padding: 1px 6px;
+  }
+
+  .dashboard-card .card-header .card-link {
+    font-size: 0.65rem;
+  }
+
+  .lista-item {
+    font-size: 0.7rem;
+    padding: 4px 0;
+  }
+
+  .lista-item .item-titulo {
+    font-size: 0.75rem;
+  }
+
+  .lista-item .item-subtitulo {
+    font-size: 0.6rem;
+  }
+
+  .lista-item .item-status {
+    font-size: 0.55rem;
+    padding: 1px 6px;
+  }
+
+  .grafico-placeholder i,
+  .lista-placeholder i {
+    font-size: 1.5rem;
+  }
+
+  .grafico-placeholder p,
+  .lista-placeholder p {
+    font-size: 0.75rem;
+  }
+
+  /* Header empilhado */
+  .dashboard-header-right {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .dashboard-header-right .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .auto-refresh-toggle {
+    justify-content: center;
+  }
+
+  /* Filtro global compacto */
+  .filtro-global {
+    padding: 10px 12px;
+  }
+
+  .pill {
+    font-size: 0.68rem;
+    padding: 5px 10px;
+  }
+
+  /* Faixa de alerta compacta */
+  .alerta-faixa-item {
+    font-size: 0.78rem;
+    padding: 8px 12px;
+  }
+
+  /* Termômetro menor ainda */
+  .termometro-svg {
+    width: 130px;
+    height: 130px;
+  }
+
+  .termometro-valor-central .percentual {
+    font-size: 1.4rem;
+  }
+
+  .termometro-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Aging empilhado */
+  .aging-item {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .aging-item .aging-label {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .aging-item .aging-count {
+    align-self: flex-end;
+  }
+}
+
+/* ============================================ */
+/* IMPRESSÃO                                    */
+/* ============================================ */
+@media print {
+  .dashboard-container {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Esconder controles interativos */
+  .dashboard-header-right .btn-outline,
+  .dashboard-header-right .auto-refresh-toggle,
+  .dashboard-card .card-link,
+  .filtro-global,
+  .dashboard-footnote,
+  .dashboard-faixa-alerta,
+  .pill {
+    display: none !important;
+  }
+
+  .dashboard-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    background: white !important;
+  }
+
+  .kpi-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-auto-flow: row !important;
+  }
+
+  .dashboard-grid > .dashboard-card,
+  .dashboard-grid > .card-largo,
+  .dashboard-grid > .card-medio,
+  .dashboard-grid > .card-estreito {
+    grid-column: span 1 !important;
+  }
+
+  .card-grafico,
+  .card-evolucao {
+    grid-column: 1 / 3 !important;
+  }
+
+  .dashboard-card .card-header {
+    background: #f5f5f5 !important;
+  }
+
+  .dashboard-card .card-header h3 {
+    color: #000 !important;
+  }
+
+  .kpi-valor {
+    color: #000 !important;
+  }
+
+  .kpi-detalhe {
+    color: #666 !important;
+  }
+
+  .kpi-sparkline {
+    display: none !important;
+  }
+
+  .fila-destaque-item,
+  .risco-item,
+  .termometro-wrapper,
+  .aging-item,
+  .top-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Termômetro: mostrar sem animação */
+  .termometro-svg .progress {
+    transition: none !important;
+  }
+}
+
+/* ============================================ */
+/* ALTO CONTRASTE                               */
+/* ============================================ */
+body.high-contrast .kpi-card {
+  background: #111 !important;
+  border-color: #ffff00 !important;
+}
+
+body.high-contrast .kpi-card::after {
+  background: #ffff00 !important;
+}
+
+body.high-contrast .kpi-valor {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .kpi-label {
+  color: #fff !important;
+}
+
+body.high-contrast .kpi-detalhe {
+  color: #aaa !important;
+}
+
+body.high-contrast .kpi-comparativo {
+  color: #fff !important;
+}
+
+body.high-contrast .kpi-comparativo.positivo {
+  color: #00ff00 !important;
+}
+
+body.high-contrast .kpi-comparativo.negativo {
+  color: #ff4444 !important;
+}
+
+body.high-contrast .dashboard-card {
+  background: #111 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .dashboard-card .card-header {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .dashboard-card .card-header h3 {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .dashboard-card .card-header .card-badge {
+  background: #222 !important;
+  color: #fff !important;
+}
+
+body.high-contrast .dashboard-titulo {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .dashboard-subtitulo {
+  color: #fff !important;
+}
+
+body.high-contrast .dashboard-ultima-atualizacao {
+  color: #aaa !important;
+}
+
+body.high-contrast .dashboard-card .card-link {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .dashboard-card .card-link:hover {
+  color: #ff4444 !important;
+}
+
+body.high-contrast .lista-item {
+  border-color: #333 !important;
+}
+
+body.high-contrast .lista-item .item-titulo {
+  color: #fff !important;
+}
+
+body.high-contrast .lista-item .item-subtitulo {
+  color: #aaa !important;
+}
+
+body.high-contrast .lista-item .item-valor {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .lista-item .item-valor.urgente {
+  color: #ff4444 !important;
+}
+
+body.high-contrast .lista-item .item-valor.warning {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .lista-item .item-valor.success {
+  color: #00ff00 !important;
+}
+
+body.high-contrast .item-status.pendente {
+  background: #222 !important;
+  color: #ffff00 !important;
+}
+
+body.high-contrast .item-status.aprovado {
+  background: #222 !important;
+  color: #00ff00 !important;
+}
+
+body.high-contrast .item-status.rejeitado {
+  background: #222 !important;
+  color: #ff4444 !important;
+}
+
+/* Filtro global em alto contraste */
+body.high-contrast .filtro-global {
+  background: #111 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .filtro-global-label {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .pill {
+  background: #222 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+
+body.high-contrast .pill.ativo {
+  background: #ffff00 !important;
+  color: #000 !important;
+  border-color: #ffff00 !important;
+}
+
+body.high-contrast .filtro-data-input {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .filtro-intervalo {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+  color: #fff !important;
+}
+
+body.high-contrast .filtro-intervalo i {
+  color: #ffff00 !important;
+}
+
+/* Faixa de alerta em alto contraste */
+body.high-contrast .dashboard-faixa-alerta {
+  background: #1a1a1a !important;
+  border-color: #ffff00 !important;
+  border-left-color: #ffff00 !important;
+}
+
+body.high-contrast .alerta-faixa-item {
+  background: #111 !important;
+  border-color: #ffff00 !important;
+  color: #ffff00 !important;
+}
+
+body.high-contrast .alerta-faixa-aviso i:first-child,
+body.high-contrast .alerta-faixa-critico i:first-child {
+  color: #ffff00 !important;
+}
+
+/* Fila destaque em alto contraste */
+body.high-contrast .card-fila-destaque {
+  background: #111 !important;
+  border-color: #ffff00 !important;
+}
+
+body.high-contrast .card-fila-destaque .card-header {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .fila-destaque-titulo {
+  color: #fff !important;
+}
+
+body.high-contrast .fila-destaque-titulo strong {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .fila-destaque-total {
+  background: #222 !important;
+  border-color: #333 !important;
+  color: #fff !important;
+}
+
+body.high-contrast .fila-destaque-item {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .fila-item-numero {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .fila-item-orgao,
+body.high-contrast .fila-item-ata {
+  color: #ccc !important;
+}
+
+body.high-contrast .fila-item-valor {
+  color: #00ff00 !important;
+}
+
+body.high-contrast .btn-fila-ver-todos {
+  background: #ffff00 !important;
+  color: #000 !important;
+}
+
+/* Meus pedidos em alto contraste */
+body.high-contrast .card-meus-pedidos {
+  background: #111 !important;
+  border-color: #00ccff !important;
+}
+
+body.high-contrast .card-meus-pedidos .card-header {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+/* Risco de saldo em alto contraste */
+body.high-contrast .card-estourando-saldo {
+  background: #111 !important;
+  border-color: #ff4444 !important;
+}
+
+body.high-contrast .card-estourando-saldo .card-header {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .risco-item {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .risco-item-linha-1 strong {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .risco-item-orgao {
+  background: #222 !important;
+  color: #ccc !important;
+}
+
+body.high-contrast .risco-item-linha-2 {
+  color: #aaa !important;
+}
+
+body.high-contrast .risco-falta-valor {
+  color: #ff4444 !important;
+}
+
+body.high-contrast .risco-falta-label {
+  color: #aaa !important;
+}
+
+/* Termômetro em alto contraste */
+body.high-contrast .termometro-valor-central .percentual {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .termometro-valor-central .rotulo {
+  color: #fff !important;
+}
+
+body.high-contrast .termometro-svg .track {
+  stroke: #333 !important;
+}
+
+body.high-contrast .termometro-info-item .valor {
+  color: #fff !important;
+}
+
+body.high-contrast .termometro-info-item .label {
+  color: #aaa !important;
+}
+
+/* Aging em alto contraste */
+body.high-contrast .aging-item .aging-label {
+  color: #fff !important;
+}
+
+body.high-contrast .aging-item .aging-bar-wrap {
+  background: #222 !important;
+}
+
+body.high-contrast .aging-item .aging-count {
+  color: #ffff00 !important;
+}
+
+/* Top itens em alto contraste */
+body.high-contrast .top-item {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .top-item .top-descricao {
+  color: #fff !important;
+}
+
+body.high-contrast .top-item .top-meta {
+  color: #aaa !important;
+}
+
+body.high-contrast .top-item .top-quantidade {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .top-item .top-medalha {
+  background: #222 !important;
+  color: #fff !important;
+}
+
+/* Empty state em alto contraste */
+body.high-contrast .empty-state .empty-titulo {
+  color: #fff !important;
+}
+
+body.high-contrast .empty-state .empty-descricao {
+  color: #aaa !important;
+}
+
+/* Auto-refresh em alto contraste */
+body.high-contrast .auto-refresh-toggle {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+  color: #fff !important;
+}
+
+body.high-contrast .auto-refresh-slider {
+  background: #444 !important;
+}
+
+body.high-contrast .auto-refresh-toggle input:checked + .auto-refresh-slider {
+  background: #ffff00 !important;
+}
+
+/* Footnote em alto contraste */
+body.high-contrast .dashboard-footnote {
+  color: #aaa !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .dashboard-footnote kbd {
+  background: #222 !important;
+  color: #ffff00 !important;
+  border-color: #444 !important;
+}
+
+/* ============================================ */
+/* ANIMAÇÕES ADICIONAIS                         */
+/* ============================================ */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kpi-card {
+  animation: slideUp 0.5s ease forwards;
+}
+
+.kpi-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.kpi-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.kpi-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.kpi-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.dashboard-card {
+  animation: slideUp 0.5s ease forwards;
+}
+
+/* Anima o pill ativo ao trocar de período */
+.pill.ativo {
+  animation: pillPulse 0.3s ease;
+}
+
+@keyframes pillPulse {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Fade in para listas novas */
+.fade-in-list {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Spin suave para ícones de loading no título */
+.card-header h3 i.fa-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================================ */
+/* OBSERVAÇÕES SOBRE O CSS REMOVIDO                              */
+/* ------------------------------------------------------------ */
+/* Os seguintes blocos foram REMOVIDOS deste arquivo porque os   */
+/* cards correspondentes foram removidos do HTML:                */
+/*                                                              */
+/*   · .card-grafico-status (doughnut atas+pedidos)             */
+/*   · .card-acoes-rapidas + .acoes-rapidas-grid + .btn-acao-    */
+/*     rapida (duplicava sidebar)                                */
+/*   · .card-timeline + .timeline-item + .timeline-grupo         */
+/*     (existe em Relatórios)                                    */
+/*   · .card-fornecedores (existe em Relatórios)                 */
+/*   · .card-atividades (legado — já estava oculto)              */
+/*   · Regras antigas de posicionamento manual (.card-grafico    */
+/*     { grid-column: 1 }, etc.) — substituídas pelo novo       */
+/*     sistema de 12 colunas com classes de largura              */
+/*                                                              */
+/* Se algum dia quiser reativar algum desses cards, é só        */
+/* recriar o bloco de estilo correspondente. Os seletores são    */
+/* simples e seguem o padrão dos widgets atuais.                 */
+/* ============================================================ */
+
+
+/* Fase de evolução: leitura rápida por perfil e fila de decisões */
+.dashboard-subtitulo { max-width: 760px; }
+.dashboard-contexto-perfil { margin: 8px 0 0; color: #64748b; font-size: .82rem; }
+.fila-aprovacao-item-enriquecido { min-height: 52px; }
+.fila-aprovacao-item-enriquecido small { display: block; margin-top: 3px; color: #64748b; font-size: .72rem; font-weight: 500; }
+.fila-aprovacao-item-enriquecido .fila-aprovacao-item-numero { min-width: 118px; }
+.fila-aprovacao-item-enriquecido .fila-aprovacao-item-fornecedor { display: flex; flex-direction: column; gap: 1px; }
+
+
+/* Dashboard enxuto: filtros, exportação e conteúdo sem cabeçalho redundante. */
+.dashboard-container { padding: 8px 0 28px; max-width: 1600px; }
+.filtro-global { align-items: center; gap: 10px; margin-bottom: 22px; padding: 12px 16px; }
+.filtro-pills { gap: 7px; }
+.filtro-acoes { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
+.filtro-acoes .btn { min-height: 34px; }
+@media (max-width: 760px) {
+  .filtro-acoes { width: 100%; margin-left: 0; }
+  .filtro-acoes .btn { flex: 1; }
+}

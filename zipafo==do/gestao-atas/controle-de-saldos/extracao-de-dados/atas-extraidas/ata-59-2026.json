@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "54-55",
+    "processo_origem": "5/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "59/2026",
+    "numero_contratacao": "1468",
+    "numero_processo": "5/2026",
+    "numero_pregao": "5",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-26",
+    "vigencia_inicio": "2026-06-26",
+    "vigencia_fim": "2027-06-26",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual aquisição de fórmulas nutricionais considerando a necessidade de garantir a continuidade do atendimento aos pacientes assistidos pela Secretaria Municipal de Saúde, conforme anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "VTR COMERCIAL LTDA",
+    "cnpj": "52.932.346/0001-21"
+  },
+  "itens": [
+    {
+      "numero": "7",
+      "descricao": "APTAMIL PEPTI 800G",
+      "unidade_medida": "UN",
+      "valor_unitario": 162.0,
+      "quantidade_contratada": 200.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 18.0,
+      "quantidade_saldo": 182.0,
+      "valor_total": 32400.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 2916.0,
+      "valor_saldo": 29484.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "10",
+      "descricao": "APTAMIL SEM LACTOSE 400GR",
+      "unidade_medida": "UN",
+      "valor_unitario": 64.57,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 100.0,
+      "valor_total": 6457.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 6457.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 38857.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 2916.0,
+    "valor_saldo_geral": 35941.0
+  },
+  "observacoes": "Ata 59/2026 — VTR COMERCIAL (Processo 5/2026). Fórmulas nutricionais (2 itens). Saldo do PDF: R$ 35.941,00. ⚠️ Nº Ata 59/2026 em conflito com Ata 59/2026 da NILZA LURDES (Processo 54/2026).",
+  "anexos": []
+}

@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "88",
+    "processo_origem": "107/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor RAFAEL BISPO SERVIÇOS MEDICOS LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "19/2026",
+    "numero_contratacao": "1463 | 19/2026",
+    "numero_processo": "107/2025",
+    "numero_pregao": "38",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2026-04-29",
+    "vigencia_inicio": "2026-04-29",
+    "vigencia_fim": "2027-04-29",
+    "objeto": "Contratação de empresa para fornecimento de médico, técnico de enfermagem e enfermeiro em regime de plantão, médico pediatra, psicólogo e fisioterapeuta.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "RAFAEL BISPO SERVIÇOS MEDICOS LTDA",
+    "cnpj": "63.356.050/0001-26"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "PRESTAÇÃO DE SERVIÇOS MÉDICOS EM REGIME DE PLANTÃO DE 12 (DOZE) HORAS, DE SEGUNDA A DOMINGO, INCLUSIVE FERIADOS, PERÍODOS DIURNO E NOTURNO. - PRESTAÇÃO DE SERVIÇOS MÉDICOS EM REGIME DE PLANTÃO DE 12 (DOZE) HORAS, DE SEGUNDA A DOMINGO, INCLUSIVE FERIADOS, PERÍODOS DIURNO E NOTURNO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 1320.0,
+      "quantidade_contratada": 800.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 25.0,
+      "quantidade_saldo": 775.0,
+      "valor_total": 1056000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 33000.0,
+      "valor_saldo": 1023000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 1056000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 33000.0,
+    "valor_saldo_geral": 1023000.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem com o PDF: R$ 1.056.000,00 contratado, R$ 33.000,00 executado e R$ 1.023.000,00 de saldo.",
+  "anexos": []
+}

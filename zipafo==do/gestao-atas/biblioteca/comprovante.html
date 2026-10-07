@@ -1,0 +1,1500 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comprovante · Biblioteca Municipal</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* =====================================================================
+         RESET + VARIÁVEIS
+         ===================================================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      :root {
+        --verde: #0d5e3a;
+        --verde-escuro: #0a4a2e;
+        --verde-suave: #f0fdf4;
+        --azul: #1a3a6b;
+        --azul-claro: #ebf4ff;
+        --cinza-texto: #334155;
+        --cinza-suave: #f1f5f9;
+        --cinza-borda: #cbd5e1;
+        --vermelho: #dc2626;
+        --amarelo: #b45309;
+      }
+
+      body {
+        background: #e2e8f0;
+        color: #1e293b;
+        min-height: 100vh;
+        font-size: 12px;
+        padding: 20px;
+      }
+
+      /* =====================================================================
+         BARRA DE AÇÕES (escondida no print)
+         ===================================================================== */
+      .barra-acoes {
+        max-width: 210mm;
+        margin: 0 auto 16px;
+        background: white;
+        border-radius: 14px;
+        border: 1px solid #cbd5e1;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+
+      .barra-acoes .info-arquivo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.82rem;
+        color: #64748b;
+      }
+
+      .barra-acoes .info-arquivo strong {
+        color: #0f172a;
+        font-family: "Courier New", monospace;
+      }
+
+      .barra-acoes .botoes {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 0.6rem 1rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.82rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-family: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: #0d5e3a;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #0a4a2e;
+      }
+
+      .btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+      }
+
+      .btn-secondary:hover {
+        background: #e2e8f0;
+      }
+
+      .btn-azul {
+        background: #1a3a6b;
+        color: white;
+      }
+
+      .btn-azul:hover {
+        background: #142e54;
+      }
+
+      /* =====================================================================
+         FOLHA A4
+         ===================================================================== */
+      .folha {
+        width: 210mm;
+        min-height: 297mm;
+        background: white;
+        margin: 0 auto 20px;
+        padding: 15mm 18mm;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 2px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .folha + .folha {
+        margin-top: 30px;
+      }
+
+      /* ---------- CABEÇALHO ---------- */
+      .cabecalho {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--verde);
+        margin-bottom: 16px;
+      }
+
+      .cabecalho .brasao {
+        width: 62px;
+        height: 62px;
+        flex-shrink: 0;
+      }
+
+      .cabecalho .brasao img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .cabecalho .brasao-fallback {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0d5e3a, #1a3a6b);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        font-weight: 800;
+      }
+
+      .cabecalho .identificacao {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .cabecalho .identificacao h1 {
+        font-size: 13px;
+        font-weight: 800;
+        color: #0d5e3a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 3px;
+      }
+
+      .cabecalho .identificacao h2 {
+        font-size: 11px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 2px;
+      }
+
+      .cabecalho .identificacao p {
+        font-size: 10px;
+        color: #64748b;
+      }
+
+      .cabecalho .tipo-comprovante {
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      .cabecalho .tipo-comprovante .tipo {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .cabecalho .tipo-comprovante .tipo.emprestimo {
+        background: var(--verde-suave);
+        color: var(--verde);
+        border: 2px solid var(--verde);
+      }
+
+      .cabecalho .tipo-comprovante .tipo.devolucao {
+        background: var(--azul-claro);
+        color: var(--azul);
+        border: 2px solid var(--azul);
+      }
+
+      .cabecalho .tipo-comprovante .codigo {
+        display: block;
+        margin-top: 6px;
+        font-family: "Courier New", monospace;
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+      }
+
+      /* ---------- TÍTULO ---------- */
+      .titulo-doc {
+        text-align: center;
+        margin-bottom: 14px;
+      }
+
+      .titulo-doc h2 {
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .titulo-doc p {
+        font-size: 10px;
+        color: #64748b;
+        margin-top: 2px;
+      }
+
+      /* ---------- SEÇÕES ---------- */
+      .secao {
+        margin-bottom: 12px;
+      }
+
+      .secao-titulo {
+        background: var(--cinza-suave);
+        padding: 6px 12px;
+        border-radius: 6px 6px 0 0;
+        font-size: 10px;
+        font-weight: 800;
+        color: #334155;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-left: 3px solid var(--verde);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .secao-conteudo {
+        border: 1px solid var(--cinza-borda);
+        border-top: none;
+        padding: 10px 12px;
+        border-radius: 0 0 6px 6px;
+      }
+
+      /* ---------- GRID DE INFO ---------- */
+      .grid-info {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px 16px;
+      }
+
+      .grid-info.duas-colunas {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .info-linha {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+
+      .info-linha .label {
+        font-size: 9px;
+        color: #64748b;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+
+      .info-linha .valor {
+        font-size: 11px;
+        color: #0f172a;
+        font-weight: 600;
+        word-break: break-word;
+      }
+
+      .info-linha .valor.mono {
+        font-family: "Courier New", monospace;
+      }
+
+      /* ---------- DESTAQUE DE PRAZO ---------- */
+      .prazo-destaque {
+        margin: 14px 0;
+        background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+        border: 2px solid var(--verde);
+        border-radius: 10px;
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        page-break-inside: avoid;
+      }
+
+      .prazo-destaque .bloco-esq {
+        flex: 1;
+      }
+
+      .prazo-destaque .bloco-esq .rotulo {
+        font-size: 9px;
+        color: var(--verde);
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin-bottom: 3px;
+      }
+
+      .prazo-destaque .bloco-esq .data-grande {
+        font-size: 26px;
+        font-weight: 900;
+        color: #0f172a;
+        line-height: 1;
+        letter-spacing: -0.5px;
+      }
+
+      .prazo-destaque .bloco-esq .detalhe {
+        font-size: 10px;
+        color: #475569;
+        margin-top: 4px;
+        font-weight: 500;
+      }
+
+      .prazo-destaque .bloco-dir {
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      .prazo-destaque .bloco-dir .icone {
+        font-size: 40px;
+        color: var(--verde);
+        opacity: 0.2;
+      }
+
+      .prazo-destaque.atrasado {
+        background: #fff5f5;
+        border-color: var(--vermelho);
+      }
+
+      .prazo-destaque.atrasado .bloco-esq .rotulo {
+        color: var(--vermelho);
+      }
+
+      .prazo-destaque.atrasado .bloco-dir .icone {
+        color: var(--vermelho);
+      }
+
+      .prazo-destaque.vence-hoje {
+        background: #fffff0;
+        border-color: #d69e2e;
+      }
+
+      .prazo-destaque.vence-hoje .bloco-esq .rotulo {
+        color: #b45309;
+      }
+
+      .prazo-destaque.vence-hoje .bloco-dir .icone {
+        color: #d69e2e;
+      }
+
+      /* ---------- TABELA DE EXEMPLARES ---------- */
+      table.tabela-exemplares {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10.5px;
+      }
+
+      table.tabela-exemplares thead {
+        background: var(--cinza-suave);
+      }
+
+      table.tabela-exemplares th {
+        text-align: left;
+        padding: 7px 8px;
+        font-size: 9px;
+        font-weight: 800;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border: 1px solid var(--cinza-borda);
+      }
+
+      table.tabela-exemplares td {
+        padding: 8px;
+        border: 1px solid var(--cinza-borda);
+        color: #0f172a;
+        vertical-align: top;
+      }
+
+      table.tabela-exemplares tbody tr:nth-child(even) {
+        background: #fafafa;
+      }
+
+      table.tabela-exemplares .codigo-cell {
+        font-family: "Courier New", monospace;
+        font-weight: 700;
+        color: var(--azul);
+        white-space: nowrap;
+      }
+
+      table.tabela-exemplares .titulo-cell {
+        font-weight: 600;
+      }
+
+      table.tabela-exemplares .autor-cell {
+        font-size: 9.5px;
+        color: #64748b;
+        margin-top: 2px;
+      }
+
+      table.tabela-exemplares .prat-cell {
+        font-size: 9.5px;
+        color: #475569;
+      }
+
+      table.tabela-exemplares .status-cell {
+        text-align: center;
+      }
+
+      .status-tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 8.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .status-tag.pendente {
+        background: #fef3c7;
+        color: #b45309;
+        border: 1px solid #fde68a;
+      }
+
+      .status-tag.devolvido {
+        background: var(--verde-suave);
+        color: var(--verde);
+        border: 1px solid #c6f6d5;
+      }
+
+      .status-tag.atrasado {
+        background: #fee2e2;
+        color: var(--vermelho);
+        border: 1px solid #fecaca;
+      }
+
+      /* ---------- RESUMO ---------- */
+      .resumo-caixa {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .resumo-item {
+        border: 1px solid var(--cinza-borda);
+        border-radius: 8px;
+        padding: 8px 10px;
+        text-align: center;
+        background: #fafafa;
+      }
+
+      .resumo-item .num {
+        font-size: 18px;
+        font-weight: 900;
+        color: #0f172a;
+        line-height: 1;
+      }
+
+      .resumo-item .lbl {
+        font-size: 9px;
+        color: #64748b;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-top: 3px;
+        letter-spacing: 0.3px;
+      }
+
+      .resumo-item.destaque {
+        background: var(--verde-suave);
+        border-color: var(--verde);
+      }
+
+      .resumo-item.destaque .num {
+        color: var(--verde);
+      }
+
+      .resumo-item.destaque .lbl {
+        color: var(--verde);
+      }
+
+      .resumo-item.atraso {
+        background: #fff5f5;
+        border-color: var(--vermelho);
+      }
+
+      .resumo-item.atraso .num,
+      .resumo-item.atraso .lbl {
+        color: var(--vermelho);
+      }
+
+      /* ---------- OBSERVAÇÕES ---------- */
+      .observacoes-box {
+        border: 1px solid var(--cinza-borda);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 10px;
+        color: #475569;
+        line-height: 1.5;
+        min-height: 48px;
+        background: #fafafa;
+      }
+
+      .observacoes-box:empty::before {
+        content: "Sem observações.";
+        color: #94a3b8;
+        font-style: italic;
+      }
+
+      /* ---------- ASSINATURAS ---------- */
+      .assinaturas {
+        margin-top: auto;
+        padding-top: 30px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        page-break-inside: avoid;
+      }
+
+      .assinatura-bloco {
+        text-align: center;
+      }
+
+      .assinatura-bloco .linha {
+        border-top: 1px solid #0f172a;
+        margin-bottom: 6px;
+      }
+
+      .assinatura-bloco .nome {
+        font-size: 10px;
+        font-weight: 700;
+        color: #0f172a;
+      }
+
+      .assinatura-bloco .cargo {
+        font-size: 9px;
+        color: #64748b;
+        margin-top: 2px;
+      }
+
+      /* ---------- RODAPÉ ---------- */
+      .rodape {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid var(--cinza-borda);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 8.5px;
+        color: #94a3b8;
+        page-break-inside: avoid;
+      }
+
+      .rodape .info-geracao {
+        text-align: left;
+      }
+
+      .rodape .info-geracao strong {
+        color: #475569;
+      }
+
+      .rodape .pagina {
+        text-align: right;
+      }
+
+      /* ---------- MARCAS D'ÁGUA / SELOS ---------- */
+      .selo-via {
+        position: absolute;
+        top: 12mm;
+        right: 18mm;
+        padding: 3px 10px;
+        background: rgba(13, 94, 58, 0.08);
+        color: var(--verde);
+        border: 1px dashed var(--verde);
+        border-radius: 6px;
+        font-size: 8.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* =====================================================================
+         ESTADOS DE CARREGAMENTO / ERRO
+         ===================================================================== */
+      .estado-carregando,
+      .estado-erro {
+        max-width: 210mm;
+        margin: 40px auto;
+        background: white;
+        border-radius: 14px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .estado-carregando .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e2e8f0;
+        border-top-color: #0d5e3a;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 16px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .estado-erro i {
+        font-size: 3rem;
+        color: #dc2626;
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      .estado-erro h2 {
+        font-size: 1.1rem;
+        color: #0f172a;
+        margin-bottom: 8px;
+      }
+
+      .estado-erro p {
+        font-size: 0.85rem;
+        color: #64748b;
+        line-height: 1.5;
+      }
+
+      /* =====================================================================
+         PRINT
+         ===================================================================== */
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+          font-size: 11px;
+        }
+
+        .barra-acoes {
+          display: none !important;
+        }
+
+        .folha {
+          width: 100%;
+          min-height: auto;
+          margin: 0;
+          padding: 12mm 15mm;
+          box-shadow: none;
+          border-radius: 0;
+          page-break-after: always;
+        }
+
+        .folha:last-child {
+          page-break-after: auto;
+        }
+
+        .folha + .folha {
+          margin-top: 0;
+        }
+
+        .assinaturas {
+          padding-top: 24px;
+        }
+
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+
+        .secao,
+        .prazo-destaque,
+        .assinaturas,
+        .rodape,
+        table.tabela-exemplares {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+    <link rel="stylesheet" href="biblioteca-blue-theme.css">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ============ BARRA DE AÇÕES (escondida no print) ============ -->
+    <div class="barra-acoes" id="barraAcoes" style="display: none">
+      <div class="info-arquivo">
+        <i class="fas fa-file-invoice"></i>
+        <span id="infoArquivo">Carregando...</span>
+      </div>
+      <div class="botoes">
+        <button
+          class="btn btn-secondary"
+          id="btnToggleVias"
+          title="Alternar entre 1 e 2 vias"
+         type="button">
+          <i class="fas fa-copy"></i> <span id="txtToggleVias">2 vias</span>
+        </button>
+        <button class="btn btn-azul" id="btnVoltar" title="Voltar" type="button">
+          <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+        <button
+          class="btn btn-primary"
+          id="btnImprimir"
+          title="Imprimir (Ctrl+P)"
+         type="button">
+          <i class="fas fa-print"></i> Imprimir
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ ESTADO CARREGANDO ============ -->
+    <div class="estado-carregando" id="estadoCarregando">
+      <div class="spinner"></div>
+      <p style="color: #64748b; font-size: 0.9rem">Carregando comprovante...</p>
+    </div>
+
+    <!-- ============ ESTADO DE ERRO ============ -->
+    <div class="estado-erro" id="estadoErro" style="display: none">
+      <i class="fas fa-circle-exclamation"></i>
+      <h2 id="tituloErro">Não foi possível carregar o comprovante</h2>
+      <p id="mensagemErro">
+        O empréstimo informado não existe ou você não tem permissão para
+        visualizá-lo.
+      </p>
+      <button
+        class="btn btn-primary"
+        style="margin-top: 20px"
+        onclick="
+          window.close();
+          history.back();
+        "
+       type="button">
+        <i class="fas fa-arrow-left"></i> Voltar
+      </button>
+    </div>
+
+    <!-- ============ CONTAINER DAS VIAS ============ -->
+    <div id="containerVias"></div>
+
+    <!-- ============ SUPABASE SDK ============ -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // ============================================
+      // CONFIG SUPABASE
+      // ============================================
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // ESTADO
+      // ============================================
+      let emprestimo = null;
+      let atendente = null;
+      let config = { nome_biblioteca: "Biblioteca Municipal" };
+      let totalVias = 2; // padrão: 2 vias (biblioteca + leitor)
+
+      // ============================================
+      // HELPERS
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function formatarData(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return "—";
+        return d.toLocaleDateString("pt-BR");
+      }
+
+      function formatarDataHora(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return "—";
+        return d.toLocaleString("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function diaSemana(iso) {
+        if (!iso) return "";
+        const d = new Date(iso + "T00:00:00");
+        if (isNaN(d.getTime())) return "";
+        return d.toLocaleDateString("pt-BR", { weekday: "long" });
+      }
+
+      function hojeISO() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      }
+
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function labelEstado(e) {
+        const map = {
+          NOVO: "Novo",
+          BOM: "Bom",
+          REGULAR: "Regular",
+          DANIFICADO: "Danificado",
+          PERDIDO: "Perdido",
+        };
+        return map[e] || e || "—";
+      }
+
+      // ============================================
+      // BUSCA DE DADOS
+      // ============================================
+      async function carregarConfiguracoes() {
+        const { data } = await supabase
+          .from("bib_configuracoes")
+          .select("nome_biblioteca, orgao_responsavel_id")
+          .eq("id", 1)
+          .maybeSingle();
+        if (data) config = { ...config, ...data };
+      }
+
+      async function carregarEmprestimo(idParam) {
+        let query = supabase.from("bib_emprestimos").select(
+          `
+          id, codigo, status, data_retirada, prazo_devolucao, renovacoes,
+          observacoes, created_at,
+          leitor: bib_leitores ( id, nome, codigo_carteirinha, cpf, telefone, email, endereco, numero, bairro, cidade, uf, tipo_leitor ),
+          usuario: usuarios ( id, nome, cargo ),
+          itens: bib_emprestimo_itens (
+            id, data_devolucao, dias_atraso, estado_devolucao, observacoes,
+            exemplar: bib_exemplares ( id, codigo, estado_conservacao, situacao,
+              livro: bib_livros ( id, titulo, isbn, ano_publicacao,
+                autores: bib_livro_autores ( autor: bib_autores ( nome ) )
+              ),
+              prateleira: bib_prateleiras ( numero, estante: bib_estantes ( codigo ) )
+            )
+          )
+        `,
+        );
+
+        // Aceita id numérico ou código (EMP-xxxxxx)
+        if (/^\d+$/.test(idParam)) {
+          query = query.eq("id", parseInt(idParam));
+        } else {
+          query = query.eq("codigo", idParam.toUpperCase());
+        }
+
+        const { data, error } = await query.maybeSingle();
+        if (error) throw error;
+        if (!data) throw new Error("Empréstimo não encontrado");
+
+        return data;
+      }
+
+      // ============================================
+      // DETECÇÃO DE TIPO: EMPRÉSTIMO OU DEVOLUÇÃO
+      // ============================================
+      function analisarEstado(emp) {
+        const itens = emp.itens || [];
+        const total = itens.length;
+        const devolvidos = itens.filter((i) => i.data_devolucao).length;
+        const pendentes = total - devolvidos;
+
+        // Tipo: se todos devolvidos → comprovante de devolução total
+        //        se nenhum devolvido → comprovante de empréstimo
+        //        se parcial → comprovante misto (mostra empréstimo + devolução parcial)
+        let tipo = "emprestimo";
+        if (total > 0 && devolvidos === total) {
+          tipo = "devolucao";
+        } else if (devolvidos > 0) {
+          tipo = "misto";
+        }
+
+        return { tipo, total, devolvidos, pendentes };
+      }
+
+      // ============================================
+      // CÁLCULO DE PRAZO
+      // ============================================
+      function calcularPrazoInfo(emp) {
+        const hj = new Date(hojeISO());
+        const prazoDate = new Date(emp.prazo_devolucao + "T00:00:00");
+        const diffDias = Math.floor((prazoDate - hj) / (1000 * 60 * 60 * 24));
+
+        const { tipo, pendentes } = analisarEstado(emp);
+
+        // Se é devolução total, não destaca prazo. Mostra data de devolução final.
+        if (tipo === "devolucao") {
+          const ultimaDevolucao = (emp.itens || [])
+            .filter((i) => i.data_devolucao)
+            .sort(
+              (a, b) => new Date(b.data_devolucao) - new Date(a.data_devolucao),
+            )[0]?.data_devolucao;
+
+          const maiorAtraso = Math.max(
+            ...(emp.itens || []).map((i) => i.dias_atraso || 0),
+            0,
+          );
+
+          return {
+            tipo: "devolucao",
+            dataDevolucao: ultimaDevolucao,
+            maiorAtraso,
+          };
+        }
+
+        // Empréstimo ou misto com pendentes
+        if (pendentes === 0) return { tipo: "sem-pendentes" };
+
+        let classe = "em-dia";
+        let rotulo = "Devolver até";
+        let detalhe = "";
+
+        if (diffDias < 0) {
+          classe = "atrasado";
+          rotulo = "Prazo vencido em";
+          detalhe = `${-diffDias} dia${-diffDias !== 1 ? "s" : ""} em atraso`;
+        } else if (diffDias === 0) {
+          classe = "vence-hoje";
+          rotulo = "Devolver hoje";
+          detalhe = `Vence hoje · ${diaSemana(emp.prazo_devolucao)}`;
+        } else {
+          classe = "em-dia";
+          rotulo = "Devolver até";
+          detalhe = `Faltam ${diffDias} dia${diffDias !== 1 ? "s" : ""} · ${diaSemana(emp.prazo_devolucao)}`;
+        }
+
+        return {
+          tipo: "emprestimo",
+          classe,
+          rotulo,
+          detalhe,
+          data: emp.prazo_devolucao,
+        };
+      }
+
+      // ============================================
+      // RENDERIZAÇÃO
+      // ============================================
+      function renderizarCabecalho(emp, tipoComprovante) {
+        const tipoLabel =
+          tipoComprovante === "devolucao"
+            ? "Comprovante de Devolução"
+            : tipoComprovante === "misto"
+              ? "Comprovante de Movimentação"
+              : "Comprovante de Empréstimo";
+
+        return `
+          <div class="cabecalho">
+            <div class="brasao">
+              <img
+                src="../brasao-pref.png"
+                alt="Brasão"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              />
+              <div class="brasao-fallback" style="display: none;">PMG</div>
+            </div>
+            <div class="identificacao">
+              <h1>Prefeitura Municipal de Pitangueiras</h1>
+              <h2>${escaparHtml(config.nome_biblioteca || "Biblioteca Municipal")}</h2>
+              <p>
+                Departamento de Cultura · Av. Central, s/n · Pitangueiras · PR
+              </p>
+              <p>Tel: (43) 0000-0000 · biblioteca@pitangueiras.pr.gov.br</p>
+            </div>
+            <div class="tipo-comprovante">
+              <span class="tipo ${tipoComprovante === "devolucao" ? "devolucao" : "emprestimo"}">
+                ${tipoLabel}
+              </span>
+              <span class="codigo">${escaparHtml(emp.codigo)}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderizarDadosLeitor(leitor) {
+        const endereco = [
+          leitor.endereco,
+          leitor.numero,
+          leitor.bairro,
+          leitor.cidade && leitor.uf
+            ? `${leitor.cidade}/${leitor.uf}`
+            : leitor.cidade || leitor.uf,
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        return `
+          <div class="secao">
+            <div class="secao-titulo">
+              <i class="fas fa-user"></i> Dados do leitor
+            </div>
+            <div class="secao-conteudo">
+              <div class="grid-info">
+                <div class="info-linha" style="grid-column: span 2;">
+                  <span class="label">Nome completo</span>
+                  <span class="valor">${escaparHtml(leitor.nome || "—")}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">Carteirinha</span>
+                  <span class="valor mono">${escaparHtml(leitor.codigo_carteirinha || "—")}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">CPF</span>
+                  <span class="valor mono">${escaparHtml(leitor.cpf || "Não informado")}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">Telefone</span>
+                  <span class="valor">${escaparHtml(leitor.telefone || "—")}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">E-mail</span>
+                  <span class="valor">${escaparHtml(leitor.email || "—")}</span>
+                </div>
+                ${
+                  endereco
+                    ? `
+                  <div class="info-linha" style="grid-column: span 3;">
+                    <span class="label">Endereço</span>
+                    <span class="valor" style="font-weight: 500;">${escaparHtml(endereco)}</span>
+                  </div>`
+                    : ""
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderizarDadosEmprestimo(emp, atendente, estado) {
+        const { tipo, total, devolvidos, pendentes } = estado;
+
+        return `
+          <div class="secao">
+            <div class="secao-titulo">
+              <i class="fas fa-file-contract"></i> Dados do empréstimo
+            </div>
+            <div class="secao-conteudo">
+              <div class="grid-info">
+                <div class="info-linha">
+                  <span class="label">Código</span>
+                  <span class="valor mono">${escaparHtml(emp.codigo)}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">Data da retirada</span>
+                  <span class="valor">${formatarDataHora(emp.data_retirada)}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">Prazo original</span>
+                  <span class="valor">${formatarData(emp.prazo_devolucao)}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">Atendente</span>
+                  <span class="valor">${escaparHtml(atendente?.nome || "—")}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">Exemplares</span>
+                  <span class="valor">${total} · ${devolvidos} devolvido${devolvidos !== 1 ? "s" : ""} · ${pendentes} pendente${pendentes !== 1 ? "s" : ""}</span>
+                </div>
+                <div class="info-linha">
+                  <span class="label">Renovações</span>
+                  <span class="valor">${emp.renovacoes || 0}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderizarPrazo(info) {
+        if (info.tipo === "devolucao") {
+          return `
+            <div class="prazo-destaque">
+              <div class="bloco-esq">
+                <div class="rotulo" style="color: var(--verde);">Devolução registrada</div>
+                <div class="data-grande" style="color: var(--verde);">✓ CONCLUÍDO</div>
+                <div class="detalhe">
+                  Todos os exemplares foram devolvidos em ${formatarData(info.dataDevolucao)}.
+                  ${info.maiorAtraso > 0 ? `<br/><strong style="color: var(--vermelho);">Maior atraso registrado: ${info.maiorAtraso} dia${info.maiorAtraso !== 1 ? "s" : ""}.</strong>` : ""}
+                </div>
+              </div>
+              <div class="bloco-dir">
+                <i class="fas fa-circle-check icone" style="opacity: 0.35;"></i>
+              </div>
+            </div>
+          `;
+        }
+
+        if (info.tipo === "sem-pendentes") {
+          return "";
+        }
+
+        // Empréstimo em aberto ou misto com pendentes
+        return `
+          <div class="prazo-destaque ${info.classe}">
+            <div class="bloco-esq">
+              <div class="rotulo">${escaparHtml(info.rotulo)}</div>
+              <div class="data-grande">${formatarData(info.data)}</div>
+              <div class="detalhe">${escaparHtml(info.detalhe)}</div>
+            </div>
+            <div class="bloco-dir">
+              <i class="fas fa-calendar-check icone"></i>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderizarTabelaExemplares(emp) {
+        const itens = emp.itens || [];
+
+        const linhas = itens
+          .map((item) => {
+            const ex = item.exemplar || {};
+            const livro = ex.livro || {};
+            const autores = (livro.autores || [])
+              .map((a) => a.autor?.nome)
+              .filter(Boolean)
+              .join(", ");
+
+            const prat = ex.prateleira
+              ? `Est. ${ex.prateleira.estante?.codigo || "?"} · Prat. ${ex.prateleira.numero}`
+              : "—";
+
+            // Status
+            let statusHtml = "";
+            if (item.data_devolucao) {
+              if (item.dias_atraso > 0) {
+                statusHtml = `<span class="status-tag atrasado">Devolvido · ${item.dias_atraso}d atraso</span>`;
+              } else {
+                statusHtml = `<span class="status-tag devolvido">Devolvido em ${formatarData(item.data_devolucao)}</span>`;
+              }
+            } else {
+              statusHtml = `<span class="status-tag pendente">Em posse do leitor</span>`;
+            }
+
+            return `
+              <tr>
+                <td class="codigo-cell">${escaparHtml(ex.codigo || "—")}</td>
+                <td>
+                  <div class="titulo-cell">${escaparHtml(livro.titulo || "—")}</div>
+                  ${autores ? `<div class="autor-cell">${escaparHtml(autores)}</div>` : ""}
+                </td>
+                <td class="prat-cell">${escaparHtml(prat)}</td>
+                <td class="status-cell">${statusHtml}</td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        return `
+          <div class="secao">
+            <div class="secao-titulo">
+              <i class="fas fa-book"></i> Exemplares (${itens.length})
+            </div>
+            <div class="secao-conteudo" style="padding: 0; border: 1px solid var(--cinza-borda);">
+              <table class="tabela-exemplares" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th style="width: 90px;">Código</th>
+                    <th>Título / Autor</th>
+                    <th style="width: 130px;">Localização</th>
+                    <th style="width: 150px; text-align: center;">Situação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${linhas}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderizarResumo(estado, info) {
+        const { total, devolvidos, pendentes } = estado;
+
+        // Soma de dias de atraso
+        const totalAtraso = (emprestimo.itens || []).reduce(
+          (acc, i) => acc + (i.dias_atraso || 0),
+          0,
+        );
+
+        return `
+          <div class="resumo-caixa">
+            <div class="resumo-item">
+              <div class="num">${total}</div>
+              <div class="lbl">Total</div>
+            </div>
+            <div class="resumo-item destaque">
+              <div class="num">${devolvidos}</div>
+              <div class="lbl">Devolvidos</div>
+            </div>
+            <div class="resumo-item ${pendentes > 0 ? "" : "destaque"}">
+              <div class="num">${pendentes}</div>
+              <div class="lbl">Pendentes</div>
+            </div>
+            <div class="resumo-item ${totalAtraso > 0 ? "atraso" : ""}">
+              <div class="num">${totalAtraso}</div>
+              <div class="lbl">Dias atraso</div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderizarObservacoes(emp) {
+        const obs = emp.observacoes || "";
+        return `
+          <div class="secao">
+            <div class="secao-titulo">
+              <i class="fas fa-message"></i> Observações
+            </div>
+            <div class="secao-conteudo">
+              <div class="observacoes-box">${escaparHtml(obs)}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderizarAssinaturas(emp, estado) {
+        const { pendentes } = estado;
+        const leitor = emp.leitor || {};
+
+        return `
+          <div class="assinaturas">
+            <div class="assinatura-bloco">
+              <div class="linha"></div>
+              <div class="nome">${escaparHtml(leitor.nome || "—")}</div>
+              <div class="cargo">
+                Leitor${leitor.codigo_carteirinha ? ` · ${escaparHtml(leitor.codigo_carteirinha)}` : ""}
+              </div>
+            </div>
+            <div class="assinatura-bloco">
+              <div class="linha"></div>
+              <div class="nome">${escaparHtml(atendente?.nome || "Servidor responsável")}</div>
+              <div class="cargo">
+                ${escaparHtml(atendente?.cargo || "Biblioteca Municipal")}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderizarRodape(emp, via) {
+        return `
+          <div class="rodape">
+            <div class="info-geracao">
+              Emitido em <strong>${formatarDataHora(new Date().toISOString())}</strong> ·
+              Sistema de Gestão da Biblioteca Municipal · Prefeitura de Pitangueiras/PR
+            </div>
+            <div class="pagina">
+              Via: <strong>${escaparHtml(via)}</strong> · Documento gerado eletronicamente
+            </div>
+          </div>
+        `;
+      }
+
+      // ============================================
+      // COMPOSIÇÃO COMPLETA DE UMA VIA
+      // ============================================
+      function renderizarVia(viaLabel) {
+        const estado = analisarEstado(emprestimo);
+        const info = calcularPrazoInfo(emprestimo);
+        const tipoComprovante = estado.tipo;
+
+        return `
+          <div class="folha">
+            <div class="selo-via">${escaparHtml(viaLabel)}</div>
+
+            ${renderizarCabecalho(emprestimo, tipoComprovante)}
+
+            <div class="titulo-doc">
+              <h2>${
+                tipoComprovante === "devolucao"
+                  ? "Comprovante de Devolução"
+                  : tipoComprovante === "misto"
+                    ? "Comprovante de Movimentação"
+                    : "Comprovante de Empréstimo"
+              }</h2>
+              <p>
+                Documento comprobatório da movimentação de exemplares da Biblioteca Municipal
+              </p>
+            </div>
+
+            ${renderizarDadosEmprestimo(emprestimo, atendente, estado)}
+            ${renderizarDadosLeitor(emprestimo.leitor || {})}
+            ${renderizarPrazo(info)}
+            ${renderizarTabelaExemplares(emprestimo)}
+            ${renderizarResumo(estado, info)}
+            ${renderizarObservacoes(emprestimo)}
+            ${renderizarAssinaturas(emprestimo, estado)}
+            ${renderizarRodape(emprestimo, viaLabel)}
+          </div>
+        `;
+      }
+
+      function renderizarVias() {
+        const container = document.getElementById("containerVias");
+
+        if (totalVias === 1) {
+          container.innerHTML = renderizarVia("Via única");
+        } else {
+          container.innerHTML =
+            renderizarVia("Via do leitor") + renderizarVia("Via da biblioteca");
+        }
+      }
+
+      // ============================================
+      // ERRO
+      // ============================================
+      function mostrarErro(mensagem, titulo = "Não foi possível carregar") {
+        document.getElementById("estadoCarregando").style.display = "none";
+        document.getElementById("barraAcoes").style.display = "none";
+        document.getElementById("estadoErro").style.display = "block";
+        document.getElementById("tituloErro").textContent = titulo;
+        document.getElementById("mensagemErro").textContent = mensagem;
+      }
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        try {
+          // Sessão
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          if (!session) {
+            window.location.href = "../intranet.html";
+            return;
+          }
+
+          // ID da URL
+          const params = new URLSearchParams(window.location.search);
+          const idParam = params.get("id");
+          if (!idParam) {
+            mostrarErro(
+              "Parâmetro ?id= não informado na URL. Este comprovante precisa ser aberto a partir do módulo de Empréstimos ou Devoluções.",
+              "Parâmetro ausente",
+            );
+            return;
+          }
+
+          // Carrega dados
+          await carregarConfiguracoes();
+          emprestimo = await carregarEmprestimo(idParam);
+          atendente = emprestimo.usuario || null;
+
+          // Mostra barra de ações
+          document.getElementById("estadoCarregando").style.display = "none";
+          document.getElementById("barraAcoes").style.display = "flex";
+
+          const estado = analisarEstado(emprestimo);
+          const tipoLabel =
+            estado.tipo === "devolucao"
+              ? "Devolução"
+              : estado.tipo === "misto"
+                ? "Movimentação"
+                : "Empréstimo";
+          document.getElementById("infoArquivo").innerHTML =
+            `<strong>${escaparHtml(emprestimo.codigo)}</strong> · ${tipoLabel} · ${escaparHtml(emprestimo.leitor?.nome || "")}`;
+
+          // Renderiza as vias
+          renderizarVias();
+
+          // Atualiza título da aba
+          document.title = `${emprestimo.codigo} · Comprovante · Biblioteca`;
+        } catch (err) {
+          console.error(err);
+          mostrarErro(
+            err.message || "Erro inesperado ao carregar o comprovante.",
+          );
+        }
+      }
+
+      // ============================================
+      // EVENTOS DOS BOTÕES
+      // ============================================
+      document.getElementById("btnImprimir").addEventListener("click", () => {
+        window.print();
+      });
+
+      document.getElementById("btnVoltar").addEventListener("click", () => {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = "emprestimos.html";
+        }
+      });
+
+      document.getElementById("btnToggleVias").addEventListener("click", () => {
+        totalVias = totalVias === 2 ? 1 : 2;
+        document.getElementById("txtToggleVias").textContent =
+          totalVias === 2 ? "2 vias" : "1 via";
+        renderizarVias();
+      });
+
+      // Ctrl+P abre o print (comportamento nativo já faz isso, mas garante)
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "p") {
+          e.preventDefault();
+          window.print();
+        }
+      });
+
+      // ============================================
+      // START
+      // ============================================
+      init();
+    </script>
+      <script type="module" src="./biblioteca-saas.js"></script>
+  </body>
+</html>

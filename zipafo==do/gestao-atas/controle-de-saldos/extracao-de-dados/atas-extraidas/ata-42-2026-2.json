@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "58-59",
+    "processo_origem": "51/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "42/2026",
+    "numero_contratacao": "1487",
+    "numero_processo": "51/2026",
+    "numero_pregao": "14",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-02",
+    "vigencia_inicio": "2026-07-02",
+    "vigencia_fim": "2027-07-02",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para adesão das Atas de Registro de Preços Nº 022/2024 e Nº 031/2024 do CONSÓRCIO INTERMUNICIPAL DA REGIÃO DO ALTO URUGUAI - CIRAU, para aquisição de 01 (uma) van e 01 (um) kit de acessibilidade em van para atender as demandas da Secretaria de Saúde deste município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "TCA TRANSFORMAÇÕES VEICULARES LTDA",
+    "cnpj": "08.389.661/0001-62"
+  },
+  "itens": [
+    {
+      "numero": "2",
+      "descricao": "KIT TRANSFORMAÇÃO TIPO DISPOSITIVO POLTRONA MÓVEL PARA ACESSIBILIDADE EM VAN COM AS SEGUINTES CARACTERÍSTICAS MÍNIMAS: NOVO, INSTALADO, DEVE POSSIBILITAR A TRANSPOSIÇÃO DE FRONTEIRA PARA EMBARQUE E DESEMBARQUE DE CADEIRANTE, USUÁRIO COM MOBILIDADE REDUZIDA OU DEFICIÊNCIA SENTADO DIRETAMENTE NA POLTRONA DO VEÍCULO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 30000.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 1.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 30000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 30000.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 30000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 30000.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 42/2026 — TCA TRANSFORMAÇÕES (Processo 51/2026). 1 item: Kit acessibilidade van. Totalmente executada. Última ata do Processo 51/2026.",
+  "anexos": []
+}

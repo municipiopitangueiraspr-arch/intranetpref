@@ -2251,7 +2251,7 @@ function exportarLista(formato) {
       "'": "&#39;",
     })[caractere]);
     const brasaoUrl = new URL("../brasao-pref.png", window.location.href).href;
-    const cssUrl = new URL("../shared/css/intranet-global.css?v=20261004-unified-5", window.location.href).href;
+    const cssUrl = new URL("../shared/css/intranet-global.css?v=20261005-fontawesome-local-1", window.location.href).href;
     const linhas = dados.map((a) => `<tr><td>${escaparHtml(a.tipo_sigla)}</td><td>${escaparHtml(a.numero)}/${escaparHtml(a.ano)}</td><td>${escaparHtml(a.orgao_nome)}</td><td>${escaparHtml(a.ementa)}</td><td>${escaparHtml(a.status)}</td><td>${escaparHtml(formatarData(a.data_publicacao))}</td></tr>`).join("");
     printWindow.document.write(`
       <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Atos Oficiais</title>

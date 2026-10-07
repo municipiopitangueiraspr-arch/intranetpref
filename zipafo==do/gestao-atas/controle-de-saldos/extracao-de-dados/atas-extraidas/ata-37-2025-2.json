@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "48",
+    "processo_origem": "34/2025",
+    "aviso": "O número da contratação (37/2025) coincide com o do Processo 20/2025 — possível erro de digitação no PDF original."
+  },
+  "cabecalho": {
+    "numero_ata": "37/2025",
+    "numero_contratacao": "1250 | 37/2025",
+    "numero_processo": "34/2025",
+    "numero_pregao": "17",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-05-21",
+    "vigencia_inicio": "2026-05-22",
+    "vigencia_fim": "2027-05-22",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06, para contratação de pessoa jurídica para ensaios fotográficos para as gestantes referenciadas no PAIF-Programa de Proteção Integral.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "58.186.270 CLAUDEMIR APARECIDO DADA",
+    "cnpj": "58.186.270/0001-19"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "SESSÃO FOTOGRÁFICA. SERÃO ENTREGUES TODAS AS FOTOS TIRADAS PARA A SECRETARIA DE ASSISTÊNCIA SOCIAL E A MESMA IRÁ SELECIONAR 30 FOTOS NO QUAL A EMPRESA IRÁ ENTREGAR 10 FOTOS REVELADAS E 20 DIGITAIS TODAS TRATADAS. SERÁ DISPONIBILIZADO TAMBÉM PELA EMPRESA FIGURINO, LUZ E CÂMERA. - SESSÃO FOTOGRÁFICA. SERÃO ENTREGUES TODAS AS FOTOS TIRADAS PARA A SECRETARIA DE ASSISTÊNCIA SOCIAL E A MESMA IRÁ SELECIONAR 30 FOTOS NO QUAL A EMPRESA IRÁ ENTREGAR 10 FOTOS REVELADAS E 20 DIGITAIS TODAS TRATADAS. SERÁ DISPONIBILIZADO TAMBÉM PELA EMPRESA FIGURINO, LUZ E CÂMERA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 350.0,
+      "quantidade_contratada": 20.0,
+      "quantidade_aditivo": 20.0,
+      "quantidade_executada": 15.0,
+      "quantidade_saldo": 25.0,
+      "valor_total": 7000.0,
+      "valor_aditivo": 7000.0,
+      "valor_executado": 5250.0,
+      "valor_saldo": 8750.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 7000.0,
+    "valor_aditivo_geral": 7000.0,
+    "valor_executado_geral": 5250.0,
+    "valor_saldo_geral": 8750.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original. O PDF apresenta: quantidade original 20, aditivo 20, executado 15, saldo 25 — indicando aditivo de 20 unidades. Totais do fornecedor conferem: executado R$ 5.250,00 / saldo R$ 8.750,00.",
+  "anexos": []
+}

@@ -1,6 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient("https://qgkjnzcqjhhqdgxmvtew.supabase.co", "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw");
+import { supabase } from "../shared/js/supabase.js";
 const $ = id => document.getElementById(id);
 const money = v => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(Number(v || 0));
 const number = v => new Intl.NumberFormat("pt-BR").format(Number(v || 0));

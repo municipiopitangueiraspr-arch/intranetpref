@@ -1,0 +1,510 @@
+/* ============================================ */
+/* controle-de-saldos/css/carrinho-drawer.css   */
+/* Drawer Lateral do Carrinho - Estilo E-commerce */
+/* ============================================ */
+
+/* ============================================ */
+/* OVERLAY (fundo escuro)                      */
+/* ============================================ */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ============================================ */
+/* DRAWER (painel lateral)                     */
+/* ============================================ */
+.drawer-carrinho {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  max-width: 90vw;
+  height: 100%;
+  background: white;
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drawer-carrinho.open {
+  transform: translateX(0);
+}
+
+/* ============================================ */
+/* HEADER DO DRAWER                            */
+/* ============================================ */
+.drawer-header {
+  padding: 20px 24px;
+  border-bottom: 2px solid var(--neutral-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, var(--primary-700), var(--neutral-800));
+  color: white;
+  flex-shrink: 0;
+}
+
+.drawer-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drawer-header h2 i {
+  color: var(--primary-300);
+}
+
+.drawer-close {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================ */
+/* BODY DO DRAWER (conteúdo)                   */
+/* ============================================ */
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  background: var(--neutral-50);
+}
+
+/* Estado vazio */
+.drawer-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  color: var(--neutral-400);
+  text-align: center;
+}
+
+.drawer-empty i {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  color: var(--neutral-300);
+}
+
+.drawer-empty p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+  margin-bottom: 4px;
+}
+
+.drawer-empty span {
+  font-size: 0.9rem;
+  color: var(--neutral-400);
+}
+
+/* ============================================ */
+/* GRUPO DE ITENS POR ATA                      */
+/* ============================================ */
+.drawer-grupo-ata {
+  margin-bottom: 20px;
+  background: white;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--neutral-200);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.drawer-grupo-header {
+  padding: 12px 16px;
+  background: var(--neutral-50);
+  border-bottom: 1px solid var(--neutral-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.drawer-grupo-titulo {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--neutral-800);
+}
+
+.drawer-grupo-fornecedor {
+  font-size: 0.75rem;
+  color: var(--neutral-500);
+}
+
+/* ============================================ */
+/* ITEM INDIVIDUAL DO CARRINHO                 */
+/* ============================================ */
+.drawer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--neutral-100);
+  gap: 12px;
+}
+
+.drawer-item:last-child {
+  border-bottom: none;
+}
+
+.drawer-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.drawer-item-descricao {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--neutral-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drawer-item-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: var(--neutral-500);
+  margin-top: 2px;
+}
+
+.drawer-item-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.drawer-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.drawer-item-total {
+  font-weight: 700;
+  color: var(--primary-700);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.drawer-item-remove {
+  background: none;
+  border: none;
+  color: var(--neutral-400);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-base);
+}
+
+.drawer-item-remove:hover {
+  color: var(--error-600);
+  background: var(--error-50);
+}
+
+/* ============================================ */
+/* FOOTER DO DRAWER (total e ações)            */
+/* ============================================ */
+.drawer-footer {
+  padding: 16px 20px;
+  border-top: 2px solid var(--neutral-200);
+  background: white;
+  flex-shrink: 0;
+}
+
+.drawer-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed var(--neutral-200);
+}
+
+.drawer-total-value {
+  color: var(--primary-700);
+  font-size: 1.3rem;
+}
+
+.drawer-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.drawer-actions button {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--border-radius-lg);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-limpar-drawer {
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+  border: 1px solid var(--neutral-200) !important;
+}
+
+.btn-limpar-drawer:hover {
+  background: var(--neutral-200);
+}
+
+.btn-finalizar-drawer {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  color: white;
+}
+
+.btn-finalizar-drawer:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================ */
+/* RESPONSIVIDADE                              */
+/* ============================================ */
+@media (max-width: 768px) {
+  .drawer-carrinho {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .drawer-header {
+    padding: 16px 20px;
+  }
+
+  .drawer-header h2 {
+    font-size: 1rem;
+  }
+
+  .drawer-body {
+    padding: 12px 16px;
+  }
+
+  .drawer-item {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+  }
+
+  .drawer-item-info {
+    width: 100%;
+  }
+
+  .drawer-item-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .drawer-actions {
+    flex-direction: column;
+  }
+
+  .drawer-actions button {
+    padding: 12px;
+  }
+
+  .drawer-total {
+    font-size: 1rem;
+  }
+
+  .drawer-total-value {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .drawer-grupo-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .drawer-item-descricao {
+    font-size: 0.8rem;
+  }
+
+  .drawer-item-meta {
+    font-size: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .drawer-item-total {
+    font-size: 0.8rem;
+  }
+}
+
+/* ============================================ */
+/* SCROLLBAR PERSONALIZADA                     */
+/* ============================================ */
+.drawer-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.drawer-body::-webkit-scrollbar-track {
+  background: var(--neutral-100);
+}
+
+.drawer-body::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: 10px;
+}
+
+.drawer-body::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
+}
+
+/* ============================================ */
+/* ALTO CONTRASTE                              */
+/* ============================================ */
+body.high-contrast .drawer-carrinho {
+  background: #111 !important;
+  border-left: 2px solid #ffff00 !important;
+}
+
+body.high-contrast .drawer-header {
+  background: #000 !important;
+  border-bottom-color: #ffff00 !important;
+}
+
+body.high-contrast .drawer-header h2 {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .drawer-close {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .drawer-grupo-ata {
+  background: #222 !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .drawer-grupo-header {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+body.high-contrast .drawer-grupo-titulo {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .drawer-item {
+  border-color: #333 !important;
+}
+
+body.high-contrast .drawer-item-descricao {
+  color: #fff !important;
+}
+
+body.high-contrast .drawer-item-total {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .drawer-item-remove:hover {
+  color: #ff4444 !important;
+  background: #222 !important;
+}
+
+body.high-contrast .drawer-footer {
+  background: #111 !important;
+  border-top-color: #ffff00 !important;
+}
+
+body.high-contrast .drawer-total {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .drawer-total-value {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .btn-limpar-drawer {
+  background: #222 !important;
+  color: #fff !important;
+  border-color: #ffff00 !important;
+}
+
+body.high-contrast .btn-limpar-drawer:hover {
+  background: #333 !important;
+}
+
+body.high-contrast .btn-finalizar-drawer {
+  background: #ffff00 !important;
+  color: #000 !important;
+}
+
+body.high-contrast .drawer-empty i {
+  color: #ffff00 !important;
+}
+
+body.high-contrast .drawer-empty p {
+  color: #fff !important;
+}
+
+body.high-contrast .drawer-empty span {
+  color: #aaa !important;
+}
+
+body.high-contrast .drawer-overlay {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Correção de camadas: a confirmação de ações destrutivas deve aparecer acima do drawer. */
+.drawer-overlay { z-index: 20000 !important; }
+.drawer-carrinho { z-index: 20010 !important; }
+
+/* O cabeçalho escuro do drawer precisa manter contraste alto. */
+.drawer-header h2,
+.drawer-header h2 * { color: #fff !important; }

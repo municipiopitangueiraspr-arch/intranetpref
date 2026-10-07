@@ -1,0 +1,31 @@
+{
+  "arquivo_origem": "relatorio-de-saldos-das-contratacoes-8.csv",
+  "data_extracao": "2026-04-27T15:34:08.743838",
+  "numero_processo": "4/2026",
+  "numero_ata": "11/2026",
+  "cnpj_fornecedor": "56.689.424/0001-60",
+  "razao_social": "EDGAR JR. GESTAO E ASSESSORIA ESPORTIVA LTDA  (CNPJ/CPF:",
+  "itens": [
+    {
+      "item": "2",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO CAMPEONATO MUNICIPAL DE FUTSAL – CATEGORIA DE BASE - SERVIÇO DE ARBITRAGEM DO CAMPEONATO MUNICIPAL DE FUTSAL – CATEGORIA DE BASE (JOG)",
+      "quant_contratada": 100.0,
+      "valor_unitario": 180.0,
+      "valor_total": 18000.0
+    },
+    {
+      "item": "3",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO CAMPEONATO MUNICIPAL DE FUTSAL ADULTO E VETERANO - SERVIÇO DE ARBITRAGEM DO CAMPEONATO MUNICIPAL DE FUTSAL ADULTO E VETERANO (JOG)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 270.0,
+      "valor_total": 54000.0
+    },
+    {
+      "item": "4",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO CAMPEONATO REGIONAL DE FUTEBOL DE CAMPO - SERVIÇO DE ARBITRAGEM DO CAMPEONATO REGIONAL DE FUTEBOL DE CAMPO (JOG)",
+      "quant_contratada": 100.0,
+      "valor_unitario": 580.0,
+      "valor_total": 58000.0
+    }
+  ]
+}

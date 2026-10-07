@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "66",
+    "processo_origem": "57/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "84/2026",
+    "numero_contratacao": "1542",
+    "numero_processo": "57/2026",
+    "numero_pregao": "28",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-09-02",
+    "vigencia_inicio": "2026-09-02",
+    "vigencia_fim": "2027-09-02",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de medicamentos.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "PROMEFARMA MEDICAMENTOS E PRODUTOS HOSPITALARES LTDA",
+    "cnpj": "81.706.251/0001-98"
+  },
+  "itens": [
+    {
+      "numero": "14",
+      "descricao": "TOBRAMICINA 0,3% SOLUÇÃO OFTÁLMICA",
+      "unidade_medida": "UN",
+      "valor_unitario": 4.56,
+      "quantidade_contratada": 200.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 30.0,
+      "quantidade_saldo": 170.0,
+      "valor_total": 912.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 136.8,
+      "valor_saldo": 775.2,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 912.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 136.8,
+    "valor_saldo_geral": 775.2
+  },
+  "observacoes": "Ata 84/2026 — PROMEFARMA (Processo 57/2026). 1 item: Tobramicina oftálmica. Saldo do PDF: R$ 775,20. Última ata do Processo 57/2026.",
+  "anexos": []
+}

@@ -1,0 +1,109 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-modelo-ii.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "origem": "extracao_pdf_relatorio_saldos",
+    "versao_extrator": "1.0.0",
+    "tipo_importacao": "ata_com_saldos"
+  },
+  "cabecalho": {
+    "numero_contratacao": "1438",
+    "numero_ata": "23/2026",
+    "numero_processo": "1/2026",
+    "numero_pregao": "1",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preço Por Item - Item",
+    "controle_saldo": "Quantidade",
+    "data_homologacao": "2026-04-28",
+    "data_assinatura": "2026-05-12",
+    "vigencia_inicio": "2026-05-12",
+    "vigencia_fim": "2027-05-12",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06, para eventual aquisição de medicamentos para a Secretaria de Saúde e Vigilância Sanitária, conforme anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CIRURGICA NOSSA SENHORA LTDA",
+    "cnpj": "24.586.988/0001-80"
+  },
+  "itens": [
+    {
+      "numero": "32",
+      "descricao": "CLORIDRATO DE LIDOCAÍNA 2% SEM VASO CONSTRITOR SOLUÇÃO INJETÁVEL",
+      "unidade_medida": "UN",
+      "valor_unitario": 1.36,
+      "quantidade_contratada": 1200.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 200.0,
+      "quantidade_saldo": 1000.0,
+      "valor_total": 1632.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 272.0,
+      "valor_saldo": 1360.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "61",
+      "descricao": "TIORIDAZIDA 50 MG COMPRIMIDO",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.74,
+      "quantidade_contratada": 12000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 12000.0,
+      "valor_total": 8880.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 8880.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "62",
+      "descricao": "TRAMADOL 50 MG COMPRIMIDO",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.15,
+      "quantidade_contratada": 12000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 12000.0,
+      "valor_total": 1800.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 1800.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "74",
+      "descricao": "CITRATO DE FENTANILA 50 MCG/ML",
+      "unidade_medida": "UN",
+      "valor_unitario": 2.36,
+      "quantidade_contratada": 3000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 100.0,
+      "quantidade_saldo": 2900.0,
+      "valor_total": 7080.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 236.0,
+      "valor_saldo": 6844.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 4,
+    "valor_contratado_geral": 28200.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 300.0,
+    "valor_saldo_geral": 27900.0
+  },
+  "observacoes": "Relatório de saldos gerado em 22/09/2026. Valores conferidos conforme PDF original.",
+  "anexos": []
+}

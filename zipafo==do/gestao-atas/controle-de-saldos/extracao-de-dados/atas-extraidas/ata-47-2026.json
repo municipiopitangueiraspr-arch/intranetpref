@@ -1,0 +1,107 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "39-40",
+    "processo_origem": "42/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "47/2026",
+    "numero_contratacao": "1489",
+    "numero_processo": "42/2026",
+    "numero_pregao": "11",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-29",
+    "vigencia_inicio": "2026-06-29",
+    "vigencia_fim": "2027-06-29",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para contratação de serviços variados para atender as necessidades de todas as secretarias do Município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "AURORA CENTRO DE DESENVOLVIMENTO INFANTIL LTDA",
+    "cnpj": "59.191.471/0002-58"
+  },
+  "itens": [
+    {
+      "numero": "2",
+      "descricao": "Profissional de Educação Física, pessoa jurídica, para prestação de serviços especializados por hora/aula, destinados ao atendimento das demandas do Município, com atuação no desenvolvimento, planejamento, orientação, acompanhamento e execução de atividades físicas, esportivas, recreativas e de promoção à saúde.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 110.0,
+      "quantidade_contratada": 2500.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 2500.0,
+      "valor_total": 275000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 275000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "5",
+      "descricao": "Psicólogo(a): condução de grupos socioeducativos com temas transversais (convivência familiar, saúde mental, prevenção de violências, fortalecimento de vínculos, entre outros).",
+      "unidade_medida": "HORA",
+      "valor_unitario": 120.0,
+      "quantidade_contratada": 420.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 420.0,
+      "valor_total": 50400.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 50400.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "6",
+      "descricao": "Musicalização: atividades lúdicas voltadas ao desenvolvimento cognitivo, motor e social, com estímulos sensoriais.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 100.0,
+      "quantidade_contratada": 230.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 230.0,
+      "valor_total": 23000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 23000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "7",
+      "descricao": "Psicomotricidade: atividades voltadas ao desenvolvimento psicomotor, coordenação, equilíbrio, lateralidade e percepção corporal.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 110.0,
+      "quantidade_contratada": 230.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 218.0,
+      "valor_total": 25300.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 1320.0,
+      "valor_saldo": 23980.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 4,
+    "valor_contratado_geral": 373700.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 1320.0,
+    "valor_saldo_geral": 372380.0
+  },
+  "observacoes": "Ata 47/2026 — AURORA CENTRO (Processo 42/2026). 4 serviços: Ed. Física, Psicólogo, Musicalização, Psicomotricidade. Saldo do PDF: R$ 372.380,00.",
+  "anexos": []
+}

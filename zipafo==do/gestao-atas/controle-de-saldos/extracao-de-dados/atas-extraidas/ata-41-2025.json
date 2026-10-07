@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "70",
+    "processo_origem": "53/2025",
+    "aviso": "O número da contratação (41/2025) coincide com o do Processo 4/2025 — possível erro de digitação no PDF original."
+  },
+  "cabecalho": {
+    "numero_ata": "41/2025",
+    "numero_contratacao": "1258 | 41/2025",
+    "numero_processo": "53/2025",
+    "numero_pregao": "8",
+    "modalidade": "Dispensa de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-06-06",
+    "vigencia_inicio": "2026-06-06",
+    "vigencia_fim": "2027-06-06",
+    "objeto": "Eventual aquisição de cobertor/manta com o objetivo de oferecer as famílias com maior vulnerabilidade no próximo inverno.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "KING FLEECE TEXTIL INDUSTRIA E COMERCIO E IMPORTAÇÃO E EXPORTACAO LTDA.",
+    "cnpj": "47.326.944/0001-17"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "Cobertor/Manta, Antialérgica/Antiácaro. Tipo: Casal. Material: Microfibra. Dimensões: 1.80 x 2.20. Composição: 100% Poliéster, Textura Aveludada e toque macio. Cores: marinho, castor e/ou chumbo. - Cobertor/Manta, Antialérgica/Antiácaro. Tipo: Casal. Material: Microfibra. Dimensões: 1.80 x 2.20. Composição: 100% Poliéster, Textura Aveludada e toque macio. Cores: marinho, castor e/ou chumbo.",
+      "unidade_medida": "UN",
+      "valor_unitario": 23.9,
+      "quantidade_contratada": 300.0,
+      "quantidade_aditivo": 300.0,
+      "quantidade_executada": 445.0,
+      "quantidade_saldo": 155.0,
+      "valor_total": 7170.0,
+      "valor_aditivo": 7170.0,
+      "valor_executado": 10635.5,
+      "valor_saldo": 3704.5,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 7170.0,
+    "valor_aditivo_geral": 7170.0,
+    "valor_executado_geral": 10635.5,
+    "valor_saldo_geral": 3704.5
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original. O PDF apresenta quantidade original 300, aditivo 300, executado 445, saldo 155 — indicando aditivo de 300 unidades. Totais conferem: R$ 7.170,00 contratado + R$ 7.170,00 aditivo = R$ 14.340,00 total; executado R$ 10.635,50; saldo R$ 3.704,50.",
+  "anexos": []
+}

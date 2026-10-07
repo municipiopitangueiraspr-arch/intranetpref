@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "18",
+    "processo_origem": "29/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "24/2026",
+    "numero_contratacao": "1452",
+    "numero_processo": "29/2026",
+    "numero_pregao": "16",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preço Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-09",
+    "vigencia_inicio": "2026-06-09",
+    "vigencia_fim": "2027-06-09",
+    "objeto": "Contratação de empresa especializada, nos moldes da Lei Complementar n° 123/06, para prestação de serviços de sonorização e iluminação para o show da dupla Bruno e Barreto, conforme especificações do Anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "VIA SOM BRASIL LTDA",
+    "cnpj": "04.473.887/0001-96"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "LOCAÇÃO DE EQUIPAMENTO DE SOM E ILUMINAÇÃO PARA O SHOW NO EVENTO EM HONRA A SANTO ANTÔNIO NO MUNICÍPIO DESCRIÇÃO DETALHADA ABAIXO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 15500.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 15500.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 15500.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 15500.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 15500.0
+  },
+  "observacoes": "Ata 24/2026 — VIA SOM BRASIL (Processo 29/2026). Sonorização e iluminação show Bruno e Barreto. 1 item. Nada executado.",
+  "anexos": []
+}

@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "40",
+    "processo_origem": "42/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "63/2026",
+    "numero_contratacao": "1524",
+    "numero_processo": "42/2026",
+    "numero_pregao": "11",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-08-12",
+    "vigencia_inicio": "2026-08-12",
+    "vigencia_fim": "2027-08-12",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para contratação de serviços variados para atender as necessidades de todas as secretarias do Município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CENTRO DE ATENDIMENTO CLINICO MULTIDISCIPLINAR LTDA",
+    "cnpj": "43.286.698/0001-66"
+  },
+  "itens": [
+    {
+      "numero": "5",
+      "descricao": "Psicólogo(a): condução de grupos socioeducativos com temas transversais (convivência familiar, saúde mental, prevenção de violências, fortalecimento de vínculos, entre outros).",
+      "unidade_medida": "HORA",
+      "valor_unitario": 120.0,
+      "quantidade_contratada": 420.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 420.0,
+      "valor_total": 50400.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 50400.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "7",
+      "descricao": "Psicomotricidade: atividades voltadas ao desenvolvimento psicomotor, coordenação, equilíbrio, lateralidade e percepção corporal.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 110.0,
+      "quantidade_contratada": 230.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 230.0,
+      "valor_total": 25300.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 25300.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 75700.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 75700.0
+  },
+  "observacoes": "Ata 63/2026 — CENTRO DE ATENDIMENTO CLINICO (Processo 42/2026). 2 serviços: Psicólogo, Psicomotricidade. Nada executado. ⚠️ Nº Ata 63/2026 vai colidir com o Processo 45/2026 (BRAZIL SPEC OPS).",
+  "anexos": []
+}

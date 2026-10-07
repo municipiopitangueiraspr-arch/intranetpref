@@ -1,0 +1,1646 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Primeiro Acesso · Intranet Pitangueiras</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* =====================================================================
+         RESET + VARIÁVEIS
+         ===================================================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      :root {
+        --verde: #0d5e3a;
+        --verde-escuro: #0a4a2e;
+        --verde-claro: #e8f5e9;
+        --verde-suave: #f0fdf4;
+        --azul: #1a3a6b;
+        --azul-claro: #ebf4ff;
+        --cinza-texto: #475569;
+        --cinza-suave: #f1f5f9;
+        --cinza-borda: #e2e8f0;
+        --vermelho: #e53e3e;
+        --vermelho-suave: #fff5f5;
+        --amarelo: #d69e2e;
+        --amarelo-suave: #fffff0;
+      }
+
+      body {
+        background: linear-gradient(145deg, #e8f5e9 0%, #e2eaf1 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.5rem;
+        color: var(--cinza-texto);
+      }
+
+      /* =====================================================================
+         CONTAINER PRINCIPAL
+         ===================================================================== */
+      .onboarding-wrapper {
+        max-width: 640px;
+        width: 100%;
+        background: white;
+        border-radius: 28px;
+        padding: 2.5rem 2.5rem 2rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      /* =====================================================================
+         CABEÇALHO
+         ===================================================================== */
+      .onboarding-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .onboarding-header .brasao-mini {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 10px 20px -10px rgba(13, 94, 58, 0.4);
+      }
+
+      .onboarding-header h1 {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 0.3rem;
+      }
+
+      .onboarding-header p {
+        font-size: 0.9rem;
+        color: #718096;
+        line-height: 1.4;
+      }
+
+      /* =====================================================================
+         BARRA DE PROGRESSO
+         ===================================================================== */
+      .progresso {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        padding: 0 0.5rem;
+      }
+
+      .progresso .step {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+      }
+
+      .progresso .step .bolinha {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--cinza-suave);
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        border: 2px solid var(--cinza-borda);
+        transition: all 0.3s;
+        z-index: 1;
+      }
+
+      .progresso .step.ativo .bolinha {
+        background: var(--verde);
+        color: white;
+        border-color: var(--verde);
+        box-shadow: 0 0 0 4px rgba(13, 94, 58, 0.15);
+      }
+
+      .progresso .step.concluido .bolinha {
+        background: var(--verde);
+        color: white;
+        border-color: var(--verde);
+      }
+
+      .progresso .step .label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        text-align: center;
+      }
+
+      .progresso .step.ativo .label,
+      .progresso .step.concluido .label {
+        color: var(--verde);
+      }
+
+      .progresso .linha {
+        flex: 1;
+        height: 3px;
+        background: var(--cinza-borda);
+        margin: 0 -8px;
+        margin-bottom: 26px;
+        border-radius: 3px;
+        transition: background 0.3s;
+      }
+
+      .progresso .linha.ativa {
+        background: var(--verde);
+      }
+
+      /* =====================================================================
+         STEPS
+         ===================================================================== */
+      .step-conteudo {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .step-conteudo.ativo {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .step-titulo {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .step-titulo i {
+        color: var(--verde);
+      }
+
+      .step-subtitulo {
+        font-size: 0.85rem;
+        color: #718096;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+      }
+
+      /* =====================================================================
+         FORMULÁRIO
+         ===================================================================== */
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 6px;
+      }
+
+      .form-label .required {
+        color: var(--vermelho);
+        margin-left: 2px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem 2.8rem 0.75rem 1rem;
+        border: 2px solid var(--cinza-borda);
+        border-radius: 12px;
+        font-size: 0.9rem;
+        background: white;
+        outline: none;
+        transition: all 0.2s;
+        font-family: inherit;
+        color: #1e293b;
+      }
+
+      .form-input.no-icon {
+        padding: 0.75rem 1rem;
+      }
+
+      .form-input:focus {
+        border-color: var(--verde);
+        box-shadow: 0 0 0 3px rgba(13, 94, 58, 0.1);
+      }
+
+      .form-input.erro {
+        border-color: var(--vermelho);
+        box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+      }
+
+      .input-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+
+      .input-icon:hover {
+        color: var(--verde);
+      }
+
+      /* =====================================================================
+         MEDIDOR DE FORÇA DA SENHA
+         ===================================================================== */
+      .forca-senha {
+        margin-top: 0.6rem;
+      }
+
+      .forca-barra {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 6px;
+      }
+
+      .forca-barra .segmento {
+        flex: 1;
+        height: 5px;
+        background: var(--cinza-borda);
+        border-radius: 3px;
+        transition: background 0.2s;
+      }
+
+      .forca-barra.score-1 .segmento:nth-child(-n + 1) {
+        background: var(--vermelho);
+      }
+      .forca-barra.score-2 .segmento:nth-child(-n + 2) {
+        background: var(--amarelo);
+      }
+      .forca-barra.score-3 .segmento:nth-child(-n + 3) {
+        background: #38a169;
+      }
+      .forca-barra.score-4 .segmento {
+        background: var(--verde);
+      }
+
+      .forca-texto {
+        font-size: 0.75rem;
+        color: #718096;
+      }
+
+      .forca-texto.score-1 {
+        color: var(--vermelho);
+      }
+      .forca-texto.score-2 {
+        color: var(--amarelo);
+      }
+      .forca-texto.score-3 {
+        color: #38a169;
+      }
+      .forca-texto.score-4 {
+        color: var(--verde);
+        font-weight: 600;
+      }
+
+      /* Requisitos */
+      .requisitos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem 1rem;
+        margin-top: 0.8rem;
+        font-size: 0.78rem;
+      }
+
+      .requisitos .req {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #94a3b8;
+        transition: color 0.2s;
+      }
+
+      .requisitos .req i {
+        font-size: 0.7rem;
+        width: 14px;
+        text-align: center;
+      }
+
+      .requisitos .req.ok {
+        color: var(--verde);
+      }
+
+      .requisitos .req.ok i::before {
+        content: "\f00c"; /* check do Font Awesome */
+      }
+
+      /* =====================================================================
+         ACEITE DE TERMOS
+         ===================================================================== */
+      .termos-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 0.9rem 1rem;
+        background: var(--verde-suave);
+        border: 1px solid #c6f6d5;
+        border-radius: 12px;
+        margin-top: 1rem;
+      }
+
+      .termos-box input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--verde);
+        cursor: pointer;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .termos-box label {
+        font-size: 0.82rem;
+        color: var(--verde);
+        line-height: 1.5;
+        cursor: pointer;
+      }
+
+      .termos-box a {
+        color: var(--verde);
+        font-weight: 700;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+      /* =====================================================================
+         BOTÕES
+         ===================================================================== */
+      .btn {
+        padding: 0.9rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--verde);
+        color: white;
+        width: 100%;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: var(--verde-escuro);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px -6px rgba(13, 94, 58, 0.4);
+      }
+
+      .btn-primary:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: var(--cinza-suave);
+        color: var(--cinza-texto);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .btn-secondary:hover {
+        background: var(--cinza-borda);
+      }
+
+      .acoes-step {
+        display: flex;
+        gap: 10px;
+        margin-top: 1.5rem;
+      }
+
+      .acoes-step .btn {
+        flex: 1;
+      }
+
+      /* =====================================================================
+         RODAPÉ
+         ===================================================================== */
+      .onboarding-footer {
+        text-align: center;
+        margin-top: 1.8rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--cinza-borda);
+        font-size: 0.78rem;
+        color: #94a3b8;
+      }
+
+      .onboarding-footer a {
+        color: var(--vermelho);
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .onboarding-footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* =====================================================================
+         NOTIFICAÇÕES TOAST
+         ===================================================================== */
+      .notification-center {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .notification-toast {
+        pointer-events: all;
+        background: white;
+        border-radius: 16px;
+        padding: 16px 24px;
+        min-width: 320px;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        animation: notificationSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .notification-toast.removing {
+        animation: notificationSlideDown 0.3s ease-in forwards;
+      }
+
+      @keyframes notificationSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes notificationSlideDown {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+      }
+
+      .notification-toast.notification-success {
+        border-left-color: var(--verde);
+        background: var(--verde-suave);
+      }
+      .notification-toast.notification-error {
+        border-left-color: var(--vermelho);
+        background: var(--vermelho-suave);
+      }
+      .notification-toast.notification-warning {
+        border-left-color: var(--amarelo);
+        background: var(--amarelo-suave);
+      }
+      .notification-toast.notification-info {
+        border-left-color: var(--azul);
+        background: var(--azul-claro);
+      }
+
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .notification-content {
+        flex: 1;
+      }
+      .notification-title {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .notification-success .notification-title {
+        color: var(--verde);
+      }
+      .notification-error .notification-title {
+        color: var(--vermelho);
+      }
+      .notification-warning .notification-title {
+        color: var(--amarelo);
+      }
+      .notification-info .notification-title {
+        color: var(--azul);
+      }
+      .notification-message {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        line-height: 1.4;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #a0aec0;
+        flex-shrink: 0;
+        margin-top: -2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .notification-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+      }
+
+      /* =====================================================================
+         MODAL DE TERMOS
+         ===================================================================== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        animation: fadeIn 0.2s ease;
+      }
+
+      .modal {
+        background: white;
+        border-radius: 20px;
+        max-width: 560px;
+        width: 100%;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .modal-header {
+        padding: 1.3rem 1.5rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .modal-header h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .modal-header h3 i {
+        color: var(--verde);
+      }
+
+      .btn-fechar {
+        background: var(--cinza-suave);
+        border: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        cursor: pointer;
+        color: var(--cinza-texto);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .btn-fechar:hover {
+        background: var(--cinza-borda);
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        font-size: 0.88rem;
+        color: var(--cinza-texto);
+        line-height: 1.6;
+      }
+
+      .modal-body h4 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 1rem 0 0.5rem;
+      }
+
+      .modal-body h4:first-child {
+        margin-top: 0;
+      }
+
+      .modal-body p {
+        margin-bottom: 0.7rem;
+      }
+
+      .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--cinza-borda);
+        display: flex;
+        justify-content: flex-end;
+        background: #f8fafc;
+        border-radius: 0 0 20px 20px;
+      }
+
+      /* =====================================================================
+         RESPONSIVIDADE
+         ===================================================================== */
+      @media (max-width: 640px) {
+        .onboarding-wrapper {
+          padding: 1.8rem 1.5rem 1.5rem;
+          border-radius: 22px;
+        }
+
+        .onboarding-header h1 {
+          font-size: 1.3rem;
+        }
+
+        .progresso .step .label {
+          font-size: 0.66rem;
+        }
+
+        .requisitos {
+          grid-template-columns: 1fr;
+        }
+
+        .acoes-step {
+          flex-direction: column-reverse;
+        }
+
+        .notification-toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+      }
+    </style>
+<link rel="stylesheet" href="shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="shared/css/acessibilidade-intranet.css">
+<script src="shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- =====================================================================
+         CONTAINER PRINCIPAL
+         ===================================================================== -->
+    <div class="onboarding-wrapper">
+      <!-- CABEÇALHO -->
+      <div class="onboarding-header">
+        <div class="brasao-mini">🏛️</div>
+        <h1>Primeiro acesso</h1>
+        <p>
+          Bem-vindo à Intranet Municipal!<br />
+          Vamos configurar sua conta em 2 passos rápidos.
+        </p>
+      </div>
+
+      <!-- BARRA DE PROGRESSO -->
+      <div class="progresso">
+        <div class="step ativo" id="step1Indicador">
+          <div class="bolinha">1</div>
+          <div class="label">Definir senha</div>
+        </div>
+        <div class="linha" id="linhaProgresso"></div>
+        <div class="step" id="step2Indicador">
+          <div class="bolinha">2</div>
+          <div class="label">Completar perfil</div>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           STEP 1 · TROCAR SENHA
+           ===================================================================== -->
+      <div class="step-conteudo ativo" id="step1">
+        <div class="step-titulo">
+          <i class="fas fa-lock"></i> Defina sua senha pessoal
+        </div>
+        <div class="step-subtitulo">
+          Por segurança, substitua a senha temporária por uma senha pessoal e
+          forte. Você usará essa nova senha nos próximos acessos.
+        </div>
+
+        <form id="formSenha" novalidate>
+          <!-- Senha atual (temporária) -->
+          <div class="form-group">
+            <label class="form-label" for="senhaAtual">
+              Senha atual (temporária)
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="senhaAtual"
+                class="form-input"
+                placeholder="Digite a senha que você recebeu"
+                autocomplete="current-password"
+                required
+              / aria-label="Digite a senha que você recebeu">
+              <i
+                class="fas fa-eye input-icon"
+                data-toggle="senhaAtual"
+                title="Mostrar/ocultar"
+              ></i>
+            </div>
+          </div>
+
+          <!-- Nova senha -->
+          <div class="form-group">
+            <label class="form-label" for="novaSenha">
+              Nova senha <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="novaSenha"
+                class="form-input"
+                placeholder="Mínimo 8 caracteres"
+                autocomplete="new-password"
+                required
+              / aria-label="Mínimo 8 caracteres">
+              <i
+                class="fas fa-eye input-icon"
+                data-toggle="novaSenha"
+                title="Mostrar/ocultar"
+              ></i>
+            </div>
+
+            <!-- Medidor de força -->
+            <div class="forca-senha">
+              <div class="forca-barra" id="forcaBarra">
+                <div class="segmento"></div>
+                <div class="segmento"></div>
+                <div class="segmento"></div>
+                <div class="segmento"></div>
+              </div>
+              <div class="forca-texto" id="forcaTexto">
+                Digite uma senha para ver a força
+              </div>
+
+              <div class="requisitos">
+                <div class="req" data-req="tamanho">
+                  <i class="fas fa-times"></i> Mínimo 8 caracteres
+                </div>
+                <div class="req" data-req="maiuscula">
+                  <i class="fas fa-times"></i> 1 letra maiúscula
+                </div>
+                <div class="req" data-req="minuscula">
+                  <i class="fas fa-times"></i> 1 letra minúscula
+                </div>
+                <div class="req" data-req="numero">
+                  <i class="fas fa-times"></i> 1 número
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confirmar nova senha -->
+          <div class="form-group">
+            <label class="form-label" for="confirmaSenha">
+              Confirmar nova senha <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="confirmaSenha"
+                class="form-input"
+                placeholder="Repita a nova senha"
+                autocomplete="new-password"
+                required
+              / aria-label="Repita a nova senha">
+              <i
+                class="fas fa-eye input-icon"
+                data-toggle="confirmaSenha"
+                title="Mostrar/ocultar"
+              ></i>
+            </div>
+          </div>
+
+          <div class="acoes-step">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="btnAvancar1"
+              disabled
+            >
+              Avançar <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- =====================================================================
+           STEP 2 · COMPLETAR PERFIL
+           ===================================================================== -->
+      <div class="step-conteudo" id="step2">
+        <div class="step-titulo">
+          <i class="fas fa-user-edit"></i> Complete seu cadastro
+        </div>
+        <div class="step-subtitulo">
+          Confirme suas informações pessoais. Alguns dados vêm pré-preenchidos
+          pelo cadastro do administrador — você pode ajustá-los.
+        </div>
+
+        <form id="formPerfil" novalidate>
+          <!-- Nome -->
+          <div class="form-group">
+            <label class="form-label" for="perfilNome">
+              Nome completo <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="perfilNome"
+              class="form-input no-icon"
+              placeholder="Seu nome completo"
+              required
+              maxlength="200"
+            / aria-label="Seu nome completo">
+          </div>
+
+          <!-- Cargo -->
+          <div class="form-group">
+            <label class="form-label" for="perfilCargo">Cargo / Função</label>
+            <input
+              type="text"
+              id="perfilCargo"
+              class="form-input no-icon"
+              placeholder="Ex: Assessor, Secretário, Agente Adm."
+              maxlength="100"
+            / aria-label="Ex: Assessor, Secretário, Agente Adm.">
+          </div>
+
+          <!-- Telefone -->
+          <div class="form-group">
+            <label class="form-label" for="perfilTelefone">Telefone</label>
+            <input
+              type="tel"
+              id="perfilTelefone"
+              class="form-input no-icon"
+              placeholder="(43) 99999-9999"
+              maxlength="20"
+            / aria-label="(43) 99999 9999">
+          </div>
+
+          <!-- E-mail (somente leitura) -->
+          <div class="form-group">
+            <label class="form-label" for="perfilEmail">
+              E-mail
+              <i
+                class="fas fa-lock"
+                style="color: #94a3b8; font-size: 0.7rem"
+              ></i>
+            </label>
+            <input
+              type="email"
+              id="perfilEmail"
+              class="form-input no-icon"
+              disabled
+              style="background: #f8fafc; cursor: not-allowed; color: #94a3b8"
+            / aria-label="perfilEmail">
+          </div>
+
+          <!-- Órgão (somente leitura) -->
+          <div class="form-group">
+            <label class="form-label" for="perfilOrgao">
+              Órgão
+              <i
+                class="fas fa-lock"
+                style="color: #94a3b8; font-size: 0.7rem"
+              ></i>
+            </label>
+            <input
+              type="text"
+              id="perfilOrgao"
+              class="form-input no-icon"
+              disabled
+              style="background: #f8fafc; cursor: not-allowed; color: #94a3b8"
+            / aria-label="perfilOrgao">
+          </div>
+
+          <!-- Aceite dos termos -->
+          <div class="termos-box">
+            <input type="checkbox" id="aceiteTermos" / aria-label="aceiteTermos">
+            <label for="aceiteTermos">
+              Declaro que li e aceito os
+              <a id="linkTermos">termos de uso e a política de privacidade</a>
+              desta intranet, em conformidade com a LGPD.
+            </label>
+          </div>
+
+          <div class="acoes-step">
+            <button type="button" class="btn btn-secondary" id="btnVoltar">
+              <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="btnFinalizar"
+              disabled
+            >
+              Finalizar <i class="fas fa-check"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- RODAPÉ -->
+      <div class="onboarding-footer">
+        <a href="#" id="linkSair">← Sair e tentar outra conta</a>
+      </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div class="notification-center" id="notificationCenter"></div>
+
+    <!-- MODAL DE TERMOS -->
+    <div class="modal-overlay" id="modalTermos" style="display: none">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-shield-halved"></i> Termos de Uso e Privacidade
+          </h3>
+          <button class="btn-fechar" id="btnFecharTermos" title="Fechar" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h4>1. Aceitação</h4>
+          <p>
+            Ao acessar a Intranet Municipal de Pitangueiras, você concorda em
+            cumprir estes termos de uso, bem como toda a legislação aplicável,
+            incluindo a Lei Geral de Proteção de Dados (LGPD — Lei nº
+            13.709/2018).
+          </p>
+
+          <h4>2. Uso adequado</h4>
+          <p>
+            O acesso à intranet é restrito a servidores e colaboradores
+            autorizados. O usuário compromete-se a utilizar o sistema apenas
+            para fins profissionais, sendo vedado o compartilhamento de
+            credenciais e o uso para atividades ilícitas.
+          </p>
+
+          <h4>3. Coleta e tratamento de dados</h4>
+          <p>
+            Os dados pessoais coletados (nome, e-mail, telefone, cargo, órgão)
+            são utilizados exclusivamente para:
+          </p>
+          <p>
+            • Autenticação e controle de acesso aos módulos do sistema;<br />
+            • Comunicação institucional entre os setores;<br />
+            • Registro de auditoria (logs de acesso, ações realizadas).
+          </p>
+
+          <h4>4. Segurança</h4>
+          <p>
+            O sistema adota medidas técnicas e administrativas para proteger os
+            dados armazenados. O usuário é responsável por manter sua senha em
+            sigilo e por comunicar imediatamente ao suporte qualquer suspeita de
+            uso indevido da conta.
+          </p>
+
+          <h4>5. Direitos do titular</h4>
+          <p>
+            Em conformidade com a LGPD, o titular pode solicitar, a qualquer
+            momento, acesso, correção, portabilidade ou exclusão dos seus dados
+            pessoais, através do canal de suporte oficial da Prefeitura.
+          </p>
+
+          <h4>6. Auditoria</h4>
+          <p>
+            As ações realizadas na intranet podem ser registradas em logs de
+            auditoria, incluindo data/hora de acesso, endereço IP e operações
+            efetuadas nos módulos.
+          </p>
+
+          <h4>7. Aceite</h4>
+          <p>
+            Ao marcar a caixa de aceite e prosseguir, você declara ter lido e
+            concordado com todos os termos acima.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-primary"
+            id="btnConcordarTermos"
+            style="width: auto"
+           type="button">
+            Entendi e concordo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         SUPABASE SDK + LÓGICA
+         ===================================================================== -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // ============================================
+      // CONFIGURAÇÃO SUPABASE
+      // ============================================
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // IMPORTS DINÂMICOS
+      // ============================================
+      let AuthGuard = null;
+      let OnboardingService = null;
+
+      async function carregarServicos() {
+        try {
+          const guardMod = await import("/shared/js/auth-guard.js");
+          AuthGuard = guardMod.AuthGuard || guardMod.default;
+        } catch (err) {
+          console.error("[Onboarding] Falha ao carregar AuthGuard:", err);
+        }
+        try {
+          const svcMod =
+            await import("/shared/js/services/onboarding-service.js");
+          OnboardingService = svcMod.OnboardingService || svcMod.default;
+        } catch (err) {
+          console.error(
+            "[Onboarding] Falha ao carregar OnboardingService:",
+            err,
+          );
+        }
+      }
+
+      // ============================================
+      // ESTADO
+      // ============================================
+      let usuarioLogado = null;
+      let stepAtual = 1;
+
+      // ============================================
+      // NOTIFICAÇÕES
+      // ============================================
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      // ============================================
+      // HELPERS
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // ============================================
+      // TOGGLE DE SENHA (olho)
+      // ============================================
+      document.querySelectorAll("[data-toggle]").forEach((icon) => {
+        icon.addEventListener("click", () => {
+          const alvoId = icon.dataset.toggle;
+          const input = document.getElementById(alvoId);
+          if (!input) return;
+          const tipoAtual = input.getAttribute("type");
+          const novoTipo = tipoAtual === "password" ? "text" : "password";
+          input.setAttribute("type", novoTipo);
+          icon.classList.toggle("fa-eye", novoTipo === "password");
+          icon.classList.toggle("fa-eye-slash", novoTipo === "text");
+        });
+      });
+
+      // ============================================
+      // MEDIDOR DE FORÇA DA SENHA
+      // ============================================
+      const novaSenhaInput = document.getElementById("novaSenha");
+      const forcaBarra = document.getElementById("forcaBarra");
+      const forcaTexto = document.getElementById("forcaTexto");
+      const btnAvancar1 = document.getElementById("btnAvancar1");
+
+      function atualizarForcaSenha() {
+        const senha = novaSenhaInput.value;
+        const resultado = OnboardingService
+          ? OnboardingService.validarForcaSenha(senha)
+          : { score: 0, mensagem: "Serviço indisponível.", requisitos: {} };
+
+        // Barra
+        forcaBarra.className = "forca-barra";
+        if (senha.length > 0) {
+          forcaBarra.classList.add(`score-${resultado.score}`);
+        }
+
+        // Texto
+        forcaTexto.className = "forca-texto";
+        if (senha.length > 0) {
+          forcaTexto.classList.add(`score-${resultado.score}`);
+          forcaTexto.textContent = resultado.mensagem;
+        } else {
+          forcaTexto.textContent = "Digite uma senha para ver a força";
+        }
+
+        // Requisitos
+        const reqs = resultado.requisitos || {};
+        document.querySelectorAll(".req").forEach((el) => {
+          const key = el.dataset.req;
+          const ok = reqs[key] === true;
+          el.classList.toggle("ok", ok);
+        });
+
+        // Habilita botão
+        validarStep1();
+      }
+
+      novaSenhaInput.addEventListener("input", atualizarForcaSenha);
+
+      // ============================================
+      // VALIDAÇÃO DO STEP 1
+      // ============================================
+      const senhaAtualInput = document.getElementById("senhaAtual");
+      const confirmaSenhaInput = document.getElementById("confirmaSenha");
+
+      function validarStep1() {
+        const senhaAtual = senhaAtualInput.value;
+        const novaSenha = novaSenhaInput.value;
+        const confirma = confirmaSenhaInput.value;
+
+        const forca = OnboardingService
+          ? OnboardingService.validarForcaSenha(novaSenha)
+          : { score: 0 };
+
+        const ok =
+          senhaAtual.length >= 6 &&
+          forca.score >= 3 &&
+          novaSenha === confirma &&
+          novaSenha.length > 0;
+
+        btnAvancar1.disabled = !ok;
+      }
+
+      senhaAtualInput.addEventListener("input", validarStep1);
+      confirmaSenhaInput.addEventListener("input", validarStep1);
+
+      // ============================================
+      // NAVEGAÇÃO ENTRE STEPS
+      // ============================================
+      const step1 = document.getElementById("step1");
+      const step2 = document.getElementById("step2");
+      const step1Indicador = document.getElementById("step1Indicador");
+      const step2Indicador = document.getElementById("step2Indicador");
+      const linhaProgresso = document.getElementById("linhaProgresso");
+
+      function irParaStep(n) {
+        stepAtual = n;
+
+        step1.classList.toggle("ativo", n === 1);
+        step2.classList.toggle("ativo", n === 2);
+
+        step1Indicador.classList.toggle("ativo", n === 1);
+        step2Indicador.classList.toggle("ativo", n === 2);
+
+        step1Indicador.classList.toggle("concluido", n > 1);
+        linhaProgresso.classList.toggle("ativa", n > 1);
+
+        // Rola para o topo do card
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // ============================================
+      // SUBMIT STEP 1 · TROCAR SENHA
+      // ============================================
+      document
+        .getElementById("formSenha")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          if (!OnboardingService) {
+            window.showNotification(
+              "error",
+              "Erro",
+              "O serviço de onboarding não pôde ser carregado.",
+            );
+            return;
+          }
+
+          const senhaAtual = senhaAtualInput.value;
+          const novaSenha = novaSenhaInput.value;
+          const confirma = confirmaSenhaInput.value;
+
+          if (novaSenha !== confirma) {
+            window.showNotification(
+              "warning",
+              "Senhas diferentes",
+              "A nova senha e a confirmação não coincidem.",
+            );
+            confirmaSenhaInput.focus();
+            return;
+          }
+
+          const btn = btnAvancar1;
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Salvando...`;
+
+          try {
+            await OnboardingService.trocarSenhaInicial(senhaAtual, novaSenha);
+
+            window.showNotification(
+              "success",
+              "Senha atualizada",
+              "Agora vamos completar seus dados.",
+            );
+
+            // Avança para o step 2
+            irParaStep(2);
+          } catch (err) {
+            console.error(err);
+            window.showNotification(
+              "error",
+              "Erro ao trocar senha",
+              err.message || "Não foi possível trocar a senha.",
+            );
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `Avançar <i class="fas fa-arrow-right"></i>`;
+            validarStep1();
+          }
+        });
+
+      // ============================================
+      // VOLTAR STEP
+      // ============================================
+      document.getElementById("btnVoltar").addEventListener("click", () => {
+        irParaStep(1);
+      });
+
+      // ============================================
+      // STEP 2 · VALIDAÇÃO
+      // ============================================
+      const perfilNome = document.getElementById("perfilNome");
+      const perfilCargo = document.getElementById("perfilCargo");
+      const perfilTelefone = document.getElementById("perfilTelefone");
+      const aceiteTermos = document.getElementById("aceiteTermos");
+      const btnFinalizar = document.getElementById("btnFinalizar");
+
+      function validarStep2() {
+        const nomeOk = perfilNome.value.trim().length >= 3;
+        const termosOk = aceiteTermos.checked;
+        btnFinalizar.disabled = !(nomeOk && termosOk);
+      }
+
+      perfilNome.addEventListener("input", validarStep2);
+      aceiteTermos.addEventListener("change", validarStep2);
+
+      // Máscara simples de telefone
+      perfilTelefone.addEventListener("input", (e) => {
+        let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+        if (v.length > 10) {
+          v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+        } else if (v.length > 6) {
+          v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+        } else if (v.length > 2) {
+          v = v.replace(/(\d{2})(\d{0,5})/, "($1) $2");
+        } else if (v.length > 0) {
+          v = v.replace(/(\d{0,2})/, "($1");
+        }
+        e.target.value = v;
+      });
+
+      // ============================================
+      // SUBMIT STEP 2 · COMPLETAR PERFIL
+      // ============================================
+      document
+        .getElementById("formPerfil")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          if (!OnboardingService) {
+            window.showNotification(
+              "error",
+              "Erro",
+              "O serviço de onboarding não pôde ser carregado.",
+            );
+            return;
+          }
+
+          const nome = perfilNome.value.trim();
+          if (nome.length < 3) {
+            window.showNotification(
+              "warning",
+              "Nome obrigatório",
+              "Informe seu nome completo (mínimo 3 caracteres).",
+            );
+            perfilNome.focus();
+            return;
+          }
+
+          if (!aceiteTermos.checked) {
+            window.showNotification(
+              "warning",
+              "Aceite necessário",
+              "Você precisa aceitar os termos de uso para continuar.",
+            );
+            return;
+          }
+
+          const btn = btnFinalizar;
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Finalizando...`;
+
+          try {
+            await OnboardingService.salvarOnboarding({
+              nome,
+              cargo: perfilCargo.value.trim() || null,
+              telefone: perfilTelefone.value.trim() || null,
+              aceitou_termos: true,
+            });
+
+            window.showNotification(
+              "success",
+              "Cadastro completo!",
+              "Redirecionando para a intranet...",
+            );
+
+            // Redireciona para a intranet após um pequeno delay
+            setTimeout(() => {
+              window.location.href = "/intranet.html";
+            }, 1200);
+          } catch (err) {
+            console.error(err);
+            window.showNotification(
+              "error",
+              "Erro ao salvar",
+              err.message || "Não foi possível salvar seus dados.",
+            );
+            btn.disabled = false;
+            btn.innerHTML = `Finalizar <i class="fas fa-check"></i>`;
+          }
+        });
+
+      // ============================================
+      // MODAL DE TERMOS
+      // ============================================
+      const modalTermos = document.getElementById("modalTermos");
+      const linkTermos = document.getElementById("linkTermos");
+      const btnFecharTermos = document.getElementById("btnFecharTermos");
+      const btnConcordarTermos = document.getElementById("btnConcordarTermos");
+
+      linkTermos.addEventListener("click", (e) => {
+        e.preventDefault();
+        modalTermos.style.display = "flex";
+      });
+
+      const fecharTermos = () => {
+        modalTermos.style.display = "none";
+      };
+
+      btnFecharTermos.addEventListener("click", fecharTermos);
+      btnConcordarTermos.addEventListener("click", () => {
+        aceiteTermos.checked = true;
+        validarStep2();
+        fecharTermos();
+      });
+
+      modalTermos.addEventListener("click", (e) => {
+        if (e.target === modalTermos) fecharTermos();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modalTermos.style.display === "flex") {
+          fecharTermos();
+        }
+      });
+
+      // ============================================
+      // LINK SAIR
+      // ============================================
+      document
+        .getElementById("linkSair")
+        .addEventListener("click", async (e) => {
+          e.preventDefault();
+          if (
+            !confirm(
+              "Sair agora? Sua conta ainda não está completa. Você retornará ao login.",
+            )
+          )
+            return;
+
+          await supabase.auth.signOut();
+          window.location.href = "/index.html";
+        });
+
+      // ============================================
+      // CARREGAR DADOS DO USUÁRIO LOGADO
+      // ============================================
+      async function carregarDadosUsuario() {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+          window.location.href = "/index.html";
+          return false;
+        }
+
+        // Busca o perfil com o órgão (join)
+        const { data: perfil, error } = await supabase
+          .from("usuarios")
+          .select(
+            `
+            id, uuid, nome, email, cargo, telefone,
+            primeiro_acesso, perfil_completo,
+            orgao:orgaos ( nome, sigla )
+          `,
+          )
+          .eq("uuid", user.id)
+          .maybeSingle();
+
+        if (error || !perfil) {
+          console.error("[Onboarding] Erro ao carregar perfil:", error);
+          window.showNotification(
+            "error",
+            "Erro",
+            "Não foi possível carregar seus dados.",
+          );
+          return false;
+        }
+
+        usuarioLogado = perfil;
+
+        // Pré-preenche o step 2
+        document.getElementById("perfilNome").value = perfil.nome || "";
+        document.getElementById("perfilCargo").value = perfil.cargo || "";
+        document.getElementById("perfilTelefone").value = perfil.telefone || "";
+        document.getElementById("perfilEmail").value = perfil.email || "";
+        document.getElementById("perfilOrgao").value = perfil.orgao
+          ? `${perfil.orgao.nome}${perfil.orgao.sigla ? " (" + perfil.orgao.sigla + ")" : ""}`
+          : "—";
+
+        validarStep2();
+        return true;
+      }
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        // 1. Carrega serviços
+        await carregarServicos();
+
+        // 2. Verifica autenticação com o guard
+        if (AuthGuard) {
+          const resultado = await AuthGuard.protegerRota({
+            permitirOnboarding: true,
+            registrarAcesso: false,
+          });
+
+          if (!resultado.ok) return;
+
+          // Se já completou o onboarding, manda direto pra intranet
+          if (!resultado.precisaOnboarding) {
+            window.location.href = "/intranet.html";
+            return;
+          }
+        } else {
+          // Fallback: sem guard, verifica sessão manualmente
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          if (!session) {
+            window.location.href = "/index.html";
+            return;
+          }
+        }
+
+        // 3. Carrega os dados do usuário (para pré-preencher step 2)
+        const ok = await carregarDadosUsuario();
+        if (!ok) return;
+
+        // 4. Inicializa UI
+        atualizarForcaSenha();
+        validarStep1();
+        validarStep2();
+
+        // 5. Foco no primeiro campo
+        setTimeout(() => {
+          document.getElementById("senhaAtual").focus();
+        }, 200);
+      }
+
+      init();
+
+      // ============================================
+      // EXPOR GLOBAIS
+      // ============================================
+      window.showNotification = window.showNotification;
+    </script>
+  </body>
+</html>

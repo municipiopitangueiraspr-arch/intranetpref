@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "50",
+    "processo_origem": "47/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "64/2026",
+    "numero_contratacao": "1518",
+    "numero_processo": "47/2026",
+    "numero_pregao": "25",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-29",
+    "vigencia_inicio": "2026-07-29",
+    "vigencia_fim": "2027-07-29",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de Gás Liquefeito de Petróleo.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "GERALDA AP. MARCHINI NICOLAU - COMERCIO DE GAS LTDA",
+    "cnpj": "34.118.870/0001-81"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "BOTIJÃO DE GÁS LIQUEFEITO DE PETRÓLEO CONTENDO 13KG LÍQUIDO (RECARGA), EM CONFORMIDADE COM AS NORMAS DA ANP.",
+      "unidade_medida": "UN",
+      "valor_unitario": 114.95,
+      "quantidade_contratada": 311.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 72.0,
+      "quantidade_saldo": 239.0,
+      "valor_total": 35749.45,
+      "valor_aditivo": 0.0,
+      "valor_executado": 8276.4,
+      "valor_saldo": 27473.05,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "BOTIJÃO DE GÁS LIQUEFEITO DE PETRÓLEO CONTENDO 13KG LÍQUIDO, COM CASCO, EM CONFORMIDADE COM AS NORMAS DA ANP.",
+      "unidade_medida": "UN",
+      "valor_unitario": 279.95,
+      "quantidade_contratada": 30.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 30.0,
+      "valor_total": 8398.5,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 8398.5,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 44147.95,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 8276.4,
+    "valor_saldo_geral": 35871.55
+  },
+  "observacoes": "Ata 64/2026 — GERALDA AP. MARCHINI (Processo 47/2026). GLP (2 itens). Saldo do PDF: R$ 35.871,55. ⚠️ Nº Ata 64/2026 em conflito com Ata 64/2026 do FELIPE GALIZA PSICOLOGIA (Processo 42/2026).",
+  "anexos": []
+}

@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo - Atas, Saldos e Pedidos</title>
+
+    <!-- ============================================================ -->
+    <!-- FONT AWESOME                                                 -->
+    <!-- ============================================================ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <!-- ============================================================ -->
+    <!-- DESIGN SYSTEM COMPARTILHADO DA INTRANET (BASE + COMPONENTES) -->
+    <!-- ============================================================ -->
+    <link rel="stylesheet" href="../shared/css/intranet-base.css" />
+    <link rel="stylesheet" href="../shared/css/componentes.css" />
+
+    <!-- ============================================================ -->
+    <!-- CSS ESPECÍFICO DO MÓDULO GESTÃO DE ATAS                      -->
+    <!-- (contém apenas o que NÃO está no design system)              -->
+    <!-- ============================================================ -->
+    <link rel="stylesheet" href="css/gestao-atas.css" />
+
+    <!-- CSS DO DRAWER DO CARRINHO -->
+    <link rel="stylesheet" href="css/carrinho-drawer.css" />
+
+    <!-- ============================================================ -->
+    <!-- CSS DA VIEW DE CARRINHO (SPA)                                 -->
+    <!-- Fornece: .carrinho-grupo-ata, .tabela-carrinho,               -->
+    <!-- .carrinho-resumo, .carrinho-total, .carrinho-actions, etc.    -->
+    <!-- Não duplica mais o design system (page-header, toasts, etc.)  -->
+    <!-- ============================================================ -->
+    <link rel="stylesheet" href="css/carrinho-page.css" />
+
+    <!-- CSS DO DASHBOARD -->
+    <link rel="stylesheet" href="css/dashboard.css" />
+
+    <!-- ============================================================ -->
+    <!-- NOVO · CSS DO MÓDULO RELATÓRIOS                              -->
+    <!-- ------------------------------------------------------------ -->
+    <!-- Fornece os estilos exclusivos da view de relatórios:          -->
+    <!--   · Cards do índice (.relatorio-card)                         -->
+    <!--   · KPIs (.kpi-relatorio)                                     -->
+    <!--   · Tabelas de resultado (.relatorios-tabela-container)       -->
+    <!--   · Filtros específicos (.relatorio-filtro-datas/-dias)       -->
+    <!--   · Ações de exportação (.btn-exportar-relatorio)             -->
+    <!--                                                              -->
+    <!-- Carregado DEPOIS do gestao-atas.css para poder sobrescrever    -->
+    <!-- pontualmente quando necessário.                               -->
+    <!-- ============================================================ -->
+    <link rel="stylesheet" href="css/relatorios.css" />
+
+    <!-- ============================================================ -->
+    <!-- ESTILOS EXTRAS · FAB DO CARRINHO (botão flutuante)           -->
+    <!-- Substitui o antigo botão que ficava no header                -->
+    <!-- ============================================================ -->
+    <style>
+      .btn-carrinho-flutuante {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0d5e3a, #1a3a6b);
+        color: white;
+        border: none;
+        box-shadow: 0 10px 25px rgba(13, 94, 58, 0.4);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        z-index: 900;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .btn-carrinho-flutuante:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(13, 94, 58, 0.5);
+      }
+
+      .btn-carrinho-flutuante:active {
+        transform: translateY(-1px) scale(1);
+      }
+
+      .badge-carrinho-flutuante {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 22px;
+        height: 22px;
+        background: #e53e3e;
+        color: white;
+        border-radius: 9999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+        padding: 0 4px;
+        line-height: 1;
+      }
+
+      @media (max-width: 480px) {
+        .btn-carrinho-flutuante {
+          width: 52px;
+          height: 52px;
+          font-size: 1.15rem;
+          bottom: 16px;
+          right: 16px;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+<link rel="stylesheet" href="css/gestaoatas-theme.css">
+<link rel="stylesheet" href="css/gestaoatas-premium.css">
+<link rel="stylesheet" href="css/gestaoatas-drive.css">
+  <link rel="stylesheet" href="/shared/css/system-mother.css?v=20261004-system-mother-v1">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ============================================================ -->
+    <!-- SISTEMA · LAYOUT PRINCIPAL (Sidebar + Topbar + Conteúdo)     -->
+    <!-- O id "mainSystem" é mantido para compatibilidade             -->
+    <!-- ============================================================ -->
+    <div class="app-layout" id="mainSystem">
+      <!-- ========================================================== -->
+      <!-- SIDEBAR (preenchida automaticamente pelo shared/js/layout.js) -->
+      <!-- ========================================================== -->
+      <aside class="sidebar" id="sidebar"></aside>
+
+      <!-- ========================================================== -->
+      <!-- ÁREA PRINCIPAL                                              -->
+      <!-- ========================================================== -->
+      <div class="main-area">
+        <!-- ======================================================== -->
+        <!-- TOPBAR (preenchida automaticamente pelo layout.js)       -->
+        <!-- ======================================================== -->
+        <header class="topbar" id="topbar"></header>
+
+        <!-- ======================================================== -->
+        <!-- CONTEÚDO DO MÓDULO                                       -->
+        <!-- ======================================================== -->
+        <!--
+          ============================================================
+          NAVEGAÇÃO · agora feita 100% pela sidebar lateral.
+          As antigas tabs horizontais (Dashboard / Consulta / Gestão /
+          Cadastrar Ata / Pedidos / Aditivos) foram REMOVIDAS para
+          eliminar redundância com o menu lateral do layout.js.
+          ============================================================
+        -->
+        <main class="conteudo conteudo-full">
+          <!-- ====================================================== -->
+          <!-- CONTEÚDOS DINÂMICOS · renderizados pelo main.js        -->
+          <!-- IDs preservados exatamente como o JS espera            -->
+          <!-- ====================================================== -->
+          <div id="dashboardContent" style="display: none"></div>
+          <div id="consultaContent"></div>
+          <div id="gestaoContent" style="display: none"></div>
+          <div id="cadastroContent" style="display: none"></div>
+          <div id="pedidosContent" style="display: none"></div>
+          <div id="aditivosContent" style="display: none"></div>
+
+          <!-- ====================================================== -->
+          <!-- FAQ · manual interativo para secretários               -->
+          <!-- Carregado pelo módulo FAQ via templates/faq.html        -->
+          <!-- ====================================================== -->
+          <div id="faqContent" style="display: none"></div>
+
+          <!-- ====================================================== -->
+          <!-- CARRINHO (SPA) · nova view integrada ao layout         -->
+          <!-- Renderizada por js/modules/carrinho.js                 -->
+          <!-- (antiga página standalone carrinho.html)               -->
+          <!-- ====================================================== -->
+          <div id="carrinhoContent" style="display: none"></div>
+
+          <!-- ====================================================== -->
+          <!-- NOVO · RELATÓRIOS · view integrada ao layout           -->
+          <!-- ------------------------------------------------------ -->
+          <!-- Renderizada por js/modules/relatorios.js.              -->
+          <!-- O módulo faz fetch de "templates/relatorios.html"      -->
+          <!-- (padrão do dashboard.js) e injeta o HTML aqui dentro.  -->
+          <!-- O container começa vazio: o próprio módulo popula.     -->
+          <!-- ====================================================== -->
+          <div id="relatoriosContent" style="display: none"></div>
+
+          <!-- ====================================================== -->
+          <!-- CONTEÚDOS LEGADOS (Órgãos / Usuários)                  -->
+          <!-- Mantidos por segurança — hoje vazios, sem módulos ativos -->
+          <!-- ====================================================== -->
+          <div id="orgaosContent" style="display: none"></div>
+          <div id="usuariosContent" style="display: none"></div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- FAB · BOTÃO FLUTUANTE DO CARRINHO                            -->
+    <!-- Substitui o antigo botão do header. Mantém os mesmos IDs     -->
+    <!-- que o main.js referencia (btnAbrirDrawerCarrinho e           -->
+    <!-- carrinhoBadgeHeader).                                        -->
+    <!-- ============================================================ -->
+    <button
+      class="btn-carrinho-flutuante"
+      id="btnAbrirDrawerCarrinho"
+      title="Abrir carrinho"
+      aria-label="Abrir carrinho"
+     type="button">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="badge-carrinho-flutuante" id="carrinhoBadgeHeader">0</span>
+    </button>
+
+    <!-- ============================================================ -->
+    <!-- DRAWER DO CARRINHO (LATERAL) · popup do FAB                   -->
+    <!-- ------------------------------------------------------------ -->
+    <!-- ✅ ATUALIZADO · O FAB agora abre este drawer como popup em    -->
+    <!-- cima da view atual (não troca de view). Adicionado:           -->
+    <!--   · Botão "Ver carrinho completo" no rodapé, que navega       -->
+    <!--     para a view SPA (#carrinhoContent)                        -->
+    <!--   · ✅ NOVO: Botão "Finalizar Pedido" agora funciona direto   -->
+    <!--     do drawer, abrindo o modal de finalização que foi movido  -->
+    <!--     para o HTML principal (ver abaixo em #modalFinalizacao)   -->
+    <!-- ============================================================ -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer-carrinho" id="drawerCarrinho">
+      <div class="drawer-header">
+        <h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>
+        <button class="drawer-close" id="btnFecharDrawer" type="button">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="drawer-body" id="drawerBody">
+        <div class="drawer-empty" id="drawerEmpty">
+          <i class="fas fa-shopping-cart"></i>
+          <p>Seu carrinho está vazio.</p>
+          <span>Navegue pelas atas e adicione itens.</span>
+        </div>
+        <div class="drawer-items" id="drawerItems" style="display: none">
+          <!-- Renderizado via JavaScript -->
+        </div>
+      </div>
+      <div class="drawer-footer" id="drawerFooter" style="display: none">
+        <div class="drawer-total">
+          <span>Total:</span>
+          <span class="drawer-total-value" id="drawerTotal">R$ 0,00</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ✅ NOVO · Botão "Ver carrinho completo"                      -->
+        <!-- ------------------------------------------------------------ -->
+        <!-- Abre a view SPA do carrinho (#carrinhoContent), permitindo   -->
+        <!-- a edição completa (ajustar quantidades, ver agrupamentos,    -->
+        <!-- finalizar pedido). É o único caminho que troca de view a     -->
+        <!-- partir do FAB. Fica em destaque (largura total) acima dos    -->
+        <!-- botões de ação secundários.                                  -->
+        <!-- ============================================================ -->
+        <button class="btn-ver-carrinho-completo" id="btnVerCarrinhoCompleto" type="button">
+          <i class="fas fa-expand"></i> Ver carrinho completo
+        </button>
+
+        <div class="drawer-actions">
+          <button class="btn-limpar-drawer" id="btnLimparDrawer" type="button">
+            <i class="fas fa-trash"></i> Limpar
+          </button>
+          <button class="btn-finalizar-drawer" id="btnFinalizarDrawer" type="button">
+            <i class="fas fa-file-invoice"></i> Finalizar Pedido
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ✅ NOVO · MODAL DE FINALIZAÇÃO DE PEDIDO                     -->
+    <!-- ------------------------------------------------------------ -->
+    <!-- Este bloco foi MOVIDO de dentro do `carrinho.js` (método      -->
+    <!-- gerarHTML()) para o HTML principal. Motivo:                  -->
+    <!--                                                              -->
+    <!--   · Antes, o modal só existia quando a view SPA do carrinho  -->
+    <!--     era renderizada. Se o usuário clicasse em "Finalizar     -->
+    <!--     Pedido" direto no FAB (drawer), nada acontecia, pois     -->
+    <!--     o modal não existia no DOM.                              -->
+    <!--                                                              -->
+    <!--   · Agora, o modal vive desde o boot da página e pode ser    -->
+    <!--     aberto tanto pelo FAB quanto pela view SPA.              -->
+    <!--                                                              -->
+    <!-- ESTRUTURA:                                                    -->
+    <!--   · Overlay full-screen (padrão .modal do sistema)            -->
+    <!--   · Modal-content com header, body (blocos por ATA), footer   -->
+    <!--   · O conteúdo dos blocos é renderizado dinamicamente por     -->
+    <!--     `carrinho.js::_renderizarBlocosFinalizacao()`             -->
+    <!--   · O <datalist> de sugestões de locais de entrega é          -->
+    <!--     populado por `carrinho.js::_popularDatalist()`            -->
+    <!-- ============================================================ -->
+    <div id="modalFinalizacao" class="modal modal-finalizacao">
+      <div class="modal-content modal-content-finalizacao">
+        <div class="modal-header">
+          <h2 class="modal-titulo">
+            <i class="fas fa-check-circle"></i> Finalizar Pedido
+          </h2>
+          <button
+            type="button"
+            class="modal-close"
+            id="btnFecharModalFinalizacao"
+            title="Fechar"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="modal-body-finalizacao">
+          <!-- Aviso contextual exibido quando o modal é aberto pelo FAB -->
+          <div
+            class="finalizacao-aviso-fab"
+            id="finalizacaoAvisoFab"
+            style="display: none"
+          >
+            <i class="fas fa-info-circle"></i>
+            <span>
+              Você pode revisar e ajustar quantidades na tela
+              <strong>Meu Carrinho</strong>.
+            </span>
+          </div>
+
+          <!-- Resumo do que vai ser gerado -->
+          <div class="finalizacao-resumo" id="finalizacaoResumo">
+            <!-- Preenchido dinamicamente -->
+          </div>
+
+          <!-- Checkbox "aplicar a todos" -->
+          <label class="finalizacao-aplicar-todos">
+            <input type="checkbox" id="aplicarTodosLocais" / aria-label="aplicarTodosLocais">
+            <span> Aplicar o mesmo local de entrega em todos os pedidos </span>
+          </label>
+
+          <!-- Blocos por ATA -->
+          <div id="finalizacaoBlocos" class="finalizacao-blocos">
+            <!-- Preenchido dinamicamente -->
+          </div>
+
+          <!-- Datalist global (as opções são compartilhadas) -->
+          <datalist id="locaisEntregaList"></datalist>
+        </div>
+
+        <div class="modal-footer-finalizacao">
+          <button
+            type="button"
+            class="btn-cancelar-finalizacao"
+            id="btnCancelarFinalizacao"
+          >
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn-confirmar-finalizacao"
+            id="btnConfirmarFinalizacao"
+            disabled
+          >
+            <i class="fas fa-check"></i> Confirmar Pedido
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · DETALHES DE ATA                                      -->
+    <!-- ============================================================ -->
+    <div
+      id="modalDetalhes"
+      class="modal"
+      onclick="if (event.target === this) sistema.fecharModal();"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-titulo" id="modalTituloAta"></h2>
+          <button class="modal-close" onclick="sistema.fecharModal()" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="modalConteudo"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · LANÇAR CONSUMO                                       -->
+    <!-- ============================================================ -->
+    <div
+      id="modalConsumo"
+      class="modal"
+      onclick="if (event.target === this) sistema.fecharModalConsumo();"
+    >
+      <div class="modal-content" style="max-width: 450px">
+        <div class="modal-header">
+          <h2 class="modal-titulo">
+            <i class="fas fa-pen"></i> Lançar Consumo
+          </h2>
+          <button class="modal-close" onclick="sistema.fecharModalConsumo()" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="modalConsumoConteudo"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · VISUALIZAR PEDIDO COMPLETO                           -->
+    <!-- ============================================================ -->
+    <div
+      id="modalVisualizarPedido"
+      class="modal"
+      onclick="
+        if (event.target === this) sistema.fecharModalVisualizarPedido();
+      "
+    >
+      <div class="modal-content" style="max-width: 950px">
+        <div class="modal-header">
+          <h2 class="modal-titulo">
+            <i class="fas fa-file-invoice"></i> Detalhes do Pedido
+          </h2>
+          <button
+            class="modal-close"
+            onclick="sistema.fecharModalVisualizarPedido()"
+           type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="modalVisualizarPedidoConteudo"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · ÓRGÃO (legado — mantido para compatibilidade)        -->
+    <!-- ============================================================ -->
+    <div
+      id="modalOrgao"
+      class="modal"
+      onclick="if (event.target === this) sistema.fecharModalOrgao();"
+    >
+      <div class="modal-content" style="max-width: 550px">
+        <div class="modal-header">
+          <h2 class="modal-titulo" id="modalOrgaoTitulo">
+            <i class="fas fa-university"></i> Novo Órgão
+          </h2>
+          <button class="modal-close" onclick="sistema.fecharModalOrgao()" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form
+          id="formOrgao"
+          onsubmit="
+            event.preventDefault();
+            sistema.orgaosModule?.salvar();
+          "
+        ></form>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · USUÁRIO (legado — mantido para compatibilidade)      -->
+    <!-- ============================================================ -->
+    <div
+      id="modalUsuario"
+      class="modal"
+      onclick="if (event.target === this) sistema.fecharModalUsuario();"
+    >
+      <div class="modal-content" style="max-width: 550px">
+        <div class="modal-header">
+          <h2 class="modal-titulo" id="modalUsuarioTitulo">
+            <i class="fas fa-user-plus"></i> Novo Usuário
+          </h2>
+          <button class="modal-close" onclick="sistema.fecharModalUsuario()" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form
+          id="formUsuario"
+          onsubmit="
+            event.preventDefault();
+            sistema.usuariosModule?.salvar();
+          "
+        ></form>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · ADITIVO                                              -->
+    <!-- ============================================================ -->
+    <div
+      id="modalAditivo"
+      class="modal"
+      onclick="if (event.target === this) sistema.fecharModalAditivo();"
+    >
+      <div class="modal-content" style="max-width: 800px">
+        <div class="modal-header">
+          <h2 class="modal-titulo" id="modalAditivoTitulo">
+            <i class="fas fa-file-contract"></i> Novo Aditivo
+          </h2>
+          <button class="modal-close" onclick="sistema.fecharModalAditivo()" type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="resumoAtaOriginal"></div>
+        <form
+          id="formAditivo"
+          onsubmit="
+            event.preventDefault();
+            sistema.aditivos.salvar();
+          "
+        ></form>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · CONFIRMAÇÃO GENÉRICA                                 -->
+    <!-- ============================================================ -->
+    <div
+      id="modalConfirmacao"
+      class="modal"
+      onclick="
+        if (event.target === this) sistema.fecharModalConfirmacao(false);
+      "
+    >
+      <div class="modal-content" style="max-width: 450px">
+        <div class="modal-header">
+          <h2 class="modal-titulo" id="confirmacaoTitulo">Confirmação</h2>
+          <button
+            class="modal-close"
+            onclick="sistema.fecharModalConfirmacao(false)"
+           type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="confirmacaoMensagem"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="confirmacaoNao" type="button">Não</button>
+          <button class="btn btn-primary" id="confirmacaoSim" type="button">Sim</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · MOTIVO DE REJEIÇÃO (VERSÃO PROFISSIONAL)              -->
+    <!-- ============================================================ -->
+    <div
+      id="modalMotivoRejeicao"
+      class="modal"
+      onclick="if (event.target === this) sistema.fecharModalMotivoRejeicao();"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-titulo">
+              <i class="fas fa-times-circle"></i> Rejeitar Pedido
+            </h2>
+            <p class="modal-subtitulo">
+              Informe o motivo para justificar a rejeição deste pedido
+            </p>
+          </div>
+          <button
+            class="modal-close"
+            onclick="sistema.fecharModalMotivoRejeicao()"
+           type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <span>
+              <strong>Atenção:</strong> Esta ação é irreversível. O solicitante
+              será notificado sobre a rejeição e poderá visualizar o motivo
+              informado.
+            </span>
+          </div>
+          <form
+            id="formMotivoRejeicao"
+            onsubmit="
+              event.preventDefault();
+              sistema.pedidos.confirmarRejeicao();
+            "
+          >
+            <div class="form-group">
+              <label for="motivoRejeicao">
+                <i class="fas fa-pen"></i> Motivo da Rejeição
+                <span class="obrigatorio">*</span>
+                <span class="label-hint">(mínimo 10 caracteres)</span>
+              </label>
+              <textarea
+                id="motivoRejeicao"
+                class="form-control"
+                rows="5"
+                placeholder="Descreva detalhadamente o motivo da rejeição..."
+                required
+                minlength="10"
+                maxlength="500"
+               aria-label="Descreva detalhadamente o motivo da rejeição..."></textarea>
+              <div class="char-counter">
+                <span class="count" id="charCount">0</span> / 500 caracteres
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn-cancelar"
+            onclick="sistema.fecharModalMotivoRejeicao()"
+          >
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn-rejeitar-modal"
+            id="btnConfirmarRejeicao"
+            form="formMotivoRejeicao"
+          >
+            <i class="fas fa-exclamation-triangle"></i> Rejeitar Pedido
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · VISUALIZAR MOTIVO DE REJEIÇÃO (VERSÃO PROFISSIONAL)   -->
+    <!-- ============================================================ -->
+    <div
+      id="modalVisualizarMotivo"
+      class="modal"
+      onclick="
+        if (event.target === this) sistema.fecharModalVisualizarMotivo();
+      "
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-titulo">
+              <i class="fas fa-info-circle"></i> Motivo da Rejeição
+            </h2>
+            <p
+              class="modal-subtitulo"
+              style="
+                color: var(--neutral-500);
+                font-size: 0.85rem;
+                margin-top: 2px;
+              "
+            >
+              Detalhes sobre a rejeição deste pedido
+            </p>
+          </div>
+          <button
+            class="modal-close"
+            onclick="sistema.fecharModalVisualizarMotivo()"
+           type="button">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="modalVisualizarMotivoConteudo">
+          <!-- Conteúdo dinâmico renderizado pelo JavaScript -->
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn-fechar-modal"
+            onclick="sistema.fecharModalVisualizarMotivo()"
+           type="button">
+            <i class="fas fa-times"></i> Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- VISUALIZADOR DE PDF (PRÉVIA)                                  -->
+    <!-- ============================================================ -->
+    <div
+      id="pdfVisualizador"
+      class="pdf-visualizador"
+      onclick="if (event.target === this) sistema.fecharPdfVisualizador();"
+    >
+      <div class="pdf-content">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+          "
+        >
+          <h2 style="font-size: 1.2rem">
+            <i class="fas fa-file-pdf"></i> Visualização do Pedido
+          </h2>
+          <button
+            onclick="sistema.fecharPdfVisualizador()"
+            style="
+              background: none;
+              border: none;
+              font-size: 1.5rem;
+              cursor: pointer;
+            "
+           type="button">
+            ×
+          </button>
+        </div>
+        <div id="pdfConteudo" class="tabela-container"></div>
+        <div
+          style="
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 16px;
+          "
+        >
+          <button
+            class="btn btn-secondary"
+            onclick="sistema.fecharPdfVisualizador()"
+           type="button">
+            Fechar
+          </button>
+          <button class="btn btn-danger" id="btnBaixarPDF" type="button">
+            <i class="fas fa-download"></i> Baixar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CONTAINERS DE NOTIFICAÇÃO / TOAST                            -->
+    <!-- Ambos existem para compatibilidade:                          -->
+    <!--  · #toastContainer       → usado por UI.mostrarToast()        -->
+    <!--  · #notificationCenter   → padrão do design system            -->
+    <!-- ============================================================ -->
+    <div id="toastContainer" class="notification-center"></div>
+    <div id="notificationCenter" class="notification-center"></div>
+
+    <!-- ============================================================ -->
+    <!-- CHART.JS PARA GRÁFICOS DO DASHBOARD E RELATÓRIOS             -->
+    <!-- ============================================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- ============================================================ -->
+    <!-- JSPDF + AUTOTABLE PARA GERAÇÃO DE PDFs                       -->
+    <!-- ============================================================ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- ============================================================ -->
+    <!-- IMPORTMAP · SUPABASE                                         -->
+    <!-- ============================================================ -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- SCRIPT PRINCIPAL DO MÓDULO                                   -->
+    <!-- ============================================================ -->
+    <script type="module" src="js/main.js"></script>
+    <script src="/shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+</body>
+</html>

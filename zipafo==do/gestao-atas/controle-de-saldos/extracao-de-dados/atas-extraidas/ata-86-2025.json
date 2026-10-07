@@ -1,0 +1,108 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "215-216",
+    "processo_origem": "67/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor CAROL COMERCIAL LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "86/2025",
+    "numero_contratacao": "1345 | 86/2025",
+    "numero_processo": "67/2025",
+    "numero_pregao": "32",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-10-07",
+    "vigencia_inicio": "2025-10-07",
+    "vigencia_fim": "2026-10-07",
+    "objeto": "Eventual aquisição de materiais de expediente.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CAROL COMERCIAL LTDA",
+    "cnpj": "10.867.300/0001-26"
+  },
+  "itens": [
+    {
+      "numero": "19",
+      "descricao": "GIZ PASTEL OLEOSO PENTEL PARA DESENHAR COM 50 CORES, O GIZ PASTEL OLEOSO GIZ PASTEL OLEOSO PENTEL PARA DESENHAR COM 50 CORES, QUALIDADE JAPONESA; PENTEL, PHN-50.",
+      "unidade_medida": "UN",
+      "valor_unitario": 54.05,
+      "quantidade_contratada": 20.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 2.0,
+      "quantidade_saldo": 18.0,
+      "valor_total": 1081.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 108.1,
+      "valor_saldo": 972.9,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "26",
+      "descricao": "PLACA DE E.V.A EMBORRACHADO, ESTAMPADO MEDINDO APROXIMADAMENTE 40X60CM, VÁRIAS CORES, PACOTE COM 10 UNIDADES.",
+      "unidade_medida": "UN",
+      "valor_unitario": 25.35,
+      "quantidade_contratada": 50.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 50.0,
+      "valor_total": 1267.5,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 1267.5,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "29",
+      "descricao": "SACOLA KRAFT LEMBRANÇA PEQUENA 12X08X16 - SACOLA KRAFT LEMBRANÇA PEQUENA 12X08X16",
+      "unidade_medida": "UN",
+      "valor_unitario": 1.52,
+      "quantidade_contratada": 500.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 500.0,
+      "valor_total": 760.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 760.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "30",
+      "descricao": "SACOLA PLÁSTICA MODELO CAMISETA 25X30 CM PACOTE COM 1000 - SACOLA PLÁSTICA MODELO CAMISETA 25X30 CM PACOTE COM 1000",
+      "unidade_medida": "UN",
+      "valor_unitario": 43.15,
+      "quantidade_contratada": 20.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 20.0,
+      "valor_total": 863.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 863.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 4,
+    "valor_contratado_geral": 3971.5,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 108.1,
+    "valor_saldo_geral": 3863.4
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Totais conferem com o PDF: R$ 3.971,50 contratado, R$ 108,10 executado e R$ 3.863,40 de saldo.",
+  "anexos": []
+}

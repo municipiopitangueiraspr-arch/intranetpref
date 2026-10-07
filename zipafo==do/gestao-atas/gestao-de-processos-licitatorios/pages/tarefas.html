@@ -1,0 +1,58 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="tarefas">
+  <div class="page-header">
+    <h1>Tarefas</h1>
+  </div>
+
+  <div class="filters">
+    <div class="filter-group">
+      <label>Responsável:</label>
+      <select id="filter-tarefa-responsavel" aria-label="filter tarefa responsavel">
+        <option value="todos">Todos</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Setor:</label>
+      <select id="filter-tarefa-setor" aria-label="filter tarefa setor">
+        <option value="todos">Todos</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Status:</label>
+      <select id="filter-tarefa-status" aria-label="filter tarefa status">
+        <option value="todos">Todos</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Prazo:</label>
+      <select aria-label="Selecione uma opção">
+        <option value="todos">Todos</option>
+        <option value="vencido">Vencido</option>
+        <option value="proximo">Próximo</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" id="btn-aplicar-filtros" type="button">Aplicar</button>
+    <button class="btn" id="btn-limpar-filtros-tarefas" type="button">Limpar</button>
+  </div>
+
+  <div class="card">
+    <div class="table-container">
+      <table aria-label="Tabela de dados">
+        <thead>
+          <tr>
+            <th>Tarefa</th>
+            <th>Processo</th>
+            <th>Fase</th>
+            <th>Responsável</th>
+            <th>Prazo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tarefas-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+/* Shared foundation for the municipal administration UI. */
+:root {
+  --admin-navy: #102a43;
+  --admin-navy-2: #163f63;
+  --admin-green: #0d5e3a;
+  --admin-ink: #172b4d;
+  --admin-muted: #627d98;
+  --admin-line: #d9e2ec;
+  --admin-surface: #ffffff;
+  --admin-bg: #f4f7fb;
+  --admin-sidebar-width: 272px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { min-height: 100%; }
+body { min-height: 100%; margin: 0; background: var(--admin-bg); color: var(--admin-ink); }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; }

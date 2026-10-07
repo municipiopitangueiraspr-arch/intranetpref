@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "73",
+    "processo_origem": "6/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "53/2026",
+    "numero_contratacao": "1482",
+    "numero_processo": "6/2026",
+    "numero_pregao": "6",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-26",
+    "vigencia_inicio": "2026-06-26",
+    "vigencia_fim": "2027-06-26",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06 e Lei Municipal nº 690/2021, eventual aquisição de material de limpeza e higiene.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "PARANA LICITACOES E COMERCIO LTDA.",
+    "cnpj": "53.494.246/0001-23"
+  },
+  "itens": [
+    {
+      "numero": "42",
+      "descricao": "FILTRO DE PAPEL PARA CAFÉ 103 - COMPOSIÇÃO – 100% CELULOSE, PRODUTO NÃO PERECÍVEL – NÃO CONTÉM GLÚTEN – CONTÉM 30 UNIDADES",
+      "unidade_medida": "UN",
+      "valor_unitario": 6.48,
+      "quantidade_contratada": 500.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 61.0,
+      "quantidade_saldo": 439.0,
+      "valor_total": 3240.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 395.28,
+      "valor_saldo": 2844.72,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 3240.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 395.28,
+    "valor_saldo_geral": 2844.72
+  },
+  "observacoes": "Ata 53/2026 — PARANA LICITACOES (Processo 6/2026). 1 item: Filtro de papel para café. Saldo do PDF: R$ 2.844,72. ⚠️ Nº Ata 53/2026 em conflito com Ata 53/2026 da MONTANHA & GOULART (Processo 34/2026).",
+  "anexos": []
+}

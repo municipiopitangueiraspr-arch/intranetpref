@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "37",
+    "processo_origem": "41/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "60/2026",
+    "numero_contratacao": "1503",
+    "numero_processo": "41/2026",
+    "numero_pregao": "22",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-10",
+    "vigencia_inicio": "2026-07-10",
+    "vigencia_fim": "2027-07-10",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de coturnos e boinas para uso da guarda municipal.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "RESERVA SOLUCOES EM EQUIPAMENTOS TATICOS LTDA",
+    "cnpj": "59.012.539/0001-03"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "COTURNO CABEDAL: Confeccionado em couro BOX (alto brilho), Cano em Cordura Hidrorepelente. CADARÇO: Tradicional SOLADO: Extra leve em PU Militar com flutuabilidade positiva, colado e costurado ao cabedal.",
+      "unidade_medida": "UN",
+      "valor_unitario": 238.99,
+      "quantidade_contratada": 40.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 32.0,
+      "valor_total": 9559.6,
+      "valor_aditivo": 0.0,
+      "valor_executado": 1911.92,
+      "valor_saldo": 7647.68,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "COTURNO - Complemento: PALMILHA High Performance com formato anatômico. COM ZIPER. Peso aproximado 417g. Medidas 38cm à 44cm.",
+      "unidade_medida": "UN",
+      "valor_unitario": 107.07,
+      "quantidade_contratada": 20.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 12.0,
+      "valor_total": 2141.4,
+      "valor_aditivo": 0.0,
+      "valor_executado": 856.56,
+      "valor_saldo": 1284.84,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 11701.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 2768.48,
+    "valor_saldo_geral": 8932.52
+  },
+  "observacoes": "Ata 60/2026 — RESERVA SOLUCOES (Processo 41/2026). Coturnos e boinas GM (2 itens). Saldo do PDF: R$ 8.932,52. ⚠️ Nº Ata 60/2026 em conflito com Ata 60/2026 da WATARAI (Processo 36/2026).",
+  "anexos": []
+}

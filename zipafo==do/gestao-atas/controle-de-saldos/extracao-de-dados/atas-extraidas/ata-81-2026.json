@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "65",
+    "processo_origem": "57/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "81/2026",
+    "numero_contratacao": "1541",
+    "numero_processo": "57/2026",
+    "numero_pregao": "28",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-09-02",
+    "vigencia_inicio": "2026-09-02",
+    "vigencia_fim": "2027-09-02",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de medicamentos.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "DIMEBRAS - DISTRIBUIDORA DE MEDICAMENTOS BRASIL LTDA",
+    "cnpj": "76.472.349/0001-98"
+  },
+  "itens": [
+    {
+      "numero": "8",
+      "descricao": "SERTRALINA 50MG",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.1,
+      "quantidade_contratada": 10000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 10000.0,
+      "valor_total": 1000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 1000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 1000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 1000.0
+  },
+  "observacoes": "Ata 81/2026 — DIMEBRAS (Processo 57/2026). 1 item: Sertralina 50mg. Nada executado.",
+  "anexos": []
+}

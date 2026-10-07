@@ -1,0 +1,27 @@
+{
+  "$schema_version": "1.0",
+  "tipo": "atualizacao_saldo",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes.pdf",
+    "data_extracao": "2026-09-29T00:00:00Z",
+    "paginas_origem": "1"
+  },
+  "identificacao_ata": {
+    "numero_ata": "71/2026",
+    "cnpj_fornecedor": "57.945.409/0001-06",
+    "razao_social": "57.945.409 EDUARDO YUKIO WAKIUTI",
+    "numero_processo": "31/2026"
+  },
+  "saldos": [
+    {
+      "numero_item": "11",
+      "quantidade_saldo": 10.0,
+      "quantidade_executada": 0.0
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "quantidade_saldo_geral": 10.0
+  },
+  "observacoes": ""
+}

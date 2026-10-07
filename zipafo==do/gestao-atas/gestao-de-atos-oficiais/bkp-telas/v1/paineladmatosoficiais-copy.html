@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo · Atos Oficiais</title>
+    <link rel="stylesheet" href="../../painel-adm-atos-oficiais.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+<link rel="stylesheet" href="../../../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../../../shared/css/acessibilidade-intranet.css">
+<script src="../../../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- OVERLAY DE CARREGAMENTO -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none">
+      <div class="loading-spinner-large"></div>
+      <p class="loading-text">Processando...</p>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div id="notificationCenter" class="notification-center"></div>
+
+    <!-- MODAL DE CONFIRMAÇÃO GENÉRICO -->
+    <div id="confirmModal" class="modal-overlay" style="display: none">
+      <div class="modal-confirm">
+        <div class="modal-confirm-icon" id="confirmIcon">⚠️</div>
+        <h3 class="modal-confirm-title" id="confirmTitle">Confirmar ação</h3>
+        <p class="modal-confirm-message" id="confirmMessage">
+          Tem certeza que deseja continuar?
+        </p>
+        <div class="modal-confirm-actions">
+          <button class="btn btn-secondary" id="confirmCancelBtn" type="button">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" id="confirmOkBtn" type="button">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE ATO (CRIAÇÃO / EDIÇÃO) -->
+    <div id="atoModal" class="modal-overlay modal-xl" style="display: none">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2 id="atoModalTitle">Cadastrar Novo Ato</h2>
+          <button class="modal-close" onclick="closeAtoModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="atoForm" novalidate>
+            <input type="hidden" id="atoId" />
+            <input type="hidden" id="atoVersion" />
+
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="tipoAto"
+                  >Tipo do Ato</label
+                >
+                <select id="tipoAto" class="form-input" required aria-label="tipoAto">
+                  <option value="">Carregando...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="numeroAto"
+                  >Número</label
+                >
+                <input
+                  type="number"
+                  id="numeroAto"
+                  class="form-input"
+                  placeholder="Nº"
+                  required
+                  min="1"
+                / aria-label="Nº">
+              </div>
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="anoAto">Ano</label>
+                <input
+                  type="number"
+                  id="anoAto"
+                  class="form-input"
+                  placeholder="AAAA"
+                  required
+                  min="1900"
+                  max="2100"
+                / aria-label="AAAA">
+              </div>
+            </div>
+
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="orgaoAto"
+                  >Órgão Responsável</label
+                >
+                <select id="orgaoAto" class="form-input" required aria-label="orgaoAto">
+                  <option value="">Carregando...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="dataPublicacao"
+                  >Data de Publicação</label
+                >
+                <input
+                  type="date"
+                  id="dataPublicacao"
+                  class="form-input"
+                  required
+                / aria-label="dataPublicacao">
+              </div>
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="statusAto"
+                  >Status</label
+                >
+                <select id="statusAto" class="form-input" required aria-label="statusAto">
+                  <option value="Vigente">✅ Vigente</option>
+                  <option value="Revogado">❌ Revogado</option>
+                  <option value="Alterado">⚠️ Alterado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="ementaAto"
+                >Ementa (Resumo)</label
+              >
+              <textarea
+                id="ementaAto"
+                class="form-input"
+                rows="3"
+                placeholder="Descreva o resumo do ato..."
+                required
+               aria-label="Descreva o resumo do ato..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="textoCompletoAto"
+                >Texto Completo</label
+              >
+              <div class="editor-toolbar">
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="bold"
+                  title="Negrito"
+                >
+                  <b>N</b>
+                </button>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="italic"
+                  title="Itálico"
+                >
+                  <i>I</i>
+                </button>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="underline"
+                  title="Sublinhado"
+                >
+                  <u>S</u>
+                </button>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="strikethrough"
+                  title="Tachado"
+                >
+                  <s>T</s>
+                </button>
+                <span class="toolbar-divider"></span>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="justifyleft"
+                  title="Esquerda"
+                >
+                  ⫷
+                </button>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="justifycenter"
+                  title="Centralizar"
+                >
+                  ⬌
+                </button>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="justifyright"
+                  title="Direita"
+                >
+                  ⫸
+                </button>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="justifyfull"
+                  title="Justificar"
+                >
+                  ☰
+                </button>
+                <span class="toolbar-divider"></span>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="insertUnorderedList"
+                  title="Lista"
+                >
+                  •
+                </button>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="insertOrderedList"
+                  title="Lista Numerada"
+                >
+                  1.
+                </button>
+                <span class="toolbar-divider"></span>
+                <button
+                  type="button"
+                  class="toolbar-btn"
+                  data-command="createLink"
+                  title="Inserir âncora"
+                >
+                  🔗
+                </button>
+              </div>
+              <div
+                id="textoCompletoEditor"
+                class="editor-content"
+                contenteditable="true"
+              ></div>
+              <input type="hidden" id="textoCompletoAto" />
+              <div class="form-text" style="font-size: 0.7rem; margin-top: 4px">
+                Dica: Para criar âncoras (IDs), selecione um texto e clique no
+                ícone 🔗. Exemplo: "artigo1", "paragrafo_2".
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="pdfUpload"
+                  >📄 PDF Oficial (obrigatório)</label
+                >
+                <div class="upload-area" id="pdfUploadArea">
+                  <input
+                    type="file"
+                    id="pdfUpload"
+                    accept=".pdf"
+                    style="display: none"
+                  / aria-label="pdfUpload">
+                  <div class="upload-placeholder">
+                    <span class="upload-icon">📁</span>
+                    <p>Arraste o PDF ou clique para selecionar</p>
+                    <small>Arquivo .pdf</small>
+                  </div>
+                  <div
+                    class="upload-preview"
+                    id="pdfPreview"
+                    style="display: none"
+                  >
+                    <span class="preview-icon">📄</span
+                    ><span class="preview-name" id="pdfName"></span
+                    ><button
+                      type="button"
+                      class="preview-remove"
+                      onclick="removeFile('pdf')"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="docUpload"
+                  >📝 Documento Editável (.doc)</label
+                >
+                <div class="upload-area" id="docUploadArea">
+                  <input
+                    type="file"
+                    id="docUpload"
+                    accept=".doc,.docx"
+                    style="display: none"
+                  / aria-label="docUpload">
+                  <div class="upload-placeholder">
+                    <span class="upload-icon">📁</span>
+                    <p>Arraste o .doc ou clique para selecionar</p>
+                    <small>Opcional</small>
+                  </div>
+                  <div
+                    class="upload-preview"
+                    id="docPreview"
+                    style="display: none"
+                  >
+                    <span class="preview-icon">📝</span
+                    ><span class="preview-name" id="docName"></span
+                    ><button
+                      type="button"
+                      class="preview-remove"
+                      onclick="removeFile('doc')"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-divider">
+              <h3>📰 Publicação no Diário Oficial</h3>
+            </div>
+            <div class="form-row-4">
+              <div class="form-group">
+                <label class="form-label" for="nomeDiario">Nome do Diário</label
+                ><input
+                  type="text"
+                  id="nomeDiario"
+                  class="form-input"
+                  placeholder="Ex: Diário Oficial do Município"
+                / aria-label="Ex: Diário Oficial do Município">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="edicaoDiario">Nº da Edição</label
+                ><input
+                  type="text"
+                  id="edicaoDiario"
+                  class="form-input"
+                  placeholder="Ex: 1234"
+                / aria-label="Ex: 1234">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="paginaDiario">Página</label
+                ><input
+                  type="text"
+                  id="paginaDiario"
+                  class="form-input"
+                  placeholder="Ex: 5-7"
+                / aria-label="Ex: 5 7">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="linkDiario"
+                  >Link da Publicação</label
+                ><input
+                  type="url"
+                  id="linkDiario"
+                  class="form-input"
+                  placeholder="https://..."
+                / aria-label="https://...">
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="tagsAto"
+                  >🏷️ Palavras-chave</label
+                >
+                <div class="tags-input-wrapper" id="tagsWrapper">
+                  <input
+                    type="text"
+                    id="tagInput"
+                    class="form-input"
+                    placeholder="Digite e pressione Enter..."
+                  / aria-label="Digite e pressione Enter...">
+                  <div class="tags-list" id="tagsList"></div>
+                </div>
+                <input type="hidden" id="tagsAto" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="observacoesAto"
+                  >📋 Observações Internas</label
+                >
+                <textarea
+                  id="observacoesAto"
+                  class="form-input"
+                  rows="3"
+                  placeholder="Anotações internas (não públicas)..."
+                 aria-label="Anotações internas (não públicas)..."></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeAtoModal()" type="button">
+            Cancelar
+          </button>
+          <button
+            class="btn btn-primary"
+            id="btnSalvarAto"
+            onclick="salvarAto()"
+           type="button">
+            💾 Salvar Ato
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE RELACIONAMENTOS (com suporte a alterações de dispositivos) -->
+    <div id="relacionamentoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2>🔗 Gerenciar Relacionamentos</h2>
+          <button class="modal-close" onclick="closeRelacionamentoModal()" type="button">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="relacionamento-info" id="relacionamentoAtoInfo"></div>
+          <h4>📄 Vínculo entre atos (documento inteiro)</h4>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="relTipo">Tipo de Vínculo</label
+              ><select id="relTipo" class="form-input" aria-label="relTipo">
+                <option value="revoga">Revoga</option>
+                <option value="altera">Altera</option>
+                <option value="regulamenta">Regulamenta</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="relAtoId">Ato Relacionado</label
+              ><select id="relAtoId" class="form-input" aria-label="relAtoId">
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary btn-sm"
+            onclick="adicionarRelacionamento()"
+           type="button">
+            ➕ Adicionar Vínculo
+          </button>
+          <hr
+            style="margin: 20px 0; border-top: 2px dashed var(--neutral-200)"
+          />
+          <h4>📌 Alterações em dispositivos</h4>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="relDispositivoAtoId"
+                >Ato alvo</label
+              ><select id="relDispositivoAtoId" class="form-input" aria-label="relDispositivoAtoId">
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="relIdentificadorDispositivo"
+                >Identificador</label
+              ><input
+                type="text"
+                id="relIdentificadorDispositivo"
+                class="form-input"
+                placeholder="Ex: artigo1"
+              / aria-label="Ex: artigo1">
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="relTipoDispositivo">Tipo</label
+              ><select id="relTipoDispositivo" class="form-input" aria-label="relTipoDispositivo">
+                <option value="revogado">Revogar</option>
+                <option value="alterado">Alterar</option>
+                <option value="acrescentado">Acrescentar</option>
+              </select>
+            </div>
+            <div
+              class="form-group"
+              id="relNovoTextoGroup"
+              style="display: none"
+            >
+              <label class="form-label" for="relNovoTexto">Novo texto</label
+              ><textarea
+                id="relNovoTexto"
+                class="form-input"
+                rows="3"
+               aria-label="relNovoTexto"></textarea>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary btn-sm"
+            onclick="adicionarAlteracaoDispositivo()"
+           type="button">
+            📝 Adicionar alteração pontual
+          </button>
+          <hr
+            style="margin: 20px 0; border-top: 2px dashed var(--neutral-200)"
+          />
+          <h4>📋 Relações existentes</h4>
+          <div class="relacionamentos-list" id="relacionamentosList">
+            <p class="empty-state">Nenhum relacionamento.</p>
+          </div>
+          <h4>✏️ Alterações pontuais</h4>
+          <div class="alteracoes-list" id="alteracoesList">
+            <p class="empty-state">Nenhuma alteração.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeRelacionamentoModal()" type="button">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE ANEXOS (placeholder) -->
+    <div id="anexosModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2>📎 Anexos</h2>
+          <button class="modal-close" onclick="closeAnexosModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="empty-state">Em desenvolvimento.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE HISTÓRICO (placeholder) -->
+    <div id="historicoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2>📜 Histórico</h2>
+          <button class="modal-close" onclick="closeHistoricoModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="empty-state">Em desenvolvimento.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO DO ATO -->
+    <div id="viewAtoModal" class="modal-overlay modal-xl" style="display: none">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2 id="viewAtoTitle">Visualizar Ato</h2>
+          <button class="modal-close" onclick="closeViewAtoModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body" id="viewAtoContent"></div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeViewAtoModal()" type="button">
+            Fechar</button
+          ><button class="btn btn-primary" onclick="downloadPDF()" type="button">
+            📥 Baixar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE CRUD PARA TIPO DE ATO -->
+    <div id="tipoAtoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-sm">
+        <div class="modal-header">
+          <h2 id="tipoAtoModalTitle">Novo Tipo de Ato</h2>
+          <button class="modal-close" onclick="closeTipoAtoModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="tipoAtoForm">
+            <input type="hidden" id="tipoAtoId" />
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="tipoAtoNome"
+                >Nome</label
+              ><input
+                type="text"
+                id="tipoAtoNome"
+                class="form-input"
+                required
+              / aria-label="tipoAtoNome">
+            </div>
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="tipoAtoSigla"
+                >Sigla</label
+              ><input
+                type="text"
+                id="tipoAtoSigla"
+                class="form-input"
+                required
+              / aria-label="tipoAtoSigla">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="tipoAtoOrdem">Ordem</label
+              ><input
+                type="number"
+                id="tipoAtoOrdem"
+                class="form-input"
+                value="0"
+              / aria-label="tipoAtoOrdem">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="tipoAtoAtivo">Ativo</label
+              ><select id="tipoAtoAtivo" class="form-input" aria-label="tipoAtoAtivo">
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeTipoAtoModal()" type="button">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" onclick="salvarTipoAto()" type="button">
+            💾 Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE ÓRGÃO (com sigla e gestor) -->
+    <div id="orgaoModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2 id="orgaoModalTitle">Novo Órgão</h2>
+          <button class="modal-close" onclick="closeOrgaoModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="orgaoForm">
+            <input type="hidden" id="orgaoId" />
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="orgaoNome"
+                >Nome do Órgão</label
+              ><input type="text" id="orgaoNome" class="form-input" required / aria-label="orgaoNome">
+            </div>
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="orgaoSigla"
+                >Sigla</label
+              ><input
+                type="text"
+                id="orgaoSigla"
+                class="form-input"
+                placeholder="Ex: SEMAS, SEDUC, GAB"
+                required
+              / aria-label="Ex: SEMAS, SEDUC, GAB"><small class="form-text"
+                >Sigla única do órgão (máx. 20 caracteres).</small
+              >
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="orgaoTipo">Tipo</label
+              ><select id="orgaoTipo" class="form-input" aria-label="orgaoTipo">
+                <option value="SECRETARIA">Secretaria</option>
+                <option value="PREFEITURA">Prefeitura</option>
+                <option value="CAMARA">Câmara</option>
+                <option value="SAAE">SAAE</option>
+                <option value="AUTARQUIA">Autarquia</option>
+                <option value="FUNDACAO">Fundação</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="orgaoGestor">Gestor Atual</label
+              ><input
+                list="listaGestores"
+                id="orgaoGestor"
+                class="form-input"
+                placeholder="Digite o nome do gestor ou selecione"
+              / aria-label="Digite o nome do gestor ou selecione"><datalist id="listaGestores"></datalist
+              ><small class="form-text"
+                >Selecione um gestor já cadastrado ou digite um novo nome. O
+                novo gestor será cadastrado automaticamente.</small
+              >
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="orgaoStatus">Status</label
+              ><select id="orgaoStatus" class="form-input" aria-label="orgaoStatus">
+                <option value="true">Ativo</option>
+                <option value="false">Inativo</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeOrgaoModal()" type="button">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" onclick="salvarOrgao()" type="button">
+            💾 Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE GESTORES (CRUD) -->
+    <div id="gestoresModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-md">
+        <div class="modal-header">
+          <h2>Gerenciar Gestores</h2>
+          <button class="modal-close" onclick="closeGestoresModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <div
+            id="orgaoGestorInfo"
+            style="margin-bottom: 20px; font-weight: bold"
+          ></div>
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              margin-bottom: 15px;
+            "
+          >
+            <button class="btn btn-primary btn-sm" onclick="abrirFormGestor()" type="button">
+              ➕ Novo Gestor
+            </button>
+          </div>
+          <div id="gestoresList" class="gestores-list"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeGestoresModal()" type="button">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE FORMULÁRIO DE GESTOR -->
+    <div id="gestorFormModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-sm">
+        <div class="modal-header">
+          <h2 id="gestorFormModalTitle">Novo Gestor</h2>
+          <button class="modal-close" onclick="closeGestorFormModal()" type="button">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="gestorForm">
+            <input type="hidden" id="gestorId" />
+            <input type="hidden" id="gestorOrgaoId" />
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="gestorNome"
+                >Nome do Responsável</label
+              ><input type="text" id="gestorNome" class="form-input" required / aria-label="gestorNome">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="gestorCargo">Cargo</label
+              ><input
+                type="text"
+                id="gestorCargo"
+                class="form-input"
+                placeholder="Ex: Secretário Municipal"
+              / aria-label="Ex: Secretário Municipal">
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label obrigatorio" for="gestorDataInicio"
+                  >Data de Início</label
+                ><input
+                  type="date"
+                  id="gestorDataInicio"
+                  class="form-input"
+                  required
+                / aria-label="gestorDataInicio">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="gestorDataFim"
+                  >Data de Término</label
+                ><input
+                  type="date"
+                  id="gestorDataFim"
+                  class="form-input"
+                / aria-label="gestorDataFim"><small class="form-text"
+                  >Deixe em branco se for o gestor atual</small
+                >
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="gestorObservacao">Observação</label
+              ><textarea
+                id="gestorObservacao"
+                class="form-input"
+                rows="2"
+               aria-label="gestorObservacao"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeGestorFormModal()" type="button">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" onclick="salvarGestor()" type="button">
+            💾 Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE USUÁRIO -->
+    <div id="usuarioModal" class="modal-overlay" style="display: none">
+      <div class="modal-container modal-sm">
+        <div class="modal-header">
+          <h2 id="usuarioModalTitle">Novo Usuário</h2>
+          <button class="modal-close" onclick="closeUsuarioModal()" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="usuarioForm">
+            <input type="hidden" id="usuarioId" />
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="usuarioNome"
+                >Nome</label
+              ><input
+                type="text"
+                id="usuarioNome"
+                class="form-input"
+                required
+              / aria-label="usuarioNome">
+            </div>
+            <div class="form-group">
+              <label class="form-label obrigatorio" for="usuarioEmail"
+                >E-mail</label
+              ><input
+                type="email"
+                id="usuarioEmail"
+                class="form-input"
+                required
+              / aria-label="usuarioEmail">
+            </div>
+            <div class="form-group" id="senhaGroup">
+              <label class="form-label obrigatorio" for="usuarioSenha"
+                >Senha</label
+              ><input
+                type="password"
+                id="usuarioSenha"
+                class="form-input"
+                placeholder="Mínimo 6 caracteres"
+              / aria-label="Mínimo 6 caracteres">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="usuarioPerfil">Perfil</label
+              ><select id="usuarioPerfil" class="form-input" aria-label="usuarioPerfil">
+                <option value="ADMIN">Administrador</option>
+                <option value="SECRETARIO">Secretário</option>
+                <option value="SOLICITANTE">Solicitante</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeUsuarioModal()" type="button">
+            Cancelar</button
+          ><button class="btn btn-primary" onclick="salvarUsuario()" type="button">
+            💾 Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYOUT PRINCIPAL - SEM SIDEBAR, COM CARDS DE NAVEGAÇÃO -->
+    <div class="admin-layout">
+      <!-- HEADER COM TÍTULO E USUÁRIO -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h2 id="pageTitle">Gestão de Atos Oficiais</h2>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-user" id="topbarUser">
+            <span>👤</span><span id="topbarUserName"></span>
+            <span
+              class="badge-perfil"
+              id="topbarUserPerfil"
+              style="margin-left: 8px"
+            ></span>
+          </div>
+          <button class="btn btn-outline btn-sm" id="logoutBtn" type="button">
+            <i class="fas fa-sign-out-alt"></i> Sair
+          </button>
+        </div>
+      </header>
+
+      <!-- CARDS DE NAVEGAÇÃO -->
+      <div class="cards-nav">
+        <div class="card-nav" data-page="dashboard">
+          <div class="card-nav-icon">📊</div>
+          <div class="card-nav-title">Dashboard</div>
+          <div class="card-nav-desc">Visão geral dos atos</div>
+        </div>
+        <div class="card-nav" data-page="atos">
+          <div class="card-nav-icon">📄</div>
+          <div class="card-nav-title">Atos</div>
+          <div class="card-nav-desc">Listagem e gestão</div>
+        </div>
+        <div class="card-nav" data-page="configuracoes">
+          <div class="card-nav-icon">⚙️</div>
+          <div class="card-nav-title">Configurações</div>
+          <div class="card-nav-desc">Tipos, órgãos, usuários</div>
+        </div>
+      </div>
+
+      <div class="content-area" id="contentArea">
+        <!-- PÁGINA: DASHBOARD -->
+        <div class="page" id="pageDashboard">
+          <!-- cards estatísticos com ícones circulares (novo visual) -->
+          <div class="stats-grid">
+            <div class="stat-card stat-verde">
+              <div class="stat-icon-wrapper">
+                <i class="fas fa-file-alt"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-number" id="statTotalAtos">0</span>
+                <span class="stat-label">Total de Atos</span>
+              </div>
+            </div>
+            <div class="stat-card stat-azul">
+              <div class="stat-icon-wrapper">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-number" id="statVigentes">0</span>
+                <span class="stat-label">Vigentes</span>
+              </div>
+            </div>
+            <div class="stat-card stat-vermelho">
+              <div class="stat-icon-wrapper">
+                <i class="fas fa-times-circle"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-number" id="statRevogados">0</span>
+                <span class="stat-label">Revogados</span>
+              </div>
+            </div>
+            <div class="stat-card stat-amarelo">
+              <div class="stat-icon-wrapper">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-number" id="statAlterados">0</span>
+                <span class="stat-label">Alterados</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>📋 Atos Recentes</h3>
+              <button class="btn btn-primary btn-sm" id="novoAtoDashboardBtn" type="button">
+                ➕ Novo Ato
+              </button>
+            </div>
+            <div class="card-body">
+              <table class="table" id="tableAtosRecentes" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Nº/Ano</th>
+                    <th>Órgão</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PÁGINA: ATOS -->
+        <div class="page" id="pageAtos" style="display: none">
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <button class="btn btn-primary" id="novoAtoBtn" type="button">
+                ➕ Novo Ato</button
+              ><button class="btn btn-outline" onclick="exportarLista('pdf')" type="button">
+                📥 Exportar PDF</button
+              ><button class="btn btn-outline" onclick="exportarLista('excel')" type="button">
+                📊 Exportar Excel
+              </button>
+            </div>
+            <div class="toolbar-right" id="totalRegistros">
+              Total: 0 registro(s)
+            </div>
+          </div>
+          <div class="filtros-bar">
+            <div class="filtro-group">
+              <label>Tipo</label
+              ><select id="filtroTipo" class="form-input form-input-sm" aria-label="filtroTipo">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="filtro-group">
+              <label>Ano</label
+              ><select id="filtroAno" class="form-input form-input-sm" aria-label="filtroAno">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="filtro-group">
+              <label>Órgão</label
+              ><select id="filtroOrgao" class="form-input form-input-sm" aria-label="filtroOrgao">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="filtro-group">
+              <label>Status</label
+              ><select id="filtroStatus" class="form-input form-input-sm" aria-label="filtroStatus">
+                <option value="">Todos</option>
+                <option value="Vigente">Vigente</option>
+                <option value="Revogado">Revogado</option>
+                <option value="Alterado">Alterado</option>
+              </select>
+            </div>
+            <div class="filtro-group">
+              <label>Buscar</label
+              ><input
+                type="text"
+                id="filtroBusca"
+                class="form-input form-input-sm"
+                placeholder="Nº, ementa, texto..."
+              / aria-label="Nº, ementa, texto...">
+            </div>
+            <button class="btn btn-outline btn-sm" id="btnLimparFiltros" type="button">
+              🔄 Limpar
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-body table-responsive">
+              <table class="table" id="tableAtos" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Número/Ano</th>
+                    <th>Órgão</th>
+                    <th>Ementa</th>
+                    <th>Status</th>
+                    <th>Data Pub.</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tableAtosBody"></tbody>
+              </table>
+            </div>
+            <div class="pagination" id="paginationAtos">
+              <button class="btn-page" id="btnPagAnterior" disabled type="button">
+                ◀ Anterior</button
+              ><span class="page-info" id="pageInfoAtos">Página 1 de 1</span
+              ><button class="btn-page" id="btnPagProximo" disabled type="button">
+                Próximo ▶
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PÁGINA: CONFIGURAÇÕES (INLINE) -->
+        <div class="page" id="pageConfiguracoes" style="display: none">
+          <div class="config-inline-wrapper">
+            <div class="config-tabs">
+              <button class="config-tab active" data-tab="tipos" type="button">
+                Tipos de Ato
+              </button>
+              <button class="config-tab" data-tab="orgaos" type="button">Órgãos</button>
+              <button class="config-tab" data-tab="usuarios" type="button">Usuários</button>
+            </div>
+            <div class="config-panels">
+              <!-- Tipos de Ato -->
+              <div class="config-panel active" id="configTiposPanel">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <h3>Tipos de Ato Cadastrados</h3>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    onclick="abrirModalTipoAto()"
+                   type="button">
+                    ➕ Novo Tipo
+                  </button>
+                </div>
+                <table class="table" id="tableTiposAtoInline" aria-label="Tabela de dados">
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>Sigla</th>
+                      <th>Ordem</th>
+                      <th>Status</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableTiposAtoBodyInline">
+                    <tr>
+                      <td colspan="5" class="empty-state">Carregando...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- Órgãos -->
+              <div
+                class="config-panel"
+                id="configOrgaosPanel"
+                style="display: none"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <h3>Órgãos Municipais</h3>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    onclick="abrirOrgaoModal()"
+                   type="button">
+                    ➕ Novo Órgão
+                  </button>
+                </div>
+                <table class="table" id="tableOrgaosInline" aria-label="Tabela de dados">
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>Sigla</th>
+                      <th>Gestor Atual</th>
+                      <th>Status</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableOrgaosBodyInline">
+                    <tr>
+                      <td colspan="5" class="empty-state">Carregando...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- Usuários -->
+              <div
+                class="config-panel"
+                id="configUsuariosPanel"
+                style="display: none"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <h3>Usuários do Sistema</h3>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    onclick="abrirUsuarioModal()"
+                   type="button">
+                    ➕ Novo Usuário
+                  </button>
+                </div>
+                <table class="table" id="tableUsuariosInline" aria-label="Tabela de dados">
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>E-mail</th>
+                      <th>Perfil</th>
+                      <th>Status</th>
+                      <th>Último Login</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableUsuariosBodyInline">
+                    <tr>
+                      <td colspan="6" class="empty-state">Carregando...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="paineladmatosoficiais-copy.js"></script>
+  </body>
+</html>

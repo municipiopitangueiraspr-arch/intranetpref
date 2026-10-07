@@ -1,0 +1,24 @@
+{
+  "arquivo_origem": "relatorio-de-saldos-das-contratacoes-8.csv",
+  "data_extracao": "2026-04-27T15:34:08.744052",
+  "numero_processo": "4/2026",
+  "numero_ata": "13/2026",
+  "cnpj_fornecedor": "14.203.316/0001-95",
+  "razao_social": "MAURO SERGIO CARVALHO SALOMAO  (CNPJ/CPF:",
+  "itens": [
+    {
+      "item": "1",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO TORNEIO DE FUTEBOL DE CAMPO TRABALHADOR – 1º DE MAIO - SERVIÇO DE ARBITRAGEM DO TORNEIO DE FUTEBOL DE CAMPO TRABALHADOR – 1º DE MAIO (DIA)",
+      "quant_contratada": 2.0,
+      "valor_unitario": 444.9,
+      "valor_total": 889.8
+    },
+    {
+      "item": "5",
+      "descricao": "SERVIÇO DE ARBITRAGEM DE FUTEBOL SUÍÇO, FUTSAL E FUTEBOL DE CAMPO, NO PERÍODO DAS 8-18H - SERVIÇO DE ARBITRAGEM DE FUTEBOL SUÍÇO, FUTSAL E FUTEBOL DE CAMPO, NO PERÍODO DAS 8-18H (DIA)",
+      "quant_contratada": 50.0,
+      "valor_unitario": 348.9,
+      "valor_total": 17445.0
+    }
+  ]
+}

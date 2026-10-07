@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "73",
+    "processo_origem": "6/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "46/2026",
+    "numero_contratacao": "1476",
+    "numero_processo": "6/2026",
+    "numero_pregao": "6",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-26",
+    "vigencia_inicio": "2026-06-26",
+    "vigencia_fim": "2027-06-26",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06 e Lei Municipal nº 690/2021, eventual aquisição de material de limpeza e higiene.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "PERSPOEL LTDA",
+    "cnpj": "27.215.429/0001-52"
+  },
+  "itens": [
+    {
+      "numero": "12",
+      "descricao": "GUARDANAPO DE PAPEL EMBALAGEM PLÁSTICA – MACIO E ABSORVENTE, FOLHA SIMPLES DE COR BRANCA, CONTÉM 50 UNIDADES DE 24 CM X 22 CM, 100% DE FIBRAS NATURAIS",
+      "unidade_medida": "UN",
+      "valor_unitario": 1.1,
+      "quantidade_contratada": 800.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 240.0,
+      "quantidade_saldo": 560.0,
+      "valor_total": 880.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 264.0,
+      "valor_saldo": 616.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "13",
+      "descricao": "GUARDANAPO DE PAPEL EMBALAGEM PLÁSTICA – MACIO E ABSORVENTE, FOLHA SIMPLES DE COR BRANCA CONTÉM 50 UNIDADES DE 30 CM X 30 CM 100% DE FIBRAS NATURAIS",
+      "unidade_medida": "UN",
+      "valor_unitario": 1.65,
+      "quantidade_contratada": 700.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 185.0,
+      "quantidade_saldo": 515.0,
+      "valor_total": 1155.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 305.25,
+      "valor_saldo": 849.75,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 2035.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 569.25,
+    "valor_saldo_geral": 1465.75
+  },
+  "observacoes": "Ata 46/2026 — PERSPOEL LTDA (Processo 6/2026). Guardanapos (2 itens). Saldo do PDF: R$ 1.465,75. ⚠️ Nº Ata 46/2026 em conflito com Ata 46/2026 da GB CLÍNICA (Processo 24/2026).",
+  "anexos": []
+}

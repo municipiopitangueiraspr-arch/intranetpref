@@ -1,0 +1,1641 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca Municipal · Painel</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* =====================================================================
+         RESET + VARIÁVEIS GLOBAIS
+         ===================================================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      :root {
+        --verde: #0d5e3a;
+        --verde-escuro: #0a4a2e;
+        --verde-claro: #e8f5e9;
+        --verde-suave: #f0fdf4;
+        --azul: #1a3a6b;
+        --azul-claro: #ebf4ff;
+        --cinza-texto: #475569;
+        --cinza-suave: #f1f5f9;
+        --cinza-borda: #e2e8f0;
+        --vermelho: #e53e3e;
+        --vermelho-suave: #fff5f5;
+        --amarelo: #d69e2e;
+        --amarelo-suave: #fffff0;
+        --branco: #ffffff;
+        --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        --sombra-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+      }
+
+      body {
+        background: linear-gradient(145deg, #e8f5e9 0%, #e2eaf1 100%);
+        min-height: 100vh;
+        color: var(--cinza-texto);
+      }
+
+      /* =====================================================================
+         LAYOUT PRINCIPAL · SIDEBAR + CONTEÚDO
+         ===================================================================== */
+      .app-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      /* ---------- SIDEBAR ---------- */
+      .sidebar {
+        background: linear-gradient(180deg, #0d5e3a 0%, #0a4a2e 100%);
+        color: white;
+        padding: 1.8rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+        /* Scrollbar customizada – Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+      }
+
+      /* Scrollbar customizada – Chrome/Edge/Safari */
+      .sidebar::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 8px 0;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        transition: background 0.2s;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.35);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:active {
+        background: rgba(198, 246, 213, 0.6);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.5rem 0.6rem 1.2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-brand .brand-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+      }
+
+      .sidebar-brand .brand-text h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .sidebar-brand .brand-text span {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+      }
+
+      .sidebar-nav .nav-section {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.55;
+        padding: 0.8rem 0.6rem 0.4rem;
+        font-weight: 700;
+      }
+
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.7rem 0.9rem;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        opacity: 0.9;
+      }
+
+      .sidebar-nav a i {
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+        opacity: 0.85;
+      }
+
+      .sidebar-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        transform: translateX(2px);
+      }
+
+      .sidebar-nav a.active {
+        background: rgba(255, 255, 255, 0.18);
+        opacity: 1;
+        font-weight: 600;
+        border-left: 3px solid #c6f6d5;
+      }
+
+      .sidebar-nav a.active i {
+        opacity: 1;
+      }
+
+      .sidebar-voltar {
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-voltar a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 0.82rem;
+        padding: 0.6rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+
+      .sidebar-voltar a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      /* ---------- ÁREA PRINCIPAL ---------- */
+      .main-area {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* ---------- TOPBAR ---------- */
+      .topbar {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--cinza-borda);
+        padding: 1.1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .topbar-titulo h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .topbar-titulo h1 i {
+        color: var(--verde);
+      }
+
+      .topbar-titulo p {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      .topbar-direita {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .topbar-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 0.78rem;
+        color: #718096;
+      }
+
+      .topbar-info strong {
+        color: #0f172a;
+        font-size: 0.85rem;
+      }
+
+      .avatar-usuario {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ---------- NOVO: DROPDOWN DO AVATAR ---------- */
+      .avatar-wrapper {
+        position: relative;
+      }
+
+      .avatar-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        padding: 0;
+      }
+
+      .avatar-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      }
+
+      .avatar-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--cinza-borda);
+        min-width: 230px;
+        padding: 0.5rem;
+        z-index: 200;
+        display: none;
+        animation: menuPop 0.2s ease;
+      }
+
+      .avatar-menu.aberto {
+        display: block;
+      }
+
+      @keyframes menuPop {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .avatar-menu-header {
+        padding: 0.8rem 0.9rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        margin-bottom: 0.4rem;
+      }
+
+      .avatar-menu-header strong {
+        display: block;
+        font-size: 0.9rem;
+        color: #0f172a;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .avatar-menu-header span {
+        font-size: 0.75rem;
+        color: #718096;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+      }
+
+      .avatar-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.7rem 0.9rem;
+        border-radius: 10px;
+        color: var(--cinza-texto);
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s;
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: inherit;
+      }
+
+      .avatar-menu-item i {
+        width: 18px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.9rem;
+      }
+
+      .avatar-menu-item:hover {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+
+      .avatar-menu-item:hover i {
+        color: var(--verde);
+      }
+
+      .avatar-menu-item.sair {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair i {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair:hover {
+        background: var(--vermelho-suave);
+        color: #c53030;
+      }
+
+      .avatar-menu-divisor {
+        height: 1px;
+        background: var(--cinza-borda);
+        margin: 0.4rem 0.6rem;
+      }
+
+      /* ---------- CONTEÚDO ---------- */
+      .conteudo {
+        padding: 2rem;
+        flex: 1;
+        max-width: 1400px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* ---------- CARDS DE INDICADORES ---------- */
+      .indicadores-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+      }
+
+      .indicador-card {
+        background: white;
+        border-radius: 18px;
+        padding: 1.5rem;
+        border: 1px solid var(--cinza-borda);
+        box-shadow: var(--sombra-card);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.25s;
+        cursor: default;
+      }
+
+      .indicador-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--sombra-card-hover);
+      }
+
+      .indicador-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      .indicador-icon.ic-verde {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+      .indicador-icon.ic-azul {
+        background: var(--azul-claro);
+        color: var(--azul);
+      }
+      .indicador-icon.ic-amarelo {
+        background: var(--amarelo-suave);
+        color: var(--amarelo);
+      }
+      .indicador-icon.ic-vermelho {
+        background: var(--vermelho-suave);
+        color: var(--vermelho);
+      }
+
+      .indicador-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .indicador-info .valor {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+
+      .indicador-info .label {
+        font-size: 0.82rem;
+        color: #718096;
+        font-weight: 500;
+      }
+
+      /* ---------- SEÇÕES ---------- */
+      .secao {
+        background: white;
+        border-radius: 18px;
+        border: 1px solid var(--cinza-borda);
+        box-shadow: var(--sombra-card);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+
+      .secao-header {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+      }
+
+      .secao-header h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .secao-header h3 i {
+        color: var(--verde);
+      }
+
+      .secao-header .badge-contador {
+        background: var(--verde);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 40px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .secao-header .badge-contador.badge-alerta {
+        background: var(--vermelho);
+      }
+
+      .secao-header .badge-contador.badge-amarelo {
+        background: var(--amarelo);
+      }
+
+      .secao-corpo {
+        padding: 1.2rem 1.5rem;
+      }
+
+      /* ---------- LISTA DE ALERTAS / ATIVIDADES ---------- */
+      .lista-vazia {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: #94a3b8;
+        font-size: 0.88rem;
+      }
+
+      .lista-vazia i {
+        display: block;
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+        opacity: 0.5;
+      }
+
+      .item-alerta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid var(--cinza-borda);
+      }
+
+      .item-alerta:last-child {
+        border-bottom: none;
+      }
+
+      .item-alerta .item-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+
+      .item-alerta .item-icon.vermelho {
+        background: var(--vermelho-suave);
+        color: var(--vermelho);
+      }
+      .item-alerta .item-icon.amarelo {
+        background: var(--amarelo-suave);
+        color: var(--amarelo);
+      }
+      .item-alerta .item-icon.verde {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+
+      .item-alerta .item-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .item-alerta .item-info strong {
+        display: block;
+        color: #0f172a;
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+      }
+
+      .item-alerta .item-info span {
+        font-size: 0.78rem;
+        color: #718096;
+      }
+
+      .item-alerta .item-prazo {
+        text-align: right;
+        font-size: 0.78rem;
+        color: var(--cinza-texto);
+        flex-shrink: 0;
+      }
+
+      .item-alerta .item-prazo strong {
+        display: block;
+        color: #0f172a;
+        font-size: 0.85rem;
+      }
+
+      /* ---------- ATALHOS RÁPIDOS ---------- */
+      .atalhos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+      }
+
+      .atalho-card {
+        background: white;
+        border: 1px solid var(--cinza-borda);
+        border-radius: 14px;
+        padding: 1.2rem 1rem;
+        text-align: center;
+        text-decoration: none;
+        color: var(--cinza-texto);
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .atalho-card:hover {
+        border-color: var(--verde);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px -8px rgba(13, 94, 58, 0.15);
+        color: var(--verde);
+      }
+
+      .atalho-card i {
+        font-size: 1.5rem;
+        color: var(--verde);
+      }
+
+      .atalho-card span {
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      /* ---------- LOADING ---------- */
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9998;
+        transition: opacity 0.3s;
+      }
+
+      .loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid var(--cinza-borda);
+        border-top-color: var(--verde);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* =====================================================================
+         NOTIFICAÇÕES TOAST
+         ===================================================================== */
+      .notification-center {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .notification-toast {
+        pointer-events: all;
+        background: white;
+        border-radius: 16px;
+        padding: 16px 24px;
+        min-width: 320px;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        animation: notificationSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .notification-toast.removing {
+        animation: notificationSlideDown 0.3s ease-in forwards;
+      }
+
+      @keyframes notificationSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes notificationSlideDown {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+      }
+
+      .notification-toast.notification-success {
+        border-left-color: var(--verde);
+        background: var(--verde-suave);
+      }
+      .notification-toast.notification-error {
+        border-left-color: var(--vermelho);
+        background: var(--vermelho-suave);
+      }
+      .notification-toast.notification-warning {
+        border-left-color: var(--amarelo);
+        background: var(--amarelo-suave);
+      }
+      .notification-toast.notification-info {
+        border-left-color: var(--azul);
+        background: var(--azul-claro);
+      }
+
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .notification-content {
+        flex: 1;
+      }
+      .notification-title {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .notification-success .notification-title {
+        color: var(--verde);
+      }
+      .notification-error .notification-title {
+        color: var(--vermelho);
+      }
+      .notification-warning .notification-title {
+        color: var(--amarelo);
+      }
+      .notification-info .notification-title {
+        color: var(--azul);
+      }
+      .notification-message {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        line-height: 1.4;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #a0aec0;
+        flex-shrink: 0;
+        margin-top: -2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .notification-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+      }
+
+      /* =====================================================================
+         RESPONSIVIDADE
+         ===================================================================== */
+      @media (max-width: 1024px) {
+        .app-layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: fixed;
+          left: -280px;
+          width: 260px;
+          z-index: 1000;
+          transition: left 0.3s;
+        }
+        .sidebar.aberta {
+          left: 0;
+        }
+        .btn-toggle-sidebar {
+          display: flex !important;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .conteudo {
+          padding: 1.2rem;
+        }
+        .topbar {
+          padding: 0.9rem 1.2rem;
+        }
+        .topbar-titulo h1 {
+          font-size: 1.1rem;
+        }
+        .topbar-info {
+          display: none;
+        }
+        .indicadores-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.8rem;
+        }
+        .indicador-card {
+          padding: 1rem;
+        }
+        .indicador-icon {
+          width: 44px;
+          height: 44px;
+          font-size: 1.2rem;
+        }
+        .indicador-info .valor {
+          font-size: 1.5rem;
+        }
+        .indicador-info .label {
+          font-size: 0.72rem;
+        }
+        .notification-toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+      }
+
+      .btn-toggle-sidebar {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--cinza-borda);
+        color: var(--cinza-texto);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+    </style>
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+    <link rel="stylesheet" href="biblioteca-blue-theme.css">
+  <link rel="stylesheet" href="/shared/css/system-mother.css?v=20261004-system-mother-v1">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- =====================================================================
+         LOADING OVERLAY (mostrado enquanto carrega dados)
+         ===================================================================== -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- =====================================================================
+         LAYOUT PRINCIPAL
+         ===================================================================== -->
+    <div class="app-layout">
+      <!-- ==================================================================
+           SIDEBAR
+           ================================================================== -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon"><i class="fas fa-book-open-reader"></i></div>
+          <div class="brand-text">
+            <h2>Biblioteca</h2>
+            <span>Municipal</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section">Principal</div>
+          <a href="dashboard.html" class="active">
+            <i class="fas fa-gauge-high"></i> Painel
+          </a>
+
+          <div class="nav-section">Acervo</div>
+          <a href="livros.html"> <i class="fas fa-book"></i> Livros </a>
+          <a href="exemplares.html">
+            <i class="fas fa-bookmark"></i> Exemplares
+          </a>
+          <a href="prateleiras.html">
+            <i class="fas fa-layer-group"></i> Prateleiras
+          </a>
+          <a href="autores.html"> <i class="fas fa-feather"></i> Autores </a>
+          <a href="categorias.html"> <i class="fas fa-tags"></i> Categorias </a>
+
+          <div class="nav-section">Circulação</div>
+          <a href="editoras.html"><i class="fas fa-building-columns"></i> Editoras</a>
+          <a href="emprestimos.html">
+            <i class="fas fa-hand-holding-heart"></i> Empréstimos
+          </a>
+          <a href="devolucoes.html">
+            <i class="fas fa-rotate-left"></i> Devoluções
+          </a>
+
+          <div class="nav-section">Pessoas</div>
+          <a href="leitores.html"> <i class="fas fa-users"></i> Leitores </a>
+
+          <div class="nav-section">Gestão</div>
+          <a href="relatorios.html">
+            <i class="fas fa-chart-column"></i> Relatórios
+          </a>
+          <a href="config.html"> <i class="fas fa-gear"></i> Configurações </a>
+          <a href="ajuda.html">
+            <i class="fas fa-circle-question"></i> Ajuda
+          </a>
+        </nav>
+
+        <div class="sidebar-voltar">
+          <a href="../intranet.html">
+            <i class="fas fa-arrow-left"></i> Voltar à intranet
+          </a>
+        </div>
+      </aside>
+
+      <!-- ==================================================================
+           ÁREA PRINCIPAL
+           ================================================================== -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <button
+              class="btn-toggle-sidebar"
+              id="btnToggleSidebar"
+              title="Abrir menu"
+             type="button">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-titulo">
+              <h1><i class="fas fa-gauge-high"></i> Painel da Biblioteca</h1>
+              <p>Visão geral do acervo, empréstimos e leitores</p>
+            </div>
+          </div>
+
+          <div class="topbar-direita">
+            <div class="topbar-info">
+              <strong id="topbarNome">—</strong>
+              <span id="topbarData">—</span>
+            </div>
+
+            <!-- DROPDOWN DO AVATAR -->
+            <div class="avatar-wrapper">
+              <button
+                class="avatar-btn"
+                id="avatarBtn"
+                title="Menu do usuário"
+                aria-haspopup="menu"
+                aria-expanded="false"
+               type="button">
+                <span id="avatarIniciais">?</span>
+              </button>
+              <div class="avatar-menu" id="avatarMenu" role="menu">
+                <div class="avatar-menu-header">
+                  <strong id="menuNome">—</strong>
+                  <span id="menuEmail">—</span>
+                </div>
+                <a
+                  href="../perfil.html"
+                  class="avatar-menu-item"
+                  role="menuitem"
+                >
+                  <i class="fas fa-user-circle"></i> Meu Perfil
+                </a>
+                <a href="ajuda.html" class="avatar-menu-item" role="menuitem">
+                  <i class="fas fa-circle-question"></i> Ajuda
+                </a>
+                <div class="avatar-menu-divisor"></div>
+                <button
+                  class="avatar-menu-item sair"
+                  id="menuSair"
+                  type="button"
+                  role="menuitem"
+                >
+                  <i class="fas fa-right-from-bracket"></i> Sair
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <main class="conteudo">
+          <!-- ---------- INDICADORES PRINCIPAIS ---------- -->
+          <section class="indicadores-grid">
+            <div class="indicador-card">
+              <div class="indicador-icon ic-verde">
+                <i class="fas fa-book"></i>
+              </div>
+              <div class="indicador-info">
+                <span class="valor" id="indTotalLivros">—</span>
+                <span class="label">Livros no acervo</span>
+              </div>
+            </div>
+
+            <div class="indicador-card">
+              <div class="indicador-icon ic-azul">
+                <i class="fas fa-bookmark"></i>
+              </div>
+              <div class="indicador-info">
+                <span class="valor" id="indTotalExemplares">—</span>
+                <span class="label">Exemplares totais</span>
+              </div>
+            </div>
+
+            <div class="indicador-card">
+              <div class="indicador-icon ic-verde">
+                <i class="fas fa-circle-check"></i>
+              </div>
+              <div class="indicador-info">
+                <span class="valor" id="indDisponiveis">—</span>
+                <span class="label">Disponíveis</span>
+              </div>
+            </div>
+
+            <div class="indicador-card">
+              <div class="indicador-icon ic-azul">
+                <i class="fas fa-hand-holding-heart"></i>
+              </div>
+              <div class="indicador-info">
+                <span class="valor" id="indEmprestados">—</span>
+                <span class="label">Emprestados</span>
+              </div>
+            </div>
+
+            <div class="indicador-card">
+              <div class="indicador-icon ic-vermelho">
+                <i class="fas fa-triangle-exclamation"></i>
+              </div>
+              <div class="indicador-info">
+                <span class="valor" id="indAtrasados">—</span>
+                <span class="label">Empréstimos atrasados</span>
+              </div>
+            </div>
+
+            <div class="indicador-card">
+              <div class="indicador-icon ic-amarelo">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="indicador-info">
+                <span class="valor" id="indLeitores">—</span>
+                <span class="label">Leitores ativos</span>
+              </div>
+            </div>
+
+            <div class="indicador-card">
+              <div class="indicador-icon ic-vermelho">
+                <i class="fas fa-magnifying-glass-minus"></i>
+              </div>
+              <div class="indicador-info">
+                <span class="valor" id="indExtraviados">—</span>
+                <span class="label">Exemplares extraviados</span>
+              </div>
+            </div>
+
+            <div class="indicador-card">
+              <div class="indicador-icon ic-amarelo">
+                <i class="fas fa-screwdriver-wrench"></i>
+              </div>
+              <div class="indicador-info">
+                <span class="valor" id="indManutencao">—</span>
+                <span class="label">Em manutenção</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- ---------- EMPRÉSTIMOS ATRASADOS ---------- -->
+          <section class="secao">
+            <div class="secao-header">
+              <h3>
+                <i
+                  class="fas fa-triangle-exclamation"
+                  style="color: #e53e3e"
+                ></i>
+                Empréstimos em atraso
+              </h3>
+              <span class="badge-contador badge-alerta" id="badgeAtrasados"
+                >0</span
+              >
+            </div>
+            <div class="secao-corpo" id="listaAtrasados">
+              <div class="lista-vazia">
+                <i class="fas fa-circle-check" style="color: #0d5e3a"></i>
+                Nenhum empréstimo em atraso. Bom trabalho!
+              </div>
+            </div>
+          </section>
+
+          <!-- ---------- DEVOLUÇÕES DE HOJE ---------- -->
+          <section class="secao">
+            <div class="secao-header">
+              <h3>
+                <i class="fas fa-calendar-day" style="color: #d69e2e"></i>
+                Devoluções previstas para hoje
+              </h3>
+              <span class="badge-contador badge-amarelo" id="badgeHoje">0</span>
+            </div>
+            <div class="secao-corpo" id="listaHoje">
+              <div class="lista-vazia">
+                <i class="fas fa-mug-hot"></i>
+                Nenhuma devolução prevista para hoje.
+              </div>
+            </div>
+          </section>
+
+          <!-- ---------- ATALHOS RÁPIDOS ---------- -->
+          <section class="secao">
+            <div class="secao-header">
+              <h3>
+                <i class="fas fa-bolt" style="color: #0d5e3a"></i>
+                Atalhos rápidos
+              </h3>
+            </div>
+            <div class="secao-corpo">
+              <div class="atalhos-grid">
+                <a href="emprestimos.html" class="atalho-card">
+                  <i class="fas fa-hand-holding-heart"></i>
+                  <span>Novo empréstimo</span>
+                </a>
+                <a href="devolucoes.html" class="atalho-card">
+                  <i class="fas fa-rotate-left"></i>
+                  <span>Registrar devolução</span>
+                </a>
+                <a href="livros.html" class="atalho-card">
+                  <i class="fas fa-plus-circle"></i>
+                  <span>Cadastrar livro</span>
+                </a>
+                <a href="leitores.html" class="atalho-card">
+                  <i class="fas fa-user-plus"></i>
+                  <span>Novo leitor</span>
+                </a>
+                <a href="relatorios.html" class="atalho-card">
+                  <i class="fas fa-chart-column"></i>
+                  <span>Relatórios</span>
+                </a>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- CONTÊINER DE NOTIFICAÇÕES -->
+    <div class="notification-center" id="notificationCenter"></div>
+
+    <!-- =====================================================================
+         SUPABASE SDK + LÓGICA DO DASHBOARD
+         ===================================================================== -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // ============================================
+      // CONFIGURAÇÃO SUPABASE (mesma da intranet)
+      // ============================================
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // ESTADO
+      // ============================================
+      let usuarioLogado = null;
+
+      // ============================================
+      // NOTIFICAÇÕES TOAST
+      // ============================================
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        const closeBtn = toast.querySelector(".notification-close");
+        closeBtn.addEventListener("click", () => {
+          toast.classList.add("removing");
+          setTimeout(() => toast.remove(), 300);
+        });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      // ============================================
+      // UTILITÁRIOS
+      // ============================================
+      function formatarData(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return "—";
+        const dia = String(d.getDate()).padStart(2, "0");
+        const mes = String(d.getMonth() + 1).padStart(2, "0");
+        return `${dia}/${mes}/${d.getFullYear()}`;
+      }
+
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const partes = nome.trim().split(/\s+/);
+        if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+        return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+      }
+
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
+
+      function esconderLoading() {
+        const el = document.getElementById("loadingOverlay");
+        if (el) el.classList.add("hidden");
+      }
+
+      // ============================================
+      // 1. VERIFICA SESSÃO (mesma lógica da intranet)
+      // ============================================
+      async function verificarSessao() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          // Não logado → volta pra intranet (que redireciona pro login)
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        // Buscar dados do usuário logado
+        const { data: perfil, error } = await supabase
+          .from("usuarios")
+          .select("id, uuid, nome, email, perfil, cargo, orgao_id, ativo")
+          .eq("uuid", session.user.id)
+          .maybeSingle();
+
+        if (error || !perfil) {
+          console.error("Erro ao carregar perfil:", error);
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        if (perfil.ativo === false) {
+          window.showNotification(
+            "error",
+            "Usuário inativo",
+            "Seu usuário está inativo. Contate o administrador.",
+          );
+          await supabase.auth.signOut();
+          setTimeout(() => (window.location.href = "../intranet.html"), 1500);
+          return null;
+        }
+
+        usuarioLogado = perfil;
+        return perfil;
+      }
+
+      // ============================================
+      // 2. RENDERIZA INFO DO USUÁRIO NO TOPBAR
+      // ============================================
+      function renderizarUsuario() {
+        if (!usuarioLogado) return;
+        setTexto("topbarNome", usuarioLogado.nome || "—");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }),
+        );
+        const el = document.getElementById("avatarIniciais");
+        if (el) el.textContent = iniciais(usuarioLogado.nome);
+
+        // Preenche o dropdown
+        setTexto("menuNome", usuarioLogado.nome || "—");
+        setTexto("menuEmail", usuarioLogado.email || "—");
+      }
+
+      // ============================================
+      // 3. CARREGA INDICADORES (vw_bib_dashboard)
+      // ============================================
+      async function carregarIndicadores() {
+        const { data, error } = await supabase
+          .from("vw_bib_dashboard")
+          .select("*")
+          .maybeSingle();
+
+        if (error) {
+          console.error("Erro ao carregar indicadores:", error);
+          window.showNotification(
+            "error",
+            "Falha ao carregar indicadores",
+            "Não foi possível obter os números do painel.",
+          );
+          return;
+        }
+
+        const d = data || {};
+        setTexto("indTotalLivros", d.total_livros ?? 0);
+        setTexto("indTotalExemplares", d.total_exemplares ?? 0);
+        setTexto("indDisponiveis", d.exemplares_disponiveis ?? 0);
+        setTexto("indEmprestados", d.exemplares_emprestados ?? 0);
+        setTexto("indAtrasados", d.emprestimos_atrasados ?? 0);
+        setTexto("indLeitores", d.leitores_ativos ?? 0);
+        setTexto("indExtraviados", d.exemplares_extraviados ?? 0);
+        setTexto("indManutencao", d.exemplares_manutencao ?? 0);
+      }
+
+      // ============================================
+      // 4. CARREGA EMPRÉSTIMOS ATRASADOS (view detalhada)
+      // ============================================
+      async function carregarAtrasados() {
+        const { data, error } = await supabase
+          .from("vw_bib_emprestimos_detalhados")
+          .select("*")
+          .in("emprestimo_status", ["ABERTO", "PARCIAL"])
+          .lt("prazo_devolucao", new Date().toISOString().slice(0, 10))
+          .order("prazo_devolucao", { ascending: true })
+          .limit(20);
+
+        if (error) {
+          console.error("Erro ao carregar atrasados:", error);
+          return;
+        }
+
+        const lista = data || [];
+        const badge = document.getElementById("badgeAtrasados");
+        const container = document.getElementById("listaAtrasados");
+        if (badge) badge.textContent = lista.length;
+        if (!container) return;
+
+        if (lista.length === 0) {
+          container.innerHTML = `
+            <div class="lista-vazia">
+              <i class="fas fa-circle-check" style="color: #0d5e3a"></i>
+              Nenhum empréstimo em atraso. Bom trabalho!
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = lista
+          .map((item) => {
+            const dias = item.dias_em_atraso_hoje || 0;
+            return `
+              <div class="item-alerta">
+                <div class="item-icon vermelho">
+                  <i class="fas fa-triangle-exclamation"></i>
+                </div>
+                <div class="item-info">
+                  <strong>${escaparHtml(item.livro_titulo)}</strong>
+                  <span>
+                    ${escaparHtml(item.leitor_nome)}
+                    · Carteirinha ${escaparHtml(item.codigo_carteirinha || "—")}
+                    · Exemplar ${escaparHtml(item.exemplar_codigo)}
+                  </span>
+                </div>
+                <div class="item-prazo">
+                  <strong style="color:#e53e3e">${dias} dia${dias !== 1 ? "s" : ""}</strong>
+                  <span>em atraso</span>
+                </div>
+              </div>`;
+          })
+          .join("");
+      }
+
+      // ============================================
+      // 5. CARREGA DEVOLUÇÕES DE HOJE
+      // ============================================
+      async function carregarDevolucoesHoje() {
+        const hoje = new Date().toISOString().slice(0, 10);
+        const { data, error } = await supabase
+          .from("vw_bib_emprestimos_detalhados")
+          .select("*")
+          .in("emprestimo_status", ["ABERTO", "PARCIAL"])
+          .eq("prazo_devolucao", hoje)
+          .order("leitor_nome", { ascending: true })
+          .limit(20);
+
+        if (error) {
+          console.error("Erro ao carregar devoluções de hoje:", error);
+          return;
+        }
+
+        const lista = data || [];
+        const badge = document.getElementById("badgeHoje");
+        const container = document.getElementById("listaHoje");
+        if (badge) badge.textContent = lista.length;
+        if (!container) return;
+
+        if (lista.length === 0) {
+          container.innerHTML = `
+            <div class="lista-vazia">
+              <i class="fas fa-mug-hot"></i>
+              Nenhuma devolução prevista para hoje.
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = lista
+          .map(
+            (item) => `
+              <div class="item-alerta">
+                <div class="item-icon amarelo">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="item-info">
+                  <strong>${escaparHtml(item.livro_titulo)}</strong>
+                  <span>
+                    ${escaparHtml(item.leitor_nome)}
+                    · Exemplar ${escaparHtml(item.exemplar_codigo)}
+                  </span>
+                </div>
+                <div class="item-prazo">
+                  <strong>Hoje</strong>
+                  <span>${formatarData(item.prazo_devolucao)}</span>
+                </div>
+              </div>`,
+          )
+          .join("");
+      }
+
+      // ============================================
+      // 6. HELPERS DE SEGURANÇA
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // ============================================
+      // 7. MENU DO AVATAR (dropdown)
+      // ============================================
+      function configurarMenuAvatar() {
+        const btn = document.getElementById("avatarBtn");
+        const menu = document.getElementById("avatarMenu");
+        if (!btn || !menu) return;
+
+        // Abre/fecha ao clicar no avatar
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const aberto = menu.classList.toggle("aberto");
+          btn.setAttribute("aria-expanded", aberto ? "true" : "false");
+        });
+
+        // Fecha ao clicar fora
+        document.addEventListener("click", (e) => {
+          if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Fecha com ESC
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Item "Sair" dentro do dropdown
+        const menuSair = document.getElementById("menuSair");
+        if (menuSair) {
+          menuSair.addEventListener("click", async () => {
+            const confirmar = window.confirm(
+              "Deseja realmente sair do módulo?",
+            );
+            if (!confirmar) return;
+            await supabase.auth.signOut();
+            window.location.href = "../intranet.html";
+          });
+        }
+      }
+
+      // ============================================
+      // 8. TOGGLE SIDEBAR (mobile)
+      // ============================================
+      const btnToggle = document.getElementById("btnToggleSidebar");
+      const sidebar = document.getElementById("sidebar");
+      if (btnToggle && sidebar) {
+        btnToggle.addEventListener("click", () => {
+          sidebar.classList.toggle("aberta");
+        });
+        // Fecha ao clicar em um link
+        sidebar.querySelectorAll("a").forEach((a) => {
+          a.addEventListener("click", () => sidebar.classList.remove("aberta"));
+        });
+      }
+
+      // ============================================
+      // 9. INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        try {
+          const usuario = await verificarSessao();
+          if (!usuario) return;
+
+          renderizarUsuario();
+          configurarMenuAvatar();
+
+          // Carrega os dados em paralelo
+          await Promise.all([
+            carregarIndicadores(),
+            carregarAtrasados(),
+            carregarDevolucoesHoje(),
+          ]);
+        } catch (err) {
+          console.error("Erro na inicialização:", err);
+          window.showNotification(
+            "error",
+            "Erro inesperado",
+            "Ocorreu um erro ao carregar o painel.",
+          );
+        } finally {
+          esconderLoading();
+        }
+      }
+
+      init();
+
+      // ============================================
+      // EXPOR GLOBAIS
+      // ============================================
+      window.showNotification = window.showNotification;
+    </script>
+      <script type="module" src="./biblioteca-saas.js"></script>
+    <script src="/shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+</body>
+</html>

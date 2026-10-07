@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "70",
+    "processo_origem": "6/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "45/2026",
+    "numero_contratacao": "1475",
+    "numero_processo": "6/2026",
+    "numero_pregao": "6",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-26",
+    "vigencia_inicio": "2026-06-26",
+    "vigencia_fim": "2027-06-26",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06 e Lei Municipal nº 690/2021, eventual aquisição de material de limpeza e higiene.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "GAMBA CONEXOES COMERCIO ATACADISTA DE ALIMENTOS LTDA",
+    "cnpj": "40.738.368/0001-76"
+  },
+  "itens": [
+    {
+      "numero": "11",
+      "descricao": "COPO PLÁSTICO DESCARTÁVEL TRANSPARENTE 50 ML, PACOTE COM 100 UNIDADES, PRODUTO PARA CONSUMO DE CAFÉ, APROVADO PELA ABNT.",
+      "unidade_medida": "UN",
+      "valor_unitario": 2.06,
+      "quantidade_contratada": 1110.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 162.0,
+      "quantidade_saldo": 948.0,
+      "valor_total": 2286.6,
+      "valor_aditivo": 0.0,
+      "valor_executado": 333.72,
+      "valor_saldo": 1952.88,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 2286.6,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 333.72,
+    "valor_saldo_geral": 1952.88
+  },
+  "observacoes": "Ata 45/2026 — GAMBA CONEXOES (Processo 6/2026). 1 item: Copo plástico 50ml. Saldo do PDF: R$ 1.952,88. ⚠️ Nº Ata 45/2026 em conflito com Ata 45/2026 da ABSOLUT CLINICA (Processo 24/2026).",
+  "anexos": []
+}

@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "34-35",
+    "processo_origem": "4/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "13/2026",
+    "numero_contratacao": "1416",
+    "numero_processo": "4/2026",
+    "numero_pregao": "4",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-03-03",
+    "vigencia_inicio": "2026-03-03",
+    "vigencia_fim": "2027-03-03",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual prestação de serviços de arbitragem para a Secretaria de Esporte e Lazer, conforme anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "MAURO SERGIO CARVALHO SALOMAO",
+    "cnpj": "14.203.316/0001-95"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO TORNEIO DE FUTEBOL DE CAMPO TRABALHADOR - 1º DE MAIO",
+      "unidade_medida": "UN",
+      "valor_unitario": 444.9,
+      "quantidade_contratada": 2.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 2.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 889.8,
+      "valor_aditivo": 0.0,
+      "valor_executado": 889.8,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "5",
+      "descricao": "SERVIÇO DE ARBITRAGEM DE FUTEBOL SUÍÇO, FUTSAL E FUTEBOL DE CAMPO, NO PERÍODO DAS 8-18H",
+      "unidade_medida": "UN",
+      "valor_unitario": 348.9,
+      "quantidade_contratada": 50.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 42.0,
+      "valor_total": 17445.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 2791.2,
+      "valor_saldo": 14653.8,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 18334.8,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 3681.0,
+    "valor_saldo_geral": 14653.8
+  },
+  "observacoes": "Ata 13/2026 — MAURO SERGIO CARVALHO SALOMAO (Processo 4/2026). Arbitragem esportiva (2 itens). Saldo do PDF: R$ 14.653,80.",
+  "anexos": []
+}

@@ -1,0 +1,58 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="processo-detalhe">
+  <div class="page-header">
+    <h1>Detalhes do Processo</h1>
+    <button class="btn" onclick="window.location.hash = '#/processos'" type="button">
+      Voltar
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Informações Gerais</h3>
+    </div>
+    <div class="info-grid">
+      <div><strong>Número:</strong> <span id="detalhe-numero"></span></div>
+      <div><strong>Objeto:</strong> <span id="detalhe-objeto"></span></div>
+      <div>
+        <strong>Modalidade:</strong> <span id="detalhe-modalidade"></span>
+      </div>
+      <div>
+        <strong>Secretaria:</strong> <span id="detalhe-secretaria"></span>
+      </div>
+      <div>
+        <strong>Valor estimado:</strong> <span id="detalhe-valor"></span>
+      </div>
+      <div><strong>Status:</strong> <span id="detalhe-status"></span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Linha do Tempo</h3>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Tarefas da Fase Atual</h3>
+    </div>
+    <div class="table-container">
+      <table aria-label="Tabela de dados">
+        <thead>
+          <tr>
+            <th>Tarefa</th>
+            <th>Responsável</th>
+            <th>Prazo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="lista-tarefas-fase"></tbody>
+      </table>
+    </div>
+  </div>
+</div>

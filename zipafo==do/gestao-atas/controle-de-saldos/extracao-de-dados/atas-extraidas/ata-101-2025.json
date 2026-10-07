@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "254-255",
+    "processo_origem": "79/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor SIMONE PIRILLI FRANCO CALIANI & CIA LTDA ME."
+  },
+  "cabecalho": {
+    "numero_ata": "101/2025",
+    "numero_contratacao": "1358 | 101/2025",
+    "numero_processo": "79/2025",
+    "numero_pregao": "12",
+    "modalidade": "Dispensa de licitação",
+    "forma_julgamento": "Menor Preco Por Lote - Lote",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-10-17",
+    "vigencia_inicio": "2025-10-17",
+    "vigencia_fim": "2026-10-17",
+    "objeto": "Obedecido o disposto na Lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para prestação de serviço de dedetização, desratização e limpeza das caixas d'água.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "SIMONE PIRILLI FRANCO CALIANI & CIA LTDA ME",
+    "cnpj": "06.951.138/0001-52"
+  },
+  "itens": [
+    {
+      "numero": "15",
+      "descricao": "DEDETIZAÇÃO M² - LOTE 5 - DEDETIZAÇÃO M² - LOTE 5",
+      "unidade_medida": "M²",
+      "valor_unitario": 0.95,
+      "quantidade_contratada": 340.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 340.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 323.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 323.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "16",
+      "descricao": "DESRATIZAÇÃO M² - LOTE 5 - DESRATIZAÇÃO M² - LOTE 5",
+      "unidade_medida": "M²",
+      "valor_unitario": 0.51,
+      "quantidade_contratada": 340.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 340.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 173.4,
+      "valor_aditivo": 0.0,
+      "valor_executado": 173.4,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 496.4,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 496.4,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Todos os itens deste fornecedor estão com saldo zerado (totalmente executados).",
+  "anexos": []
+}

@@ -1,0 +1,107 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "17",
+    "processo_origem": "25/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "20/2026",
+    "numero_contratacao": "1445",
+    "numero_processo": "25/2026",
+    "numero_pregao": "6",
+    "modalidade": "Dispensa de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-02",
+    "vigencia_inicio": "2026-06-02",
+    "vigencia_fim": "2027-06-02",
+    "objeto": "Obedecido o disposto na Lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para contratação de instituição especializada para oferta de cursos de qualificação profissional para usuários da Assistência Social.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "SENAC - ARAPONGAS",
+    "cnpj": "03.541.088/0046-49"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "CURSO BÁSICO DE INFORMÁTICA: conteúdo: Windows, Word, Excel, PowerPoint, Internet e Redes Sociais. Carga horária de 90 horas. Turma de até 20 alunos.",
+      "unidade_medida": "UN",
+      "valor_unitario": 22500.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 22500.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 22500.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "FUNDAMENTOS DO DESENHO ARTÍSTICO: conteúdo: técnicas de desenho, luz e sombra, perspectiva, estudo das cores. Carga horária de 40 horas. Turma de até 20 alunos.",
+      "unidade_medida": "UN",
+      "valor_unitario": 10000.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 10000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 10000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "3",
+      "descricao": "FERRAMENTA COLABORATIVA CANVA: conteúdo: design gráfico básico e intermediário, criação de materiais digitais. Carga horária de 15 horas. Turma de até 20 alunos.",
+      "unidade_medida": "UN",
+      "valor_unitario": 5000.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 5000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 5000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "4",
+      "descricao": "MODELAGEM E IMPRESSÃO 3D: conteúdo: modelagem tridimensional, funcionamento de impressoras 3D e impressão de protótipos. Carga horária de 30 horas. Turma de até 20 alunos.",
+      "unidade_medida": "UN",
+      "valor_unitario": 14000.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 14000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 14000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 4,
+    "valor_contratado_geral": 51500.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 51500.0
+  },
+  "observacoes": "Ata 20/2026 — SENAC ARAPONGAS (Processo 25/2026). Cursos profissionalizantes (4 turmas). Nada executado ainda.",
+  "anexos": []
+}

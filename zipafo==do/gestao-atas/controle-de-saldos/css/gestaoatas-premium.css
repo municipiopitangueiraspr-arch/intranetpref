@@ -1,0 +1,279 @@
+/* =====================================================================
+   GESTÃO DE ATAS · PREMIUM PRODUCT UI
+   Camada final de acabamento para SaaS comercial
+   ===================================================================== */
+:root {
+  --premium-ink: #102a43;
+  --premium-ink-soft: #342c54;
+  --premium-purple: #1d4ed8;
+  --premium-violet: #3b82f6;
+  --premium-pink: #0ea5e9;
+  --premium-coral: #14b8a6;
+  --premium-gold: #f59e0b;
+  --premium-cyan: #0891b2;
+  --premium-lilac: #eaf2ff;
+  --premium-pink-soft: #f0f9ff;
+  --premium-line: #d9e2ec;
+  --premium-muted: #627d98;
+  --premium-card: rgba(255,255,255,.96);
+  --premium-shadow: 0 12px 30px rgba(34, 26, 66, .08);
+  --premium-shadow-hover: 0 22px 48px rgba(72, 41, 132, .15);
+}
+
+#mainSystem, #mainSystem * { font-family: "DM Sans", Inter, system-ui, sans-serif; }
+#mainSystem h1, #mainSystem h2, #mainSystem h3, #mainSystem h4, #mainSystem .gestao-titulo,
+#mainSystem .pedido-titulo, #mainSystem .cadastro-titulo, #mainSystem .ata-numero {
+  font-family: "Manrope", "DM Sans", system-ui, sans-serif;
+}
+#mainSystem {
+  background:
+    radial-gradient(circle at 86% 0%, rgba(221,214,254,.34), transparent 25%),
+    radial-gradient(circle at 6% 20%, rgba(251,207,232,.24), transparent 22%),
+    #f6f9fc !important;
+}
+
+/* Sidebar com ritmo visual de produto */
+#mainSystem .sidebar {
+  width: 280px !important;
+  padding: 22px 16px 18px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(139,92,246,.42), transparent 34%),
+    linear-gradient(160deg, #102a43 0%, #163b63 54%, #1e4e79 100%) !important;
+}
+#mainSystem .sidebar-brand {
+  min-height: 72px;
+  padding: 7px 8px 18px !important;
+  gap: 13px !important;
+  border-bottom: 1px solid rgba(255,255,255,.18) !important;
+}
+#mainSystem .sidebar-brand .brand-icon {
+  width: 52px !important; height: 52px !important; border-radius: 16px !important;
+  background: linear-gradient(145deg, #fff, #eaf2ff) !important;
+  box-shadow: 0 12px 24px rgba(0,0,0,.22) !important;
+}
+#mainSystem .sidebar-brand .brand-text h2 {
+  font-size: .98rem !important; font-weight: 800 !important; line-height: 1.15 !important;
+  color: #fff !important; letter-spacing: -.02em;
+}
+#mainSystem .sidebar-brand .brand-text span {
+  display: inline-block; margin-top: 5px; color: #dbeafe !important;
+  font-size: .62rem !important; letter-spacing: .09em !important;
+}
+#mainSystem .sidebar-nav { gap: 5px !important; padding-top: 7px; }
+#mainSystem .sidebar-nav .nav-section {
+  padding: 18px 10px 7px !important; font-size: .60rem !important;
+  color: #d8b4fe !important; letter-spacing: .14em !important;
+}
+#mainSystem .sidebar-nav a {
+  min-height: 44px; padding: 10px 12px !important; gap: 12px !important;
+  border: 1px solid transparent; font-size: .82rem !important; font-weight: 600 !important;
+  color: rgba(255,255,255,.84) !important; opacity: 1 !important;
+}
+#mainSystem .sidebar-nav a i {
+  width: 22px !important; font-size: .92rem !important; color: #bfdbfe !important;
+}
+#mainSystem .sidebar-nav a:hover {
+  transform: translateX(3px) !important;
+  background: rgba(255,255,255,.09) !important;
+  border-color: rgba(255,255,255,.10) !important;
+}
+#mainSystem .sidebar-nav a.active {
+  background: linear-gradient(100deg, rgba(139,92,246,.55), rgba(219,39,119,.38)) !important;
+  border-color: rgba(255,255,255,.16) !important;
+  box-shadow: 0 9px 22px rgba(9,5,25,.18);
+  color: #fff !important;
+}
+#mainSystem .sidebar-nav a.active i { color: #fbbf24 !important; }
+#mainSystem .sidebar-voltar { border-top-color: rgba(255,255,255,.17) !important; }
+#mainSystem .sidebar-voltar a { color: #dbeafe !important; font-weight: 700; }
+
+/* Topbar: mais editorial e menos "sistema" */
+#mainSystem .topbar {
+  min-height: 84px !important; padding: 16px 34px !important;
+  background: rgba(255,255,255,.88) !important;
+  border-bottom: 1px solid rgba(226,220,239,.86) !important;
+  box-shadow: 0 8px 28px rgba(39,35,68,.07) !important;
+  backdrop-filter: blur(18px) !important;
+  position: sticky; overflow: visible;
+}
+#mainSystem .topbar::before {
+  content: ""; position: absolute; inset: 0 auto auto 0; width: 100%; height: 3px;
+  background: linear-gradient(90deg, #1d4ed8, #0ea5e9 55%, #f59e0b);
+}
+#mainSystem .topbar-esquerda { gap: 15px !important; }
+#mainSystem .btn-toggle-sidebar {
+  width: 40px !important; height: 40px !important; display: grid; place-items: center;
+  color: #1d4ed8 !important; background: #eaf2ff !important;
+  border: 1px solid #bfdbfe !important; border-radius: 12px !important;
+}
+#mainSystem .topbar-titulo h1 {
+  margin: 0 !important; color: var(--premium-ink) !important;
+  font-size: 1.35rem !important; font-weight: 800 !important; letter-spacing: -.035em;
+}
+#mainSystem .topbar-titulo h1 i { color: var(--premium-pink) !important; }
+#mainSystem .topbar-titulo p { margin-top: 5px !important; color: var(--premium-muted) !important; font-size: .76rem !important; }
+#mainSystem .topbar-info strong { color: var(--premium-ink) !important; font-weight: 800 !important; }
+#mainSystem .topbar-info span { color: var(--premium-muted) !important; }
+#mainSystem .avatar-btn, #mainSystem .avatar-usuario {
+  width: 44px !important; height: 44px !important; background: linear-gradient(135deg,#1d4ed8,#0ea5e9) !important;
+  border: 3px solid #fff !important; box-shadow: 0 8px 18px rgba(109,40,217,.25) !important;
+}
+#mainSystem .avatar-btn:hover { transform: translateY(-2px) scale(1.04) !important; }
+#mainSystem .avatar-menu {
+  top: calc(100% + 14px) !important; min-width: 270px !important; padding: 8px !important;
+  border-radius: 16px !important; box-shadow: 0 24px 55px rgba(33,22,66,.20) !important;
+}
+#mainSystem .avatar-menu-header { padding: 13px 12px !important; }
+#mainSystem .avatar-menu-item { padding: 11px 12px !important; border-radius: 10px !important; font-size: .78rem !important; }
+#mainSystem .avatar-menu-item:hover { background: linear-gradient(90deg,#eaf2ff,#f0f9ff) !important; }
+
+/* Conteúdo: uma coluna com breathing room e hierarquia */
+#mainSystem .conteudo {
+  max-width: 1600px; width: 100%; margin: 0 auto; padding: 30px 36px 60px !important;
+}
+#mainSystem .page-header, #mainSystem .content-header { margin-bottom: 24px; }
+#mainSystem .consulta-contador {
+  margin-bottom: 18px !important; padding: 15px 18px !important;
+  border: 1px solid var(--premium-line) !important; border-left: 4px solid var(--premium-pink) !important;
+  background: linear-gradient(100deg,#fff,#fff5fb) !important; border-radius: 15px !important;
+  box-shadow: var(--premium-shadow) !important;
+}
+#mainSystem .consulta-contador span strong { color: var(--premium-purple) !important; font-size: 1rem; }
+
+/* Resumo rápido: indicadores como mini dashboard */
+#mainSystem .resumo-rapido {
+  gap: 12px !important; padding: 12px !important; margin-bottom: 20px !important;
+  background: rgba(255,255,255,.72) !important; border: 1px solid var(--premium-line) !important;
+  border-radius: 18px !important; box-shadow: var(--premium-shadow) !important;
+}
+#mainSystem .resumo-card {
+  min-height: 78px; padding: 12px 9px !important; border: 1px solid var(--premium-line) !important;
+  border-radius: 14px !important; background: #fff !important; box-shadow: none !important;
+}
+#mainSystem .resumo-card:nth-child(1) { border-top: 3px solid #1d4ed8 !important; }
+#mainSystem .resumo-card:nth-child(2) { border-top: 3px solid #0891b2 !important; }
+#mainSystem .resumo-card:nth-child(3) { border-top: 3px solid #f59e0b !important; }
+#mainSystem .resumo-card:nth-child(4) { border-top: 3px solid #14b8a6 !important; }
+#mainSystem .resumo-card:nth-child(5) { border-top: 3px solid #0ea5e9 !important; }
+#mainSystem .resumo-card:hover, #mainSystem .resumo-card.ativo {
+  transform: translateY(-4px) !important; box-shadow: 0 12px 24px rgba(72,41,132,.12) !important;
+  border-color: #93c5fd !important;
+}
+#mainSystem .resumo-card .resumo-numero { font-size: 1.45rem !important; color: var(--premium-ink) !important; }
+#mainSystem .resumo-card .resumo-label { font-size: .58rem !important; color: var(--premium-muted) !important; letter-spacing: .06em !important; }
+
+/* Filtros: superfície de trabalho clara e articulada */
+#mainSystem .filtros-container, #mainSystem .filtros-gestao {
+  padding: 20px !important; margin-bottom: 20px !important; border-radius: 18px !important;
+  background: rgba(255,255,255,.9) !important; border: 1px solid var(--premium-line) !important;
+  box-shadow: var(--premium-shadow) !important;
+}
+#mainSystem .filtros-gestao { background: linear-gradient(135deg,#fff,#f8fbff) !important; }
+#mainSystem .filtro-label { color: var(--premium-ink-soft) !important; font-weight: 800 !important; font-size: .68rem !important; letter-spacing: .02em; }
+#mainSystem .filtro-label i, #mainSystem .filtros-gestao .filtro-busca i { color: var(--premium-purple) !important; }
+#mainSystem input, #mainSystem select, #mainSystem textarea, #mainSystem .filtro-input, #mainSystem .filtro-select, #mainSystem .gestao-select {
+  min-height: 42px; border: 1px solid #ddd6e8 !important; border-radius: 11px !important;
+  color: var(--premium-ink) !important; box-shadow: inset 0 1px 1px rgba(25,21,47,.03);
+}
+#mainSystem input:focus, #mainSystem select:focus, #mainSystem textarea:focus {
+  border-color: var(--premium-violet) !important; box-shadow: 0 0 0 4px rgba(139,92,246,.12) !important;
+}
+#mainSystem .btn-aplicar, #mainSystem .btn-salvar-ata, #mainSystem .btn-status,
+#mainSystem .btn-gerar-pedido, #mainSystem .btn-nova-ata {
+  min-height: 42px; padding: 10px 17px !important; border-radius: 11px !important;
+  background: linear-gradient(135deg,#1d4ed8,#0ea5e9) !important;
+}
+#mainSystem .btn-exportar { min-height: 42px; background: linear-gradient(135deg,#ea580c,#f59e0b) !important; }
+#mainSystem .btn-limpar, #mainSystem .btn-outline, #mainSystem .btn-secondary {
+  min-height: 42px; background: #eaf2ff !important; border: 1px solid #bfdbfe !important; color: #5b21b6 !important;
+}
+
+/* Cards de atas: leitura rápida e sensação de catálogo */
+#mainSystem .atas-grid { gap: 18px !important; }
+#mainSystem .ata-card {
+  min-height: 250px; border: 1px solid var(--premium-line) !important; border-radius: 18px !important;
+  box-shadow: var(--premium-shadow) !important; background: #fff !important;
+}
+#mainSystem .ata-card::before { height: 5px !important; opacity: 1 !important; background: linear-gradient(90deg,#1d4ed8,#0ea5e9,#14b8a6) !important; }
+#mainSystem .ata-card:hover { transform: translateY(-7px) !important; box-shadow: var(--premium-shadow-hover) !important; }
+#mainSystem .ata-header { padding: 21px 20px !important; background: linear-gradient(135deg,#fff,#f8fbff) !important; border-bottom-color: #e6eef7 !important; }
+#mainSystem .ata-numero { color: var(--premium-ink) !important; font-size: 1.18rem !important; font-weight: 850 !important; }
+#mainSystem .ata-fornecedor { color: var(--premium-muted) !important; }
+#mainSystem .status-badge { padding: 7px 11px !important; font-size: .63rem !important; letter-spacing: .07em; }
+#mainSystem .ata-footer { padding: 15px 20px !important; background: #fff !important; }
+#mainSystem .itens-correspondentes { background: linear-gradient(135deg,#eaf2ff,#f0f9ff) !important; border-color: #bfdbfe !important; }
+#mainSystem .item-correspondente:hover { border-color: #93c5fd !important; box-shadow: 0 7px 16px rgba(109,40,217,.10) !important; }
+
+/* Gestão, pedidos e cadastro como módulos internos de produto */
+#mainSystem .gestao-container, #mainSystem .pedido-container, #mainSystem .cadastro-container {
+  border: 1px solid var(--premium-line) !important; border-radius: 20px !important;
+  box-shadow: var(--premium-shadow) !important; background: rgba(255,255,255,.94) !important;
+  padding: 26px !important;
+}
+#mainSystem .gestao-header, #mainSystem .pedido-header, #mainSystem .cadastro-header { padding-bottom: 18px; border-bottom: 1px solid var(--premium-line) !important; }
+#mainSystem .gestao-titulo, #mainSystem .pedido-titulo, #mainSystem .cadastro-titulo { font-size: 1.18rem !important; color: var(--premium-ink) !important; }
+#mainSystem .gestao-titulo i, #mainSystem .pedido-titulo i, #mainSystem .cadastro-titulo i { color: var(--premium-pink) !important; }
+#mainSystem .gestao-stats { gap: 0 !important; padding: 0 !important; background: transparent !important; border: 0 !important; }
+#mainSystem .gestao-stats > div {
+  flex: 1; min-width: 135px; padding: 14px 16px; background: linear-gradient(135deg,#f8fbff,#fff);
+  border: 1px solid var(--premium-line); border-right: 0; color: var(--premium-ink); font-weight: 800;
+}
+#mainSystem .gestao-stats > div:first-child { border-radius: 14px 0 0 14px; }
+#mainSystem .gestao-stats > div:last-child { border-right: 1px solid var(--premium-line); border-radius: 0 14px 14px 0; }
+#mainSystem .gestao-stat-label { color: var(--premium-muted) !important; }
+#mainSystem .gestao-tabela-wrapper, #mainSystem .pedidos-lista-container { border: 1px solid var(--premium-line) !important; border-radius: 14px !important; box-shadow: 0 5px 18px rgba(39,35,68,.05); }
+#mainSystem .gestao-tabela th, #mainSystem .pedidos-lista-header { background: linear-gradient(135deg,#102a43,#1e3a8a) !important; color: #fff !important; }
+#mainSystem .gestao-tabela td { color: #334e68 !important; }
+#mainSystem .gestao-tabela tr:hover td { background: #faf7ff !important; }
+#mainSystem .pedido-info-grid { background: linear-gradient(135deg,#f8fbff,#f0f9ff) !important; border: 1px solid #eee5f7; }
+
+/* Modais e drawer: ação importante com foco e acabamento */
+#mainSystem .modal { background: rgba(25,21,47,.72) !important; backdrop-filter: blur(8px) !important; }
+#mainSystem .modal-content, #mainSystem .modal-confirm, #mainSystem .drawer-carrinho {
+  border: 1px solid rgba(255,255,255,.85) !important; border-radius: 22px !important;
+  box-shadow: 0 30px 80px rgba(25,21,47,.28) !important; overflow: hidden;
+}
+#mainSystem .modal-header, #mainSystem .drawer-header {
+  margin: 0 !important; padding: 19px 24px !important;
+  background: linear-gradient(110deg,#f8fbff,#f0f9ff) !important;
+  border-bottom: 1px solid var(--premium-line) !important;
+}
+#mainSystem .modal-header h2, #mainSystem .modal-header h3, #mainSystem .modal-titulo,
+#mainSystem .drawer-header h2 { color: var(--premium-ink) !important; font-weight: 850 !important; }
+#mainSystem .modal-header h2 i, #mainSystem .modal-titulo i, #mainSystem .drawer-header h2 i { color: var(--premium-pink) !important; }
+#mainSystem .modal-body, #mainSystem .drawer-body { padding: 24px !important; }
+#mainSystem .modal-footer, #mainSystem .drawer-footer { padding: 16px 24px !important; background: #f8fbff !important; border-top: 1px solid var(--premium-line) !important; }
+#mainSystem .modal-close, #mainSystem .drawer-close { width: 34px; height: 34px; background: #eaf2ff !important; color: #1d4ed8 !important; border-radius: 10px !important; }
+#mainSystem .modal-close:hover, #mainSystem .drawer-close:hover { background: #0ea5e9 !important; color: #fff !important; }
+#mainSystem .drawer-carrinho { width: min(440px, calc(100vw - 20px)) !important; }
+#mainSystem .btn-carrinho-flutuante { width: 58px !important; height: 58px !important; background: linear-gradient(135deg,#1d4ed8,#0ea5e9) !important; box-shadow: 0 14px 30px rgba(109,40,217,.30) !important; }
+#mainSystem .btn-carrinho-flutuante:hover { transform: translateY(-5px) scale(1.05) !important; }
+
+/* Movimento discreto para dar vida sem infantilizar */
+@keyframes premiumRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+#mainSystem .ata-card, #mainSystem .resumo-card, #mainSystem .gestao-container { animation: premiumRise .42s ease both; }
+#mainSystem .ata-card:nth-child(2), #mainSystem .resumo-card:nth-child(2) { animation-delay: 40ms; }
+#mainSystem .ata-card:nth-child(3), #mainSystem .resumo-card:nth-child(3) { animation-delay: 80ms; }
+#mainSystem .ata-card:nth-child(4), #mainSystem .resumo-card:nth-child(4) { animation-delay: 120ms; }
+
+@media (max-width: 1024px) {
+  #mainSystem .sidebar { width: 78px !important; padding-inline: 10px !important; }
+  #mainSystem .sidebar-brand { justify-content: center; padding-inline: 0 !important; }
+  #mainSystem .sidebar-brand .brand-text, #mainSystem .sidebar-nav .nav-section, #mainSystem .sidebar-nav a span, #mainSystem .sidebar-voltar a span { display: none !important; }
+  #mainSystem .sidebar-nav a, #mainSystem .sidebar-voltar a { justify-content: center !important; padding-inline: 8px !important; }
+  #mainSystem .sidebar-nav a i, #mainSystem .sidebar-voltar a i { margin: 0 !important; }
+  #mainSystem .app-layout { grid-template-columns: 78px 1fr !important; }
+}
+@media (max-width: 760px) {
+  #mainSystem .topbar { padding: 14px 16px !important; min-height: 72px !important; }
+  #mainSystem .topbar-titulo h1 { font-size: 1.05rem !important; }
+  #mainSystem .topbar-titulo p { display: none; }
+  #mainSystem .topbar-info { display: none !important; }
+  #mainSystem .conteudo { padding: 18px 14px 42px !important; }
+  #mainSystem .resumo-rapido { grid-template-columns: repeat(2,1fr) !important; }
+  #mainSystem .gestao-container, #mainSystem .pedido-container, #mainSystem .cadastro-container { padding: 17px !important; }
+  #mainSystem .gestao-stats { display: grid !important; grid-template-columns: repeat(2,1fr); gap: 8px !important; }
+  #mainSystem .gestao-stats > div, #mainSystem .gestao-stats > div:first-child, #mainSystem .gestao-stats > div:last-child { border: 1px solid var(--premium-line); border-radius: 12px; }
+  #mainSystem .modal-body, #mainSystem .drawer-body { padding: 17px !important; }
+  #mainSystem .modal-footer, #mainSystem .drawer-footer { padding: 13px 17px !important; }
+}

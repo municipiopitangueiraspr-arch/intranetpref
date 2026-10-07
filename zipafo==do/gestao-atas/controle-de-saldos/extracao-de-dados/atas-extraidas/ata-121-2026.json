@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "20",
+    "processo_origem": "30/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "121/2026",
+    "numero_contratacao": "1450",
+    "numero_processo": "30/2026",
+    "numero_pregao": "17",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-09",
+    "vigencia_inicio": "2026-06-09",
+    "vigencia_fim": "2027-06-09",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para contratação de empresa para eventual locação de geradores de energia.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "MUNDIAL GERADORES LTDA",
+    "cnpj": "62.527.832/0001-18"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "LOCAÇÃO DE GERADOR DE ENERGIA 180KW",
+      "unidade_medida": "UN",
+      "valor_unitario": 3450.0,
+      "quantidade_contratada": 10.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 10.0,
+      "valor_total": 34500.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 34500.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "LOCAÇÃO DE GERADOR DE ENERGIA 260 KW",
+      "unidade_medida": "UN",
+      "valor_unitario": 3560.0,
+      "quantidade_contratada": 10.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 2.0,
+      "quantidade_saldo": 8.0,
+      "valor_total": 35600.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 7120.0,
+      "valor_saldo": 28480.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 70100.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 7120.0,
+    "valor_saldo_geral": 62980.0
+  },
+  "observacoes": "Ata 121/2026 — MUNDIAL GERADORES (Processo 30/2026). Locação de 2 geradores (180KW e 260KW). Saldo do PDF: R$ 62.980,00.",
+  "anexos": []
+}

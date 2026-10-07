@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "48",
+    "processo_origem": "45/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "63/2026",
+    "numero_contratacao": "1511",
+    "numero_processo": "45/2026",
+    "numero_pregao": "24",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-14",
+    "vigencia_inicio": "2026-07-14",
+    "vigencia_fim": "2027-07-14",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de equipamentos para uso da Guarda Municipal.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "BRAZIL SPEC OPS COMERCIO IMPORTACAO E EXPORTACAO LTDA",
+    "cnpj": "32.295.601/0001-65"
+  },
+  "itens": [
+    {
+      "numero": "10",
+      "descricao": "KIT BASTÃO RETRÁTIL + PORTA BASTÃO - PRONTO PARA AÇÃO IMEDIATA - CONFORME DESCRIÇÃO COMPLETA NO EDITAL.",
+      "unidade_medida": "UN",
+      "valor_unitario": 549.0,
+      "quantidade_contratada": 15.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 7.0,
+      "valor_total": 8235.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 4392.0,
+      "valor_saldo": 3843.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 8235.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 4392.0,
+    "valor_saldo_geral": 3843.0
+  },
+  "observacoes": "Ata 63/2026 — BRAZIL SPEC OPS (Processo 45/2026). 1 item: Kit Bastão Retrátil. Saldo do PDF: R$ 3.843,00. ⚠️ Nº Ata 63/2026 em conflito com Ata 63/2026 do CENTRO DE ATENDIMENTO CLINICO (Processo 42/2026).",
+  "anexos": []
+}

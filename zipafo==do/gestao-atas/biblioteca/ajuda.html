@@ -1,0 +1,3545 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca Municipal · Como usar</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* =====================================================================
+         RESET + VARIÁVEIS (padrão Biblioteca)
+         ===================================================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      :root {
+        --verde: #0d5e3a;
+        --verde-escuro: #0a4a2e;
+        --verde-claro: #e8f5e9;
+        --verde-suave: #f0fdf4;
+        --azul: #1a3a6b;
+        --azul-claro: #ebf4ff;
+        --cinza-texto: #475569;
+        --cinza-suave: #f1f5f9;
+        --cinza-borda: #e2e8f0;
+        --vermelho: #e53e3e;
+        --vermelho-suave: #fff5f5;
+        --amarelo: #d69e2e;
+        --amarelo-suave: #fffff0;
+        --roxo: #8b5cf6;
+        --roxo-suave: #f3f0ff;
+        --branco: #ffffff;
+        --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        --sombra-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+      }
+
+      body {
+        background: linear-gradient(145deg, #e8f5e9 0%, #e2eaf1 100%);
+        min-height: 100vh;
+        color: var(--cinza-texto);
+      }
+
+      /* =====================================================================
+         LAYOUT · SIDEBAR + MAIN
+         ===================================================================== */
+      .app-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        background: linear-gradient(180deg, #0d5e3a 0%, #0a4a2e 100%);
+        color: white;
+        padding: 1.8rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+        /* Scrollbar customizada – Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+      }
+
+      /* Scrollbar customizada – Chrome/Edge/Safari */
+      .sidebar::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 8px 0;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        transition: background 0.2s;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.35);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:active {
+        background: rgba(198, 246, 213, 0.6);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.5rem 0.6rem 1.2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-brand .brand-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+      }
+
+      .sidebar-brand .brand-text h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .sidebar-brand .brand-text span {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+      }
+
+      .sidebar-nav .nav-section {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.55;
+        padding: 0.8rem 0.6rem 0.4rem;
+        font-weight: 700;
+      }
+
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.7rem 0.9rem;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        opacity: 0.9;
+      }
+
+      .sidebar-nav a i {
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+        opacity: 0.85;
+      }
+
+      .sidebar-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        transform: translateX(2px);
+      }
+
+      .sidebar-nav a.active {
+        background: rgba(255, 255, 255, 0.18);
+        opacity: 1;
+        font-weight: 600;
+        border-left: 3px solid #c6f6d5;
+      }
+
+      .sidebar-voltar {
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-voltar a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 0.82rem;
+        padding: 0.6rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+
+      .sidebar-voltar a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .main-area {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .topbar {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--cinza-borda);
+        padding: 1.1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .topbar-titulo h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .topbar-titulo h1 i {
+        color: var(--verde);
+      }
+
+      .topbar-titulo p {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      .topbar-direita {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .topbar-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 0.78rem;
+        color: #718096;
+      }
+
+      .topbar-info strong {
+        color: #0f172a;
+        font-size: 0.85rem;
+      }
+
+      .avatar-usuario {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ---------- DROPDOWN DO AVATAR (padrão dashboard) ---------- */
+      .avatar-wrapper {
+        position: relative;
+      }
+
+      .avatar-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        padding: 0;
+      }
+
+      .avatar-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      }
+
+      .avatar-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--cinza-borda);
+        min-width: 230px;
+        padding: 0.5rem;
+        z-index: 200;
+        display: none;
+        animation: menuPop 0.2s ease;
+      }
+
+      .avatar-menu.aberto {
+        display: block;
+      }
+
+      @keyframes menuPop {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .avatar-menu-header {
+        padding: 0.8rem 0.9rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        margin-bottom: 0.4rem;
+      }
+
+      .avatar-menu-header strong {
+        display: block;
+        font-size: 0.9rem;
+        color: #0f172a;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .avatar-menu-header span {
+        font-size: 0.75rem;
+        color: #718096;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+      }
+
+      .avatar-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.7rem 0.9rem;
+        border-radius: 10px;
+        color: var(--cinza-texto);
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s;
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: inherit;
+      }
+
+      .avatar-menu-item i {
+        width: 18px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.9rem;
+      }
+
+      .avatar-menu-item:hover {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+
+      .avatar-menu-item:hover i {
+        color: var(--verde);
+      }
+
+      .avatar-menu-item.sair {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair i {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair:hover {
+        background: var(--vermelho-suave);
+        color: #c53030;
+      }
+
+      .avatar-menu-divisor {
+        height: 1px;
+        background: var(--cinza-borda);
+        margin: 0.4rem 0.6rem;
+      }
+
+      /* ---------- BOTÃO TOGGLE SIDEBAR (mobile) ---------- */
+      .btn-toggle-sidebar {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--cinza-borda);
+        color: var(--cinza-texto);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+
+      /* =====================================================================
+         CONTEÚDO
+         ===================================================================== */
+      .conteudo {
+        padding: 2rem;
+        flex: 1;
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* =====================================================================
+         AVISO / ATALHOS
+         ===================================================================== */
+      .card-intro {
+        background: linear-gradient(
+          135deg,
+          var(--verde-suave) 0%,
+          #ffffff 100%
+        );
+        border: 2px solid var(--verde);
+        border-radius: 20px;
+        padding: 1.8rem;
+        margin-bottom: 1.8rem;
+        display: flex;
+        gap: 1.2rem;
+        align-items: flex-start;
+        box-shadow: var(--sombra-card);
+      }
+
+      .card-intro .icone {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        flex-shrink: 0;
+        box-shadow: 0 10px 20px -8px rgba(13, 94, 58, 0.4);
+      }
+
+      .card-intro .texto h2 {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 0.4rem;
+      }
+
+      .card-intro .texto p {
+        font-size: 0.92rem;
+        color: var(--cinza-texto);
+        line-height: 1.6;
+      }
+
+      /* =====================================================================
+         ATALHOS RÁPIDOS
+         ===================================================================== */
+      .atalhos-rapidos {
+        background: white;
+        border-radius: 18px;
+        padding: 1.4rem;
+        margin-bottom: 1.8rem;
+        box-shadow: var(--sombra-card);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .atalhos-rapidos h3 {
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--verde);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .atalhos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 10px;
+      }
+
+      .atalho {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.8rem 1rem;
+        background: var(--cinza-suave);
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--cinza-texto);
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+      }
+
+      .atalho:hover {
+        background: white;
+        border-color: var(--verde);
+        color: var(--verde);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px -8px rgba(13, 94, 58, 0.25);
+      }
+
+      .atalho i {
+        width: 20px;
+        text-align: center;
+        color: var(--verde);
+      }
+
+      /* =====================================================================
+         BUSCA
+         ===================================================================== */
+      .busca-wrapper {
+        background: white;
+        border-radius: 18px;
+        padding: 1.2rem 1.4rem;
+        margin-bottom: 1.8rem;
+        box-shadow: var(--sombra-card);
+        border: 1px solid var(--cinza-borda);
+        position: sticky;
+        top: 1rem;
+        z-index: 40;
+      }
+
+      .busca-wrapper .input-busca {
+        position: relative;
+      }
+
+      .busca-wrapper .input-busca i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+      }
+
+      .busca-wrapper input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.6rem;
+        border: 2px solid var(--cinza-borda);
+        border-radius: 12px;
+        font-size: 0.92rem;
+        outline: none;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+
+      .busca-wrapper input:focus {
+        border-color: var(--verde);
+        box-shadow: 0 0 0 3px rgba(13, 94, 58, 0.1);
+      }
+
+      .busca-wrapper .dica {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* =====================================================================
+         ÍNDICE
+         ===================================================================== */
+      .indice {
+        background: white;
+        border-radius: 18px;
+        padding: 1.5rem 1.8rem;
+        margin-bottom: 1.8rem;
+        box-shadow: var(--sombra-card);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .indice h3 {
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--verde);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .indice ol {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.5rem;
+      }
+
+      .indice ol li a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.5rem 0.8rem;
+        text-decoration: none;
+        color: var(--cinza-texto);
+        font-size: 0.85rem;
+        border-radius: 8px;
+        transition: all 0.15s;
+      }
+
+      .indice ol li a:hover {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+
+      .indice ol li a .num {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--verde-suave);
+        color: var(--verde);
+        font-weight: 700;
+        font-size: 0.72rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      /* =====================================================================
+         SEÇÕES
+         ===================================================================== */
+      .secao {
+        background: white;
+        border-radius: 18px;
+        margin-bottom: 1.2rem;
+        box-shadow: var(--sombra-card);
+        border: 1px solid var(--cinza-borda);
+        overflow: hidden;
+        scroll-margin-top: 100px;
+      }
+
+      .secao-header {
+        padding: 1.2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        transition: background 0.15s;
+        border-bottom: 1px solid transparent;
+        user-select: none;
+      }
+
+      .secao-header:hover {
+        background: var(--cinza-suave);
+      }
+
+      .secao-header.aberta {
+        border-bottom-color: var(--cinza-borda);
+        background: linear-gradient(
+          135deg,
+          var(--verde-suave) 0%,
+          #ffffff 100%
+        );
+      }
+
+      .secao-header .num-secao {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .secao-header .titulo-secao {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .secao-header .titulo-secao h3 {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 2px;
+      }
+
+      .secao-header .titulo-secao h3 i {
+        color: var(--verde);
+        font-size: 0.95rem;
+      }
+
+      .secao-header .titulo-secao p {
+        font-size: 0.8rem;
+        color: #718096;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .secao-header .icone-toggle {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--cinza-suave);
+        color: var(--cinza-texto);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        transition:
+          transform 0.3s,
+          background 0.2s;
+      }
+
+      .secao-header.aberta .icone-toggle {
+        transform: rotate(180deg);
+        background: var(--verde);
+        color: white;
+      }
+
+      .secao-corpo {
+        display: none;
+        padding: 1.5rem 1.8rem 1.8rem;
+        color: var(--cinza-texto);
+        font-size: 0.9rem;
+        line-height: 1.7;
+      }
+
+      .secao-corpo.aberta {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Conteúdo dentro da seção */
+      .secao-corpo h4 {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 1.5rem 0 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .secao-corpo h4:first-child {
+        margin-top: 0;
+      }
+
+      .secao-corpo h4 i {
+        color: var(--verde);
+        font-size: 0.85rem;
+      }
+
+      .secao-corpo p {
+        margin-bottom: 0.8rem;
+      }
+
+      .secao-corpo ul,
+      .secao-corpo ol {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .secao-corpo li {
+        margin-bottom: 0.4rem;
+      }
+
+      .secao-corpo strong {
+        color: #0f172a;
+      }
+
+      .secao-corpo code {
+        background: var(--cinza-suave);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 0.85em;
+        color: var(--azul);
+        font-weight: 700;
+      }
+
+      .secao-corpo a {
+        color: var(--verde);
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .secao-corpo a:hover {
+        text-decoration: underline;
+      }
+
+      /* Blocos especiais */
+      .bloco-destaque {
+        padding: 1rem 1.2rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+
+      .bloco-destaque i {
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .bloco-destaque.dica {
+        background: var(--verde-suave);
+        border-left: 4px solid var(--verde);
+        color: var(--verde);
+      }
+
+      .bloco-destaque.dica i {
+        color: var(--verde);
+      }
+
+      .bloco-destaque.atencao {
+        background: var(--amarelo-suave);
+        border-left: 4px solid var(--amarelo);
+        color: #92400e;
+      }
+
+      .bloco-destaque.atencao i {
+        color: var(--amarelo);
+      }
+
+      .bloco-destaque.info {
+        background: var(--azul-claro);
+        border-left: 4px solid var(--azul);
+        color: #1e3a5f;
+      }
+
+      .bloco-destaque.info i {
+        color: var(--azul);
+      }
+
+      .bloco-destaque.perigo {
+        background: var(--vermelho-suave);
+        border-left: 4px solid var(--vermelho);
+        color: #742a2a;
+      }
+
+      .bloco-destaque.perigo i {
+        color: var(--vermelho);
+      }
+
+      .bloco-destaque strong {
+        display: block;
+        margin-bottom: 3px;
+        font-weight: 800;
+      }
+
+      /* Fluxo de passos */
+      .fluxo-passos {
+        counter-reset: passo;
+        list-style: none;
+        padding-left: 0;
+        margin: 1rem 0;
+      }
+
+      .fluxo-passos > li {
+        counter-increment: passo;
+        position: relative;
+        padding-left: 48px;
+        padding-bottom: 1.2rem;
+        margin-bottom: 0;
+      }
+
+      .fluxo-passos > li::before {
+        content: counter(passo);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--verde);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.85rem;
+        box-shadow: 0 4px 10px -4px rgba(13, 94, 58, 0.4);
+      }
+
+      .fluxo-passos > li:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        left: 15px;
+        top: 36px;
+        width: 2px;
+        height: calc(100% - 28px);
+        background: linear-gradient(180deg, var(--verde) 0%, transparent 100%);
+        opacity: 0.3;
+      }
+
+      /* Grid de cards auxiliares */
+      .mini-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+        margin: 1rem 0;
+      }
+
+      .mini-card {
+        background: var(--cinza-suave);
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .mini-card .mini-titulo {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--verde);
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .mini-card .mini-conteudo {
+        font-size: 0.82rem;
+        color: var(--cinza-texto);
+        line-height: 1.5;
+      }
+
+      /* Diagrama ASCII */
+      .diagrama {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 1.2rem 1.5rem;
+        border-radius: 12px;
+        font-family: "Courier New", monospace;
+        font-size: 0.78rem;
+        line-height: 1.4;
+        overflow-x: auto;
+        margin: 1rem 0;
+        white-space: pre;
+      }
+
+      /* FAQ */
+      .faq-item {
+        border-bottom: 1px solid var(--cinza-borda);
+        padding: 0.8rem 0;
+      }
+
+      .faq-item:last-child {
+        border-bottom: none;
+      }
+
+      .faq-pergunta {
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 0.92rem;
+      }
+
+      .faq-pergunta i {
+        color: var(--verde);
+        margin-top: 3px;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+        transition: transform 0.2s;
+      }
+
+      .faq-pergunta.aberta i {
+        transform: rotate(90deg);
+      }
+
+      .faq-resposta {
+        display: none;
+        padding: 0.7rem 0 0 22px;
+        font-size: 0.85rem;
+        color: var(--cinza-texto);
+        line-height: 1.6;
+      }
+
+      .faq-resposta.aberta {
+        display: block;
+      }
+
+      /* Glossário */
+      .glossario-item {
+        padding: 0.7rem 0;
+        border-bottom: 1px solid var(--cinza-borda);
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 1rem;
+        align-items: baseline;
+      }
+
+      .glossario-item:last-child {
+        border-bottom: none;
+      }
+
+      .glossario-termo {
+        font-weight: 800;
+        color: var(--verde);
+        font-size: 0.88rem;
+      }
+
+      .glossario-def {
+        font-size: 0.85rem;
+        color: var(--cinza-texto);
+        line-height: 1.5;
+      }
+
+      /* Estado vazio da busca */
+      .busca-vazia {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #94a3b8;
+      }
+
+      .busca-vazia i {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 1rem;
+        opacity: 0.4;
+      }
+
+      /* =====================================================================
+         BOTÃO VOLTAR AO TOPO
+         ===================================================================== */
+      .btn-topo {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--verde);
+        color: white;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 8px 20px -6px rgba(13, 94, 58, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        z-index: 100;
+        transition: all 0.2s;
+      }
+
+      .btn-topo:hover {
+        background: var(--verde-escuro);
+        transform: translateY(-3px);
+      }
+
+      .btn-topo.visivel {
+        display: flex;
+      }
+
+      /* =====================================================================
+         RESPONSIVIDADE
+         ===================================================================== */
+      @media (max-width: 1024px) {
+        .app-layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: fixed;
+          left: -280px;
+          width: 260px;
+          z-index: 1000;
+          transition: left 0.3s;
+        }
+        .sidebar.aberta {
+          left: 0;
+        }
+        .btn-toggle-sidebar {
+          display: flex !important;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .conteudo {
+          padding: 1.2rem;
+        }
+        .topbar {
+          padding: 0.9rem 1.2rem;
+        }
+        .topbar-titulo h1 {
+          font-size: 1.1rem;
+        }
+        .topbar-info {
+          display: none;
+        }
+        .card-intro {
+          flex-direction: column;
+          padding: 1.2rem;
+        }
+        .secao-header {
+          padding: 1rem;
+        }
+        .secao-corpo {
+          padding: 1.2rem 1.2rem 1.5rem;
+        }
+        .glossario-item {
+          grid-template-columns: 1fr;
+          gap: 0.2rem;
+        }
+        .fluxo-passos > li {
+          padding-left: 42px;
+        }
+        .fluxo-passos > li::before {
+          width: 28px;
+          height: 28px;
+          font-size: 0.78rem;
+        }
+        .fluxo-passos > li:not(:last-child)::after {
+          left: 13px;
+        }
+        .btn-topo {
+          bottom: 1.2rem;
+          right: 1.2rem;
+          width: 42px;
+          height: 42px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .conteudo {
+          padding: 1rem;
+        }
+        .atalhos-grid {
+          grid-template-columns: 1fr;
+        }
+        .indice ol {
+          grid-template-columns: 1fr;
+        }
+        .diagrama {
+          font-size: 0.7rem;
+          padding: 0.9rem;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+    <link rel="stylesheet" href="biblioteca-blue-theme.css">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ========== LAYOUT ========== -->
+    <div class="app-layout">
+      <!-- ========== SIDEBAR ========== -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon"><i class="fas fa-book-open-reader"></i></div>
+          <div class="brand-text">
+            <h2>Biblioteca</h2>
+            <span>Municipal</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section">Principal</div>
+          <a href="dashboard.html"><i class="fas fa-gauge-high"></i> Painel</a>
+
+          <div class="nav-section">Acervo</div>
+          <a href="livros.html"><i class="fas fa-book"></i> Livros</a>
+          <a href="exemplares.html"
+            ><i class="fas fa-bookmark"></i> Exemplares</a
+          >
+          <a href="prateleiras.html"
+            ><i class="fas fa-layer-group"></i> Prateleiras</a
+          >
+          <a href="autores.html"><i class="fas fa-feather"></i> Autores</a>
+          <a href="categorias.html"><i class="fas fa-tags"></i> Categorias</a>
+          <a href="editoras.html"
+            ><i class="fas fa-building-columns"></i> Editoras</a
+          >
+
+          <div class="nav-section">Circulação</div>
+          <a href="emprestimos.html"
+            ><i class="fas fa-hand-holding-heart"></i> Empréstimos</a
+          >
+          <a href="devolucoes.html"
+            ><i class="fas fa-rotate-left"></i> Devoluções</a
+          >
+
+          <div class="nav-section">Pessoas</div>
+          <a href="leitores.html"><i class="fas fa-users"></i> Leitores</a>
+
+          <div class="nav-section">Gestão</div>
+          <a href="relatorios.html"
+            ><i class="fas fa-chart-column"></i> Relatórios</a
+          >
+          <a href="config.html"><i class="fas fa-gear"></i> Configurações</a>
+          <a href="ajuda.html" class="active"
+            ><i class="fas fa-circle-question"></i> Ajuda</a
+          >
+        </nav>
+
+        <div class="sidebar-voltar">
+          <a href="../intranet.html"
+            ><i class="fas fa-arrow-left"></i> Voltar à intranet</a
+          >
+        </div>
+      </aside>
+
+      <!-- ========== MAIN ========== -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <button
+              class="btn-toggle-sidebar"
+              id="btnToggleSidebar"
+              title="Abrir menu"
+             type="button">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-titulo">
+              <h1>
+                <i class="fas fa-circle-question"></i> Como usar a Biblioteca
+              </h1>
+              <p>
+                Guia completo do módulo · Aprenda todos os fluxos em minutos
+              </p>
+            </div>
+          </div>
+
+          <div class="topbar-direita">
+            <div class="topbar-info">
+              <strong id="topbarNome">—</strong>
+              <span id="topbarData">—</span>
+            </div>
+
+            <!-- DROPDOWN DO AVATAR -->
+            <div class="avatar-wrapper">
+              <button
+                class="avatar-btn"
+                id="avatarBtn"
+                title="Menu do usuário"
+                aria-haspopup="menu"
+                aria-expanded="false"
+               type="button">
+                <span id="avatarIniciais">?</span>
+              </button>
+              <div class="avatar-menu" id="avatarMenu" role="menu">
+                <div class="avatar-menu-header">
+                  <strong id="menuNome">—</strong>
+                  <span id="menuEmail">—</span>
+                </div>
+                <a
+                  href="../perfil.html"
+                  class="avatar-menu-item"
+                  role="menuitem"
+                >
+                  <i class="fas fa-user-circle"></i> Meu Perfil
+                </a>
+                <a href="ajuda.html" class="avatar-menu-item" role="menuitem">
+                  <i class="fas fa-circle-question"></i> Ajuda
+                </a>
+                <div class="avatar-menu-divisor"></div>
+                <button
+                  class="avatar-menu-item sair"
+                  id="menuSair"
+                  type="button"
+                  role="menuitem"
+                >
+                  <i class="fas fa-right-from-bracket"></i> Sair
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <main class="conteudo">
+          <!-- CARD DE INTRODUÇÃO -->
+          <div class="card-intro">
+            <div class="icone">
+              <i class="fas fa-hand-sparkles"></i>
+            </div>
+            <div class="texto">
+              <h2>Bem-vindo ao guia da Biblioteca</h2>
+              <p>
+                Este é o <strong>manual de uso do módulo Biblioteca</strong>.
+                Aqui você encontra explicações sobre <strong>cada tela</strong>,
+                <strong>cada botão</strong> e <strong>cada fluxo</strong> do
+                sistema. Use a busca abaixo para achar algo específico, ou abra
+                as seções na ordem para uma leitura completa. Se ainda restar
+                dúvida, fale com o suporte de TI — mas primeiro dê uma olhada
+                aqui! 😉
+              </p>
+            </div>
+          </div>
+
+          <!-- ATALHOS RÁPIDOS -->
+          <div class="atalhos-rapidos">
+            <h3><i class="fas fa-bolt"></i> Atalhos rápidos</h3>
+            <div class="atalhos-grid">
+              <a href="livros.html" class="atalho">
+                <i class="fas fa-book"></i> Cadastrar livro
+              </a>
+              <a href="exemplares.html" class="atalho">
+                <i class="fas fa-bookmark"></i> Novo exemplar
+              </a>
+              <a href="leitores.html" class="atalho">
+                <i class="fas fa-user-plus"></i> Novo leitor
+              </a>
+              <a href="emprestimos.html" class="atalho">
+                <i class="fas fa-hand-holding-heart"></i> Novo empréstimo
+              </a>
+              <a href="devolucoes.html" class="atalho">
+                <i class="fas fa-rotate-left"></i> Registrar devolução
+              </a>
+              <a href="relatorios.html" class="atalho">
+                <i class="fas fa-chart-column"></i> Ver relatórios
+              </a>
+              <a href="config.html" class="atalho">
+                <i class="fas fa-gear"></i> Configurações
+              </a>
+              <a href="dashboard.html" class="atalho">
+                <i class="fas fa-gauge-high"></i> Painel do dia
+              </a>
+            </div>
+          </div>
+
+          <!-- BUSCA -->
+          <div class="busca-wrapper">
+            <div class="input-busca">
+              <i class="fas fa-magnifying-glass"></i>
+              <input
+                type="text"
+                id="inputBusca"
+                placeholder="Buscar nas orientações (ex: empréstimo, prazo, exemplar...)"
+                autocomplete="off"
+              / aria-label="Buscar nas orientações (ex: empréstimo, prazo, exemplar...)">
+            </div>
+            <div class="dica">
+              <i class="fas fa-lightbulb"></i>
+              Dica: para buscar dentro do conteúdo, use
+              <strong>Ctrl+F</strong> (ou Cmd+F no Mac).
+            </div>
+          </div>
+
+          <!-- ÍNDICE -->
+          <div class="indice" id="indice">
+            <h3><i class="fas fa-list"></i> Índice</h3>
+            <ol>
+              <li>
+                <a href="#secao-1">
+                  <span class="num">1</span> Visão geral do módulo
+                </a>
+              </li>
+              <li>
+                <a href="#secao-2">
+                  <span class="num">2</span> Conceitos importantes
+                </a>
+              </li>
+              <li>
+                <a href="#secao-3"> <span class="num">3</span> Painel </a>
+              </li>
+              <li>
+                <a href="#secao-4"> <span class="num">4</span> Livros </a>
+              </li>
+              <li>
+                <a href="#secao-5"> <span class="num">5</span> Exemplares </a>
+              </li>
+              <li>
+                <a href="#secao-6"> <span class="num">6</span> Autores </a>
+              </li>
+              <li>
+                <a href="#secao-7"> <span class="num">7</span> Editoras </a>
+              </li>
+              <li>
+                <a href="#secao-8"> <span class="num">8</span> Categorias </a>
+              </li>
+              <li>
+                <a href="#secao-9"> <span class="num">9</span> Prateleiras </a>
+              </li>
+              <li>
+                <a href="#secao-10"> <span class="num">10</span> Leitores </a>
+              </li>
+              <li>
+                <a href="#secao-11">
+                  <span class="num">11</span> Empréstimos
+                </a>
+              </li>
+              <li>
+                <a href="#secao-12"> <span class="num">12</span> Devoluções </a>
+              </li>
+              <li>
+                <a href="#secao-13"> <span class="num">13</span> Relatórios </a>
+              </li>
+              <li>
+                <a href="#secao-14">
+                  <span class="num">14</span> Configurações
+                </a>
+              </li>
+              <li>
+                <a href="#secao-15">
+                  <span class="num">15</span> Comprovantes
+                </a>
+              </li>
+              <li>
+                <a href="#secao-16">
+                  <span class="num">16</span> Fluxos do dia a dia
+                </a>
+              </li>
+              <li>
+                <a href="#secao-17">
+                  <span class="num">17</span> Perguntas frequentes (FAQ)
+                </a>
+              </li>
+              <li>
+                <a href="#secao-18"> <span class="num">18</span> Glossário </a>
+              </li>
+            </ol>
+          </div>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 1 · VISÃO GERAL                                        -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-1">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">1</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-compass"></i> Visão geral do módulo</h3>
+                <p>O que a Biblioteca faz e para que serve</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                O módulo <strong>Biblioteca</strong> cuida de toda a operação da
+                Biblioteca Municipal de Pitangueiras:
+              </p>
+              <ul>
+                <li>
+                  Cadastro de <strong>livros</strong>, <strong>autores</strong>,
+                  <strong>editoras</strong> e <strong>categorias</strong>
+                </li>
+                <li>
+                  Controle dos <strong>exemplares</strong> físicos (cada cópia
+                  do livro)
+                </li>
+                <li>
+                  Organização em <strong>estantes</strong> e
+                  <strong>prateleiras</strong>
+                </li>
+                <li>
+                  Cadastro de <strong>leitores</strong> (quem pode retirar
+                  livros)
+                </li>
+                <li>
+                  <strong>Empréstimos</strong> e <strong>devoluções</strong> com
+                  cálculo automático de atrasos
+                </li>
+                <li><strong>Relatórios</strong> do acervo e da circulação</li>
+              </ul>
+
+              <div class="bloco-destaque info">
+                <i class="fas fa-circle-info"></i>
+                <div>
+                  <strong>Quem pode usar?</strong>
+                  Qualquer pessoa com acesso ao sistema. Mas
+                  <strong>só o perfil ADMIN</strong> pode alterar as
+                  configurações, excluir registros ou gerenciar usuários.
+                </div>
+              </div>
+
+              <h4><i class="fas fa-sitemap"></i> Como está organizado</h4>
+              <p>O menu lateral esquerdo agrupa as telas em 4 blocos:</p>
+              <ul>
+                <li>
+                  <strong>Principal</strong> → Painel (visão geral do dia)
+                </li>
+                <li>
+                  <strong>Acervo</strong> → Livros, Exemplares, Prateleiras,
+                  Autores, Categorias, Editoras
+                </li>
+                <li><strong>Circulação</strong> → Empréstimos e Devoluções</li>
+                <li><strong>Pessoas</strong> → Leitores</li>
+                <li>
+                  <strong>Gestão</strong> → Relatórios, Configurações e Ajuda
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 2 · CONCEITOS IMPORTANTES                              -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-2">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">2</div>
+              <div class="titulo-secao">
+                <h3>
+                  <i class="fas fa-graduation-cap"></i> Conceitos importantes
+                </h3>
+                <p>
+                  Entenda a diferença entre Livro e Exemplar, e outros termos
+                </p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <div class="bloco-destaque atencao">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div>
+                  <strong>ATENÇÃO — a confusão nº 1</strong>
+                  <strong>Livro</strong> ≠ <strong>Exemplar</strong>. Entenda
+                  bem essa diferença antes de continuar:
+                </div>
+              </div>
+
+              <h4><i class="fas fa-book"></i> Livro</h4>
+              <p>
+                É o <strong>título</strong> em si — a obra, a informação
+                bibliográfica. Existe
+                <strong>um único cadastro por título</strong>, independente de
+                quantas cópias existam.
+              </p>
+              <p>
+                Exemplo: <em>"Dom Casmurro", de Machado de Assis</em>. Isso é UM
+                livro no sistema, mesmo que a biblioteca tenha 5 cópias dele.
+              </p>
+
+              <h4><i class="fas fa-bookmark"></i> Exemplar</h4>
+              <p>
+                É cada <strong>cópia física</strong> do livro. Cada exemplar tem
+                seu próprio <strong>código</strong> (formato
+                <code>EX-0001</code>), uma <strong>prateleira</strong> própria e
+                um <strong>estado de conservação</strong> (Novo, Bom, Regular,
+                Danificado, Perdido).
+              </p>
+              <p>
+                Exemplo: a biblioteca tem 5 exemplares de "Dom Casmurro":
+                <code>EX-0001</code>, <code>EX-0002</code>, ...,
+                <code>EX-0005</code>. Cada um pode estar em um estado diferente
+                e em uma prateleira diferente.
+              </p>
+
+              <div class="diagrama">
+                Livro: "Dom Casmurro" │ ├── Exemplar EX-0001 (Prateleira A1 ·
+                estado: Bom) ├── Exemplar EX-0002 (Prateleira A1 · estado: Bom)
+                ├── Exemplar EX-0003 (Prateleira A2 · estado: Novo) ├── Exemplar
+                EX-0004 (Prateleira B1 · estado: Regular) └── Exemplar EX-0005
+                (Prateleira B1 · estado: Danificado)
+              </div>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>Resumo</strong>
+                  Cadastre o <strong>Livro</strong> uma vez. Depois crie os
+                  <strong>Exemplares</strong> (um para cada cópia física que a
+                  biblioteca possui).
+                </div>
+              </div>
+
+              <h4><i class="fas fa-arrows-turn-to-dots"></i> Outros termos</h4>
+              <ul>
+                <li>
+                  <strong>Empréstimo</strong> — ato de retirar exemplares por um
+                  período, com prazo de devolução.
+                </li>
+                <li>
+                  <strong>Devolução</strong> — ato de devolver os exemplares
+                  (total ou parcial).
+                </li>
+                <li>
+                  <strong>Renovação</strong> — estender o prazo de um empréstimo
+                  em aberto.
+                </li>
+                <li>
+                  <strong>Atraso</strong> — devolução após o prazo. O sistema
+                  calcula os dias e registra no histórico.
+                </li>
+                <li>
+                  <strong>Empréstimo parcial</strong> — quando o leitor devolve
+                  só parte dos exemplares que retirou.
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 3 · PAINEL                                             -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-3">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">3</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-gauge-high"></i> Painel</h3>
+                <p>Visão geral do acervo e da circulação em um só lugar</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                É a <strong>primeira tela</strong> ao entrar no módulo. Serve
+                para você bater o olho e saber como está a biblioteca hoje.
+              </p>
+
+              <h4><i class="fas fa-chart-simple"></i> O que aparece</h4>
+              <p>Uma faixa com <strong>8 números</strong> (cards):</p>
+              <ul>
+                <li><strong>Livros</strong> — total de títulos cadastrados</li>
+                <li><strong>Exemplares</strong> — total de cópias físicas</li>
+                <li><strong>Disponíveis</strong> — prontos para empréstimo</li>
+                <li><strong>Emprestados</strong> — fora da biblioteca</li>
+                <li><strong>Atrasados</strong> — empréstimos vencidos</li>
+                <li><strong>Leitores ativos</strong> — cadastrados e aptos</li>
+                <li><strong>Extraviados</strong> — exemplares perdidos</li>
+                <li><strong>Manutenção</strong> — exemplares em reparo</li>
+              </ul>
+
+              <h4><i class="fas fa-bell"></i> Seções abaixo dos cards</h4>
+              <ul>
+                <li>
+                  <strong>Empréstimos em atraso</strong> — lista quem está com
+                  livro vencido. Clique para ir direto ao empréstimo.
+                </li>
+                <li>
+                  <strong>Devoluções previstas para hoje</strong> — quem deve
+                  devolver hoje. Bom para ligar e lembrar.
+                </li>
+                <li>
+                  <strong>Atalhos rápidos</strong> — botões grandes para ações
+                  comuns (Novo empréstimo, Novo livro, etc.)
+                </li>
+              </ul>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>Rotina sugerida</strong>
+                  Abra o Painel toda manhã. Ele mostra o que precisa de atenção
+                  no dia (atrasos + devoluções previstas).
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 4 · LIVROS                                             -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-4">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">4</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-book"></i> Livros</h3>
+                <p>Cadastro dos títulos do acervo</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                Aqui você cadastra os <strong>títulos</strong> do acervo. Cada
+                livro pode ter vários <strong>autores</strong> e várias
+                <strong>categorias</strong>. Também pode ter uma
+                <strong>capa</strong> enviada (imagem).
+              </p>
+
+              <h4><i class="fas fa-plus"></i> Como cadastrar um livro</h4>
+              <ol class="fluxo-passos">
+                <li>
+                  Clique no botão <strong>Novo livro</strong> (canto superior
+                  direito)
+                </li>
+                <li>
+                  Preencha o <strong>título</strong> (obrigatório) e
+                  opcionalmente: subtítulo, ISBN, editora, ano, edição, idioma,
+                  nº de páginas
+                </li>
+                <li>
+                  Selecione <strong>1 ou mais autores</strong> na lista à
+                  esquerda
+                </li>
+                <li>
+                  Selecione <strong>1 ou mais categorias</strong> (clique nos
+                  chips coloridos)
+                </li>
+                <li>
+                  Faça <strong>upload da capa</strong> (opcional — JPG, PNG ou
+                  WEBP, até 2 MB)
+                </li>
+                <li>Escreva a <strong>sinopse</strong> (resumo do livro)</li>
+                <li>Clique em <strong>Salvar livro</strong></li>
+              </ol>
+
+              <h4><i class="fas fa-list"></i> A lista de livros</h4>
+              <p>Mostra os livros em uma tabela com:</p>
+              <ul>
+                <li><strong>Capa</strong> (miniatura)</li>
+                <li><strong>Título + autores</strong></li>
+                <li><strong>Editora e ano</strong></li>
+                <li><strong>Categorias</strong> (até 3 tags coloridas)</li>
+                <li><strong>Nº de exemplares</strong> cadastrados</li>
+                <li><strong>Status</strong> (Ativo / Inativo)</li>
+              </ul>
+
+              <h4>
+                <i class="fas fa-magnifying-glass"></i> Filtros disponíveis
+              </h4>
+              <ul>
+                <li>Busca por título, ISBN ou autor</li>
+                <li>Filtro por categoria</li>
+                <li>Filtro por status (Ativos / Inativos)</li>
+              </ul>
+
+              <div class="bloco-destaque atencao">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div>
+                  <strong>Não consigo excluir o livro!</strong>
+                  Se o livro já tem exemplares cadastrados, o sistema bloqueia a
+                  exclusão. Você precisa excluir os exemplares primeiro (ou
+                  inativar o livro).
+                </div>
+              </div>
+
+              <div class="bloco-destaque info">
+                <i class="fas fa-circle-info"></i>
+                <div>
+                  <strong
+                    >Precisa criar Autor, Editora ou Categoria novos?</strong
+                  >
+                  Antes de cadastrar o livro, abra as telas de
+                  <a href="autores.html">Autores</a>,
+                  <a href="editoras.html">Editoras</a> e
+                  <a href="categorias.html">Categorias</a> e cadastre-os. Eles
+                  ficam disponíveis na hora para o livro.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 5 · EXEMPLARES                                         -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-5">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">5</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-bookmark"></i> Exemplares</h3>
+                <p>Cada cópia física do livro — com código e localização</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                Cadastro das <strong>cópias físicas</strong> dos livros. É o que
+                efetivamente vai para a mão do leitor. Cada exemplar tem:
+              </p>
+              <ul>
+                <li>
+                  <strong>Código único</strong> (gerado automaticamente:
+                  <code>EX-0001</code>, <code>EX-0002</code>, ...)
+                </li>
+                <li><strong>Livro vinculado</strong></li>
+                <li>
+                  <strong>Prateleira</strong> (localização exata na biblioteca)
+                </li>
+                <li>
+                  <strong>Situação</strong>: Disponível, Emprestado, Reservado,
+                  Extraviado, Manutenção
+                </li>
+                <li>
+                  <strong>Estado</strong>: Novo, Bom, Regular, Danificado,
+                  Perdido
+                </li>
+              </ul>
+
+              <h4>
+                <i class="fas fa-plus"></i> Cadastrar exemplar (um por um)
+              </h4>
+              <ol class="fluxo-passos">
+                <li>Clique em <strong>Novo exemplar</strong></li>
+                <li>
+                  Digite o título do livro no campo de busca e selecione o
+                  correto
+                </li>
+                <li>Escolha a prateleira (opcional, mas recomendado)</li>
+                <li>Defina o estado de conservação (padrão: Bom)</li>
+                <li>(Opcional) Informe data de aquisição e valor</li>
+                <li>Clique em <strong>Salvar exemplar</strong></li>
+              </ol>
+
+              <h4>
+                <i class="fas fa-layer-group"></i> Cadastrar lote (vários de uma
+                vez)
+              </h4>
+              <p>
+                Se você recebeu <strong>10 cópias iguais</strong> de um livro,
+                não precisa cadastrar uma por uma. Use o
+                <strong>Novo lote</strong>:
+              </p>
+              <ol class="fluxo-passos">
+                <li>Clique em <strong>Novo lote</strong></li>
+                <li>Busque e selecione o livro</li>
+                <li>Informe a <strong>quantidade</strong> (1 a 100)</li>
+                <li>Defina estado, prateleira, valor (aplicados a todos)</li>
+                <li>Clique em <strong>Gerar exemplares</strong></li>
+              </ol>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>O código é gerado automaticamente.</strong>
+                  Você não precisa escolher <code>EX-0010</code> ou
+                  <code>EX-0011</code> — o sistema cuida disso sozinho e sem
+                  conflitos.
+                </div>
+              </div>
+
+              <h4><i class="fas fa-magnifying-glass"></i> Filtros</h4>
+              <ul>
+                <li>Busca por código, título, autor ou ISBN</li>
+                <li>Filtro por situação</li>
+                <li>Filtro por estado de conservação</li>
+                <li>Filtro por prateleira</li>
+              </ul>
+
+              <div class="bloco-destaque atencao">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div>
+                  <strong>Alterar situação rapidamente</strong>
+                  Clique no badge de situação (Disponível, Emprestado, etc.) na
+                  lista para mudar rapidamente. Mas atenção: exemplares
+                  <strong>emprestados</strong> não podem ser alterados por ali —
+                  use a tela de Devoluções.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 6 · AUTORES                                            -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-6">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">6</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-feather"></i> Autores</h3>
+                <p>Quem escreveu os livros do acervo</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                Cadastro dos autores. Cada livro pode ter
+                <strong>vários autores</strong> (útil para obras coletivas).
+              </p>
+
+              <h4><i class="fas fa-list"></i> Como aparece</h4>
+              <p>Cards com:</p>
+              <ul>
+                <li>Iniciais do autor (avatar colorido)</li>
+                <li>Nome completo</li>
+                <li>Nacionalidade</li>
+                <li>Data de nascimento (se informada)</li>
+                <li>Breve biografia (prévia de 3 linhas)</li>
+                <li>Nº de livros vinculados</li>
+                <li>Status (Ativo / Inativo)</li>
+              </ul>
+
+              <h4><i class="fas fa-plus"></i> Cadastrar autor</h4>
+              <ol class="fluxo-passos">
+                <li>Clique em <strong>Novo autor</strong></li>
+                <li>
+                  Preencha <strong>nome</strong> (obrigatório), nacionalidade,
+                  data de nascimento e biografia
+                </li>
+                <li>Defina o status (Ativo por padrão)</li>
+                <li>Salvar</li>
+              </ol>
+
+              <div class="bloco-destaque atencao">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div>
+                  <strong
+                    >Autor com livros vinculados não pode ser excluído</strong
+                  >
+                  Se você precisa "remover" um autor que já tem livros, use o
+                  botão de <strong>inativar</strong>. Ele some das listas de
+                  novos livros, mas preserva os livros já cadastrados.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 7 · EDITORAS                                           -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-7">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">7</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-building-columns"></i> Editoras</h3>
+                <p>Quem publicou os livros</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                Cadastro das <strong>casas publicadoras</strong> dos livros.
+                Cada editora tem nome, cidade e UF.
+              </p>
+
+              <h4><i class="fas fa-plus"></i> Cadastrar editora</h4>
+              <ol class="fluxo-passos">
+                <li>Clique em <strong>Nova editora</strong></li>
+                <li>
+                  Informe o <strong>nome</strong> (obrigatório) e,
+                  opcionalmente, cidade e UF
+                </li>
+                <li>Salvar</li>
+              </ol>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>Boa prática</strong>
+                  Mantenha o nome da editora sempre igual (ex: sempre "Companhia
+                  das Letras", nunca "Companhia das letras" em alguns livros).
+                  Isso facilita relatórios futuros.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 8 · CATEGORIAS                                         -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-8">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">8</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-tags"></i> Categorias</h3>
+                <p>Organização temática dos livros</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                Categorias são os "gêneros" dos livros: Romance, Infantil,
+                Fantasia, História, Biografia, etc. Cada categoria tem:
+              </p>
+              <ul>
+                <li><strong>Nome</strong> (único, não pode repetir)</li>
+                <li><strong>Descrição</strong> (opcional)</li>
+                <li><strong>Cor</strong> (usada em tags e relatórios)</li>
+                <li><strong>Status</strong> (Ativa / Inativa)</li>
+              </ul>
+
+              <h4><i class="fas fa-palette"></i> Sobre a cor</h4>
+              <p>
+                A cor é usada em <strong>tags visuais</strong> em toda a
+                interface (na lista de livros, relatórios, etc.). Ajuda a bater
+                o olho e reconhecer rápido.
+              </p>
+              <p>
+                Você pode escolher uma das
+                <strong>10 cores sugeridas</strong> (que combinam com o visual
+                do sistema) ou digitar um código hexadecimal (ex:
+                <code>#FF5733</code>).
+              </p>
+
+              <h4><i class="fas fa-plus"></i> Cadastrar categoria</h4>
+              <ol class="fluxo-passos">
+                <li>Clique em <strong>Nova categoria</strong></li>
+                <li>Informe o <strong>nome</strong> (obrigatório)</li>
+                <li>Escreva uma descrição (opcional)</li>
+                <li>Escolha a cor (clique numa bolinha ou digite o código)</li>
+                <li>Salvar</li>
+              </ol>
+
+              <div class="bloco-destaque atencao">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div>
+                  <strong>Nome repetido é bloqueado</strong>
+                  Se você tentar criar uma categoria com o mesmo nome de outra,
+                  o sistema avisa. Escolha um nome diferente.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 9 · PRATELEIRAS                                        -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-9">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">9</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-layer-group"></i> Prateleiras</h3>
+                <p>Localização física dos exemplares</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                A localização na biblioteca é organizada em
+                <strong>2 níveis</strong>:
+              </p>
+              <ol>
+                <li>
+                  <strong>Estante</strong> — o móvel físico (ex: Estante A,
+                  Estante B, Estante Infantil)
+                </li>
+                <li>
+                  <strong>Prateleira</strong> — a prateleira dentro da estante
+                  (ex: 01, 02, 03)
+                </li>
+              </ol>
+
+              <div class="diagrama">
+                Estante A ├── Prateleira 01 ├── Prateleira 02 └── Prateleira 03
+                Estante B ├── Prateleira 01 └── Prateleira 02 Estante INFANTIL
+                ├── Prateleira 01 └── Prateleira 02
+              </div>
+
+              <h4><i class="fas fa-list"></i> Como funciona a tela</h4>
+              <p>É uma tela de <strong>duas colunas</strong>:</p>
+              <ul>
+                <li><strong>Esquerda</strong>: lista de estantes</li>
+                <li>
+                  <strong>Direita</strong>: prateleiras da estante selecionada
+                </li>
+              </ul>
+              <p>
+                Clique numa estante à esquerda para ver e gerenciar as
+                prateleiras dela.
+              </p>
+
+              <h4><i class="fas fa-plus"></i> Cadastrar</h4>
+              <ol class="fluxo-passos">
+                <li>
+                  Primeiro crie as <strong>estantes</strong> (botão
+                  <strong>+</strong> no topo da coluna esquerda)
+                </li>
+                <li>
+                  Depois, com uma estante selecionada, crie as
+                  <strong>prateleiras</strong> dentro dela
+                </li>
+              </ol>
+
+              <div class="bloco-destaque atencao">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div>
+                  <strong>Não dá para excluir estante com prateleiras</strong>
+                  Exclua as prateleiras primeiro. E também não pode excluir
+                  prateleira com exemplares vinculados — mova ou exclua os
+                  exemplares antes.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 10 · LEITORES                                          -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-10">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">10</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-users"></i> Leitores</h3>
+                <p>Cadastro de quem pode retirar livros</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                Aqui ficam as <strong>pessoas</strong> que podem pegar livros
+                emprestados. Cada leitor tem:
+              </p>
+              <ul>
+                <li>
+                  <strong>Código de carteirinha</strong> (gerado
+                  automaticamente)
+                </li>
+                <li><strong>Nome</strong>, CPF, data de nascimento, sexo</li>
+                <li><strong>Contato</strong>: telefone, e-mail</li>
+                <li><strong>Endereço completo</strong></li>
+                <li>
+                  <strong>Tipo</strong>: Comunidade, Estudante, Servidor,
+                  Professor
+                </li>
+                <li><strong>Status</strong>: Ativo, Inativo, Suspenso</li>
+              </ul>
+
+              <h4><i class="fas fa-plus"></i> Cadastrar leitor</h4>
+              <ol class="fluxo-passos">
+                <li>Clique em <strong>Novo leitor</strong></li>
+                <li>
+                  Preencha ao menos o <strong>nome</strong> (resto é opcional,
+                  mas ajuda muito)
+                </li>
+                <li>
+                  Se o tipo for <strong>Servidor</strong>, escolha o órgão de
+                  vínculo
+                </li>
+                <li>Defina o status (Ativo por padrão)</li>
+                <li>Salvar</li>
+              </ol>
+
+              <h4><i class="fas fa-clock-rotate-left"></i> Ver histórico</h4>
+              <p>
+                Cada leitor tem um botão de <strong>histórico</strong> (ícone de
+                relógio). Ele mostra todos os empréstimos daquele leitor, com
+                status de cada um (aberto, devolvido, atrasado).
+              </p>
+
+              <h4>
+                <i class="fas fa-circle-xmark"></i> Quando um leitor não pode
+                retirar?
+              </h4>
+              <ul>
+                <li>
+                  <strong>Inativo</strong> — não aparece nas buscas de novos
+                  empréstimos
+                </li>
+                <li>
+                  <strong>Suspenso</strong> — aparece, mas o sistema bloqueia a
+                  retirada
+                </li>
+                <li>
+                  <strong>Atingiu o limite de livros</strong> — definido em
+                  Configurações
+                </li>
+              </ul>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>CPF é opcional, mas recomendado</strong>
+                  Se dois leitores tiverem o mesmo nome, o CPF evita confusão.
+                  Além disso, o sistema valida se o CPF é real (dígitos
+                  verificadores).
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 11 · EMPRÉSTIMOS                                       -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-11">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">11</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-hand-holding-heart"></i> Empréstimos</h3>
+                <p>Registrar retirada de livros pelos leitores</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>Tela principal da circulação. Tem <strong>2 abas</strong>:</p>
+              <ul>
+                <li><strong>Nova retirada</strong> — registrar empréstimo</li>
+                <li>
+                  <strong>Empréstimos ativos</strong> — lista tudo que está em
+                  aberto (para renovar, cancelar, imprimir)
+                </li>
+              </ul>
+
+              <h4><i class="fas fa-plus"></i> Registrar um empréstimo</h4>
+              <ol class="fluxo-passos">
+                <li>
+                  <strong>Escolha o leitor</strong> — digite o nome, CPF ou
+                  código da carteirinha no campo de busca. Selecione o leitor.
+                </li>
+                <li>
+                  <strong>Adicione exemplares</strong> — busque por código,
+                  título, ISBN ou autor. Cada exemplar selecionado vai para o
+                  carrinho (coluna direita).
+                </li>
+                <li>
+                  <strong>Defina o prazo</strong> — o padrão vem das
+                  Configurações, mas você pode alterar (respeitando o máximo).
+                </li>
+                <li>
+                  <strong>Confirme</strong> — clique em
+                  <strong>Confirmar empréstimo</strong>. O sistema:
+                  <ul>
+                    <li>
+                      Cria o empréstimo com código <code>EMP-XXXXXX</code>
+                    </li>
+                    <li>Marca os exemplares como "Emprestado"</li>
+                    <li>Abre o comprovante para impressão (opcional)</li>
+                  </ul>
+                </li>
+              </ol>
+
+              <h4><i class="fas fa-list"></i> Aba "Empréstimos ativos"</h4>
+              <p>
+                Mostra uma tabela com todos os empréstimos em aberto. Para cada
+                um, você pode:
+              </p>
+              <ul>
+                <li>
+                  <strong>Registrar devolução</strong> — vai para a tela de
+                  Devoluções
+                </li>
+                <li>
+                  <strong>Renovar</strong> — estende o prazo (respeitando o
+                  limite de renovações)
+                </li>
+                <li>
+                  <strong>Cancelar</strong> — cancela o empréstimo (útil se o
+                  leitor desistiu)
+                </li>
+                <li>
+                  <strong>Ver comprovante</strong> — abre a versão para
+                  impressão
+                </li>
+              </ul>
+
+              <h4><i class="fas fa-magnifying-glass"></i> Filtros</h4>
+              <ul>
+                <li>Busca por código, leitor, carteirinha ou livro</li>
+                <li>
+                  Filtro por status (abertos, parciais, devolvidos, cancelados)
+                </li>
+                <li>
+                  Filtro por período (hoje, últimos 7 dias, últimos 30 dias)
+                </li>
+                <li>Filtro por atrasados</li>
+              </ul>
+
+              <div class="bloco-destaque info">
+                <i class="fas fa-circle-info"></i>
+                <div>
+                  <strong>O sistema verifica automaticamente:</strong>
+                  limite de livros por leitor, status do leitor
+                  (ativo/suspenso), disponibilidade de cada exemplar. Se algo
+                  estiver errado, ele avisa antes de você confirmar.
+                </div>
+              </div>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>Use leitor de código de barras</strong>
+                  O campo de busca aceita entrada de leitor de código de barras.
+                  Basta bipar o código do exemplar que ele já aparece na lista.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 12 · DEVOLUÇÕES                                        -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-12">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">12</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-rotate-left"></i> Devoluções</h3>
+                <p>Registrar devolução dos exemplares</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                Tela para registrar quando o leitor devolve os livros. Calcula
+                atraso automaticamente, atualiza o estado de conservação dos
+                exemplares e registra tudo no histórico.
+              </p>
+
+              <h4><i class="fas fa-magnifying-glass"></i> Como usar</h4>
+              <ol class="fluxo-passos">
+                <li>
+                  <strong>Busque o empréstimo</strong> — pode ser por:
+                  <ul>
+                    <li>Código do empréstimo (<code>EMP-XXXXXX</code>)</li>
+                    <li>Código do exemplar (<code>EX-XXXX</code>)</li>
+                    <li>CPF do leitor</li>
+                    <li>Nome do leitor</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Confira os exemplares</strong> — o sistema mostra
+                  todos os exemplares do empréstimo
+                </li>
+                <li>
+                  <strong>Marque os que estão voltando</strong> — se for
+                  devolução total, deixe todos marcados. Se for
+                  <strong>parcial</strong>, desmarque os que ficam com o leitor.
+                </li>
+                <li>
+                  <strong>Informe o estado de cada um</strong> — Novo, Bom,
+                  Regular, Danificado, Perdido
+                </li>
+                <li>
+                  (Opcional) Adicione observações em cada exemplar (ex: "capa
+                  rasgada")
+                </li>
+                <li>
+                  <strong>Confirme</strong> — clique em
+                  <strong>Confirmar devolução</strong>
+                </li>
+              </ol>
+
+              <h4>
+                <i class="fas fa-calculator"></i> O que acontece automaticamente
+              </h4>
+              <ul>
+                <li>Cálculo de dias de atraso (se houver)</li>
+                <li>Exemplares voltam para "Disponível"</li>
+                <li>Estado de conservação é atualizado (se você mudou)</li>
+                <li>
+                  Se for <strong>devolução total</strong> → empréstimo vira
+                  "Devolvido"
+                </li>
+                <li>
+                  Se for <strong>parcial</strong> → empréstimo vira "Parcial"
+                </li>
+              </ul>
+
+              <div class="bloco-destaque info">
+                <i class="fas fa-circle-info"></i>
+                <div>
+                  <strong>Devolução parcial</strong>
+                  Quando o leitor devolve só <strong>parte</strong> dos
+                  exemplares, deixe marcado só os que voltaram. O empréstimo
+                  continua aberto com os restantes.
+                </div>
+              </div>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>Antes de confirmar</strong>
+                  Você pode clicar em <strong>Ver comprovante</strong> para ver
+                  o que vai ser impresso. Bom para conferir antes de fechar.
+                </div>
+              </div>
+
+              <div class="bloco-destaque atencao">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div>
+                  <strong>Atraso é registrado automaticamente</strong>
+                  Não precisa calcular. O sistema conta os dias desde o prazo de
+                  devolução e guarda no histórico. Isso aparece nos relatórios.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 13 · RELATÓRIOS                                        -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-13">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">13</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-chart-column"></i> Relatórios</h3>
+                <p>Estatísticas e listagens do acervo e da circulação</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                A tela de Relatórios tem <strong>5 abas</strong>, cada uma com
+                um relatório diferente. Todos podem ser
+                <strong>impressos</strong> (Ctrl+P) ou
+                <strong>exportados em CSV</strong> (abre no Excel).
+              </p>
+
+              <div class="mini-cards">
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-book"></i> Acervo
+                  </div>
+                  <div class="mini-conteudo">
+                    Lista completa dos livros com filtros por categoria,
+                    disponibilidade e busca.
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-hand-holding-heart"></i> Empréstimos
+                  </div>
+                  <div class="mini-conteudo">
+                    Histórico de empréstimos por período, status e leitor.
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-triangle-exclamation"></i> Atrasados
+                  </div>
+                  <div class="mini-conteudo">
+                    Quem está com livro em atraso (com telefone para contato).
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-users"></i> Leitores
+                  </div>
+                  <div class="mini-conteudo">
+                    Ranking de leitores por número de empréstimos.
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-fire"></i> Mais emprestados
+                  </div>
+                  <div class="mini-conteudo">
+                    Os livros mais populares do período.
+                  </div>
+                </div>
+              </div>
+
+              <h4><i class="fas fa-download"></i> Exportar CSV</h4>
+              <p>
+                Em qualquer aba, clique em <strong>CSV</strong> para baixar um
+                arquivo <code>.csv</code>. Ele abre no Excel, LibreOffice ou
+                Google Sheets. Útil para:
+              </p>
+              <ul>
+                <li>Enviar para a Secretaria de Cultura</li>
+                <li>Fazer gráficos externos</li>
+                <li>Guardar histórico anual</li>
+              </ul>
+
+              <h4><i class="fas fa-print"></i> Imprimir</h4>
+              <p>
+                Clique em <strong>Imprimir</strong> (ou Ctrl+P). A tela formata
+                automaticamente para A4 paisagem. A sidebar e menus desaparecem
+                na impressão.
+              </p>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 14 · CONFIGURAÇÕES                                     -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-14">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">14</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-gear"></i> Configurações</h3>
+                <p>Regras da biblioteca — somente ADMIN pode alterar</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <div class="bloco-destaque perigo">
+                <i class="fas fa-lock"></i>
+                <div>
+                  <strong>Acesso restrito</strong>
+                  Somente usuários com perfil <strong>ADMIN</strong> podem
+                  alterar configurações. Os demais veem em modo leitura.
+                </div>
+              </div>
+
+              <h4><i class="fas fa-sliders"></i> O que dá para configurar</h4>
+
+              <div class="mini-cards">
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-clock"></i> Prazo padrão
+                  </div>
+                  <div class="mini-conteudo">
+                    Quantos dias por padrão o empréstimo dura.
+                    <br />(Atualmente: 14 dias)
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-hourglass-end"></i> Prazo máximo
+                  </div>
+                  <div class="mini-conteudo">
+                    O prazo máximo aceito. O sistema bloqueia acima disso.
+                    <br />(Atualmente: 30 dias)
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-arrows-rotate"></i> Renovações
+                  </div>
+                  <div class="mini-conteudo">
+                    Quantas vezes o mesmo empréstimo pode ser renovado.
+                    <br />(Atualmente: 1 vez)
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-book-open"></i> Limite por leitor
+                  </div>
+                  <div class="mini-conteudo">
+                    Quantos livros simultâneos um leitor pode ter.
+                    <br />(Atualmente: 3 livros)
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-titulo">
+                    <i class="fas fa-bell"></i> Alerta de atraso
+                  </div>
+                  <div class="mini-conteudo">
+                    A partir de quantos dias após o prazo o empréstimo aparece
+                    como "atrasado" no Painel.
+                  </div>
+                </div>
+              </div>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>Todas as alterações passam por preview</strong>
+                  Quando você muda o prazo, a tela mostra "se um livro fosse
+                  retirado hoje, devolveria em X". Assim você confere antes de
+                  salvar.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 15 · COMPROVANTES                                      -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-15">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">15</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-file-invoice"></i> Comprovantes</h3>
+                <p>Impressão de comprovantes de empréstimo e devolução</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <p>
+                O <strong>comprovante</strong> é o documento impresso que
+                formaliza o empréstimo ou a devolução. Ele tem
+                <strong>2 vias</strong> por padrão:
+              </p>
+              <ul>
+                <li><strong>Via do leitor</strong> — fica com o leitor</li>
+                <li>
+                  <strong>Via da biblioteca</strong> — arquivada internamente
+                </li>
+              </ul>
+
+              <h4><i class="fas fa-file-alt"></i> O que tem no comprovante</h4>
+              <ul>
+                <li>Cabeçalho com brasão e nome da biblioteca</li>
+                <li>Código do empréstimo (<code>EMP-XXXXXX</code>)</li>
+                <li>Dados do leitor (nome, carteirinha, telefone)</li>
+                <li>Dados do empréstimo (data, prazo, atendente)</li>
+                <li>
+                  <strong>Prazo de devolução em destaque</strong> (bem grande)
+                </li>
+                <li>Tabela com os exemplares retirados</li>
+                <li>Espaço para assinatura do leitor e do servidor</li>
+              </ul>
+
+              <h4><i class="fas fa-print"></i> Como imprimir</h4>
+              <ol class="fluxo-passos">
+                <li>
+                  Você pode abrir o comprovante de 3 lugares:
+                  <ul>
+                    <li>Ao confirmar um empréstimo (abre automaticamente)</li>
+                    <li>Na aba "Empréstimos ativos" (ícone de impressora)</li>
+                    <li>Na tela de Devoluções (botão "Ver comprovante")</li>
+                  </ul>
+                </li>
+                <li>Uma nova aba abre no navegador com o comprovante pronto</li>
+                <li>
+                  Clique em <strong>Imprimir</strong> ou use
+                  <strong>Ctrl+P</strong>
+                </li>
+                <li>
+                  Confirme a impressão (o navegador já formata para
+                  <strong>A4 retrato</strong>)
+                </li>
+              </ol>
+
+              <div class="bloco-destaque info">
+                <i class="fas fa-circle-info"></i>
+                <div>
+                  <strong>Alternar entre 1 e 2 vias</strong>
+                  Existe um botão no topo do comprovante para alternar entre
+                  imprimir <strong>1 via</strong> (só leitor) ou
+                  <strong>2 vias</strong> (leitor + biblioteca). O padrão é 2.
+                </div>
+              </div>
+
+              <div class="bloco-destaque dica">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                  <strong>Economize papel</strong>
+                  Se a biblioteca usa sistema digital de acompanhamento, você
+                  pode usar só 1 via. Configure direto no navegador.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 16 · FLUXOS DO DIA A DIA                               -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-16">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">16</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-route"></i> Fluxos do dia a dia</h3>
+                <p>Passo a passo das tarefas mais comuns</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <h4><i class="fas fa-sun"></i> Rotina da manhã</h4>
+              <ol class="fluxo-passos">
+                <li>Abra o <strong>Painel</strong></li>
+                <li>Anote os <strong>empréstimos em atraso</strong></li>
+                <li>Veja as <strong>devoluções previstas para hoje</strong></li>
+                <li>
+                  (Opcional) Ligue para os leitores em atraso — o telefone
+                  aparece na tela
+                </li>
+              </ol>
+
+              <h4><i class="fas fa-user-plus"></i> Cadastrar um leitor novo</h4>
+              <ol class="fluxo-passos">
+                <li>
+                  <strong>Leitores → Novo leitor</strong>
+                </li>
+                <li>Preencha nome, CPF, telefone, endereço, tipo</li>
+                <li>
+                  Salvar. O sistema gera a <strong>carteirinha</strong>
+                  automaticamente
+                </li>
+              </ol>
+
+              <h4>
+                <i class="fas fa-book-medical"></i> Adicionar um livro novo ao
+                acervo
+              </h4>
+              <ol class="fluxo-passos">
+                <li>
+                  Se os <strong>autores</strong> ainda não existem, cadastre-os
+                  primeiro em <strong>Autores</strong>
+                </li>
+                <li>
+                  Se a <strong>editora</strong> ainda não existe, cadastre em
+                  <strong>Editoras</strong>
+                </li>
+                <li>
+                  Se a <strong>categoria</strong> ainda não existe, cadastre em
+                  <strong>Categorias</strong>
+                </li>
+                <li>
+                  Cadastre o <strong>livro</strong> em <strong>Livros</strong>
+                </li>
+                <li>
+                  Cadastre os <strong>exemplares</strong> em
+                  <strong>Exemplares</strong>
+                </li>
+                <li>
+                  (Recomendado) Defina a <strong>prateleira</strong> de cada
+                  exemplar
+                </li>
+              </ol>
+
+              <h4>
+                <i class="fas fa-hand-holding-heart"></i> Registrar empréstimo
+              </h4>
+              <ol class="fluxo-passos">
+                <li>
+                  <strong>Empréstimos → Nova retirada</strong>
+                </li>
+                <li>Busque o leitor (nome, CPF ou carteirinha)</li>
+                <li>Busque os exemplares (código, título, ISBN, autor)</li>
+                <li>Ajuste o prazo se necessário</li>
+                <li>Confirmar empréstimo</li>
+                <li>
+                  Imprima o comprovante (abre automaticamente) — assine com o
+                  leitor
+                </li>
+              </ol>
+
+              <h4><i class="fas fa-rotate-left"></i> Registrar devolução</h4>
+              <ol class="fluxo-passos">
+                <li>
+                  <strong>Devoluções</strong>
+                </li>
+                <li>Busque o empréstimo (por código, exemplar, CPF ou nome)</li>
+                <li>Marque os exemplares que estão voltando</li>
+                <li>Informe o estado de conservação de cada um</li>
+                <li>Confirmar devolução</li>
+                <li>Se houver atraso, o sistema calcula automaticamente</li>
+              </ol>
+
+              <h4>
+                <i class="fas fa-arrows-rotate"></i> Renovar um empréstimo
+              </h4>
+              <ol class="fluxo-passos">
+                <li>
+                  <strong>Empréstimos → Empréstimos ativos</strong>
+                </li>
+                <li>Localize o empréstimo (busca ou filtro "atrasados")</li>
+                <li>Clique no ícone <i class="fas fa-arrows-rotate"></i></li>
+                <li>Confirme a renovação (prazo é somado)</li>
+                <li>
+                  <strong>Atenção</strong>: o sistema bloqueia se o limite de
+                  renovações já foi atingido
+                </li>
+              </ol>
+
+              <h4><i class="fas fa-file-csv"></i> Exportar relatório mensal</h4>
+              <ol class="fluxo-passos">
+                <li>
+                  <strong>Relatórios → Empréstimos</strong>
+                </li>
+                <li>
+                  Defina as datas (use os atalhos: <strong>30d</strong>,
+                  <strong>Este mês</strong>)
+                </li>
+                <li>Aplicar</li>
+                <li>Clique em <strong>CSV</strong> e salve o arquivo</li>
+              </ol>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 17 · FAQ                                               -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-17">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">17</div>
+              <div class="titulo-secao">
+                <h3>
+                  <i class="fas fa-circle-question"></i> Perguntas frequentes
+                </h3>
+                <p>Dúvidas comuns e respostas rápidas</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Cadastrei um livro, mas não consigo emprestar. Por quê?
+                </div>
+                <div class="faq-resposta">
+                  Livro <strong>não é</strong> exemplar. Um livro só pode ser
+                  emprestado se tiver ao menos um <strong>exemplar</strong>
+                  cadastrado. Vá em
+                  <a href="exemplares.html">Exemplares</a> e crie pelo menos um
+                  exemplar para o livro.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Como devolvo só um dos livros e deixo os outros com o leitor?
+                </div>
+                <div class="faq-resposta">
+                  Em <a href="devolucoes.html">Devoluções</a>, busque o
+                  empréstimo. Desmarque os exemplares que
+                  <strong>não</strong> estão voltando e deixe marcados só os que
+                  voltaram. Confirme. O empréstimo vai ficar com status
+                  <strong>Parcial</strong>.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Posso cadastrar 20 exemplares iguais de uma vez?
+                </div>
+                <div class="faq-resposta">
+                  Sim! Em <a href="exemplares.html">Exemplares</a>, use o botão
+                  <strong>Novo lote</strong>. Escolha o livro, informe a
+                  quantidade (até 100) e configure os dados comuns.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  O que é "usuário órfão"?
+                </div>
+                <div class="faq-resposta">
+                  É quando existe uma conta de login no sistema mas
+                  <strong>não existe o perfil correspondente</strong>. Isso pode
+                  acontecer quando um usuário é removido incorretamente. O
+                  sistema detecta e avisa — nesse caso, contate o suporte de TI.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Como faço para um leitor suspenso voltar a poder retirar?
+                </div>
+                <div class="faq-resposta">
+                  Vá em <a href="leitores.html">Leitores</a>, clique no leitor
+                  suspenso, edite o cadastro e mude o status para
+                  <strong>Ativo</strong>. Salve. Pronto.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Apaguei um autor e perdi os livros dele?
+                </div>
+                <div class="faq-resposta">
+                  <strong>Não</strong>. O sistema bloqueia a exclusão de autores
+                  com livros vinculados. Você pode <strong>inativar</strong> o
+                  autor — ele sai das listas de novos livros, mas os livros
+                  antigos continuam vinculados.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  O comprovante está saindo em 1 via, quero 2 vias
+                </div>
+                <div class="faq-resposta">
+                  No topo do comprovante tem um botão
+                  <strong>"1 via" / "2 vias"</strong>. Clique para alternar. O
+                  sistema lembra da sua última escolha.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  O que acontece se o leitor devolver um livro danificado?
+                </div>
+                <div class="faq-resposta">
+                  Ao registrar a devolução, mude o estado de conservação para
+                  <strong>Danificado</strong> ou <strong>Perdido</strong>. Se
+                  for Danificado, o exemplar vai para "Manutenção". Se for
+                  Perdido, vai para "Extraviado". Ambos somem do acervo
+                  emprestável.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Quero mudar o prazo padrão de 14 para 21 dias. Como?
+                </div>
+                <div class="faq-resposta">
+                  Só o perfil <strong>ADMIN</strong> pode. Vá em
+                  <a href="config.html">Configurações → Regras de circulação</a
+                  >. Mude o prazo padrão, veja o preview, salve.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Como vejo os livros que um leitor pegou no ano passado?
+                </div>
+                <div class="faq-resposta">
+                  Em <a href="leitores.html">Leitores</a>, clique no leitor e
+                  depois no ícone <i class="fas fa-clock-rotate-left"></i>
+                  (histórico). Ele mostra todos os empréstimos, mesmo os já
+                  devolvidos.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  O sistema trava quando tento excluir um livro que tem
+                  exemplares
+                </div>
+                <div class="faq-resposta">
+                  É intencional. Livros com exemplares vinculados
+                  <strong>não podem</strong> ser excluídos. Duas opções:
+                  <ul>
+                    <li>
+                      Excluir todos os exemplares primeiro (só funciona se não
+                      tiverem histórico de empréstimo)
+                    </li>
+                    <li>
+                      <strong>Inativar</strong> o livro (recomendado) — ele sai
+                      do acervo ativo, mas mantém o histórico
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Como faço busca por código de barras?
+                </div>
+                <div class="faq-resposta">
+                  Todos os campos de busca aceitam leitor de código de barras.
+                  Clique no campo, bipe o código e a busca acontece
+                  automaticamente.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Esqueci de lançar uma devolução ontem. Tem problema?
+                </div>
+                <div class="faq-resposta">
+                  Sem problema. Lance hoje normalmente. O sistema vai usar a
+                  <strong>data de hoje</strong> como data de devolução. Se ontem
+                  ainda estava no prazo, sem atraso. Se o leitor devolveu ontem
+                  mas o prazo já tinha passado, o atraso contará até ontem — mas
+                  como você está lançando hoje, vai contar 1 dia a mais. Nesses
+                  casos, se for crítico, use as observações para registrar.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  O que significa cada status de exemplar?
+                </div>
+                <div class="faq-resposta">
+                  <ul>
+                    <li>
+                      <strong>Disponível</strong> — na prateleira, pronto para
+                      emprestar
+                    </li>
+                    <li><strong>Emprestado</strong> — com um leitor</li>
+                    <li><strong>Reservado</strong> — separado para alguém</li>
+                    <li>
+                      <strong>Extraviado</strong> — perdido, não retorna ao
+                      acervo
+                    </li>
+                    <li><strong>Manutenção</strong> — em reparo</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-pergunta" data-toggle-faq>
+                  <i class="fas fa-chevron-right"></i>
+                  Não consigo achar uma tela no menu, o que faço?
+                </div>
+                <div class="faq-resposta">
+                  Todas as telas do módulo estão listadas na sidebar à esquerda.
+                  Se você não está vendo a sidebar, clique no ícone
+                  <i class="fas fa-bars"></i> no topo (celular/tablet) ou
+                  aumente a janela do navegador (desktop).
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- SEÇÃO 18 · GLOSSÁRIO                                         -->
+          <!-- ============================================================ -->
+          <section class="secao" id="secao-18">
+            <div class="secao-header" data-toggle-secao>
+              <div class="num-secao">18</div>
+              <div class="titulo-secao">
+                <h3><i class="fas fa-book-open"></i> Glossário</h3>
+                <p>Termos e siglas usados no sistema</p>
+              </div>
+              <div class="icone-toggle">
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+            <div class="secao-corpo">
+              <div class="glossario-item">
+                <div class="glossario-termo">Ativo / Inativo</div>
+                <div class="glossario-def">
+                  Status de cadastros. <strong>Ativo</strong> = disponível para
+                  uso. <strong>Inativo</strong> = não aparece em novas
+                  operações, mas mantém histórico.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Atraso</div>
+                <div class="glossario-def">
+                  Devolução após o prazo. O sistema calcula automaticamente os
+                  dias e registra no histórico do empréstimo.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Carteirinha</div>
+                <div class="glossario-def">
+                  Código único gerado para cada leitor (ex:
+                  <code>LEI-00001</code>). Usado para identificação na
+                  biblioteca.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Disponível</div>
+                <div class="glossario-def">
+                  Exemplar que está na prateleira, pronto para ser emprestado.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Empréstimo</div>
+                <div class="glossario-def">
+                  Ato de retirar exemplares por um prazo definido. Gerado com
+                  código <code>EMP-XXXXXX</code>.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Estado de conservação</div>
+                <div class="glossario-def">
+                  Condição física do exemplar: <strong>Novo</strong>,
+                  <strong>Bom</strong>, <strong>Regular</strong>,
+                  <strong>Danificado</strong> ou <strong>Perdido</strong>.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Exemplar</div>
+                <div class="glossario-def">
+                  Cada cópia física de um livro. Tem código próprio
+                  (<code>EX-XXXX</code>), prateleira e estado.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Extraviado</div>
+                <div class="glossario-def">
+                  Exemplar perdido — não retorna ao acervo emprestável.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Leitor</div>
+                <div class="glossario-def">
+                  Pessoa cadastrada que pode retirar livros da biblioteca.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Livro</div>
+                <div class="glossario-def">
+                  Título do acervo (ex: "Dom Casmurro"). Um livro pode ter
+                  vários exemplares.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Manutenção</div>
+                <div class="glossario-def">
+                  Exemplar em reparo — temporariamente fora do acervo
+                  emprestável.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Parcial</div>
+                <div class="glossario-def">
+                  Status de empréstimo quando alguns exemplares já foram
+                  devolvidos, mas outros ainda estão com o leitor.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Prateleira</div>
+                <div class="glossario-def">
+                  Localização física dentro de uma estante. Formato: Estante +
+                  Número.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Prazo de devolução</div>
+                <div class="glossario-def">
+                  Data limite para o leitor devolver o exemplar.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Renovação</div>
+                <div class="glossario-def">
+                  Extensão do prazo de um empréstimo em aberto. Limitado por
+                  configuração (padrão: 1 renovação).
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Reserva</div>
+                <div class="glossario-def">
+                  Exemplar separado para um leitor específico. Status
+                  <strong>Reservado</strong>.
+                </div>
+              </div>
+
+              <div class="glossario-item">
+                <div class="glossario-termo">Suspenso</div>
+                <div class="glossario-def">
+                  Status de leitor que não pode retirar livros temporariamente
+                  (ex: por atraso recorrente).
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================ -->
+          <!-- FIM DO CONTEÚDO                                              -->
+          <!-- ============================================================ -->
+          <div
+            style="
+              text-align: center;
+              padding: 2.5rem 1rem 1rem;
+              color: #94a3b8;
+              font-size: 0.85rem;
+              border-top: 1px dashed var(--cinza-borda);
+              margin-top: 2rem;
+            "
+          >
+            <i class="fas fa-circle-check" style="color: var(--verde)"></i>
+            Você chegou ao fim do guia.
+            <br />
+            Se ainda tiver dúvidas,
+            <a
+              href="../intranet.html"
+              style="color: var(--verde); font-weight: 700"
+              >volte à intranet</a
+            >
+            e use o botão <strong>Suporte</strong>.
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- BOTÃO VOLTAR AO TOPO -->
+    <button class="btn-topo" id="btnTopo" title="Voltar ao topo" type="button">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- SUPABASE SDK -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // ============================================
+      // CONFIG SUPABASE
+      // ============================================
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // HELPERS
+      // ============================================
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
+
+      // ============================================
+      // SESSÃO (verificação simples)
+      // ============================================
+      async function verificarSessao() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        const { data: perfil, error } = await supabase
+          .from("usuarios")
+          .select("id, uuid, nome, email, perfil, ativo")
+          .eq("uuid", session.user.id)
+          .maybeSingle();
+
+        if (error || !perfil || perfil.ativo === false) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        return perfil;
+      }
+
+      function renderizarUsuario(perfil) {
+        if (!perfil) return;
+        setTexto("topbarNome", perfil.nome || "—");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+        );
+        const el = document.getElementById("avatarIniciais");
+        if (el) el.textContent = iniciais(perfil.nome);
+
+        // Preenche o dropdown do avatar
+        setTexto("menuNome", perfil.nome || "—");
+        setTexto("menuEmail", perfil.email || "—");
+      }
+
+      // ============================================
+      // MENU DO AVATAR (dropdown)
+      // ============================================
+      function configurarMenuAvatar() {
+        const btn = document.getElementById("avatarBtn");
+        const menu = document.getElementById("avatarMenu");
+        if (!btn || !menu) return;
+
+        // Abre/fecha ao clicar no avatar
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const aberto = menu.classList.toggle("aberto");
+          btn.setAttribute("aria-expanded", aberto ? "true" : "false");
+        });
+
+        // Fecha ao clicar fora
+        document.addEventListener("click", (e) => {
+          if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Fecha com ESC
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Item "Sair" dentro do dropdown
+        const menuSair = document.getElementById("menuSair");
+        if (menuSair) {
+          menuSair.addEventListener("click", async () => {
+            const confirmar = window.confirm(
+              "Deseja realmente sair do módulo?",
+            );
+            if (!confirmar) return;
+            await supabase.auth.signOut();
+            window.location.href = "../intranet.html";
+          });
+        }
+      }
+
+      // ============================================
+      // SIDEBAR TOGGLE (mobile)
+      // ============================================
+      const btnToggle = document.getElementById("btnToggleSidebar");
+      const sidebar = document.getElementById("sidebar");
+      if (btnToggle && sidebar) {
+        btnToggle.addEventListener("click", () =>
+          sidebar.classList.toggle("aberta"),
+        );
+        sidebar.querySelectorAll("a").forEach((a) => {
+          a.addEventListener("click", () => sidebar.classList.remove("aberta"));
+        });
+      }
+
+      // ============================================
+      // TOGGLE DE SEÇÕES (accordion)
+      // ============================================
+      document.querySelectorAll("[data-toggle-secao]").forEach((header) => {
+        header.addEventListener("click", () => {
+          const estaAberta = header.classList.contains("aberta");
+
+          // Fecha todas (comportamento accordion: só 1 aberta por vez)
+          document
+            .querySelectorAll("[data-toggle-secao]")
+            .forEach((h) => h.classList.remove("aberta"));
+          document
+            .querySelectorAll(".secao-corpo")
+            .forEach((c) => c.classList.remove("aberta"));
+
+          // Se não estava aberta, abre esta
+          if (!estaAberta) {
+            header.classList.add("aberta");
+            const corpo = header.nextElementSibling;
+            if (corpo) corpo.classList.add("aberta");
+          }
+        });
+      });
+
+      // ============================================
+      // TOGGLE DE FAQ (accordion simples)
+      // ============================================
+      document.querySelectorAll("[data-toggle-faq]").forEach((pergunta) => {
+        pergunta.addEventListener("click", () => {
+          const resposta = pergunta.nextElementSibling;
+          if (!resposta) return;
+
+          const estaAberta = pergunta.classList.contains("aberta");
+          pergunta.classList.toggle("aberta", !estaAberta);
+          resposta.classList.toggle("aberta", !estaAberta);
+        });
+      });
+
+      // ============================================
+      // LINKS DO ÍNDICE (rolar suave + abrir seção)
+      // ============================================
+      document.querySelectorAll('.indice a[href^="#"]').forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const destino = document.querySelector(link.getAttribute("href"));
+          if (!destino) return;
+
+          // Abre a seção
+          const header = destino.querySelector("[data-toggle-secao]");
+          const corpo = destino.querySelector(".secao-corpo");
+          if (header && corpo) {
+            document
+              .querySelectorAll("[data-toggle-secao]")
+              .forEach((h) => h.classList.remove("aberta"));
+            document
+              .querySelectorAll(".secao-corpo")
+              .forEach((c) => c.classList.remove("aberta"));
+            header.classList.add("aberta");
+            corpo.classList.add("aberta");
+          }
+
+          // Scroll suave
+          destino.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      // ============================================
+      // BUSCA INTERNA (filtra seções por título)
+      // ============================================
+      const inputBusca = document.getElementById("inputBusca");
+      const secoes = document.querySelectorAll(".secao");
+      const indice = document.getElementById("indice");
+
+      inputBusca.addEventListener("input", (e) => {
+        const termo = e.target.value.trim().toLowerCase();
+
+        if (!termo) {
+          // Mostra todas
+          secoes.forEach((s) => (s.style.display = ""));
+          indice.style.display = "";
+          return;
+        }
+
+        let encontradas = 0;
+
+        secoes.forEach((s) => {
+          const titulo =
+            s.querySelector(".titulo-secao h3")?.textContent.toLowerCase() ||
+            "";
+          const subtitulo =
+            s.querySelector(".titulo-secao p")?.textContent.toLowerCase() || "";
+          const corpo =
+            s.querySelector(".secao-corpo")?.textContent.toLowerCase() || "";
+
+          const bate =
+            titulo.includes(termo) ||
+            subtitulo.includes(termo) ||
+            corpo.includes(termo);
+
+          if (bate) {
+            s.style.display = "";
+            encontradas++;
+          } else {
+            s.style.display = "none";
+          }
+        });
+
+        // Esconde o índice quando há busca ativa
+        indice.style.display = "none";
+
+        // Se não encontrou nada
+        const avisoExistente = document.getElementById("buscaVazia");
+        if (avisoExistente) avisoExistente.remove();
+
+        if (encontradas === 0) {
+          const aviso = document.createElement("div");
+          aviso.id = "buscaVazia";
+          aviso.className = "busca-vazia";
+          aviso.innerHTML = `
+            <i class="fas fa-magnifying-glass"></i>
+            Nenhum resultado para "<strong>${termo}</strong>".<br/>
+            <small>Tente outra palavra-chave ou pressione Ctrl+F para buscar no texto.</small>
+          `;
+          // Insere depois do índice
+          indice.parentNode.insertBefore(aviso, indice.nextSibling);
+        }
+      });
+
+      // ============================================
+      // BOTÃO VOLTAR AO TOPO
+      // ============================================
+      const btnTopo = document.getElementById("btnTopo");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 300) {
+          btnTopo.classList.add("visivel");
+        } else {
+          btnTopo.classList.remove("visivel");
+        }
+      });
+      btnTopo.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        const perfil = await verificarSessao();
+        if (!perfil) return;
+        renderizarUsuario(perfil);
+        configurarMenuAvatar();
+
+        // Abre a primeira seção por padrão
+        const primeiraSecao = document.querySelector("[data-toggle-secao]");
+        if (primeiraSecao) {
+          primeiraSecao.classList.add("aberta");
+          primeiraSecao.nextElementSibling?.classList.add("aberta");
+        }
+      }
+
+      init();
+    </script>
+      <script type="module" src="./biblioteca-saas.js"></script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "1-2",
+    "processo_origem": "1/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "21/2026",
+    "numero_contratacao": "1436",
+    "numero_processo": "1/2026",
+    "numero_pregao": "1",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preço Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-05-06",
+    "vigencia_inicio": "2026-05-06",
+    "vigencia_fim": "2027-05-06",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06, para eventual aquisição de medicamentos para a Secretaria de Saúde e Vigilância Sanitária, conforme anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "AQ PHARMA LABORATORIO DE MANIPULACAO LTDA",
+    "cnpj": "04.767.168/0001-88"
+  },
+  "itens": [
+    {
+      "numero": "48",
+      "descricao": "CLOBAZAM 10 MG COMPRIMIDO",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.5,
+      "quantidade_contratada": 12000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12000.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 6000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 6000.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 6000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 6000.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 21/2026 — AQ PHARMA. Item único (CLOBAZAM 10 MG) já 100% executado — saldo zerado.",
+  "anexos": []
+}

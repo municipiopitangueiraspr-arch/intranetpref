@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "46",
+    "processo_origem": "42/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "49/2026",
+    "numero_contratacao": "1490",
+    "numero_processo": "42/2026",
+    "numero_pregao": "11",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-30",
+    "vigencia_inicio": "2026-06-30",
+    "vigencia_fim": "2027-06-30",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para contratação de serviços variados para atender as necessidades de todas as secretarias do Município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "PROCF - PROGRAMA DE CONDICIONAMENTO FÍSICO LTDA",
+    "cnpj": "29.634.657/0001-92"
+  },
+  "itens": [
+    {
+      "numero": "2",
+      "descricao": "Profissional de Educação Física, pessoa jurídica, devidamente habilitado e registrado no conselho profissional competente, para prestação de serviços especializados por hora/aula, destinados ao atendimento das demandas do Município, com atuação no desenvolvimento, planejamento, orientação, acompanhamento e execução de atividades físicas, esportivas, recreativas e de promoção à saúde.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 110.0,
+      "quantidade_contratada": 2500.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 198.0,
+      "quantidade_saldo": 2302.0,
+      "valor_total": 275000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 21780.0,
+      "valor_saldo": 253220.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 275000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 21780.0,
+    "valor_saldo_geral": 253220.0
+  },
+  "observacoes": "Ata 49/2026 — PROCF (Processo 42/2026). 1 serviço: Ed. Física. Saldo do PDF: R$ 253.220,00. ⚠️ Nº Ata 49/2026 vai colidir com o Processo 6/2026 (EXTEC).",
+  "anexos": []
+}

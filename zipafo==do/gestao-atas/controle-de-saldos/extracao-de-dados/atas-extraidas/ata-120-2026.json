@@ -1,0 +1,90 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "12",
+    "processo_origem": "18/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "120/2026",
+    "numero_contratacao": "1448",
+    "numero_processo": "18/2026",
+    "numero_pregao": "10",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Lote - Lote",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-11",
+    "vigencia_inicio": "2026-06-11",
+    "vigencia_fim": "2027-06-11",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para contratação de empresa para eventual aquisição de uniformes e acessórios para uso da Guarda Municipal de Pitangueiras/PR.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "VEST BEM UNIFORMES, CONFECCOES E LIMPEZA LTDA",
+    "cnpj": "49.613.182/0001-65"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "CALÇA TÁTICA DESC. CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 184.09,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 30.0,
+      "quantidade_saldo": 70.0,
+      "valor_total": 18409.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 5522.7,
+      "valor_saldo": 12886.3,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "CAMISETA DESC. CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 147.6,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 30.0,
+      "quantidade_saldo": 70.0,
+      "valor_total": 14760.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 4428.0,
+      "valor_saldo": 10332.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "3",
+      "descricao": "JAQUETA DESC. CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 236.56,
+      "quantidade_contratada": 50.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 10.0,
+      "quantidade_saldo": 40.0,
+      "valor_total": 11828.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 2365.6,
+      "valor_saldo": 9472.4,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 3,
+    "valor_contratado_geral": 44998.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 12316.3,
+    "valor_saldo_geral": 32681.7
+  },
+  "observacoes": "Ata 120/2026 — VEST BEM UNIFORMES (Processo 18/2026). Uniformes GM (3 itens). Saldo do PDF: R$ 32.681,70.",
+  "anexos": []
+}

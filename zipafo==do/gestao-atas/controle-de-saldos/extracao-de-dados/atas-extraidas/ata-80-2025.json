@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "229-230",
+    "processo_origem": "73/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor CAROL COMERCIAL LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "80/2025",
+    "numero_contratacao": "1337 | 80/2025",
+    "numero_processo": "73/2025",
+    "numero_pregao": "34",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-09-05",
+    "vigencia_inicio": "2025-09-05",
+    "vigencia_fim": "2026-09-05",
+    "objeto": "Registro de preços para empresas constituídas nos moldes da Lei Complementar n° 123/06, para eventual aquisição de brinquedos em comemoração ao dia das crianças.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CAROL COMERCIAL LTDA",
+    "cnpj": "10.867.300/0001-26"
+  },
+  "itens": [
+    {
+      "numero": "2",
+      "descricao": "TRICICLO INFANTIL MOTINHA BIKE - FABRICADO COM MATERIAL DE ALTA QUALIDADE. PEÇAS PLÁSTICAS INJETADAS EM POLIPROPILENO COM TECNOLOGIA DGP (DOUBLE GLASS POLIPROPILENO-BRILHO EM DOBRO) E QUADRO EM AÇO DE ALTA DURABILIDADE. ESPECIFICAÇÕES: BUZINA A AR; MANOPLAS ANTIADERENTES; PEDAIS ERGONÔMICOS FIXADOS NAS RODAS DIANTEIRAS; RODAS EM PP (POLIPROPILENO); PLATAFORMA NO EIXO TRASEIRO PARA APOIO; ACOMPANHA CHAVE PARA MONTAGEM; CERTIFICAÇÃO INMETRO. DIMENSÕES APROXIMADAS DO TRICICLO: ALTURA...",
+      "unidade_medida": "UN",
+      "valor_unitario": 138.9,
+      "quantidade_contratada": 75.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 75.0,
+      "valor_total": 10417.5,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 10417.5,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 10417.5,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 10417.5
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Todos os itens com saldo integral (nada executado). Totais conferem com o PDF: R$ 10.417,50 contratado.",
+  "anexos": []
+}

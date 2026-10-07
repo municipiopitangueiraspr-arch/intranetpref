@@ -1,0 +1,746 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<!-- ============================================================ -->
+<!-- DASHBOARD - ATAS, SALDOS E PEDIDOS                                   -->
+<!-- ------------------------------------------------------------ -->
+<!-- ESTRUTURA APÓS REORGANIZAÇÃO:                                -->
+<!--                                                              -->
+<!--   1. Cabeçalho (título + exportação + auto-refresh)          -->
+<!--   2. Filtro global de período                                -->
+<!--   3. KPIs (4 cards com sparkline + comparativo)              -->
+<!--   4. Faixa de alerta contextual (só aparece se houver        -->
+<!--      pendência real — decide por perfil no JS)               -->
+<!--   5. Bloco de AÇÃO (por perfil):                             -->
+<!--        · ADMIN/SECRETARIO → Fila de Aprovação em destaque    -->
+<!--        · SOLICITANTE      → Meus Pedidos                     -->
+<!--   6. Bloco de RISCO (só ADMIN/SECRETARIO):                   -->
+<!--        · Pedidos estourando saldo                            -->
+<!--   7. 3 colunas de indicadores:                               -->
+<!--        · Termômetro de Execução                              -->
+<!--        · Aging de Pedidos                                    -->
+<!--        · Top Itens Consumidos                                -->
+<!--   8. Gráfico principal (full width):                         -->
+<!--        · Consumo por Categoria                               -->
+<!--   9. 2 colunas médias:                                       -->
+<!--        · Próximos Vencimentos                                -->
+<!--        · Evolução Mensal (3 meses)                           -->
+<!--                                                              -->
+<!-- REMOVIDOS (por duplicação ou baixo valor):                   -->
+<!--   · Ações Rápidas (duplica sidebar)                          -->
+<!--   · Distribuição de Status (doughnut decorativo)             -->
+<!--   · Timeline de Atividades (existe em Relatórios)            -->
+<!--   · Top Fornecedores (existe em Relatórios)                  -->
+<!--   · Atividades Recentes (legado — já estava hidden)          -->
+<!--                                                              -->
+<!-- CONTROLE POR PERFIL:                                         -->
+<!--   Cada bloco com `data-perfil="X,Y"` é escondido pelo JS    -->
+<!--   (`dashboard.aplicarPerfil()`) quando o perfil do usuário   -->
+<!--   logado não bate com a lista.                               -->
+<!--                                                              -->
+<!-- GRID: usa `grid-auto-flow: dense` para preencher buracos    -->
+<!-- automaticamente. Cards declaram largura via classes:         -->
+<!--   · .card-largo    → span 12 (full width)                    -->
+<!--   · .card-medio    → span 6  (metade)                        -->
+<!--   · .card-estreito → span 4  (1/3)                           -->
+<!-- ============================================================ -->
+<div class="dashboard-container">
+  <!-- O título do módulo permanece na topbar compartilhada. O dashboard começa pelos filtros. -->
+  <!-- ============================================================ -->
+  <!-- FILTRO GLOBAL DE PERÍODO                                     -->
+  <!-- Aplica em todos os widgets de dados                          -->
+  <!-- ============================================================ -->
+  <div class="filtro-global" id="filtroGlobal">
+    <div class="filtro-global-label">
+      <i class="fas fa-calendar-range"></i> Período:
+    </div>
+    <div class="filtro-pills" id="filtroPills">
+      <button class="pill" data-periodo="hoje" type="button">Hoje</button>
+      <button class="pill" data-periodo="7d" type="button">Últimos 7 dias</button>
+      <button class="pill ativo" data-periodo="30d" type="button">Últimos 30 dias</button>
+    </div>
+
+    <div class="filtro-acoes" aria-label="Exportar dashboard">
+      <button class="btn btn-outline btn-sm" onclick="sistema.dashboard.exportarPDF()" title="Exportar relatório em PDF" type="button">
+        <i class="fas fa-file-pdf"></i> PDF
+      </button>
+      <button class="btn btn-outline btn-sm" onclick="sistema.dashboard.exportarExcel()" title="Exportar dados em CSV/Excel" type="button">
+        <i class="fas fa-file-csv"></i> Excel
+      </button>
+    </div>
+    <!-- Indicador textual do intervalo ativo -->
+    <span class="filtro-intervalo" id="filtroIntervalo">
+      <i class="fas fa-info-circle"></i>
+      <span id="filtroIntervaloTexto">--</span>
+    </span>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CARDS DE INDICADORES (KPIs) - 4 CARDS                        -->
+  <!-- Agora com sparkline + comparativo                            -->
+  <!-- ============================================================ -->
+  <div class="dashboard-kpis">
+    <!-- KPI 1: ATAS ATIVAS -->
+    <div
+      class="kpi-card kpi-ativas"
+      onclick="sistema.dashboard.irParaConsulta({ status: 'ATIVA' })"
+      role="button"
+      tabindex="0"
+    >
+      <div class="kpi-icon">
+        <i class="fas fa-file-contract"></i>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-valor" id="kpiAtasAtivas">--</span>
+        <span class="kpi-label">Atas Ativas</span>
+        <span class="kpi-comparativo" id="kpiAtasComparativo">
+          <i class="fas fa-minus"></i> Sem variação
+        </span>
+        <span class="kpi-detalhe" id="kpiAtasDetalhe">
+          <span class="badge badge-success">-- Ativas</span>
+          <span class="badge badge-info">-- Próximas</span>
+        </span>
+      </div>
+      <div class="kpi-sparkline">
+        <canvas id="sparklineAtasCanvas" width="80" height="40"></canvas>
+      </div>
+    </div>
+
+    <!-- KPI 2: VALOR CONTRATADO -->
+    <div
+      class="kpi-card kpi-valores"
+      onclick="sistema.dashboard.irParaConsulta({})"
+      role="button"
+      tabindex="0"
+    >
+      <div class="kpi-icon">
+        <i class="fas fa-coins"></i>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-valor" id="kpiValorContratado">--</span>
+        <span class="kpi-label">Valor Contratado</span>
+        <span class="kpi-comparativo" id="kpiValoresComparativo">
+          <i class="fas fa-minus"></i> Sem variação
+        </span>
+        <span class="kpi-detalhe" id="kpiValoresDetalhe">
+          <span>Consumido: --</span>
+          <span class="badge badge-info">--%</span>
+        </span>
+      </div>
+      <div class="kpi-sparkline">
+        <canvas id="sparklineValoresCanvas" width="80" height="40"></canvas>
+      </div>
+    </div>
+
+    <!-- KPI 3: SALDO UTILIZÁVEL -->
+    <div
+      class="kpi-card kpi-saldos"
+      onclick="sistema.dashboard.irParaConsulta({})"
+      role="button"
+      tabindex="0"
+    >
+      <div class="kpi-icon">
+        <i class="fas fa-wallet"></i>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-valor" id="kpiSaldoDisponivel">--</span>
+        <span class="kpi-label">Saldo utilizável</span>
+        <span class="kpi-comparativo" id="kpiSaldosComparativo">
+          <i class="fas fa-minus"></i> Sem variação
+        </span>
+        <span class="kpi-detalhe" id="kpiSaldosDetalhe">
+          <span id="kpiSaldoFisicoDetalhe">Saldo físico: --</span>
+          <span class="badge badge-warning" id="kpiSaldoReservadoDetalhe">Reservado: --</span>
+        </span>
+      </div>
+      <div class="kpi-sparkline">
+        <canvas id="sparklineSaldosCanvas" width="80" height="40"></canvas>
+      </div>
+    </div>
+
+    <!-- KPI 4: ALERTAS -->
+    <div
+      class="kpi-card kpi-alertas"
+      onclick="sistema.dashboard.scrollParaAlertas()"
+      role="button"
+      tabindex="0"
+    >
+      <div class="kpi-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-valor" id="kpiAlertas">--</span>
+        <span class="kpi-label">Alertas</span>
+        <span class="kpi-comparativo" id="kpiAlertasComparativo">
+          <i class="fas fa-minus"></i> Sem variação
+        </span>
+        <span class="kpi-detalhe" id="kpiAlertasDetalhe">
+          <span class="badge badge-danger">-- críticos</span>
+          <span class="badge badge-warning">-- vencendo</span>
+          <span class="badge badge-info">-- pedidos</span>
+        </span>
+      </div>
+      <div class="kpi-sparkline">
+        <canvas id="sparklineAlertasCanvas" width="80" height="40"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FAIXA DE ALERTA CONTEXTUAL (NOVO)                            -->
+  <!-- ------------------------------------------------------------ -->
+  <!-- Aparece só quando há pendência real. O JS (`carregarFaixa-    -->
+  <!-- Alerta()`) decide o conteúdo conforme o perfil do usuário.    -->
+  <!--                                                              -->
+  <!-- Por padrão começa `display: none`. O JS muda pra `flex`     -->
+  <!-- se houver pelo menos um item a mostrar.                       -->
+  <!-- ============================================================ -->
+  <div
+    class="dashboard-faixa-alerta"
+    id="dashboardFaixaAlerta"
+    style="display: none"
+  >
+    <div
+      class="dashboard-faixa-alerta-conteudo"
+      id="dashboardFaixaAlertaConteudo"
+    >
+      <!-- Conteúdo dinâmico renderizado por dashboard.js -->
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- GRID PRINCIPAL DE WIDGETS                                    -->
+  <!-- ------------------------------------------------------------ -->
+  <!-- O grid usa `grid-auto-flow: dense` para preencher buracos     -->
+  <!-- automaticamente. Cada card declara sua largura pelas classes  -->
+  <!-- .card-largo / .card-medio / .card-estreito.                   -->
+  <!-- ============================================================ -->
+  <div class="dashboard-grid">
+    <!-- ========================================================== -->
+    <!-- ZONA 1 · FILA DE APROVAÇÃO EM DESTAQUE (ADMIN/SECRETARIO)  -->
+    <!-- ---------------------------------------------------------- -->
+    <!-- Só aparece pra quem pode aprovar.                          -->
+    <!-- ========================================================== -->
+    <div
+      class="dashboard-card card-medio card-fila-destaque"
+      id="cardFilaDestaque"
+      data-perfil="ADMIN,SECRETARIO"
+    >
+      <div class="card-header">
+        <h3><i class="fas fa-clipboard-check"></i> Decisões pendentes</h3>
+        <a
+          href="#"
+          onclick="
+            event.preventDefault();
+            sistema.ativarTab('pedidos');
+          "
+          class="card-link"
+        >
+          Revisar pedidos <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      <div class="card-body">
+        <div id="filaAprovacaoDestaque">
+          <div class="skeleton-lista">
+            <div class="skeleton-line skeleton-line-lg"></div>
+            <div class="skeleton-line skeleton-line-md"></div>
+            <div class="skeleton-line skeleton-line-lg"></div>
+            <div class="skeleton-line skeleton-line-md"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ZONA 1 · MEUS PEDIDOS (SOLICITANTE)                        -->
+    <!-- ---------------------------------------------------------- -->
+    <!-- Só aparece pra quem solicitou (não vê a fila de aprovação). -->
+    <!-- ========================================================== -->
+    <div
+      class="dashboard-card card-medio card-meus-pedidos"
+      id="cardMeusPedidos"
+      data-perfil="SOLICITANTE"
+    >
+      <div class="card-header">
+        <h3><i class="fas fa-inbox"></i> Meus Pedidos</h3>
+        <a
+          href="#"
+          onclick="
+            event.preventDefault();
+            sistema.ativarTab('pedidos');
+          "
+          class="card-link"
+        >
+          Ver todos <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      <div class="card-body">
+        <div id="listaMeusPedidos">
+          <div class="skeleton-lista">
+            <div class="skeleton-line skeleton-line-lg"></div>
+            <div class="skeleton-line skeleton-line-md"></div>
+            <div class="skeleton-line skeleton-line-lg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ZONA 1 · RISCO DE SALDO (ADMIN/SECRETARIO)                 -->
+    <!-- ---------------------------------------------------------- -->
+    <!-- Só aparece quando há pedidos que vão estourar o saldo.     -->
+    <!-- O próprio JS esconde se estiver vazio.                     -->
+    <!-- ========================================================== -->
+    <div
+      class="dashboard-card card-medio card-estourando-saldo"
+      id="cardEstourandoSaldo"
+      data-perfil="ADMIN,SECRETARIO"
+      style="display: none"
+    >
+      <div class="card-header">
+        <h3><i class="fas fa-exclamation-triangle"></i> Risco de Saldo</h3>
+        <span class="card-badge card-badge-danger">Atenção</span>
+      </div>
+      <div class="card-body">
+        <div id="listaEstourandoSaldo">
+          <!-- Conteúdo dinâmico -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ZONA 2 · TERMÔMETRO DE EXECUÇÃO                            -->
+    <!-- ========================================================== -->
+    <div class="dashboard-indicadores-row">
+    <div class="dashboard-card card-estreito card-termometro">
+      <div class="card-header">
+        <h3><i class="fas fa-temperature-half"></i> Execução Orçamentária</h3>
+        <span class="card-badge">Atas ativas</span>
+      </div>
+      <div class="card-body">
+        <div class="termometro-wrapper" id="termometroExecucao">
+          <div class="skeleton-circle"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ZONA 2 · AGING DE PEDIDOS                                  -->
+    <!-- ========================================================== -->
+    <div class="dashboard-card card-estreito card-aging">
+      <div class="card-header">
+        <h3><i class="fas fa-hourglass-half"></i> Aging de Pedidos</h3>
+        <span class="card-badge">Tempo parado</span>
+      </div>
+      <div class="card-body">
+        <div id="agingPedidos">
+          <div class="skeleton-lista">
+            <div class="skeleton-line skeleton-line-md"></div>
+            <div class="skeleton-line skeleton-line-lg"></div>
+            <div class="skeleton-line skeleton-line-sm"></div>
+            <div class="skeleton-line skeleton-line-md"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ZONA 2 · TOP ITENS POR QUANTIDADE                          -->
+    <!-- ========================================================== -->
+    <div class="dashboard-card card-estreito card-top-itens">
+      <div class="card-header">
+        <h3><i class="fas fa-medal"></i> Top Itens Consumidos</h3>
+        <span class="card-badge" id="badgePeriodoTopItens">Últimos 30d</span>
+      </div>
+      <div class="card-body">
+        <div id="listaTopItens">
+          <div class="skeleton-lista">
+            <div class="skeleton-line skeleton-line-lg"></div>
+            <div class="skeleton-line skeleton-line-md"></div>
+            <div class="skeleton-line skeleton-line-lg"></div>
+            <div class="skeleton-line skeleton-line-sm"></div>
+            <div class="skeleton-line skeleton-line-md"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    </div>
+
+    <!-- ZONA 3 · CONSUMO POR CATEGORIA (full width)                -->
+    <!-- ========================================================== -->
+    <div class="dashboard-card card-largo card-grafico">
+      <div class="card-header">
+        <h3><i class="fas fa-chart-bar"></i> Consumo por Categoria</h3>
+        <span class="card-badge" id="badgePeriodoConsumo">Últimos 30d</span>
+      </div>
+      <div class="card-body">
+        <div class="grafico-container" id="graficoConsumo">
+          <div class="skeleton-chart">
+            <div class="skeleton-bar skeleton-bar-1"></div>
+            <div class="skeleton-bar skeleton-bar-2"></div>
+            <div class="skeleton-bar skeleton-bar-3"></div>
+            <div class="skeleton-bar skeleton-bar-4"></div>
+            <div class="skeleton-bar skeleton-bar-5"></div>
+          </div>
+          <canvas id="graficoConsumoCanvas" style="display: none"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ZONA 4 · PRÓXIMOS VENCIMENTOS                              -->
+    <!-- ========================================================== -->
+    <div class="dashboard-card card-medio card-vencimentos">
+      <div class="card-header">
+        <h3><i class="fas fa-calendar-alt"></i> Próximos Vencimentos</h3>
+        <span class="card-badge">30 dias</span>
+      </div>
+      <div class="card-body">
+        <div id="listaVencimentos">
+          <div class="skeleton-lista">
+            <div class="skeleton-line skeleton-line-md"></div>
+            <div class="skeleton-line skeleton-line-lg"></div>
+            <div class="skeleton-line skeleton-line-md"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- ZONA 4 · EVOLUÇÃO MENSAL (3 meses)                         -->
+    <!-- ========================================================== -->
+    <div class="dashboard-card card-medio card-evolucao">
+      <div class="card-header">
+        <h3><i class="fas fa-wave-square"></i> Evolução Mensal</h3>
+        <span class="card-badge" id="badgePeriodoEvolucao">
+          Últimos 3 meses
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="grafico-container" id="graficoEvolucao">
+          <div class="skeleton-chart-line"></div>
+          <canvas id="graficoEvolucaoCanvas" style="display: none"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- NOTA DE RODAPÉ DO DASHBOARD                                  -->
+  <!-- ============================================================ -->
+  <div class="dashboard-footnote">
+    <i class="fas fa-info-circle"></i>
+    Dados atualizados automaticamente conforme movimentação das atas e pedidos.
+    <span class="dashboard-footnote-atalhos">
+      Atalhos:
+      <kbd>Alt</kbd>+<kbd>1..6</kbd> navega entre módulos · <kbd>Ctrl</kbd>+<kbd
+        >R</kbd
+      >
+      recarrega dashboard
+    </span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ESTILOS CRÍTICOS INLINE                                      -->
+<!-- ============================================================ -->
+<!-- Todos os estilos visuais do dashboard estão em                -->
+<!-- css/dashboard.css (que é importado por css/gestao-atas.css).   -->
+<!--                                                              -->
+<!-- Este bloco inline cobre apenas:                               -->
+<!--   · Grid estrutural (pra não colapsar antes do CSS carregar)  -->
+<!--   · Skeleton loading                                          -->
+<!--   · Fallback mínimo                                           -->
+<!--                                                              -->
+<!-- Estilos de cards, KPIs, faixa de alerta, fila destaque, etc.  -->
+<!-- ficam TODOS em css/dashboard.css.                             -->
+<!-- ============================================================ -->
+<style>
+  /* ---------- Estrutura mínima para o conteúdo não colapsar ---------- */
+  .dashboard-container {
+    padding: 20px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Filtro global — layout base ---------- */
+  .filtro-global {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+
+  .filtro-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .filtro-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ---------- Grid principal — fallback ---------- */
+  /* O CSS completo está em dashboard.css. Aqui garantimos que     */
+  /* mesmo sem o arquivo externo, o grid funciona com largura       */
+  /* total (não colapsa).                                          */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-flow: dense;
+    gap: 20px;
+  }
+
+  .dashboard-grid > .dashboard-card {
+    grid-column: span 6; /* padrão: meia largura */
+  }
+
+  .dashboard-grid > .card-largo {
+    grid-column: span 12;
+  }
+
+  .dashboard-grid > .card-estreito {
+    grid-column: span 4;
+  }
+  .dashboard-grid > .dashboard-indicadores-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 20px;
+    min-width: 0;
+  }
+  .dashboard-indicadores-row > .dashboard-card {
+    grid-column: auto;
+    min-width: 0;
+  }
+
+  /* ---------- Fallback da faixa de alerta ---------- */
+  .dashboard-faixa-alerta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+  }
+
+  .dashboard-faixa-alerta-conteudo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .alerta-faixa-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: white;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    color: inherit;
+  }
+
+  .alerta-faixa-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .alerta-faixa-aviso {
+    border-color: #fde68a;
+    background: #fffbeb;
+    color: #92400e;
+  }
+
+  .alerta-faixa-critico {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+  }
+
+  .alerta-faixa-seta {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin-left: 4px;
+  }
+
+  /* ---------- Sparklines ---------- */
+  .kpi-sparkline canvas {
+    display: block;
+  }
+
+  /* ---------- Skeleton base ---------- */
+  .skeleton-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 0;
+  }
+
+  .skeleton-line {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  }
+
+  .skeleton-line-sm {
+    width: 45%;
+  }
+  .skeleton-line-md {
+    width: 70%;
+  }
+  .skeleton-line-lg {
+    width: 95%;
+  }
+
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* ---------- Skeleton de chart (barras) ---------- */
+  .skeleton-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 160px;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .skeleton-bar {
+    flex: 1;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 100%);
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    background-size: 100% 200%;
+  }
+
+  .skeleton-bar-1 {
+    height: 45%;
+  }
+  .skeleton-bar-2 {
+    height: 75%;
+  }
+  .skeleton-bar-3 {
+    height: 55%;
+  }
+  .skeleton-bar-4 {
+    height: 90%;
+  }
+  .skeleton-bar-5 {
+    height: 35%;
+  }
+
+  /* ---------- Skeleton de linha ---------- */
+  .skeleton-chart-line {
+    height: 140px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    margin: 16px;
+  }
+
+  /* ---------- Skeleton rosca ---------- */
+  .skeleton-doughnut {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    margin: 20px auto;
+    background: conic-gradient(
+      #e2e8f0 0deg 120deg,
+      #f1f5f9 120deg 240deg,
+      #e2e8f0 240deg 360deg
+    );
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    mask: radial-gradient(circle, transparent 55%, black 56%);
+    -webkit-mask: radial-gradient(circle, transparent 55%, black 56%);
+  }
+
+  /* ---------- Skeleton círculo (termômetro) ---------- */
+  .skeleton-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    margin: 20px auto;
+    background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    background-size: 200% 200%;
+  }
+
+  /* ---------- Foot note ---------- */
+  .dashboard-footnote {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .dashboard-footnote-atalhos {
+    opacity: 0.85;
+  }
+
+  .dashboard-footnote kbd {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: #475569;
+  }
+
+  /* ---------- Responsividade base (fallback) ---------- */
+  @media (max-width: 1200px) {
+    .dashboard-grid > .card-estreito {
+      grid-column: span 6;
+    }
+  }
+
+  @media (max-width: 992px) {
+    .dashboard-indicadores-row {
+      grid-template-columns: 1fr;
+    }
+    .dashboard-grid > .dashboard-card,
+    .dashboard-grid > .card-largo,
+    .dashboard-grid > .card-medio,
+    .dashboard-grid > .card-estreito {
+      grid-column: span 12;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 12px;
+    }
+  }
+</style>

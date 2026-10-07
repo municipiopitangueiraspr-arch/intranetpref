@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "15-16",
+    "processo_origem": "24/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "46/2026",
+    "numero_contratacao": "1502",
+    "numero_processo": "24/2026",
+    "numero_pregao": "6",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-02",
+    "vigencia_inicio": "2026-07-02",
+    "vigencia_fim": "2027-07-02",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para credenciamento de pessoa jurídica para prestação de serviços médicos nas áreas de reumatologia e ginecologia e obstetrícia.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "GB CLÍNICA MÉDICA EIRELI",
+    "cnpj": "27.754.611/0001-81"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "PRESTAÇÃO DE SERVIÇOS MÉDICOS NA ESPECIALIDADE DE GINECOLOGIA/OBSTETRÍCIA, PARA ATENDIMENTO DE CONSULTAS, NA UBS DE PITANGUEIRAS/PR, CONFORME AGENDAMENTO DO MUNICÍPIO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 90.0,
+      "quantidade_contratada": 800.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 792.0,
+      "valor_total": 72000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 720.0,
+      "valor_saldo": 71280.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "PRESTAÇÃO DE SERVIÇOS MÉDICOS NA ESPECIALIDADE DE REUMATOLOGIA, PARA ATENDIMENTO DE CONSULTAS, NA UBS DE PITANGUEIRAS/PR, CONFORME AGENDAMENTO DO MUNICÍPIO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 200.0,
+      "quantidade_contratada": 360.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 360.0,
+      "valor_total": 72000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 72000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 144000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 720.0,
+    "valor_saldo_geral": 143280.0
+  },
+  "observacoes": "Ata 46/2026 — GB CLÍNICA MÉDICA EIRELI (Processo 24/2026). Consultas médicas (2 especialidades). Saldo do PDF: R$ 143.280,00.",
+  "anexos": []
+}

@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "4",
+    "processo_origem": "1/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "25/2026",
+    "numero_contratacao": "1440",
+    "numero_processo": "1/2026",
+    "numero_pregao": "1",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preço Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-05-07",
+    "vigencia_inicio": "2026-05-07",
+    "vigencia_fim": "2027-05-07",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06, para eventual aquisição de medicamentos para a Secretaria de Saúde e Vigilância Sanitária, conforme anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "GMC DISTRIBUIDORA DE MEDICAMENTOS LTDA",
+    "cnpj": "51.205.028/0001-04"
+  },
+  "itens": [
+    {
+      "numero": "10",
+      "descricao": "ESCOPOLAMINA 10 MG COMPRIMIDO",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.5,
+      "quantidade_contratada": 21600.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 4000.0,
+      "quantidade_saldo": 17600.0,
+      "valor_total": 10800.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 2000.0,
+      "valor_saldo": 8800.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "13",
+      "descricao": "PROPATILNITRATO 10 MG COMPRIMIDO",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.36,
+      "quantidade_contratada": 30000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 1000.0,
+      "quantidade_saldo": 29000.0,
+      "valor_total": 10800.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 360.0,
+      "valor_saldo": 10440.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 21600.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 2360.0,
+    "valor_saldo_geral": 19240.0
+  },
+  "observacoes": "Ata 25/2026 — GMC DISTRIBUIDORA. 2 itens de medicamentos. Saldo do PDF: R$ 19.240,00.",
+  "anexos": []
+}

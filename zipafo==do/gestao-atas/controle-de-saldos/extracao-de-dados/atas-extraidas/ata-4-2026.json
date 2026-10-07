@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "7",
+    "processo_origem": "10/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "4/2026",
+    "numero_contratacao": "1413",
+    "numero_processo": "10/2026",
+    "numero_pregao": "1",
+    "modalidade": "Dispensa de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-02-27",
+    "vigencia_inicio": "2026-02-27",
+    "vigencia_fim": "2027-02-27",
+    "objeto": "Celebração de Contrato de Rateio, referente a parcela de contribuição mensal deste Município ao CISMEPAR relativo para ampliação de oferta de serviços ambulatoriais especializados e aquisição de insumos e órteses de saúde.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CONSORCIO INTERMUNICIPAL DE SAUDE DO MEDIO PARANAPANEMA",
+    "cnpj": "00.445.188/0001-81"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "Celebração de Contrato de Rateio, referente a parcela de contribuição mensal deste Município ao CISMEPAR relativo para ampliação de oferta de serviços ambulatoriais especializados e aquisição de insumos e órteses de saúde.",
+      "unidade_medida": "MES",
+      "valor_unitario": 30666.67,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 368000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 368000.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 368000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 368000.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 4/2026 — CISMEPAR (Processo 10/2026). Contrato de Rateio. 1 item (mensalidade). 12 parcelas de R$ 30.666,67 = R$ 368.000,00. Totalmente executada.",
+  "anexos": []
+}

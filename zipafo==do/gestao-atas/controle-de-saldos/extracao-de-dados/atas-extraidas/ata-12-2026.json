@@ -1,0 +1,17 @@
+{
+  "arquivo_origem": "relatorio-de-saldos-das-contratacoes-8.csv",
+  "data_extracao": "2026-04-27T15:34:08.743992",
+  "numero_processo": "4/2026",
+  "numero_ata": "12/2026",
+  "cnpj_fornecedor": "41.227.145/0001-07",
+  "razao_social": "FENIX DO BRASIL SPORTS LTDA  (CNPJ/CPF:",
+  "itens": [
+    {
+      "item": "6",
+      "descricao": "SERVIÇO DE ARBITRAGEM DO CAMPEONATO DE FUTEBOL SUÍÇO ADULTO E VETERANO - SERVIÇO DE ARBITRAGEM DO CAMPEONATO DE FUTEBOL SUÍÇO ADULTO E VETERANO (JOG)",
+      "quant_contratada": 100.0,
+      "valor_unitario": 170.0,
+      "valor_total": 17000.0
+    }
+  ]
+}

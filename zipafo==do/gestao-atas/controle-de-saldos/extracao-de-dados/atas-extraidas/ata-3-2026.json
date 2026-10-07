@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "84",
+    "processo_origem": "9/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "3/2026",
+    "numero_contratacao": "1410",
+    "numero_processo": "9/2026",
+    "numero_pregao": "2",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-02-13",
+    "vigencia_inicio": "2026-02-13",
+    "vigencia_fim": "2027-02-13",
+    "objeto": "Contratação de empresa especializada para a prestação de serviços de apoio técnico contábil.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "PC3 - SOLUCOES SUSTENTAVEIS LTDA",
+    "cnpj": "30.261.265/0001-04"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "APOIO TÉCNICO CONTÁBIL, CONFORME TERMO DE REFERÊNCIA",
+      "unidade_medida": "MES",
+      "valor_unitario": 7500.0,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 90000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 90000.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 90000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 90000.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 3/2026 — PC3 SOLUCOES. Apoio técnico contábil. 1 item (mensalidade). 12 parcelas de R$ 7.500,00 = R$ 90.000,00. Totalmente executada.",
+  "anexos": []
+}

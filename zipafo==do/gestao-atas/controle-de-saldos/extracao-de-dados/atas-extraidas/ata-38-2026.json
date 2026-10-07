@@ -1,0 +1,90 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "36",
+    "processo_origem": "40/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "38/2026",
+    "numero_contratacao": "1458",
+    "numero_processo": "40/2026",
+    "numero_pregao": "21",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Lote - Lote",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-19",
+    "vigencia_inicio": "2026-06-19",
+    "vigencia_fim": "2027-06-19",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para contratação de empresa para oferecimento de solução para controle eletrônico de ponto dos servidores municipais.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "DIVINO DE OLIVEIRA RODRIGUES EQUIPAMENTOS",
+    "cnpj": "51.049.397/0001-47"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "LICENÇA DE USO DE SOFTWARE DE GESTÃO DE PONTO ELETRÔNICO",
+      "unidade_medida": "UN",
+      "valor_unitario": 241.66,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 2899.92,
+      "valor_aditivo": 0.0,
+      "valor_executado": 2899.92,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "2",
+      "descricao": "REGISTRADOR ELETRÔNICO DE PONTO BIOMÉTRICO (REP) COM INSTALAÇÃO, CONFIGURAÇÃO E TREINAMENTO",
+      "unidade_medida": "UN",
+      "valor_unitario": 1300.02,
+      "quantidade_contratada": 3.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 3.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 3900.06,
+      "valor_aditivo": 0.0,
+      "valor_executado": 3900.06,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "3",
+      "descricao": "BOBINA TÉRMICA PARA REGISTRADOR ELETRÔNICO DE PONTO",
+      "unidade_medida": "UN",
+      "valor_unitario": 19.99,
+      "quantidade_contratada": 100.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 100.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 1999.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 1999.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 3,
+    "valor_contratado_geral": 8798.98,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 8798.98,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 38/2026 — DIVINO DE OLIVEIRA (Processo 40/2026). Software ponto + REP + Bobinas. 3 itens. Totalmente executada. ⚠️ Nº Ata 38/2026 vai colidir com o Processo 5/2026 (FAGANNUTRI).",
+  "anexos": []
+}

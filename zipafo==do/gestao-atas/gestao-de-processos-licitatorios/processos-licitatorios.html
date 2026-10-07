@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestão de Licitações - Lei 14.133</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="/shared/css/system-mother.css?v=20261004-system-mother-v1">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <div class="app">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h2>Gestão de Licitações</h2>
+        </div>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="#/" data-page="dashboard"
+                ><i class="icon-dashboard"></i> Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="#/processos" data-page="processos"
+                ><i class="icon-processos"></i> Processos</a
+              >
+            </li>
+            <li>
+              <a href="#/tarefas" data-page="tarefas"
+                ><i class="icon-tarefas"></i> Tarefas</a
+              >
+            </li>
+            <li>
+              <a href="#/prazos" data-page="prazos"
+                ><i class="icon-prazos"></i> Prazos</a
+              >
+            </li>
+            <li>
+              <a href="#/fluxos" data-page="fluxos"
+                ><i class="icon-fluxos"></i> Fluxos</a
+              >
+            </li>
+            <li>
+              <a href="#/modelos" data-page="modelos"
+                ><i class="icon-modelos"></i> Modelos</a
+              >
+            </li>
+            <li>
+              <a href="#/setores" data-page="setores"
+                ><i class="icon-setores"></i> Setores</a
+              >
+            </li>
+            <li>
+              <a href="#/usuarios" data-page="usuarios"
+                ><i class="icon-usuarios"></i> Usuários</a
+              >
+            </li>
+            <li>
+              <a href="#/configuracoes" data-page="configuracoes"
+                ><i class="icon-config"></i> Configurações</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main content -->
+      <div class="main">
+        <!-- Topbar -->
+        <header class="topbar">
+          <div class="search-bar">
+            <input type="text" placeholder="Buscar..." / aria-label="Buscar...">
+            <button type="button"><i class="icon-search"></i></button>
+          </div>
+          <div class="user-menu">
+            <div class="notifications">
+              <span class="badge">3</span>
+              <i class="icon-bell"></i>
+            </div>
+            <div class="user-dropdown">
+              <img src="https://via.placeholder.com/32" alt="User" />
+              <span>Admin</span>
+              <i class="icon-chevron-down"></i>
+            </div>
+          </div>
+        </header>
+
+        <!-- Page content -->
+        <main id="page-content">
+          <!-- O conteúdo das páginas será carregado aqui via JavaScript -->
+        </main>
+      </div>
+    </div>
+
+    <!-- Dados mockados -->
+    <script src="data/mock-data.js"></script>
+    <!-- Scripts -->
+
+    <script src="js/api.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/app.js"></script>
+    <!-- Módulos -->
+    <script src="modules/dashboard.js"></script>
+    <script src="modules/processos.js"></script>
+    <script src="modules/processo-detalhe.js"></script>
+    <script src="modules/tarefas.js"></script>
+    <script src="modules/prazos.js"></script>
+    <script src="modules/fluxos.js"></script>
+    <script src="modules/modelos.js"></script>
+    <script src="modules/setores.js"></script>
+    <script src="modules/usuarios.js"></script>
+    <script src="modules/configuracoes.js"></script>
+    <script src="/shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+</body>
+</html>

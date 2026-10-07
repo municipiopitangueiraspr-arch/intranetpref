@@ -1,0 +1,90 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "48",
+    "processo_origem": "45/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "62/2026",
+    "numero_contratacao": "1510",
+    "numero_processo": "45/2026",
+    "numero_pregao": "24",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-14",
+    "vigencia_inicio": "2026-07-14",
+    "vigencia_fim": "2027-07-14",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de equipamentos para uso da Guarda Municipal.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "A M M CORREA",
+    "cnpj": "53.169.506/0001-95"
+  },
+  "itens": [
+    {
+      "numero": "8",
+      "descricao": "COLDRE TÁTICO MULTIPLATAFORMA - CONFORME DESCRIÇÃO COMPLETA NO EDITAL.",
+      "unidade_medida": "UN",
+      "valor_unitario": 249.9,
+      "quantidade_contratada": 15.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 7.0,
+      "valor_total": 3748.5,
+      "valor_aditivo": 0.0,
+      "valor_executado": 1999.2,
+      "valor_saldo": 1749.3,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "9",
+      "descricao": "PORTA CARREGADOR COMPATÍVEL PT938 - CONFORME DESCRIÇÃO COMPLETA NO EDITAL.",
+      "unidade_medida": "UN",
+      "valor_unitario": 54.99,
+      "quantidade_contratada": 15.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 7.0,
+      "valor_total": 824.85,
+      "valor_aditivo": 0.0,
+      "valor_executado": 439.92,
+      "valor_saldo": 384.93,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "11",
+      "descricao": "CINTO TÁTICO - CONFORME DESCRIÇÃO COMPLETA NO EDITAL.",
+      "unidade_medida": "UN",
+      "valor_unitario": 94.9,
+      "quantidade_contratada": 15.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 7.0,
+      "valor_total": 1423.5,
+      "valor_aditivo": 0.0,
+      "valor_executado": 759.2,
+      "valor_saldo": 664.3,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 3,
+    "valor_contratado_geral": 5996.85,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 3198.32,
+    "valor_saldo_geral": 2798.53
+  },
+  "observacoes": "Ata 62/2026 — A M M CORREA (Processo 45/2026). Equipamentos GM (3 itens: coldre, porta carregador, cinto). Saldo do PDF: R$ 2.798,53. ⚠️ Nº Ata 62/2026 em conflito com Ata 62/2026 do MARCHINI & CASAROTO (Processo 34/2026).",
+  "anexos": []
+}

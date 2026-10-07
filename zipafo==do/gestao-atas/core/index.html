@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#102a43">
+  <title>Governança Administrativa · Intranet Municipal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="/core/css/dashboard.css?v=20261002-admin-saas-v2">
+  <link rel="stylesheet" href="/core/css/admin-library-theme.css?v=20261002-admin-library-v3">
+  <link rel="stylesheet" href="/shared/css/system-mother.css?v=20261004-system-mother-v1">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+<body class="admin-saas">
+  <div class="admin-app">
+    <aside class="admin-sidebar" id="sidebar" aria-label="Navegação de governança">
+      <div class="admin-brand">
+        <div class="admin-brand-mark"><i class="fas fa-shield-halved"></i></div>
+        <div><strong>Governança</strong><span>Administração central</span></div>
+      </div>
+      <div class="admin-tenant-chip"><i class="fas fa-building-columns"></i><span>Ambiente municipal</span><b>ADMIN</b></div>
+      <nav class="admin-nav">
+        <span class="admin-nav-label">Visão central</span>
+        <a class="active" href="/core/index.html"><i class="fas fa-grid-2"></i><span>Painel executivo</span></a>
+        <a href="/core/modulos/index.html"><i class="fas fa-cubes"></i><span>Catálogo de módulos</span></a>
+        <a href="/core/auditoria/index.html"><i class="fas fa-clock-rotate-left"></i><span>Auditoria e logs</span></a>
+        <span class="admin-nav-label">Identidades e acesso</span>
+        <a href="/core/usuarios/index.html"><i class="fas fa-users"></i><span>Usuários</span><em id="navUsers">—</em></a>
+        <a href="/core/orgaos/index.html"><i class="fas fa-building"></i><span>Órgãos e unidades</span></a>
+        <a href="/core/permissoes/index.html"><i class="fas fa-key"></i><span>Perfis e permissões</span></a>
+        <span class="admin-nav-label">Sistema</span>
+        <a href="/core/modulos/index.html"><i class="fas fa-sliders"></i><span>Configurar módulos</span></a>
+        <a href="/intranet.html"><i class="fas fa-arrow-left"></i><span>Voltar à intranet</span></a>
+      </nav>
+      <div class="admin-sidebar-footer"><i class="fas fa-lock"></i><div><strong>Acesso protegido</strong><span>Somente perfil ADMIN</span></div></div>
+    </aside>
+
+    <section class="admin-main">
+      <header class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button class="admin-icon-button" id="btnToggleSidebar" aria-label="Abrir menu" type="button"><i class="fas fa-bars"></i></button>
+          <div><div class="admin-breadcrumb"><span>Intranet Municipal</span><i class="fas fa-chevron-right"></i><strong>Governança</strong></div><h1>Centro de governança administrativa</h1></div>
+        </div>
+        <div class="admin-topbar-right">
+          <div class="admin-live"><span></span> Ambiente operacional</div>
+          <div class="admin-user"><div><strong id="topbarNome">—</strong><small id="topbarData">—</small></div><div class="admin-avatar" id="avatarIniciais">?</div></div>
+          <button class="admin-icon-button admin-logout" id="btnSair" title="Sair" type="button"><i class="fas fa-right-from-bracket"></i></button>
+        </div>
+      </header>
+
+      <main class="admin-content" id="pageContent">
+        <div class="admin-loading" id="loadingContainer"><span class="admin-spinner"></span><strong>Preparando a governança do sistema…</strong><small>Conferindo identidades, módulos e trilhas de auditoria</small></div>
+        <section class="admin-shell" id="dashboardContent" hidden>
+          <div class="admin-product-bar"><div><span class="admin-eyebrow"><i class="fas fa-shield-halved"></i> Governança · SaaS municipal</span><h2>Uma visão única para administrar o ecossistema</h2><p>Controle identidades, acessos, módulos e integridade operacional com rastreabilidade de ponta a ponta.</p></div><div class="admin-product-actions"><button class="admin-button admin-button-soft" id="btnRefresh" type="button"><i class="fas fa-rotate"></i> Atualizar</button><a class="admin-button admin-button-primary" href="/core/auditoria/index.html"><i class="fas fa-list-check"></i> Ver auditoria</a></div></div>
+          <div class="admin-trust-row"><span><i class="fas fa-shield-halved"></i> Acesso protegido por ADMIN</span><span><i class="fas fa-clock-rotate-left"></i> Auditoria canônica</span><span><i class="fas fa-layer-group"></i> Multi-módulo</span><span><i class="fas fa-lock"></i> Princípio do menor privilégio</span></div>
+
+          <section class="admin-kpi-grid" id="kpiGrid"></section>
+
+          <div class="admin-section-heading" id="modulos"><div><span class="admin-eyebrow">Ecossistema</span><h2>Operação em um só lugar</h2><p>Leia o estado da plataforma e acesse rapidamente cada domínio de gestão.</p></div><a class="admin-link" href="/core/modulos/index.html">Gerenciar catálogo <i class="fas fa-arrow-up-right-from-square"></i></a></div>
+          <div class="admin-main-grid">
+            <section class="admin-card admin-card-wide"><div class="admin-card-header"><div><span class="admin-eyebrow">Catálogo</span><h3>Módulos da Intranet</h3><p>Disponibilidade, visibilidade e acesso por domínio.</p></div><i class="fas fa-cubes admin-heading-icon"></i></div><div class="module-grid" id="moduleGrid"></div></section>
+            <section class="admin-card"><div class="admin-card-header"><div><span class="admin-eyebrow">Integridade</span><h3>Saúde do ambiente</h3><p>Indicadores que pedem atenção.</p></div><i class="fas fa-heart-pulse admin-heading-icon"></i></div><div class="health-list" id="healthList"></div></section>
+          </div>
+
+          <div class="admin-main-grid admin-main-grid-lower">
+            <section class="admin-card admin-card-wide" id="auditoria"><div class="admin-card-header admin-card-header-row"><div><span class="admin-eyebrow">Rastreabilidade</span><h3>Auditoria recente</h3><p>Eventos canônicos registrados pelo sistema.</p></div><span class="admin-live-pill"><i class="fas fa-circle"></i> Monitoramento ativo</span></div><div class="admin-table-wrap"><table class="admin-table" aria-label="Tabela de dados"><thead><tr><th>Evento</th><th>Entidade</th><th>Responsável</th><th>Origem</th><th>Quando</th></tr></thead><tbody id="eventsBody"></tbody></table></div></section>
+            <section class="admin-card"><div class="admin-card-header"><div><span class="admin-eyebrow">Identidades</span><h3>Últimos acessos</h3><p>Atividade mais recente da equipe.</p></div><i class="fas fa-user-clock admin-heading-icon"></i></div><div class="access-list" id="accessList"></div></section>
+          </div>
+
+          <div class="admin-main-grid admin-main-grid-lower">
+            <section class="admin-card"><div class="admin-card-header admin-card-header-row"><div><span class="admin-eyebrow">Acesso controlado</span><h3>Solicitações pendentes</h3><p>Entradas aguardando decisão do administrador.</p></div><a class="admin-link" href="/core/usuarios/index.html">Abrir gestão <i class="fas fa-arrow-right"></i></a></div><div class="request-list" id="requestList"></div></section>
+            <section class="admin-card"><div class="admin-card-header"><div><span class="admin-eyebrow">Políticas</span><h3>Distribuição de perfis</h3><p>Leitura rápida da superfície de acesso.</p></div><i class="fas fa-user-shield admin-heading-icon"></i></div><div class="profile-list" id="profileList"></div></section>
+          </div>
+
+          <footer class="admin-footer"><span><i class="fas fa-circle-check"></i> Dados carregados com escopo administrativo</span><span id="lastSync">—</span></footer>
+        </section>
+      </main>
+    </section>
+  </div>
+  <div class="admin-toast-stack" id="notificationCenter" aria-live="polite"></div>
+  <script type="module" src="/core/admin-central.js?v=20261002-admin-central-v2"></script>
+  <script src="/core/admin-navigation.js?v=20261003-shared-nav-v1"></script>
+  <script src="/shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "260-261",
+    "processo_origem": "84/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor LUKAPEL ATACADO DE PAPELARIA LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "100/2025",
+    "numero_contratacao": "1378 | 100/2025",
+    "numero_processo": "84/2025",
+    "numero_pregao": "43",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-12-11",
+    "vigencia_inicio": "2025-12-11",
+    "vigencia_fim": "2026-12-11",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para eventual aquisição de material escolar, conforme anexo I deste edital.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "LUKAPEL ATACADO DE PAPELARIA LTDA",
+    "cnpj": "61.337.969/0001-47"
+  },
+  "itens": [
+    {
+      "numero": "5",
+      "descricao": "CADERNO DE DESENHO E CARTOGRAFIA - DESCRIÇÃO CONFORME EDITAL - CADERNO DE DESENHO E CARTOGRAFIA - DESCRIÇÃO CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 19.8,
+      "quantidade_contratada": 250.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 250.0,
+      "valor_total": 4950.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 4950.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "6",
+      "descricao": "CADERNO BROCHURÃO QUADRICULADO - DESCRIÇÃO CONFORME EDITAL - CADERNO BROCHURÃO QUADRICULADO - DESCRIÇÃO CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 12.89,
+      "quantidade_contratada": 500.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 500.0,
+      "valor_total": 6445.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 6445.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 11395.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 11395.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Todos os itens com saldo integral (nada executado). Totais conferem com o PDF: R$ 11.395,00 contratado.",
+  "anexos": []
+}

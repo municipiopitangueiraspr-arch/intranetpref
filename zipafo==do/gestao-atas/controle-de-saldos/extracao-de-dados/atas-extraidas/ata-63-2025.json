@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "14",
+    "processo_origem": "2/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor MVSP FISIOTERAPIA LTDA (contratação 1257 | 63/2025)."
+  },
+  "cabecalho": {
+    "numero_ata": "63/2025",
+    "numero_contratacao": "1257 | 63/2025",
+    "numero_processo": "2/2025",
+    "numero_pregao": "1",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-06-04",
+    "vigencia_inicio": "2025-06-04",
+    "vigencia_fim": "2026-06-04",
+    "objeto": "Credenciamento de clínicas (pessoas jurídicas) especializadas em serviços de fisioterapia, para atendimento das necessidades da Secretaria de Saúde e Vigilância Sanitária.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "MVSP FISIOTERAPIA LTDA",
+    "cnpj": "58.822.337/0001-64"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "SESSÃO DE FISIOTERAPIA - SESSÃO DE FISIOTERAPIA",
+      "unidade_medida": "UN",
+      "valor_unitario": 18.0,
+      "quantidade_contratada": 3600.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 2064.0,
+      "quantidade_saldo": 1536.0,
+      "valor_total": 64800.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 37152.0,
+      "valor_saldo": 27648.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 64800.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 37152.0,
+    "valor_saldo_geral": 27648.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original.",
+  "anexos": []
+}

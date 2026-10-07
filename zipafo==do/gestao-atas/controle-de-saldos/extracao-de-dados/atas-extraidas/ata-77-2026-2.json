@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "77",
+    "processo_origem": "61/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "77/2026",
+    "numero_contratacao": "1547",
+    "numero_processo": "61/2026",
+    "numero_pregao": "32",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-09-03",
+    "vigencia_inicio": "2026-09-03",
+    "vigencia_fim": "2027-09-03",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de tubos de concreto.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CAMPOS & ZAMBON LTDA",
+    "cnpj": "80.798.242/0001-01"
+  },
+  "itens": [
+    {
+      "numero": "2",
+      "descricao": "TUBO CONCRETO 400X1000mm P/B PS1 - EXCLUSIVO ME E EPP",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.01,
+      "quantidade_contratada": 0.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 0.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "4",
+      "descricao": "TUBO CONCRETO 600X1000mm P/B PS1 AMPLA CONCORRÊNCIA",
+      "unidade_medida": "UN",
+      "valor_unitario": 0.01,
+      "quantidade_contratada": 0.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 0.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 0.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 77/2026 — CAMPOS & ZAMBON (Processo 61/2026). ⚠️ Os itens vieram truncados no PDF (sem quantidade/valor). Cadastre com valores zerados e preencha manualmente depois. Única ata do Processo 61/2026.",
+  "anexos": []
+}

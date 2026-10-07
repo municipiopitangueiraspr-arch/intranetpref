@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "10",
+    "processo_origem": "14/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "9/2026",
+    "numero_contratacao": "1419",
+    "numero_processo": "14/2026",
+    "numero_pregao": "4",
+    "modalidade": "Dispensa de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-02-27",
+    "vigencia_inicio": "2026-02-27",
+    "vigencia_fim": "2027-02-27",
+    "objeto": "Repasse de recursos financeiros destinados à realização de transporte sanitário macrorregional de passageiros (pacientes) para Curitiba.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CONSORCIO INTERMUNICIPAL DE SAUDE DO MEDIO PARANAPANEMA",
+    "cnpj": "00.445.188/0001-81"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "Repasse de recursos financeiros destinados à realização de transporte sanitário macrorregional de passageiros (pacientes) para Curitiba.",
+      "unidade_medida": "MES",
+      "valor_unitario": 1250.0,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 12.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 15000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 15000.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 15000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 15000.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 9/2026 — CISMEPAR (Processo 14/2026). Repasse para transporte sanitário. 1 item (mensalidade). 12 parcelas de R$ 1.250,00 = R$ 15.000,00. Totalmente executada.",
+  "anexos": []
+}

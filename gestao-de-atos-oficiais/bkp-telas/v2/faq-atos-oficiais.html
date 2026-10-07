@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ · Painel Administrativo · Atos Oficiais</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <!-- CSS do painel (mesmo design system) -->
+    <link rel="stylesheet" href="painel-adm-atos-oficiais.css" />
+
+    <style>
+      /* ===== ESTILOS EXCLUSIVOS DA PÁGINA DE FAQ ===== */
+      .faq-container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 24px;
+      }
+
+      .faq-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .faq-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--neutral-900);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .faq-header p {
+        color: var(--neutral-500);
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .faq-search {
+        margin-bottom: 32px;
+        position: relative;
+      }
+
+      .faq-search input {
+        width: 100%;
+        padding: 14px 48px 14px 20px;
+        border: 2px solid var(--neutral-200);
+        border-radius: var(--border-radius-xl);
+        font-size: 1rem;
+        transition: var(--transition-base);
+        background: white;
+      }
+
+      .faq-search input:focus {
+        border-color: var(--primary-500);
+        outline: none;
+        box-shadow: 0 0 0 4px var(--primary-100);
+      }
+
+      .faq-search .search-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--neutral-400);
+        font-size: 1.2rem;
+        pointer-events: none;
+      }
+
+      /* Categorias */
+      .faq-categorias {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 36px;
+      }
+
+      .faq-categoria {
+        padding: 10px 20px;
+        border-radius: 40px;
+        background: var(--neutral-100);
+        color: var(--neutral-600);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition-base);
+        border: 1px solid transparent;
+        user-select: none;
+      }
+
+      .faq-categoria:hover,
+      .faq-categoria.active {
+        background: var(--primary-50);
+        color: var(--primary-700);
+        border-color: var(--primary-200);
+      }
+
+      /* Accordion */
+      .faq-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .faq-item {
+        background: white;
+        border: 1px solid var(--neutral-200);
+        border-radius: var(--border-radius-xl);
+        overflow: hidden;
+        transition: var(--transition-base);
+      }
+
+      .faq-item:hover {
+        border-color: var(--primary-200);
+      }
+
+      .faq-item.open {
+        border-color: var(--primary-300);
+        box-shadow: var(--shadow-md);
+      }
+
+      .faq-question {
+        width: 100%;
+        padding: 20px 24px;
+        background: none;
+        border: none;
+        text-align: left;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--neutral-900);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        font-family: inherit;
+        transition: background 0.2s;
+      }
+
+      .faq-question:hover {
+        background: var(--neutral-50);
+      }
+
+      .faq-question i {
+        transition: transform 0.3s;
+        color: var(--neutral-400);
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .faq-item.open .faq-question i {
+        transform: rotate(180deg);
+        color: var(--primary-600);
+      }
+
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          max-height 0.35s ease,
+          padding 0.35s ease;
+      }
+
+      .faq-item.open .faq-answer {
+        max-height: 2000px;
+      }
+
+      .faq-answer-content {
+        padding: 0 24px 24px;
+        color: var(--neutral-700);
+        line-height: 1.8;
+        font-size: 0.95rem;
+      }
+
+      .faq-answer-content p {
+        margin-bottom: 12px;
+      }
+
+      .faq-answer-content ul,
+      .faq-answer-content ol {
+        padding-left: 24px;
+        margin: 12px 0;
+      }
+
+      .faq-answer-content ul li,
+      .faq-answer-content ol li {
+        margin-bottom: 8px;
+      }
+
+      .faq-answer-content strong {
+        color: var(--neutral-900);
+      }
+
+      .faq-answer-content .highlight-box {
+        background: var(--primary-50);
+        border-left: 4px solid var(--primary-600);
+        padding: 16px 20px;
+        border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
+        margin: 16px 0;
+      }
+
+      .faq-answer-content .warning-box {
+        background: var(--warning-50);
+        border-left: 4px solid var(--warning-600);
+        padding: 16px 20px;
+        border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
+        margin: 16px 0;
+      }
+
+      .faq-answer-content .example-box {
+        background: var(--neutral-50);
+        border: 1px solid var(--neutral-200);
+        padding: 16px 20px;
+        border-radius: var(--border-radius-lg);
+        margin: 16px 0;
+      }
+
+      .faq-answer-content .dica {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        background: #ebf4ff;
+        padding: 12px 16px;
+        border-radius: var(--border-radius-lg);
+        margin: 16px 0;
+        font-size: 0.9rem;
+      }
+
+      .faq-answer-content .dica i {
+        color: var(--primary-700);
+        margin-top: 2px;
+      }
+
+      .faq-answer-content code {
+        background: var(--neutral-100);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        color: var(--primary-700);
+      }
+
+      .faq-answer-content .badge-inline {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-right: 4px;
+      }
+
+      .badge-vigente {
+        background: var(--success-100);
+        color: var(--success-800);
+      }
+      .badge-revogado {
+        background: var(--error-100);
+        color: var(--error-800);
+      }
+      .badge-alterado {
+        background: var(--warning-100);
+        color: var(--warning-800);
+      }
+
+      /* Rodapé */
+      .faq-footer {
+        text-align: center;
+        margin-top: 48px;
+        padding: 32px 24px;
+        background: var(--neutral-50);
+        border-radius: var(--border-radius-xl);
+        border: 1px solid var(--neutral-200);
+      }
+
+      .faq-footer h3 {
+        font-size: 1.2rem;
+        color: var(--neutral-900);
+        margin-bottom: 8px;
+      }
+
+      .faq-footer p {
+        color: var(--neutral-500);
+        font-size: 0.95rem;
+      }
+
+      .hidden-faq {
+        display: none !important;
+      }
+
+      /* Responsivo */
+      @media (max-width: 768px) {
+        .faq-container {
+          padding: 24px 16px;
+        }
+        .faq-header h1 {
+          font-size: 1.5rem;
+        }
+        .faq-question {
+          font-size: 0.9rem;
+          padding: 16px 18px;
+        }
+        .faq-answer-content {
+          padding: 0 18px 18px;
+        }
+        .faq-categoria {
+          padding: 8px 14px;
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+<link rel="stylesheet" href="../../../shared/css/identidade-intranet.css?v=20261004-canonico-2">
+
+<link rel="stylesheet" href="../../../shared/css/acessibilidade-intranet.css?v=20261004-shell-fix-4">
+<script src="../../../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- ============================================ -->
+    <!-- TOPO SIMPLES                                 -->
+    <!-- ============================================ -->
+    <header
+      style="
+        background: linear-gradient(
+          135deg,
+          var(--primary-600),
+          var(--primary-700)
+        );
+        color: white;
+        padding: 24px 0;
+        text-align: center;
+      "
+    >
+      <h1 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px">
+        <i class="fas fa-question-circle"></i> FAQ · Sistema de Gestão de Atos
+        Oficiais
+      </h1>
+      <p style="font-size: 0.9rem; opacity: 0.9">
+        Respostas completas para as dúvidas mais comuns
+      </p>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- CONTEÚDO DO FAQ                               -->
+    <!-- ============================================ -->
+    <main class="faq-container">
+      <!-- Campo de busca -->
+      <div class="faq-search">
+        <input
+          type="text"
+          id="faqSearchInput"
+          placeholder="Pesquisar nas perguntas e respostas..."
+          aria-label="Buscar no FAQ"
+        />
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+      </div>
+
+      <!-- Filtros por categoria -->
+      <div class="faq-categorias" id="faqCategorias">
+        <span class="faq-categoria active" data-categoria="todas">Todas</span>
+        <span class="faq-categoria" data-categoria="cadastro"
+          >Cadastro de Atos</span
+        >
+        <span class="faq-categoria" data-categoria="edicao"
+          >Edição e Versões</span
+        >
+        <span class="faq-categoria" data-categoria="status"
+          >Status dos Atos</span
+        >
+        <span class="faq-categoria" data-categoria="pesquisa"
+          >Pesquisa e Filtros</span
+        >
+        <span class="faq-categoria" data-categoria="exportacao"
+          >Exportação e Relatórios</span
+        >
+        <span class="faq-categoria" data-categoria="publicacao"
+          >Publicação</span
+        >
+        <span class="faq-categoria" data-categoria="relacionamentos"
+          >Relacionamentos</span
+        >
+        <span class="faq-categoria" data-categoria="permissoes"
+          >Permissões</span
+        >
+        <span class="faq-categoria" data-categoria="problemas"
+          >Problemas Comuns</span
+        >
+        <span class="faq-categoria" data-categoria="boas-praticas"
+          >Boas Práticas</span
+        >
+      </div>
+
+      <!-- Lista de FAQ (Accordion) -->
+      <div class="faq-list" id="faqList">
+        <!-- ==================== CATEGORIA: CADASTRO DE ATOS ==================== -->
+        <div class="faq-item" data-categoria="cadastro">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Por que não consigo salvar um ato?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>
+                O sistema exige o preenchimento de alguns
+                <strong>campos obrigatórios</strong> para garantir a validade do
+                cadastro.
+              </p>
+              <p><strong>Campos obrigatórios:</strong></p>
+              <ul>
+                <li>Tipo de ato (Ex: Decreto, Portaria, Lei)</li>
+                <li>Número do ato</li>
+                <li>Ano</li>
+                <li>Órgão responsável</li>
+                <li>Data de publicação</li>
+                <li>Ementa</li>
+              </ul>
+              <div class="example-box">
+                <strong>👉 Exemplo prático:</strong><br />
+                Você está cadastrando o <strong>Decreto nº 123/2026</strong>,
+                mas esqueceu de informar o órgão (ex: Gabinete do Prefeito).<br />
+                ➡️ O sistema não permitirá salvar.
+              </div>
+              <div class="dica">
+                <i class="fas fa-lightbulb"></i>
+                <span
+                  ><strong>Dica:</strong> Sempre preencha primeiro: Tipo →
+                  Número → Ano. Depois siga o restante — evita retrabalho.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="cadastro">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Qual a diferença entre "ementa" e "texto completo"?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Essa é uma das dúvidas mais importantes.</p>
+              <ul>
+                <li>
+                  <strong>Ementa</strong> → resumo do ato (é o que aparece na
+                  busca)
+                </li>
+                <li>
+                  <strong>Texto completo</strong> → conteúdo integral (documento
+                  completo)
+                </li>
+              </ul>
+              <div class="example-box">
+                <strong>👉 Exemplo correto:</strong><br />
+                <strong>Ementa:</strong> "Dispõe sobre a concessão de férias aos
+                servidores do setor de saúde."<br />
+                <strong>Texto completo:</strong> todo o conteúdo do decreto.
+              </div>
+              <div class="warning-box">
+                <strong>👉 Exemplo errado:</strong><br />
+                <strong>Ementa:</strong> "Decreto nº 123" ❌ (isso não ajuda em
+                nada)
+              </div>
+              <div class="highlight-box">
+                <strong>💡 Impacto real:</strong><br />
+                Se a ementa estiver mal escrita, ninguém encontra o ato depois.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="cadastro">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Posso cadastrar um ato sem anexar o PDF?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Sim, o sistema permite.</p>
+              <p>Mas na prática:</p>
+              <div class="warning-box">
+                <strong>⚠️ Não é recomendado</strong>, porque:
+                <ul>
+                  <li>dificulta auditoria</li>
+                  <li>prejudica transparência</li>
+                  <li>pode gerar questionamento do controle interno</li>
+                </ul>
+              </div>
+              <div class="example-box">
+                <strong>👉 Exemplo real:</strong><br />
+                Um servidor precisa consultar uma portaria antiga → encontra o
+                cadastro → mas não tem o PDF<br />
+                ➡️ ele vai ter que pedir ajuda → gera retrabalho
+              </div>
+              <div class="dica">
+                <i class="fas fa-lightbulb"></i>
+                <span
+                  ><strong>Boa prática:</strong> Sempre anexar o documento
+                  oficial.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="cadastro">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Posso anexar mais de um arquivo?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Sim.</p>
+              <p>Você pode anexar:</p>
+              <ul>
+                <li>
+                  <strong>PDF</strong> (principal – obrigatório na prática)
+                </li>
+                <li><strong>Word</strong> (opcional – para edição futura)</li>
+              </ul>
+              <div class="example-box">
+                <strong>👉 Exemplo prático:</strong><br />
+                <strong>PDF</strong> → versão assinada<br />
+                <strong>Word</strong> → versão editável para futuras alterações
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="cadastro">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ O sistema salva automaticamente?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Não.</p>
+              <p>Se você:</p>
+              <ul>
+                <li>fechar a tela</li>
+                <li>trocar de página</li>
+                <li>atualizar o navegador</li>
+              </ul>
+              <p>➡️ <strong>perde tudo que digitou</strong></p>
+              <div class="dica">
+                <i class="fas fa-lightbulb"></i>
+                <span
+                  ><strong>Dica prática:</strong> Ao escrever textos grandes →
+                  salve a cada etapa. Ou escreva no Word e depois cole.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: EDIÇÃO E CONTROLE DE VERSÕES ==================== -->
+        <div class="faq-item" data-categoria="edicao">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ O que acontece quando edito um ato?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>
+                O sistema <strong>cria uma nova versão</strong> do ato, mantendo
+                o histórico.
+              </p>
+              <div class="example-box">
+                <strong>👉 Exemplo:</strong><br />
+                Versão 1 → publicada<br />
+                Versão 2 → corrigida<br />
+                Versão 3 → atualizada
+              </div>
+              <p>Isso permite:</p>
+              <ul>
+                <li>✔ rastrear alterações</li>
+                <li>✔ comprovar mudanças</li>
+                <li>✔ evitar perda de informação</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="edicao">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Posso apagar um ato?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Sim, mas com restrições:</p>
+              <ul>
+                <li>apenas usuários com permissão</li>
+                <li>exige confirmação</li>
+              </ul>
+              <div class="warning-box">
+                <strong>⚠️ Atenção:</strong><br />
+                Excluir um ato pode causar problemas se ele já foi:
+                <ul>
+                  <li>publicado</li>
+                  <li>referenciado por outro ato</li>
+                </ul>
+              </div>
+              <div class="dica">
+                <i class="fas fa-lightbulb"></i>
+                <span
+                  ><strong>Boa prática:</strong> Prefira alterar o status para
+                  <span class="badge-inline badge-revogado">Revogado</span> ao
+                  invés de excluir.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: STATUS DOS ATOS ==================== -->
+        <div class="faq-item" data-categoria="status">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Qual a diferença entre Vigente, Revogado e Alterado?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Isso define a <strong>situação jurídica</strong> do ato.</p>
+              <ul>
+                <li>
+                  <span class="badge-inline badge-vigente">Vigente</span> →
+                  ainda vale
+                </li>
+                <li>
+                  <span class="badge-inline badge-revogado">Revogado</span> →
+                  não tem mais efeito
+                </li>
+                <li>
+                  <span class="badge-inline badge-alterado">Alterado</span> →
+                  sofreu mudança
+                </li>
+              </ul>
+              <div class="example-box">
+                <strong>👉 Exemplo real:</strong><br />
+                Lei criada em 2020 →
+                <span class="badge-inline badge-vigente">Vigente</span><br />
+                Nova lei em 2023 cancela → vira
+                <span class="badge-inline badge-revogado">Revogada</span>
+              </div>
+              <div class="warning-box">
+                <strong>💡 Erro comum:</strong><br />
+                Não atualizar o status → gera informação errada para consulta
+                pública.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="status">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Posso mudar o status depois?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Sim, a qualquer momento.</p>
+              <div class="example-box">
+                <strong>👉 Exemplo:</strong><br />
+                Você descobre que uma portaria foi revogada → basta editar e
+                atualizar o status.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: PESQUISA E FILTROS ==================== -->
+        <div class="faq-item" data-categoria="pesquisa">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Como encontrar um ato rapidamente?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Use os <strong>filtros combinados</strong>:</p>
+              <ul>
+                <li>Tipo (ex: Decreto)</li>
+                <li>Ano (ex: 2024)</li>
+                <li>Órgão (ex: Saúde)</li>
+                <li>Texto (palavra-chave)</li>
+              </ul>
+              <div class="example-box">
+                <strong>👉 Exemplo prático:</strong><br />
+                Quer encontrar:
+                <em>"Decreto sobre transporte escolar de 2023"</em><br /><br />
+                Use:<br />
+                <strong>Tipo:</strong> Decreto<br />
+                <strong>Ano:</strong> 2023<br />
+                <strong>Busca:</strong> "transporte escolar"
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="pesquisa">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Por que não encontro um ato?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Possíveis causas:</p>
+              <ul>
+                <li>Ementa mal escrita</li>
+                <li>Filtros ativos (sem perceber)</li>
+                <li>Ano errado</li>
+                <li>Órgão errado</li>
+              </ul>
+              <div class="dica">
+                <i class="fas fa-lightbulb"></i>
+                <span
+                  ><strong>Dica prática:</strong> Clique em "limpar filtros"
+                  antes de buscar novamente.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: EXPORTAÇÃO E RELATÓRIOS ==================== -->
+        <div class="faq-item" data-categoria="exportacao">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Posso exportar os dados?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Sim.</p>
+              <p><strong>Formatos disponíveis:</strong></p>
+              <ul>
+                <li>Excel (CSV)</li>
+                <li>PDF</li>
+              </ul>
+              <div class="example-box">
+                <strong>👉 Exemplo prático:</strong><br />
+                Secretaria quer relatório de decretos de 2025<br />
+                ➡️ aplica filtro → exporta → pronto
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="exportacao">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ O relatório respeita os filtros?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Sim.</p>
+              <p>👉 O que você filtrar é o que será exportado.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: PUBLICAÇÃO ==================== -->
+        <div class="faq-item" data-categoria="publicacao">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ O sistema publica automaticamente no diário oficial?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Não.</p>
+              <p>Ele apenas registra:</p>
+              <ul>
+                <li>onde foi publicado</li>
+                <li>qual edição</li>
+                <li>qual página</li>
+              </ul>
+              <div class="example-box">
+                <strong>👉 Exemplo:</strong><br />
+                Diário Oficial nº 123, página 5<br />
+                ➡️ você informa no sistema
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="publicacao">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Posso compartilhar um ato?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Sim, via link.</p>
+              <p>Você pode:</p>
+              <ul>
+                <li>enviar por WhatsApp</li>
+                <li>colocar no site</li>
+                <li>encaminhar por e-mail</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: RELACIONAMENTO ENTRE ATOS ==================== -->
+        <div class="faq-item" data-categoria="relacionamentos">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Para que serve vincular atos?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Para manter <strong>histórico jurídico organizado</strong>.</p>
+              <div class="example-box">
+                <strong>👉 Exemplo:</strong><br />
+                Lei nova altera Lei antiga<br />
+                ➡️ você vincula as duas
+              </div>
+              <p>Isso permite:</p>
+              <ul>
+                <li>✔ rastreabilidade</li>
+                <li>✔ consulta mais inteligente</li>
+                <li>✔ transparência</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: PERMISSÕES ==================== -->
+        <div class="faq-item" data-categoria="permissoes">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Por que não consigo editar?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Depende do seu <strong>perfil</strong>.</p>
+              <ul>
+                <li>alguns usuários só visualizam</li>
+                <li>outros podem editar</li>
+                <li>poucos podem excluir</li>
+              </ul>
+              <p>👉 Isso é feito por segurança.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: PROBLEMAS COMUNS ==================== -->
+        <div class="faq-item" data-categoria="problemas">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ O PDF não abre
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Verifique:</p>
+              <ul>
+                <li>se foi anexado</li>
+                <li>se o arquivo está correto</li>
+                <li>se não está corrompido</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="problemas">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ O sistema está lento
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <p>Pode ser:</p>
+              <ul>
+                <li>muitos dados</li>
+                <li>internet lenta</li>
+                <li>arquivos grandes</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== CATEGORIA: BOAS PRÁTICAS ==================== -->
+        <div class="faq-item" data-categoria="boas-praticas">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ Como cadastrar corretamente?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <ul>
+                <li>✔ escreva uma boa ementa</li>
+                <li>✔ use palavras-chave</li>
+                <li>✔ anexe PDF</li>
+                <li>✔ revise antes de salvar</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-categoria="boas-praticas">
+          <button class="faq-question" aria-expanded="false" type="button">
+            ❓ O que evitar?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              <ul>
+                <li>❌ ementa genérica</li>
+                <li>❌ cadastro incompleto</li>
+                <li>❌ duplicação de atos</li>
+                <li>❌ não atualizar status</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensagem quando nenhum resultado é encontrado -->
+      <div class="empty-state hidden-faq" id="faqEmpty">
+        <span class="empty-icon">🔍</span>
+        <p>Nenhuma pergunta encontrada com os termos informados.</p>
+        <p style="font-size: 0.85rem">
+          Tente limpar os filtros ou usar palavras diferentes.
+        </p>
+      </div>
+
+      <!-- Rodapé de contato -->
+      <div class="faq-footer">
+        <h3><i class="fas fa-headset"></i> Não encontrou o que procurava?</h3>
+        <p>
+          Entre em contato com o suporte de TI pelo ramal
+          <strong>123</strong> ou pelo e-mail
+          <strong>assistencia@pitangueiras.pr.gov.br</strong>.
+        </p>
+      </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS DO ACCORDION, BUSCA E FILTROS         -->
+    <!-- ============================================ -->
+    <script>
+      (function () {
+        // ---- Accordion ----
+        document.querySelectorAll(".faq-question").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const item = btn.closest(".faq-item");
+            const isOpen = item.classList.contains("open");
+
+            // Comportamento: fecha todos os itens (sanfona)
+            document.querySelectorAll(".faq-item.open").forEach((openItem) => {
+              openItem.classList.remove("open");
+              openItem
+                .querySelector(".faq-question")
+                .setAttribute("aria-expanded", "false");
+            });
+
+            // Abre o item clicado se estava fechado
+            if (!isOpen) {
+              item.classList.add("open");
+              btn.setAttribute("aria-expanded", "true");
+              // Scroll suave até o item
+              item.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+          });
+        });
+
+        // ---- Filtro por categoria ----
+        const categoriasBtns = document.querySelectorAll(".faq-categoria");
+        const faqItems = document.querySelectorAll(".faq-item");
+
+        categoriasBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            // Atualiza botão ativo
+            categoriasBtns.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            const categoria = btn.getAttribute("data-categoria");
+            faqItems.forEach((item) => {
+              if (
+                categoria === "todas" ||
+                item.getAttribute("data-categoria") === categoria
+              ) {
+                item.classList.remove("hidden-faq");
+              } else {
+                item.classList.add("hidden-faq");
+              }
+            });
+
+            // Reaplica a busca textual com o termo atual
+            const termoAtual = document.getElementById("faqSearchInput").value;
+            aplicarBusca(termoAtual);
+
+            // Scroll para o topo da lista
+            document
+              .getElementById("faqList")
+              .scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        // ---- Busca textual ----
+        function aplicarBusca(termo) {
+          const lower = termo.toLowerCase().trim();
+          let encontrouAlgum = false;
+
+          faqItems.forEach((item) => {
+            // Pula itens já ocultos pela categoria
+            if (
+              item.classList.contains("hidden-faq") &&
+              !document
+                .querySelector(".faq-categoria.active")
+                ?.getAttribute("data-categoria") === "todas"
+            ) {
+              // se a categoria ativa não é "todas" e o item já está oculto, mantém oculto
+              if (
+                document
+                  .querySelector(".faq-categoria.active")
+                  ?.getAttribute("data-categoria") !== "todas"
+              ) {
+                return;
+              }
+            }
+            // Reexibe todos os itens da categoria ativa antes de filtrar por texto
+            const categoriaAtiva = document
+              .querySelector(".faq-categoria.active")
+              ?.getAttribute("data-categoria");
+            if (categoriaAtiva && categoriaAtiva !== "todas") {
+              if (item.getAttribute("data-categoria") !== categoriaAtiva)
+                return;
+            }
+
+            const texto = item.textContent.toLowerCase();
+            if (!lower || texto.includes(lower)) {
+              item.classList.remove("hidden-faq");
+              encontrouAlgum = true;
+            } else {
+              item.classList.add("hidden-faq");
+            }
+          });
+
+          document
+            .getElementById("faqEmpty")
+            .classList.toggle("hidden-faq", encontrouAlgum);
+          document
+            .getElementById("faqList")
+            .classList.toggle("hidden-faq", !encontrouAlgum);
+        }
+
+        document
+          .getElementById("faqSearchInput")
+          .addEventListener("input", function () {
+            aplicarBusca(this.value);
+          });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "33",
+    "processo_origem": "36/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "60/2026",
+    "numero_contratacao": "1515",
+    "numero_processo": "36/2026",
+    "numero_pregao": "8",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-28",
+    "vigencia_inicio": "2026-07-28",
+    "vigencia_fim": "2027-07-28",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para contratação de capacitação sobre escuta especializada, para atender a demanda da Secretaria de Assistência Social.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "WATARAI CLINICA INTERDISCIPLINAR E CONSULTORIA EMPRESARIAL LTDA",
+    "cnpj": "19.037.641/0001-49"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "PALESTRA PARA A REDE DE PROTEÇÃO À CRIANÇA E AO ADOLESCENTE VÍTIMA DE VIOLÊNCIA SOBRE REVELAÇÃO ESPONTÂNEA E FORMAÇÃO EM ESCUTA ESPECIALIZADA DE CRIANÇAS E ADOLESCENTES VÍTIMAS DE VIOLÊNCIA PARA PROFISSIONAIS",
+      "unidade_medida": "UN",
+      "valor_unitario": 13800.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 1.0,
+      "valor_total": 13800.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 13800.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 13800.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 13800.0
+  },
+  "observacoes": "Ata 60/2026 — WATARAI CLINICA (Processo 36/2026). Capacitação sobre escuta especializada. 1 item. Nada executado. ⚠️ Nº Ata 60/2026 vai colidir com o Processo 41/2026 (RESERVA SOLUCOES).",
+  "anexos": []
+}

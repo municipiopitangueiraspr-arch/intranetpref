@@ -1,0 +1,30 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="orgaos-container">
+  <div class="orgaos-header">
+    <h3 style="font-size: 1.1rem">
+      <i class="fas fa-university"></i> Gestão de Órgãos / Autarquias
+    </h3>
+    <button class="btn-novo-orgao" onclick="sistema.abrirModalOrgao()" type="button">
+      <i class="fas fa-plus-circle"></i> Novo Órgão
+    </button>
+  </div>
+  <div class="tabela-container">
+    <table class="tabela-orgaos" aria-label="Tabela de dados">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Sigla</th>
+          <th>CNPJ</th>
+          <th>Contato</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaOrgaosBody"></tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "15",
+    "processo_origem": "20/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "37/2025",
+    "numero_contratacao": "1221 | 37/2025",
+    "numero_processo": "20/2025",
+    "numero_pregao": "5",
+    "modalidade": "Dispensa de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2024-02-09",
+    "data_assinatura": "2025-04-07",
+    "vigencia_inicio": "2025-04-07",
+    "vigencia_fim": "2026-04-07",
+    "objeto": "REPASSE DE RECURSOS FINANCEIROS DESTINADOS À REALIZAÇÃO DE TRANSPORTE SANITÁRIO MACRORREGIONAL DE PASSAGEIROS (PACIENTES) PARA CURITIBA.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CONSORCIO INTERMUNICIPAL DE SAUDE DO MEDIO PARANAPANEMA",
+    "cnpj": "00.445.188/0001-81"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "TRANSPORTE SANITÁRIO MACRORREGIONAL DE PASSAGEIROS (PACIENTES) PARA CURITIBA E DEMAIS CIDADES. - TRANSPORTE SANITÁRIO MACRORREGIONAL DE PASSAGEIROS (PACIENTES) PARA CURITIBA E DEMAIS CIDADES.",
+      "unidade_medida": "UN",
+      "valor_unitario": 10000.0,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.5,
+      "quantidade_saldo": 0.5,
+      "valor_total": 10000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 5000.0,
+      "valor_saldo": 5000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 10000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 5000.0,
+    "valor_saldo_geral": 5000.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (09/02/2024), embora o processo seja de 2025 — possível erro de template no documento original.",
+  "anexos": []
+}

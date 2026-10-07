@@ -1,0 +1,122 @@
+{
+  "arquivo_origem": "relatorio-de-saldos-das-contratacoes-8.csv",
+  "data_extracao": "2026-04-27T15:34:08.743011",
+  "numero_processo": "3/2026",
+  "numero_ata": "19/2026",
+  "cnpj_fornecedor": "40.648.281/0001-08",
+  "razao_social": "Y P RAIS SUPRIMENTOS  (CNPJ/CPF:",
+  "itens": [
+    {
+      "item": "1",
+      "descricao": "EPSON L3110 - EPSON L3110 (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "2",
+      "descricao": "EPSON L3250 - EPSON L3250 (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "3",
+      "descricao": "EPSON L395 - EPSON L395 (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "4",
+      "descricao": "EPSON L4260 - EPSON L4260 (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "5",
+      "descricao": "EPSON L495 - EPSON L495 (UND)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "6",
+      "descricao": "EPSON L5590 - EPSON L5590 (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "7",
+      "descricao": "EPSON L3150 - EPSON L3150 (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "8",
+      "descricao": "HP MFP M428 FDW - HP MFP M428 FDW (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "9",
+      "descricao": "PAMTUM  M 6550 NW - PAMTUM  M 6550 NW (HOR)",
+      "quant_contratada": 50.0,
+      "valor_unitario": 117.0,
+      "valor_total": 5850.0
+    },
+    {
+      "item": "10",
+      "descricao": "BROTHER DCP-1617NW - BROTHER DCP-1617NW (HOR)",
+      "quant_contratada": 50.0,
+      "valor_unitario": 117.0,
+      "valor_total": 5850.0
+    },
+    {
+      "item": "11",
+      "descricao": "BROTHER HL 2320D - BROTHER HL 2320D (HOR)",
+      "quant_contratada": 50.0,
+      "valor_unitario": 117.0,
+      "valor_total": 5850.0
+    },
+    {
+      "item": "12",
+      "descricao": "HP LASER JET P1006 - HP LASER JET P1006 (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "13",
+      "descricao": "HP M1132 MFP H - HP M1132 MFP H (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "14",
+      "descricao": "HP MFP M127 FN - HP MFP M127 FN (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "15",
+      "descricao": "HP P1102 W - HP P1102 W (HOR)",
+      "quant_contratada": 200.0,
+      "valor_unitario": 117.0,
+      "valor_total": 23400.0
+    },
+    {
+      "item": "16",
+      "descricao": "RICOH MP305+ - RICOH MP305+ (HOR)",
+      "quant_contratada": 50.0,
+      "valor_unitario": 117.0,
+      "valor_total": 5850.0
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "49",
+    "processo_origem": "46/2026",
+    "aviso": "⚠️ PDF incompleto - fornecedor e itens não constam na extração. Dados parciais."
+  },
+  "cabecalho": {
+    "numero_ata": "46/2026",
+    "numero_contratacao": "",
+    "numero_processo": "46/2026",
+    "numero_pregao": "12",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "",
+    "vigencia_inicio": "",
+    "vigencia_fim": "",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para contratação de pessoa jurídica especializada para realização de consultas na área de psiquiatria.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "A DEFINIR - CONSULTAS PSIQUIATRIA",
+    "cnpj": "00.000.000/0001-00"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "CONSULTAS NA ÁREA DE PSIQUIATRIA (dados parciais extraídos do relatório de saldos — complementar com o sistema de origem)",
+      "unidade_medida": "UN",
+      "valor_unitario": 179.0,
+      "quantidade_contratada": 400.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 82.0,
+      "quantidade_saldo": 318.0,
+      "valor_total": 71600.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 14678.0,
+      "valor_saldo": 56922.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 71600.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 14678.0,
+    "valor_saldo_geral": 56922.0
+  },
+  "observacoes": "⚠️ ATENÇÃO — Processo 46/2026 (Consultas psiquiatria). PDF original NÃO trouxe nome do fornecedor, CNPJ, Nº Ata, datas de assinatura/vigência, nem detalhamento dos itens. Os dados de valor/quantidade foram derivados dos totais do PDF. COMPLETAR MANUALMENTE após consultar o sistema de origem. Valor unitário foi calculado: R$ 71.600 ÷ 400 = R$ 179,00.",
+  "anexos": []
+}

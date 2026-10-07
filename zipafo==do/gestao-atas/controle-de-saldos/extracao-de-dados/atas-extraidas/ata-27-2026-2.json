@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "52",
+    "processo_origem": "49/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "27/2026",
+    "numero_contratacao": "1455",
+    "numero_processo": "49/2026",
+    "numero_pregao": "9",
+    "modalidade": "Dispensa de licitação",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-16",
+    "vigencia_inicio": "2026-06-16",
+    "vigencia_fim": "2027-06-16",
+    "objeto": "Contratação de empresa para prestação de serviços de planejamento, organização, execução e materiais necessários para realização da pedalada que será realizada no Município de Pitangueiras/PR.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "GEOVANA AMARAL ZAIA PENASSO 11094143901",
+    "cnpj": "43.039.691/0001-40"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "Prestação de serviços de planejamento, organização, execução e materiais necessários para realização da pedalada que será realizada no Município de Pitangueiras/PR.",
+      "unidade_medida": "UN",
+      "valor_unitario": 16185.32,
+      "quantidade_contratada": 1.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 1.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 16185.32,
+      "valor_aditivo": 0.0,
+      "valor_executado": 16185.32,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 16185.32,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 16185.32,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 27/2026 — GEOVANA AMARAL ZAIA PENASSO (Processo 49/2026). Pedalada Municipal. 1 item. Totalmente executada. ⚠️ Nº Ata 27/2026 em conflito com Ata 27/2026 da PLENA MEDICA HOSPITALAR (Processo 1/2026).",
+  "anexos": []
+}

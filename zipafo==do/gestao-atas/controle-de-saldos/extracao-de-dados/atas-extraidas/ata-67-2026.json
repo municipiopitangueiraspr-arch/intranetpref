@@ -1,0 +1,107 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "41-42",
+    "processo_origem": "42/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "67/2026",
+    "numero_contratacao": "1532",
+    "numero_processo": "42/2026",
+    "numero_pregao": "11",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-08-20",
+    "vigencia_inicio": "2026-08-20",
+    "vigencia_fim": "2027-08-20",
+    "objeto": "Obedecido o disposto na lei Federal nº 9.784/99, suas atualizações e legislação correlata, fica instaurado Processo Administrativo para contratação de serviços variados para atender as necessidades de todas as secretarias do Município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "GUSTAVO GRACIANO PINTO",
+    "cnpj": "31.587.979/0001-70"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "Pessoa jurídica especializada para prestação de serviços, por hora trabalhada, destinados à execução de atividades de limpeza, higienização, conservação, arrumação e organização de espaços públicos, de acordo com as necessidades do Município e mediante solicitação da Administração Pública.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 33.0,
+      "quantidade_contratada": 10000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 10000.0,
+      "valor_total": 330000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 330000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "3",
+      "descricao": "Profissional para prestação de serviços como Operador de Máquinas, pessoa jurídica, devidamente habilitado e qualificado, para execução de serviços por hora trabalhada, visando atender às necessidades do Município na operação de máquinas pesadas e equipamentos utilizados na manutenção, conservação, recuperação e execução de serviços urbanos e rurais.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 38.0,
+      "quantidade_contratada": 2000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 2000.0,
+      "valor_total": 76000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 76000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "4",
+      "descricao": "Profissionais na função de Tratorista, pessoa jurídica, compreendendo a operação, condução e manuseio de tratores e implementos, destinados à execução de atividades de interesse público no âmbito do Município, em especial nos serviços de manutenção de estradas rurais, limpeza de áreas, terraplanagem, transporte e demais demandas operacionais da administração pública.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 38.0,
+      "quantidade_contratada": 2000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 2000.0,
+      "valor_total": 76000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 76000.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "5",
+      "descricao": "Profissionais na função de Tratorista, pessoa jurídica - continuação do item anterior.",
+      "unidade_medida": "HORA",
+      "valor_unitario": 0.01,
+      "quantidade_contratada": 0.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 0.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 4,
+    "valor_contratado_geral": 482000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 482000.0
+  },
+  "observacoes": "Ata 67/2026 — GUSTAVO GRACIANO PINTO (Processo 42/2026). 3 itens reais: Limpeza (10.000h), Operador Máquinas (2.000h), Tratorista (2.000h). Item 5 é resíduo do PDF (linha órfã). Fornecedor já cadastrado na Ata 66/2026. ⚠️ Nº Ata 67/2026 vai colidir com o Processo 43/2026 (LABORATORIO ARMERIA).",
+  "anexos": []
+}

@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "12",
+    "processo_origem": "18/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "32/2026",
+    "numero_contratacao": "1456",
+    "numero_processo": "18/2026",
+    "numero_pregao": "10",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Lote - Lote",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-15",
+    "vigencia_inicio": "2026-06-15",
+    "vigencia_fim": "2027-06-15",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar n° 123/06, para contratação de empresa para eventual aquisição de uniformes e acessórios para uso da Guarda Municipal de Pitangueiras/PR.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "EMBRACOL TEXTIL CONFECCAO E COMERCIO DE MALHAS LTDA",
+    "cnpj": "13.545.135/0001-84"
+  },
+  "itens": [
+    {
+      "numero": "4",
+      "descricao": "CAPA TÁTICA MODULAR NA COR PRETA TAMANHOS A SEREM ADQUIRIDOS SERÃO INFORMADOS NO MOMENTO DA COMPRA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 349.0,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 4.0,
+      "valor_total": 4188.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 2792.0,
+      "valor_saldo": 1396.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "5",
+      "descricao": "COLETES BALISTICOS. DESCRIÇÃO CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 1790.0,
+      "quantidade_contratada": 12.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 8.0,
+      "quantidade_saldo": 4.0,
+      "valor_total": 21480.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 14320.0,
+      "valor_saldo": 7160.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 25668.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 17112.0,
+    "valor_saldo_geral": 8556.0
+  },
+  "observacoes": "Ata 32/2026 — EMBRACOL TEXTIL (Processo 18/2026). Uniformes GM (2 itens). Saldo do PDF: R$ 8.556,00.",
+  "anexos": []
+}

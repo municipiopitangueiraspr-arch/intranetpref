@@ -1,0 +1,4 @@
+/* Shared component defaults. Kept intentionally small so page-specific styles remain compatible. */
+.admin-button, .btn, button { -webkit-tap-highlight-color: transparent; }
+.admin-button:focus-visible, button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(31,111,139,.35); outline-offset: 2px; }
+.shared-nav-links a { -webkit-tap-highlight-color: transparent; }

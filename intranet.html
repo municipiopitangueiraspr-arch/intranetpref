@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <title>Intranet · Gestão Pitangueiras</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,7 +19,7 @@
 
 
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
+  <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="intranet">
     <!-- ============================================================ -->
@@ -88,7 +87,7 @@
         </div>
         <div class="boas-vindas">
           <h1>
-            <i class="fas fa-hand-wave"></i>
+            <i class="fas fa-hand"></i>
             Bem-vindo, <span id="servidorNome">servidor</span>
           </h1>
           <span class="departamento-tag">
@@ -97,7 +96,7 @@
           </span>
           <div class="intranet-style-1f7b8ab338">
             <span class="badge-intranet">
-              <i class="fas fa-shield-haltered"></i> INTRANET MUNICIPAL · ACESSO
+              <i class="fas fa-shield-halved"></i> INTRANET MUNICIPAL · ACESSO
               RESTRITO
             </span>
           </div>
@@ -832,7 +831,7 @@ import { supabase } from "./shared/js/supabase.js";
         // Atualizar saudação principal
         const saudacao = document.querySelector("#hallContent .boas-vindas h1");
         if (saudacao) {
-          saudacao.innerHTML = `<i class="fas fa-hand-wave"></i> Bem-vindo, ${escaparHtml(
+          saudacao.innerHTML = `<i class="fas fa-hand"></i> Bem-vindo, ${escaparHtml(
             usuarioLogado.nome,
           )}`;
         }

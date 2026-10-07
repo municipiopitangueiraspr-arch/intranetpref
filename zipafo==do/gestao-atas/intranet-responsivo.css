@@ -1,0 +1,176 @@
+/* Identidade moderna, colorida e de alto contraste para login e hall */
+body {
+  background: radial-gradient(circle at 8% 0%, #fff1f7 0, transparent 32%), radial-gradient(circle at 94% 8%, #ede9fe 0, transparent 28%), linear-gradient(145deg, #fbfaff, #f3f1f8) !important;
+  color: #17152f;
+  overflow-x: hidden;
+}
+.portal-prefeitura {
+  border-radius: 24px !important;
+  border-color: #e6e1f0 !important;
+  box-shadow: 0 20px 55px rgba(39,35,68,.14) !important;
+}
+.brasao-img-container { outline-color: #6d28d9 !important; box-shadow: 0 8px 22px rgba(109,40,217,.18) !important; }
+.boas-vindas h1 { font-family: Manrope, system-ui, sans-serif !important; color: #17152f !important; }
+.boas-vindas h1 i, .departamento-tag i { color: #db2777 !important; }
+.departamento-tag { background: #f3e8ff !important; color: #4c1d95 !important; border-color: #ddd6fe !important; }
+.sistema-card, .login-card, .modal-content { border-color: #e6e1f0 !important; box-shadow: 0 12px 30px rgba(39,35,68,.09) !important; }
+.sistema-card:hover { border-color: #8b5cf6 !important; box-shadow: 0 18px 35px rgba(109,40,217,.15) !important; }
+.sistema-card::before { background: linear-gradient(90deg,#6d28d9,#db2777,#f97316) !important; }
+.sistema-card .card-icon { color: #6d28d9 !important; }
+.btn-primary, button.primary, .btn-login { background: linear-gradient(135deg,#6d28d9,#db2777) !important; border-radius: 11px !important; box-shadow: 0 9px 20px rgba(109,40,217,.22) !important; }
+input, select, textarea { border-color: #d8d0e8 !important; border-radius: 10px !important; }
+@media (max-width: 760px) {
+  body { align-items: flex-start; padding: 12px !important; }
+  .portal-prefeitura { margin: 0 auto; padding: 22px 14px !important; border-radius: 20px !important; }
+  .brasao-img-container { width: 92px !important; height: 92px !important; margin-bottom: 1rem !important; }
+  .boas-vindas h1 { font-size: 1.65rem !important; line-height: 1.15; }
+  .departamento-tag { font-size: .82rem !important; padding: .5rem 1rem !important; }
+  .sistemas-grid { grid-template-columns: 1fr !important; gap: 12px !important; margin-top: 1.5rem !important; }
+  .sistema-card { min-height: 0 !important; padding: 1.25rem 1rem !important; border-radius: 16px !important; }
+  .card-icon { width: 58px !important; height: 58px !important; font-size: 1.7rem !important; margin-bottom: .75rem !important; }
+  .sistema-card h3 { font-size: 1.15rem !important; }
+  .info-municipal { display: block !important; text-align: center; padding-top: 1rem !important; margin-top: 1.25rem !important; }
+  .selo-seguranca, .links-rapidos { justify-content: center; flex-wrap: wrap; gap: 10px !important; margin-top: 10px; }
+  .notification-toast { min-width: 0 !important; width: calc(100vw - 28px) !important; max-width: none !important; }
+}
+@media (max-width: 420px) {
+  .portal-prefeitura { padding-inline: 10px !important; }
+  .boas-vindas h1 { font-size: 1.4rem !important; }
+  .sistema-card p { font-size: .82rem !important; }
+}
+
+
+/* ===== AJUSTE DOS CARDS DINÂMICOS · Biblioteca + Compras =====
+   O cartão permanece claro para manter a leitura do título/descrição.
+   O ícone e o badge usam azul escuro, portanto recebem texto branco. */
+.sistemas-grid .sistema-card.card-biblioteca,
+.sistemas-grid .sistema-card.card-compras {
+  background: linear-gradient(145deg, #eef6ff 0%, #ffffff 68%) !important;
+  border-color: #cbdff2 !important;
+  color: #102a43 !important;
+}
+.sistemas-grid .sistema-card.card-biblioteca:hover,
+.sistemas-grid .sistema-card.card-compras:hover {
+  border-color: #60a5fa !important;
+  box-shadow: 0 20px 35px rgba(29, 78, 216, .15) !important;
+}
+.sistemas-grid .sistema-card.card-biblioteca::before,
+.sistemas-grid .sistema-card.card-compras::before {
+  background: linear-gradient(90deg, #1d4ed8, #0ea5e9, #14b8a6) !important;
+}
+.sistemas-grid .sistema-card.card-biblioteca .card-icon,
+.sistemas-grid .sistema-card.card-compras .card-icon {
+  background: linear-gradient(135deg, #163b63, #1d4ed8) !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: 0 10px 20px rgba(29, 78, 216, .22) !important;
+}
+.sistemas-grid .sistema-card.card-biblioteca h3,
+.sistemas-grid .sistema-card.card-compras h3 {
+  color: #102a43 !important;
+}
+.sistemas-grid .sistema-card.card-biblioteca p,
+.sistemas-grid .sistema-card.card-compras p {
+  color: #486581 !important;
+}
+.sistemas-grid .sistema-card.card-biblioteca .acesso-badge,
+.sistemas-grid .sistema-card.card-compras .acesso-badge {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+}
+.sistemas-grid .sistema-card.card-biblioteca .acesso-badge i,
+.sistemas-grid .sistema-card.card-compras .acesso-badge i {
+  color: #ffffff !important;
+}
+
+
+/* ========================================================================
+   IDENTIDADE ÚNICA DO SISTEMA · HALL DE ENTRADA
+   Todos os cards seguem o mesmo contrato visual: superfície clara, texto
+   escuro e azul; somente superfícies realmente escuras usam texto branco.
+   ======================================================================== */
+:root {
+  --system-navy: #102a43;
+  --system-blue: #1d4ed8;
+  --system-sky: #0ea5e9;
+  --system-teal: #14b8a6;
+  --system-soft: #eaf2ff;
+  --system-bg: #f6f9fc;
+  --system-line: #d9e2ec;
+  --system-muted: #486581;
+}
+body {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(234,242,255,.92), transparent 32%),
+    radial-gradient(circle at 94% 8%, rgba(224,242,254,.88), transparent 28%),
+    #f6f9fc !important;
+  color: var(--system-navy) !important;
+}
+.portal-prefeitura {
+  background: rgba(255,255,255,.94) !important;
+  border-color: var(--system-line) !important;
+  box-shadow: 0 24px 65px rgba(16,42,67,.12) !important;
+}
+.boas-vindas h1 { color: var(--system-navy) !important; }
+.boas-vindas h1 i, .departamento-tag i { color: var(--system-blue) !important; }
+.departamento-tag { background: var(--system-soft) !important; color: #1e3a8a !important; border-color: #bfdbfe !important; }
+.badge-intranet { background: linear-gradient(100deg,#163b63,#1d4ed8,#0ea5e9) !important; color: #fff !important; }
+.module-discovery-copy .discovery-kicker, .module-search-shell > i { color: var(--system-blue) !important; }
+.module-discovery h2 { color: var(--system-navy) !important; }
+.module-discovery p, .module-search-meta { color: var(--system-muted) !important; }
+.module-search-shell { border-color: #bfdbfe !important; box-shadow: 0 12px 30px rgba(16,42,67,.09) !important; }
+.module-search-shell:focus-within { border-color: #3b82f6 !important; box-shadow: 0 0 0 5px rgba(59,130,246,.13), 0 14px 35px rgba(16,42,67,.12) !important; }
+
+/* Mesmo tratamento para cada card, inclusive cards administrativos. */
+.sistemas-grid .sistema-card,
+.sistemas-grid .sistema-card.card-perfil {
+  background: linear-gradient(145deg,#f8fbff 0%,#ffffff 70%) !important;
+  border: 1px solid var(--system-line) !important;
+  color: var(--system-navy) !important;
+  box-shadow: 0 8px 22px rgba(16,42,67,.07) !important;
+}
+.sistemas-grid .sistema-card:hover,
+.sistemas-grid .sistema-card.card-perfil:hover {
+  transform: translateY(-6px) !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 20px 38px rgba(29,78,216,.14) !important;
+}
+.sistemas-grid .sistema-card::before,
+.sistemas-grid .sistema-card.card-perfil::before {
+  background: linear-gradient(90deg,#1d4ed8,#0ea5e9,#14b8a6) !important;
+}
+.sistemas-grid .sistema-card .card-icon,
+.sistemas-grid .sistema-card.card-perfil .card-icon {
+  background: linear-gradient(135deg,#163b63,#1d4ed8) !important;
+  color: #fff !important;
+  border: 0 !important;
+  box-shadow: 0 10px 20px rgba(29,78,216,.22) !important;
+}
+.sistemas-grid .sistema-card h3 { color: var(--system-navy) !important; }
+.sistemas-grid .sistema-card p { color: var(--system-muted) !important; }
+.sistemas-grid .sistema-card .acesso-badge,
+.sistemas-grid .sistema-card.card-perfil .acesso-badge {
+  background: var(--system-blue) !important;
+  color: #fff !important;
+  border: 1px solid var(--system-blue) !important;
+  box-shadow: 0 6px 14px rgba(29,78,216,.16) !important;
+}
+.sistemas-grid .sistema-card .acesso-badge i { color: #fff !important; }
+.lista-vazia-placeholder { background: #f8fbff !important; border-color: var(--system-line) !important; color: #829ab1 !important; }
+.lista-vazia-placeholder i { color: var(--system-blue) !important; }
+.info-municipal { border-top-color: var(--system-line) !important; color: var(--system-muted) !important; }
+.selo-seguranca span i { color: var(--system-blue) !important; }
+.links-rapidos a { color: var(--system-muted) !important; }
+.links-rapidos a:hover { color: var(--system-blue) !important; }
+
+/* Componentes escuros do hall: contraste sempre claro. */
+.avatar-btn { background: linear-gradient(135deg,#163b63,#1d4ed8) !important; color: #fff !important; }
+.modal-overlay { background: rgba(16,42,67,.68) !important; }
+.modal-confirm, .modal-perfil { background: #fff !important; color: var(--system-navy) !important; border-color: var(--system-line) !important; }
+.modal-confirm h3, .modal-perfil-header h3 { color: var(--system-navy) !important; }
+.modal-confirm p, .modal-perfil-header p { color: var(--system-muted) !important; }
+.btn-primary { background: linear-gradient(135deg,#1d4ed8,#0ea5e9) !important; color: #fff !important; }
+.btn-secondary { background: var(--system-soft) !important; color: #1e3a8a !important; border-color: #bfdbfe !important; }
+.notification-toast { color: var(--system-navy) !important; border-color: var(--system-line) !important; }
+.notification-toast .notification-message { color: var(--system-muted) !important; }

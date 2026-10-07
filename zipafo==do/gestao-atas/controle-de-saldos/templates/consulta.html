@@ -1,0 +1,382 @@
+
+<link rel="stylesheet" href="../../shared/css/identidade-intranet.css">
+<link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css">
+<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+<div class="filtros-container">
+  <!-- ============================================================ -->
+  <!-- RESULTADOS RÁPIDOS - CARD CLICÁVEIS                          -->
+  <!-- ------------------------------------------------------------ -->
+  <!-- ✅ ATUALIZADO · Os cards de resumo agora são <button type="button"> com    -->
+  <!-- data-filtro="..." para aplicar filtros ao clicar:            -->
+  <!--                                                              -->
+  <!--   · Total     → limpa filtro de vigência (mostra tudo)       -->
+  <!--   · 30 dias   → aplica "vencendo em até 30 dias"             -->
+  <!--   · 60 dias   → aplica "vencendo em até 60 dias"             -->
+  <!--   · 90 dias   → aplica "vencendo em até 90 dias"             -->
+  <!--   · Alertas   → aplica "vencendo em 30d" + saldo baixo       -->
+  <!--                                                              -->
+  <!-- O consulta.js lê o data-filtro, sincroniza o select          -->
+  <!-- #filtroVencimentoModo + #filtroVencimentoDias, marca o card  -->
+  <!-- como .ativo e chama filtrarAtas().                            -->
+  <!-- ============================================================ -->
+  <div class="resumo-rapido" id="resumoRapido">
+    <button
+      type="button"
+      class="resumo-card"
+      data-filtro="total"
+      title="Mostrar todas as atas"
+    >
+      <span class="resumo-numero" id="totalAtas">0</span>
+      <span class="resumo-label">Total</span>
+    </button>
+
+    <button
+      type="button"
+      class="resumo-card resumo-vencimento-30"
+      data-filtro="venc_30"
+      title="Atas que vencem em até 30 dias"
+    >
+      <span class="resumo-numero" id="vencimento30">0</span>
+      <span class="resumo-label">30 dias</span>
+    </button>
+
+    <button
+      type="button"
+      class="resumo-card resumo-vencimento-60"
+      data-filtro="venc_60"
+      title="Atas que vencem em até 60 dias"
+    >
+      <span class="resumo-numero" id="vencimento60">0</span>
+      <span class="resumo-label">60 dias</span>
+    </button>
+
+    <button
+      type="button"
+      class="resumo-card resumo-vencimento-90"
+      data-filtro="venc_90"
+      title="Atas que vencem em até 90 dias"
+    >
+      <span class="resumo-numero" id="vencimento90">0</span>
+      <span class="resumo-label">90 dias</span>
+    </button>
+
+    <button
+      type="button"
+      class="resumo-card resumo-alertas"
+      data-filtro="alertas"
+      title="Atas críticas: vencem em até 30 dias com saldo baixo"
+    >
+      <span class="resumo-numero" id="totalAlertas">0</span>
+      <span class="resumo-label">Alertas</span>
+    </button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FILTROS BÁSICOS                                              -->
+  <!-- ============================================================ -->
+  <div class="filtros-grid">
+    <!-- ============================================================ -->
+    <!-- BUSCA GLOBAL UNIFICADA                                        -->
+    <!-- ------------------------------------------------------------ -->
+    <!-- Busca em: nº da ata, nº pregão, processo administrativo,     -->
+    <!-- objeto, fornecedor (razão social), CNPJ, categoria e         -->
+    <!-- descrição de itens. Aceita variações como "78/2025",         -->
+    <!-- "78-2025", "782025", "0078/2025".                            -->
+    <!-- ============================================================ -->
+    <div class="filtro-grupo filtro-busca-global">
+      <label class="filtro-label"
+        ><i class="fas fa-search"></i> Busca Global</label
+      >
+      <input
+        type="text"
+        id="buscaInput"
+        class="filtro-input"
+        placeholder="Busque por nº da ata, pregão, processo, objeto, fornecedor, CNPJ, categoria ou item..."
+        autocomplete="off"
+        onkeyup="sistema.debounceFiltrarAtas()"
+      / aria-label="Busque por nº da ata, pregão, processo, objeto, fornecedor, CNPJ, categoria ou item...">
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- FILTRO DE FORNECEDOR COM AUTOCOMPLETE                        -->
+    <!-- Aceita nome ou CNPJ (formatado ou só dígitos)                -->
+    <!-- ============================================================ -->
+    <div class="filtro-grupo">
+      <label class="filtro-label"
+        ><i class="fas fa-building"></i> Fornecedor</label
+      >
+      <div class="autocomplete-container" id="autocompleteContainer">
+        <input
+          type="text"
+          id="fornecedorInput"
+          class="filtro-input autocomplete-input"
+          placeholder="Digite o nome ou CNPJ..."
+          autocomplete="off"
+          oninput="sistema.debounceFiltrarAtas()"
+        / aria-label="Digite o nome ou CNPJ...">
+        <input type="hidden" id="fornecedorId" value="" />
+        <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- FILTRO DE ÓRGÃO                                              -->
+    <!-- ============================================================ -->
+    <div class="filtro-grupo">
+      <label class="filtro-label"
+        ><i class="fas fa-university"></i> Órgão</label
+      >
+      <select
+        id="filtroOrgao"
+        class="filtro-select"
+        onchange="sistema.filtrarAtas()"
+       aria-label="filtroOrgao">
+        <option value="todos">Todos</option>
+      </select>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- FILTRO DE STATUS                                             -->
+    <!-- ============================================================ -->
+    <div class="filtro-grupo">
+      <label class="filtro-label"><i class="fas fa-tag"></i> Status</label>
+      <select
+        id="filtroStatus"
+        class="filtro-select"
+        onchange="sistema.filtrarAtas()"
+       aria-label="filtroStatus">
+        <option value="todos">Todos</option>
+        <option value="ATIVA">Ativa</option>
+        <option value="PROXIMA">Próxima</option>
+        <option value="VENCIDA">Vencida</option>
+      </select>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- FILTRO DE CATEGORIA                                          -->
+    <!-- Populado dinamicamente pelo consulta.js a partir da tabela    -->
+    <!-- `categorias` do Supabase (categoriasCache)                    -->
+    <!-- ============================================================ -->
+    <div class="filtro-grupo">
+      <label class="filtro-label"
+        ><i class="fas fa-layer-group"></i> Categoria</label
+      >
+      <select
+        id="filtroCategoria"
+        class="filtro-select"
+        onchange="sistema.filtrarAtas()"
+       aria-label="filtroCategoria">
+        <option value="todos">Todas as categorias</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FILTROS AVANÇADOS - COMPACTADO                               -->
+  <!-- ============================================================ -->
+  <div class="filtros-avancados">
+    <!-- ============================================================ -->
+    <!-- Primeira linha: Vigência (inteligente), Valor, Ordenação     -->
+    <!-- ============================================================ -->
+    <div class="filtros-avancados-row">
+      <!-- ============================================================ -->
+      <!-- FILTRO DE VIGÊNCIA INTELIGENTE                                -->
+      <!-- ------------------------------------------------------------ -->
+      <!-- Dois campos sincronizados:                                   -->
+      <!--   · #filtroVencimentoModo → modo (5 opções)                  -->
+      <!--   · #filtroVencimentoDias → aparece SÓ quando "vencendo_em"  -->
+      <!-- O consulta.js controla a visibilidade do input de dias.      -->
+      <!--                                                              -->
+      <!-- ✅ Ao clicar num card de resumo do topo, este select e o     -->
+      <!-- input de dias são atualizados automaticamente.               -->
+      <!-- ============================================================ -->
+      <div class="filtro-grupo filtro-vencimento">
+        <label class="filtro-label"
+          ><i class="fas fa-clock"></i> Vigência</label
+        >
+        <div class="filtro-vencimento-bloco">
+          <select
+            id="filtroVencimentoModo"
+            class="filtro-select"
+            onchange="sistema.filtrarAtas()"
+           aria-label="filtroVencimentoModo">
+            <option value="todos">Todas as vigências</option>
+            <option value="vigentes_hoje">Vigentes hoje</option>
+            <option value="vencendo_em">Vencendo em até X dias</option>
+            <option value="vencidas">Já vencidas</option>
+            <option value="nao_iniciadas">Não iniciadas</option>
+          </select>
+          <input
+            type="number"
+            id="filtroVencimentoDias"
+            class="filtro-input filtro-vencimento-dias"
+            placeholder="X dias"
+            min="1"
+            max="9999"
+            value="30"
+            style="display: none"
+            oninput="sistema.debounceFiltrarAtas()"
+          / aria-label="X dias">
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- FILTRO DE VALOR (mín / máx)                                  -->
+      <!-- ============================================================ -->
+      <div class="filtro-grupo filtro-valor">
+        <label class="filtro-label"><i class="fas fa-coins"></i> Valor</label>
+        <div class="filtro-valor-inputs">
+          <input
+            type="number"
+            id="valorMin"
+            class="filtro-input"
+            placeholder="R$ 0,00"
+            min="0"
+            step="0.01"
+            oninput="sistema.debounceFiltrarAtas()"
+          / aria-label="R$ 0,00">
+          <span class="filtro-valor-separador">até</span>
+          <input
+            type="number"
+            id="valorMax"
+            class="filtro-input"
+            placeholder="R$ 1.000.000"
+            min="0"
+            step="0.01"
+            oninput="sistema.debounceFiltrarAtas()"
+          / aria-label="R$ 1.000.000">
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- ORDENAÇÃO EXPANDIDA                                          -->
+      <!-- ------------------------------------------------------------ -->
+      <!-- 12 opções:                                                   -->
+      <!--   · Vencimento (asc/desc)                                    -->
+      <!--   · Valor (desc/asc)                                         -->
+      <!--   · Nº da Ata (asc/desc)                                     -->
+      <!--   · Fornecedor (A-Z / Z-A)                                   -->
+      <!--   · Cadastro (mais recentes / mais antigas)                  -->
+      <!--   · Saldo (maior / menor)                                    -->
+      <!--   · Nome da ata — legado                                     -->
+      <!-- ============================================================ -->
+      <div class="filtro-grupo filtro-ordenacao">
+        <label class="filtro-label"
+          ><i class="fas fa-sort"></i> Ordenar por</label
+        >
+        <select
+          id="filtroOrdenacao"
+          class="filtro-select"
+          onchange="sistema.filtrarAtas()"
+         aria-label="filtroOrdenacao">
+          <!-- Vencimento -->
+          <option value="vencimento_asc">Vencimento (mais próximo)</option>
+          <option value="vencimento_desc">Vencimento (mais distante)</option>
+
+          <!-- Valor -->
+          <option value="valor_desc">Maior valor</option>
+          <option value="valor_asc">Menor valor</option>
+
+          <!-- Nº da Ata -->
+          <option value="numero_asc">Nº da Ata (crescente)</option>
+          <option value="numero_desc">Nº da Ata (decrescente)</option>
+
+          <!-- Fornecedor -->
+          <option value="fornecedor_asc">Fornecedor (A-Z)</option>
+          <option value="fornecedor_desc">Fornecedor (Z-A)</option>
+
+          <!-- Cadastro -->
+          <option value="cadastro_desc">Cadastro (mais recentes)</option>
+          <option value="cadastro_asc">Cadastro (mais antigas)</option>
+
+          <!-- Saldo -->
+          <option value="saldo_desc">Maior saldo</option>
+          <option value="saldo_asc">Menor saldo</option>
+
+          <!-- Legado -->
+          <option value="nome_asc">Nome da ata</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Segunda linha: Saldo e Botões de Ação (EM LINHA)             -->
+    <!-- ============================================================ -->
+    <div class="filtros-avancados-row">
+      <div class="filtro-grupo filtro-saldo">
+        <label class="filtro-label"><i class="fas fa-wallet"></i> Saldo</label>
+        <div class="filtro-saldo-checkboxes">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="saldoDisponivel"
+              value="disponivel"
+              onchange="sistema.filtrarAtas()"
+            / aria-label="saldoDisponivel">
+            <span>Com saldo</span>
+          </label>
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="saldoBaixo"
+              value="baixo"
+              onchange="sistema.filtrarAtas()"
+            / aria-label="saldoBaixo">
+            <span>Saldo baixo (&lt; 10%)</span>
+          </label>
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="saldoZerado"
+              value="zerado"
+              onchange="sistema.filtrarAtas()"
+            / aria-label="saldoZerado">
+            <span>Saldo zerado</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- BOTÕES EM LINHA HORIZONTAL                                   -->
+      <!-- ============================================================ -->
+      <div class="filtro-grupo filtro-actions">
+        <button
+          class="btn-aplicar"
+          id="btnAplicarFiltros"
+          onclick="sistema.filtrarAtas()"
+         type="button">
+          <i class="fas fa-filter"></i> Aplicar
+        </button>
+        <button
+          class="btn-limpar"
+          id="btnLimparFiltros"
+          onclick="sistema.limparFiltros()"
+         type="button">
+          <i class="fas fa-eraser"></i> Limpar
+        </button>
+        <button
+          class="btn-exportar"
+          id="btnExportarResultados"
+          onclick="sistema.exportarResultados()"
+         type="button">
+          <i class="fas fa-download"></i> Exportar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- CONTADOR DE RESULTADOS                                        -->
+<!-- ------------------------------------------------------------ -->
+<!-- Atualizado dinamicamente pelo consulta.js após cada filtragem -->
+<!-- Ex: "42 atas encontradas"                                     -->
+<!-- ============================================================ -->
+<div class="consulta-contador" id="consultaContador">
+  <span id="consultaContadorTexto">Carregando...</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- LISTA DE ATAS                                                -->
+<!-- ============================================================ -->
+<div id="atasLista" class="atas-grid"></div>

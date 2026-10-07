@@ -1,0 +1,57 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "81",
+    "processo_origem": "105/2025",
+    "aviso": ""
+  },
+  "cabecalho": {
+    "numero_ata": "107/2025",
+    "numero_contratacao": "1360 | 107/2025",
+    "numero_processo": "105/2025",
+    "numero_pregao": "37",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-11-12",
+    "vigencia_inicio": "2025-11-13",
+    "vigencia_fim": "2026-11-13",
+    "objeto": "Locação de imóvel para a realização de atendimentos de fisioterapia",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "JOEL PELEGRINI DE ARAUJO",
+    "cnpj": "69.016.984/968-"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "SALA PARA REALIZAÇÃO DAS SESSÕES DE FISIOTERAPIA - SALA PARA REALIZAÇÃO DAS SESSÕES DE FISIOTERAPIA",
+      "unidade_medida": "UN",
+      "valor_unitario": 1200.0,
+      "quantidade_contratada": 6.0,
+      "quantidade_aditivo": 6.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 12.0,
+      "valor_total": 7200.0,
+      "valor_aditivo": 7200.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 14400.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 7200.0,
+    "valor_aditivo_geral": 7200.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 14400.0
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. O PDF apresenta quantidade original 6, aditivo 6, executado 0 e saldo 12 — indicando aditivo de 6 meses. Totais conferem: R$ 7.200,00 contratado + R$ 7.200,00 aditivo = R$ 14.400,00 total. CNPJ incompleto no PDF (69.016.984/968-), provavelmente CPF mascarado.",
+  "anexos": []
+}

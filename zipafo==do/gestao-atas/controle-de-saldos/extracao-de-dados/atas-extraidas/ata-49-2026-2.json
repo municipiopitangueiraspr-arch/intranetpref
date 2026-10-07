@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "70",
+    "processo_origem": "6/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "49/2026",
+    "numero_contratacao": "1485",
+    "numero_processo": "6/2026",
+    "numero_pregao": "6",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-26",
+    "vigencia_inicio": "2026-06-26",
+    "vigencia_fim": "2027-06-26",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06 e Lei Municipal nº 690/2021, eventual aquisição de material de limpeza e higiene.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "EXTEC LTDA",
+    "cnpj": "33.094.900/0001-02"
+  },
+  "itens": [
+    {
+      "numero": "21",
+      "descricao": "TOALHA UMEDECIDOS - EMBALAGEM: CONTENDO 100 LENÇOS MEDINDO APROXIMADAMENTE 18 CM X 11 CM CADA LENÇO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 5.0,
+      "quantidade_contratada": 2000.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 155.0,
+      "quantidade_saldo": 1845.0,
+      "valor_total": 10000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 775.0,
+      "valor_saldo": 9225.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 10000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 775.0,
+    "valor_saldo_geral": 9225.0
+  },
+  "observacoes": "Ata 49/2026 — EXTEC LTDA (Processo 6/2026). 1 item: Toalha umedecida. Saldo do PDF: R$ 9.225,00. ⚠️ Nº Ata 49/2026 em conflito com Ata 49/2026 do PROCF (Processo 42/2026).",
+  "anexos": []
+}

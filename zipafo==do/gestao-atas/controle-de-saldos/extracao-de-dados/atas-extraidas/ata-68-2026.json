@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "47",
+    "processo_origem": "43/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "68/2026",
+    "numero_contratacao": "1529",
+    "numero_processo": "43/2026",
+    "numero_pregao": "23",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-08-07",
+    "vigencia_inicio": "2026-08-07",
+    "vigencia_fim": "2027-08-07",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para eventual aquisição de armamentos para uso da Guarda Municipal de Pitangueiras.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "COMERCIO DE ALIMENTOS KERFE LTDA",
+    "cnpj": "05.366.815/0001-02"
+  },
+  "itens": [
+    {
+      "numero": "2",
+      "descricao": "ESPINGARDA CALIBRE 12 /14 POLEGADA\" CORONHA RETRÁTIL",
+      "unidade_medida": "UN",
+      "valor_unitario": 6900.0,
+      "quantidade_contratada": 2.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 2.0,
+      "valor_total": 13800.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 13800.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 13800.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 13800.0
+  },
+  "observacoes": "Ata 68/2026 — COMERCIO DE ALIMENTOS KERFE (Processo 43/2026). 1 item: Espingarda calibre 12. Nada executado.",
+  "anexos": []
+}

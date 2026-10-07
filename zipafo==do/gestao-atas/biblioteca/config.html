@@ -1,0 +1,2358 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca Municipal · Configurações</title>
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* =====================================================================
+         RESET + VARIÁVEIS
+         ===================================================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      :root {
+        --verde: #0d5e3a;
+        --verde-escuro: #0a4a2e;
+        --verde-suave: #f0fdf4;
+        --azul: #1a3a6b;
+        --azul-claro: #ebf4ff;
+        --cinza-texto: #475569;
+        --cinza-suave: #f1f5f9;
+        --cinza-borda: #e2e8f0;
+        --vermelho: #e53e3e;
+        --vermelho-suave: #fff5f5;
+        --amarelo: #d69e2e;
+        --amarelo-suave: #fffff0;
+        --roxo: #8b5cf6;
+        --roxo-suave: #f3f0ff;
+        --branco: #ffffff;
+        --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        background: linear-gradient(145deg, #e8f5e9 0%, #e2eaf1 100%);
+        min-height: 100vh;
+        color: var(--cinza-texto);
+      }
+
+      /* =====================================================================
+         LAYOUT
+         ===================================================================== */
+      .app-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        background: linear-gradient(180deg, #0d5e3a 0%, #0a4a2e 100%);
+        color: white;
+        padding: 1.8rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+        /* Scrollbar customizada – Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+      }
+
+      /* Scrollbar customizada – Chrome/Edge/Safari */
+      .sidebar::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 8px 0;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        transition: background 0.2s;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.35);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:active {
+        background: rgba(198, 246, 213, 0.6);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.5rem 0.6rem 1.2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-brand .brand-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+      }
+
+      .sidebar-brand .brand-text h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .sidebar-brand .brand-text span {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+      }
+
+      .sidebar-nav .nav-section {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.55;
+        padding: 0.8rem 0.6rem 0.4rem;
+        font-weight: 700;
+      }
+
+      .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.7rem 0.9rem;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        opacity: 0.9;
+      }
+
+      .sidebar-nav a i {
+        width: 20px;
+        text-align: center;
+        font-size: 1rem;
+        opacity: 0.85;
+      }
+
+      .sidebar-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        transform: translateX(2px);
+      }
+
+      .sidebar-nav a.active {
+        background: rgba(255, 255, 255, 0.18);
+        opacity: 1;
+        font-weight: 600;
+        border-left: 3px solid #c6f6d5;
+      }
+
+      .sidebar-voltar {
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .sidebar-voltar a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 0.82rem;
+        padding: 0.6rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+
+      .sidebar-voltar a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .main-area {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .topbar {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--cinza-borda);
+        padding: 1.1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .topbar-titulo h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .topbar-titulo h1 i {
+        color: var(--verde);
+      }
+
+      .topbar-titulo p {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      .topbar-direita {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .topbar-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 0.78rem;
+        color: #718096;
+      }
+
+      .topbar-info strong {
+        color: #0f172a;
+        font-size: 0.85rem;
+      }
+
+      .avatar-usuario {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ---------- DROPDOWN DO AVATAR (padrão dashboard) ---------- */
+      .avatar-wrapper {
+        position: relative;
+      }
+
+      .avatar-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--verde), var(--azul));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        padding: 0;
+      }
+
+      .avatar-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      }
+
+      .avatar-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--cinza-borda);
+        min-width: 230px;
+        padding: 0.5rem;
+        z-index: 200;
+        display: none;
+        animation: menuPop 0.2s ease;
+      }
+
+      .avatar-menu.aberto {
+        display: block;
+      }
+
+      @keyframes menuPop {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .avatar-menu-header {
+        padding: 0.8rem 0.9rem;
+        border-bottom: 1px solid var(--cinza-borda);
+        margin-bottom: 0.4rem;
+      }
+
+      .avatar-menu-header strong {
+        display: block;
+        font-size: 0.9rem;
+        color: #0f172a;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .avatar-menu-header span {
+        font-size: 0.75rem;
+        color: #718096;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+      }
+
+      .avatar-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.7rem 0.9rem;
+        border-radius: 10px;
+        color: var(--cinza-texto);
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s;
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: inherit;
+      }
+
+      .avatar-menu-item i {
+        width: 18px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.9rem;
+      }
+
+      .avatar-menu-item:hover {
+        background: var(--verde-suave);
+        color: var(--verde);
+      }
+
+      .avatar-menu-item:hover i {
+        color: var(--verde);
+      }
+
+      .avatar-menu-item.sair {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair i {
+        color: var(--vermelho);
+      }
+
+      .avatar-menu-item.sair:hover {
+        background: var(--vermelho-suave);
+        color: #c53030;
+      }
+
+      .avatar-menu-divisor {
+        height: 1px;
+        background: var(--cinza-borda);
+        margin: 0.4rem 0.6rem;
+      }
+
+      .conteudo {
+        padding: 2rem;
+        flex: 1;
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* =====================================================================
+         AVISO DE MODO LEITURA
+         ===================================================================== */
+      .aviso-leitura {
+        background: var(--amarelo-suave);
+        border: 1px solid #fde68a;
+        border-radius: 14px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        color: #92400e;
+      }
+
+      .aviso-leitura i {
+        color: var(--amarelo);
+        font-size: 1.2rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+
+      .aviso-leitura strong {
+        display: block;
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+      }
+
+      .aviso-leitura span {
+        font-size: 0.82rem;
+        line-height: 1.4;
+      }
+
+      /* =====================================================================
+         CARD DE STATUS
+         ===================================================================== */
+      .card-status {
+        background: white;
+        border-radius: 18px;
+        border: 1px solid var(--cinza-borda);
+        box-shadow: var(--sombra-card);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+
+      .card-status-header {
+        padding: 1.1rem 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--verde-suave) 0%,
+          #ffffff 100%
+        );
+        border-bottom: 1px solid #c6f6d5;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .card-status-header i {
+        color: var(--verde);
+        font-size: 1.2rem;
+      }
+
+      .card-status-header h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        flex: 1;
+      }
+
+      .card-status-header .badge-online {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--verde-suave);
+        color: var(--verde);
+        padding: 0.25rem 0.7rem;
+        border-radius: 40px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border: 1px solid #c6f6d5;
+      }
+
+      .card-status-header .badge-online::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--verde);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0;
+      }
+
+      .status-item {
+        padding: 1rem 1.2rem;
+        border-right: 1px solid var(--cinza-borda);
+        border-bottom: 1px solid var(--cinza-borda);
+        text-align: center;
+      }
+
+      .status-item:last-child {
+        border-right: none;
+      }
+
+      .status-item .num {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+
+      .status-item .lbl {
+        font-size: 0.68rem;
+        color: #718096;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+
+      /* =====================================================================
+         SEÇÕES DE CONFIGURAÇÃO
+         ===================================================================== */
+      .secao-config {
+        background: white;
+        border-radius: 18px;
+        border: 1px solid var(--cinza-borda);
+        box-shadow: var(--sombra-card);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+
+      .secao-config-header {
+        padding: 1.2rem 1.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        border-bottom: 1px solid var(--cinza-borda);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .secao-config-header .icone {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+      }
+
+      .secao-config-header .icone.icone-azul {
+        background: linear-gradient(135deg, var(--azul), #142e54);
+      }
+
+      .secao-config-header .icone.icone-roxo {
+        background: linear-gradient(135deg, var(--roxo), #6d28d9);
+      }
+
+      .secao-config-header h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        flex: 1;
+      }
+
+      .secao-config-header p {
+        font-size: 0.78rem;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      .secao-config-body {
+        padding: 1.5rem;
+      }
+
+      /* ---------- FORM ---------- */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem 1.2rem;
+      }
+
+      .form-grid .full {
+        grid-column: 1 / -1;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #4a5568;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .form-label .required {
+        color: var(--vermelho);
+      }
+
+      .form-label .ajuda {
+        margin-left: auto;
+        font-size: 0.72rem;
+        color: #94a3b8;
+        font-weight: 500;
+      }
+
+      .form-input,
+      .form-select {
+        width: 100%;
+        padding: 0.7rem 0.9rem;
+        border: 2px solid var(--cinza-borda);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s;
+        background: white;
+        font-family: inherit;
+        color: #1e293b;
+      }
+
+      .form-input:focus,
+      .form-select:focus {
+        border-color: var(--verde);
+        box-shadow: 0 0 0 3px rgba(13, 94, 58, 0.1);
+      }
+
+      .form-input:disabled,
+      .form-select:disabled {
+        background: var(--cinza-suave);
+        color: #94a3b8;
+        cursor: not-allowed;
+      }
+
+      .form-input.input-numero {
+        text-align: center;
+        font-weight: 700;
+        font-size: 1rem;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .form-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg fill='%23475669' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        padding-right: 2.2rem;
+      }
+
+      .form-hint {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+
+      .form-hint.erro {
+        color: var(--vermelho);
+        font-weight: 600;
+      }
+
+      .form-hint.ok {
+        color: var(--verde);
+        font-weight: 600;
+      }
+
+      .input-invalido {
+        border-color: var(--vermelho) !important;
+        background: #fff5f5 !important;
+      }
+
+      /* ---------- PREVIEW ---------- */
+      .preview-info {
+        background: var(--azul-claro);
+        border: 1px solid #bee3f8;
+        border-radius: 12px;
+        padding: 0.9rem 1.1rem;
+        margin-top: 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .preview-info i {
+        color: var(--azul);
+        font-size: 1.05rem;
+        margin-top: 1px;
+        flex-shrink: 0;
+      }
+
+      .preview-info .texto {
+        font-size: 0.82rem;
+        color: #1e293b;
+        line-height: 1.5;
+      }
+
+      .preview-info .texto strong {
+        color: var(--azul);
+      }
+
+      /* ---------- TOGGLE ---------- */
+      .toggle-linha {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--cinza-borda);
+      }
+
+      .toggle-linha:last-child {
+        border-bottom: none;
+      }
+
+      .toggle-info {
+        flex: 1;
+        padding-right: 1rem;
+      }
+
+      .toggle-info strong {
+        display: block;
+        font-size: 0.9rem;
+        color: #0f172a;
+        margin-bottom: 2px;
+      }
+
+      .toggle-info span {
+        font-size: 0.78rem;
+        color: #64748b;
+        line-height: 1.4;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 52px;
+        height: 28px;
+        flex-shrink: 0;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #cbd5e1;
+        transition: 0.3s;
+        border-radius: 28px;
+      }
+
+      .slider::before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 4px;
+        bottom: 4px;
+        background: white;
+        transition: 0.3s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
+
+      .switch input:checked + .slider {
+        background: var(--verde);
+      }
+
+      .switch input:checked + .slider::before {
+        transform: translateX(24px);
+      }
+
+      .switch input:disabled + .slider {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* =====================================================================
+         BARRA DE AÇÕES FINAIS
+         ===================================================================== */
+      .acoes-finais {
+        background: white;
+        border-radius: 18px;
+        border: 1px solid var(--cinza-borda);
+        box-shadow: var(--sombra-card);
+        padding: 1.2rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        position: sticky;
+        bottom: 1rem;
+        z-index: 40;
+      }
+
+      .acoes-finais .info-alteracoes {
+        font-size: 0.82rem;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .acoes-finais .info-alteracoes i {
+        color: var(--amarelo);
+      }
+
+      .acoes-finais .info-alteracoes.tudo-salvo i {
+        color: var(--verde);
+      }
+
+      .acoes-finais .botoes {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      /* =====================================================================
+         BOTÕES
+         ===================================================================== */
+      .btn {
+        padding: 0.75rem 1.2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--verde);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--verde-escuro);
+        transform: translateY(-1px);
+      }
+
+      .btn-primary:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: var(--cinza-suave);
+        color: var(--cinza-texto);
+        border: 1px solid var(--cinza-borda);
+      }
+
+      .btn-secondary:hover {
+        background: var(--cinza-borda);
+      }
+
+      .btn-secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-danger-outline {
+        background: white;
+        color: var(--vermelho);
+        border: 1px solid #fed7d7;
+      }
+
+      .btn-danger-outline:hover {
+        background: var(--vermelho-suave);
+      }
+
+      .btn-danger-outline:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* =====================================================================
+         NOTIFICAÇÕES
+         ===================================================================== */
+      .notification-center {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .notification-toast {
+        pointer-events: all;
+        background: white;
+        border-radius: 16px;
+        padding: 16px 24px;
+        min-width: 320px;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        animation: notificationSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 5px solid;
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .notification-toast.removing {
+        animation: notificationSlideDown 0.3s ease-in forwards;
+      }
+
+      @keyframes notificationSlideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes notificationSlideDown {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+      }
+
+      .notification-toast.notification-success {
+        border-left-color: var(--verde);
+        background: var(--verde-suave);
+      }
+      .notification-toast.notification-error {
+        border-left-color: var(--vermelho);
+        background: var(--vermelho-suave);
+      }
+      .notification-toast.notification-warning {
+        border-left-color: var(--amarelo);
+        background: var(--amarelo-suave);
+      }
+      .notification-toast.notification-info {
+        border-left-color: var(--azul);
+        background: var(--azul-claro);
+      }
+
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .notification-content {
+        flex: 1;
+      }
+      .notification-title {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .notification-success .notification-title {
+        color: var(--verde);
+      }
+      .notification-error .notification-title {
+        color: var(--vermelho);
+      }
+      .notification-warning .notification-title {
+        color: var(--amarelo);
+      }
+      .notification-info .notification-title {
+        color: var(--azul);
+      }
+      .notification-message {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        line-height: 1.4;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #a0aec0;
+        flex-shrink: 0;
+        margin-top: -2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .notification-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #0f172a;
+      }
+
+      /* =====================================================================
+         LOADING
+         ===================================================================== */
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99998;
+        transition: opacity 0.3s;
+      }
+
+      .loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid var(--cinza-borda);
+        border-top-color: var(--verde);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* =====================================================================
+         RESPONSIVIDADE
+         ===================================================================== */
+      @media (max-width: 1024px) {
+        .app-layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: fixed;
+          left: -280px;
+          width: 260px;
+          z-index: 1000;
+          transition: left 0.3s;
+        }
+        .sidebar.aberta {
+          left: 0;
+        }
+        .btn-toggle-sidebar {
+          display: flex !important;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .conteudo {
+          padding: 1.2rem;
+        }
+        .topbar {
+          padding: 0.9rem 1.2rem;
+        }
+        .topbar-titulo h1 {
+          font-size: 1.1rem;
+        }
+        .topbar-info {
+          display: none;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .acoes-finais {
+          padding: 1rem;
+        }
+        .acoes-finais .botoes {
+          width: 100%;
+        }
+        .acoes-finais .botoes .btn {
+          flex: 1;
+        }
+        .notification-toast {
+          min-width: 90%;
+          max-width: 90%;
+        }
+      }
+
+      .btn-toggle-sidebar {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--cinza-borda);
+        color: var(--cinza-texto);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+    </style>
+    <link rel="stylesheet" href="../shared/css/faq-theme.css" />
+    <link rel="stylesheet" href="biblioteca-blue-theme.css">
+<link rel="stylesheet" href="../shared/css/identidade-intranet.css">
+
+<link rel="stylesheet" href="../shared/css/acessibilidade-intranet.css">
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+</head>
+  <body>
+    <!-- LOADING -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon"><i class="fas fa-book-open-reader"></i></div>
+          <div class="brand-text">
+            <h2>Biblioteca</h2>
+            <span>Municipal</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section">Principal</div>
+          <a href="dashboard.html"><i class="fas fa-gauge-high"></i> Painel</a>
+
+          <div class="nav-section">Acervo</div>
+          <a href="livros.html"><i class="fas fa-book"></i> Livros</a>
+          <a href="exemplares.html"
+            ><i class="fas fa-bookmark"></i> Exemplares</a
+          >
+          <a href="prateleiras.html"
+            ><i class="fas fa-layer-group"></i> Prateleiras</a
+          >
+          <a href="autores.html"><i class="fas fa-feather"></i> Autores</a>
+          <a href="categorias.html"><i class="fas fa-tags"></i> Categorias</a>
+          <a href="editoras.html"
+            ><i class="fas fa-building-columns"></i> Editoras</a
+          >
+
+          <div class="nav-section">Circulação</div>
+          <a href="emprestimos.html"
+            ><i class="fas fa-hand-holding-heart"></i> Empréstimos</a
+          >
+          <a href="devolucoes.html"
+            ><i class="fas fa-rotate-left"></i> Devoluções</a
+          >
+
+          <div class="nav-section">Pessoas</div>
+          <a href="leitores.html"><i class="fas fa-users"></i> Leitores</a>
+
+          <div class="nav-section">Gestão</div>
+          <a href="relatorios.html"
+            ><i class="fas fa-chart-column"></i> Relatórios</a
+          >
+          <a href="config.html" class="active"
+            ><i class="fas fa-gear"></i> Configurações</a
+          >
+          <a href="ajuda.html">
+            <i class="fas fa-circle-question"></i> Ajuda
+          </a>
+        </nav>
+
+        <div class="sidebar-voltar">
+          <a href="../intranet.html"
+            ><i class="fas fa-arrow-left"></i> Voltar à intranet</a
+          >
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <button
+              class="btn-toggle-sidebar"
+              id="btnToggleSidebar"
+              title="Abrir menu"
+             type="button">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-titulo">
+              <h1><i class="fas fa-gear"></i> Configurações</h1>
+              <p>Ajustes gerais do módulo Biblioteca</p>
+            </div>
+          </div>
+
+          <div class="topbar-direita">
+            <div class="topbar-info">
+              <strong id="topbarNome">—</strong>
+              <span id="topbarData">—</span>
+            </div>
+
+            <!-- DROPDOWN DO AVATAR -->
+            <div class="avatar-wrapper">
+              <button
+                class="avatar-btn"
+                id="avatarBtn"
+                title="Menu do usuário"
+                aria-haspopup="menu"
+                aria-expanded="false"
+               type="button">
+                <span id="avatarIniciais">?</span>
+              </button>
+              <div class="avatar-menu" id="avatarMenu" role="menu">
+                <div class="avatar-menu-header">
+                  <strong id="menuNome">—</strong>
+                  <span id="menuEmail">—</span>
+                </div>
+                <a
+                  href="../perfil.html"
+                  class="avatar-menu-item"
+                  role="menuitem"
+                >
+                  <i class="fas fa-user-circle"></i> Meu Perfil
+                </a>
+                <a href="ajuda.html" class="avatar-menu-item" role="menuitem">
+                  <i class="fas fa-circle-question"></i> Ajuda
+                </a>
+                <div class="avatar-menu-divisor"></div>
+                <button
+                  class="avatar-menu-item sair"
+                  id="menuSair"
+                  type="button"
+                  role="menuitem"
+                >
+                  <i class="fas fa-right-from-bracket"></i> Sair
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <main class="conteudo">
+          <!-- AVISO DE MODO LEITURA (só aparece se não for ADMIN) -->
+          <div class="aviso-leitura" id="avisoLeitura" style="display: none">
+            <i class="fas fa-eye"></i>
+            <div>
+              <strong>Modo leitura</strong>
+              <span>
+                Você não tem permissão para alterar as configurações da
+                biblioteca. Somente usuários com perfil <strong>ADMIN</strong>
+                podem editar esta página.
+              </span>
+            </div>
+          </div>
+
+          <!-- CARD DE STATUS DO SISTEMA -->
+          <div class="card-status">
+            <div class="card-status-header">
+              <i class="fas fa-heart-pulse"></i>
+              <h3>Status do sistema</h3>
+              <span class="badge-online">Operacional</span>
+            </div>
+            <div class="status-grid">
+              <div class="status-item">
+                <div class="num" id="stLivros">—</div>
+                <div class="lbl">Livros</div>
+              </div>
+              <div class="status-item">
+                <div class="num" id="stExemplares">—</div>
+                <div class="lbl">Exemplares</div>
+              </div>
+              <div class="status-item">
+                <div class="num" id="stLeitores">—</div>
+                <div class="lbl">Leitores</div>
+              </div>
+              <div class="status-item">
+                <div class="num" id="stEmprestimos">—</div>
+                <div class="lbl">Empréstimos ativos</div>
+              </div>
+              <div class="status-item">
+                <div class="num" id="stAtrasados">—</div>
+                <div class="lbl">Atrasados</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               SEÇÃO 1 · IDENTIFICAÇÃO
+               ============================================================ -->
+          <div class="secao-config">
+            <div class="secao-config-header">
+              <div class="icone"><i class="fas fa-book-open-reader"></i></div>
+              <div style="flex: 1">
+                <h3>Identificação da biblioteca</h3>
+                <p>Como o sistema se apresenta em comprovantes e relatórios</p>
+              </div>
+            </div>
+            <div class="secao-config-body">
+              <div class="form-grid">
+                <div class="form-group full">
+                  <label class="form-label" for="inputNomeBiblioteca">
+                    Nome da biblioteca <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="inputNomeBiblioteca"
+                    class="form-input"
+                    placeholder="Ex: Biblioteca Municipal de Pitangueiras"
+                    maxlength="200"
+                  / aria-label="Ex: Biblioteca Municipal de Pitangueiras">
+                  <span class="form-hint">
+                    Aparece no cabeçalho dos comprovantes e relatórios.
+                  </span>
+                </div>
+
+                <div class="form-group full">
+                  <label class="form-label" for="inputOrgao">
+                    Órgão responsável
+                  </label>
+                  <select id="inputOrgao" class="form-select" aria-label="inputOrgao">
+                    <option value="">— Não definido (acervo global) —</option>
+                  </select>
+                  <span class="form-hint">
+                    Órgão ao qual a biblioteca está vinculada (ex: Secretaria de
+                    Cultura). Se não definido, o acervo é tratado como
+                    municipal/global.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               SEÇÃO 2 · REGRAS DE CIRCULAÇÃO
+               ============================================================ -->
+          <div class="secao-config">
+            <div class="secao-config-header">
+              <div class="icone icone-azul">
+                <i class="fas fa-hand-holding-heart"></i>
+              </div>
+              <div style="flex: 1">
+                <h3>Regras de circulação</h3>
+                <p>Prazos, limites e renovações aplicadas aos empréstimos</p>
+              </div>
+            </div>
+            <div class="secao-config-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="inputPrazoPadrao">
+                    Prazo padrão de empréstimo
+                    <span class="required">*</span>
+                    <span class="ajuda">dias</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="inputPrazoPadrao"
+                    class="form-input input-numero"
+                    min="1"
+                    max="180"
+                    value="14"
+                  / aria-label="inputPrazoPadrao">
+                  <span class="form-hint">
+                    Prazo sugerido automaticamente ao registrar empréstimos.
+                  </span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="inputPrazoMaximo">
+                    Prazo máximo permitido
+                    <span class="required">*</span>
+                    <span class="ajuda">dias</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="inputPrazoMaximo"
+                    class="form-input input-numero"
+                    min="1"
+                    max="365"
+                    value="30"
+                  / aria-label="inputPrazoMaximo">
+                  <span class="form-hint" id="dicaPrazoMaximo">
+                    O sistema bloqueia prazos acima deste valor.
+                  </span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="inputRenovacoes">
+                    Renovações máximas
+                    <span class="required">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="inputRenovacoes"
+                    class="form-input input-numero"
+                    min="0"
+                    max="10"
+                    value="1"
+                  / aria-label="inputRenovacoes">
+                  <span class="form-hint">
+                    Quantas vezes o mesmo empréstimo pode ser renovado.
+                  </span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="inputLimiteLivros">
+                    Limite de livros por leitor
+                    <span class="required">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="inputLimiteLivros"
+                    class="form-input input-numero"
+                    min="1"
+                    max="50"
+                    value="3"
+                  / aria-label="inputLimiteLivros">
+                  <span class="form-hint">
+                    Número máximo de exemplares simultâneos por leitor.
+                  </span>
+                </div>
+
+                <div class="form-group full">
+                  <label class="form-label" for="inputDiasAlerta">
+                    Alertar sobre atrasos a partir de
+                    <span class="ajuda">dias após o prazo</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="inputDiasAlerta"
+                    class="form-input input-numero"
+                    min="0"
+                    max="30"
+                    value="1"
+                  / aria-label="inputDiasAlerta">
+                  <span class="form-hint">
+                    Os empréstimos só aparecem como "atrasados" no painel depois
+                    desse número de dias.
+                  </span>
+                </div>
+              </div>
+
+              <div class="preview-info" id="previewPrazo">
+                <i class="fas fa-circle-info"></i>
+                <div class="texto" id="previewPrazoTexto">
+                  Preencha os campos acima para ver o preview.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               SEÇÃO 3 · RECURSOS ADICIONAIS
+               ============================================================ -->
+          <div class="secao-config">
+            <div class="secao-config-header">
+              <div class="icone icone-roxo"><i class="fas fa-sliders"></i></div>
+              <div style="flex: 1">
+                <h3>Recursos adicionais</h3>
+                <p>Funcionalidades opcionais do módulo</p>
+              </div>
+            </div>
+            <div class="secao-config-body">
+              <div class="toggle-linha">
+                <div class="toggle-info">
+                  <strong>
+                    <i
+                      class="fas fa-bookmark"
+                      style="color: var(--roxo); margin-right: 6px"
+                    ></i>
+                    Permitir reservas
+                  </strong>
+                  <span>
+                    Habilita o módulo de reservas de títulos. Leitores podem
+                    reservar livros que estão emprestados.
+                  </span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggleReservas" / aria-label="toggleReservas">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               AÇÕES FINAIS
+               ============================================================ -->
+          <div class="acoes-finais" id="acoesFinais">
+            <div class="info-alteracoes tudo-salvo" id="infoAlteracoes">
+              <i class="fas fa-circle-check"></i>
+              <span id="textoAlteracoes">Todas as alterações estão salvas</span>
+            </div>
+            <div class="botoes">
+              <button
+                class="btn btn-danger-outline"
+                id="btnRestaurarPadroes"
+                title="Voltar aos valores padrão de fábrica"
+               type="button">
+                <i class="fas fa-rotate-left"></i> Restaurar padrões
+              </button>
+              <button class="btn btn-secondary" id="btnDescartar" disabled type="button">
+                <i class="fas fa-xmark"></i> Descartar
+              </button>
+              <button class="btn btn-primary" id="btnSalvar" disabled type="button">
+                <i class="fas fa-save"></i> Salvar alterações
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div class="notification-center" id="notificationCenter"></div>
+
+    <!-- SUPABASE SDK -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { createClient } from "@supabase/supabase-js";
+
+      // ============================================
+      // CONFIG SUPABASE
+      // ============================================
+      const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ============================================
+      // PADRÕES DE FÁBRICA (usados no "Restaurar padrões")
+      // ============================================
+      const PADROES = {
+        nome_biblioteca: "Biblioteca Municipal",
+        orgao_responsavel_id: null,
+        prazo_padrao_dias: 14,
+        prazo_maximo_dias: 30,
+        renovacoes_maximas: 1,
+        limite_livros_por_leitor: 3,
+        dias_alerta_atraso: 1,
+        permite_reserva: false,
+      };
+
+      // ============================================
+      // ESTADO
+      // ============================================
+      let usuarioLogado = null;
+      let isAdmin = false;
+      let configOriginal = { ...PADROES };
+      let configAtual = { ...PADROES };
+      let orgaosDisponiveis = [];
+
+      // ============================================
+      // NOTIFICAÇÕES
+      // ============================================
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      window.showConfirm = function (title, message, onConfirm, opts = {}) {
+        const overlay = document.createElement("div");
+        overlay.style.cssText = `
+          position: fixed; inset: 0; background: rgba(15,23,42,0.55); backdrop-filter: blur(4px);
+          z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 1rem;
+        `;
+        overlay.innerHTML = `
+          <div style="background:white; border-radius:20px; padding:2rem; max-width:460px; width:100%;
+                      text-align:center; box-shadow: 0 25px 60px rgba(0,0,0,0.3); border: 1px solid #e2e8f0;">
+            <div style="font-size:3rem; margin-bottom:1rem;">${opts.icone || "❓"}</div>
+            <h3 style="font-size:1.2rem; font-weight:700; color:#0f172a; margin-bottom:0.5rem;">${title}</h3>
+            <p style="font-size:0.9rem; color:#475569; line-height:1.5; margin-bottom:1.5rem;">${message}</p>
+            <div style="display:flex; gap:0.75rem; justify-content:center;">
+              <button class="btn btn-secondary" id="cancelBtn" type="button">Cancelar</button>
+              <button class="btn ${opts.btnClass || "btn-primary"}" id="confirmBtn" type="button">${opts.btnLabel || "Confirmar"}</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        const close = () => {
+          overlay.style.opacity = "0";
+          setTimeout(() => overlay.remove(), 200);
+        };
+        overlay.querySelector("#cancelBtn").addEventListener("click", close);
+        overlay.querySelector("#confirmBtn").addEventListener("click", () => {
+          close();
+          if (typeof onConfirm === "function") onConfirm();
+        });
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) close();
+        });
+        return overlay;
+      };
+
+      // ============================================
+      // HELPERS
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
+
+      function esconderLoading() {
+        document.getElementById("loadingOverlay")?.classList.add("hidden");
+      }
+
+      function formatarDataBR(d) {
+        const dia = String(d.getDate()).padStart(2, "0");
+        const mes = String(d.getMonth() + 1).padStart(2, "0");
+        return `${dia}/${mes}/${d.getFullYear()}`;
+      }
+
+      function hoje() {
+        const d = new Date();
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      }
+
+      // ============================================
+      // SESSÃO
+      // ============================================
+      async function verificarSessao() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        const { data: perfil, error } = await supabase
+          .from("usuarios")
+          .select("id, uuid, nome, email, perfil, ativo")
+          .eq("uuid", session.user.id)
+          .maybeSingle();
+
+        if (error || !perfil || perfil.ativo === false) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        usuarioLogado = perfil;
+        isAdmin = perfil.perfil === "ADMIN";
+        return perfil;
+      }
+
+      function renderizarUsuario() {
+        if (!usuarioLogado) return;
+        setTexto("topbarNome", usuarioLogado.nome || "—");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+        );
+        const el = document.getElementById("avatarIniciais");
+        if (el) el.textContent = iniciais(usuarioLogado.nome);
+
+        // Preenche o dropdown do avatar
+        setTexto("menuNome", usuarioLogado.nome || "—");
+        setTexto("menuEmail", usuarioLogado.email || "—");
+      }
+
+      // ============================================
+      // MENU DO AVATAR (dropdown)
+      // ============================================
+      function configurarMenuAvatar() {
+        const btn = document.getElementById("avatarBtn");
+        const menu = document.getElementById("avatarMenu");
+        if (!btn || !menu) return;
+
+        // Abre/fecha ao clicar no avatar
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const aberto = menu.classList.toggle("aberto");
+          btn.setAttribute("aria-expanded", aberto ? "true" : "false");
+        });
+
+        // Fecha ao clicar fora
+        document.addEventListener("click", (e) => {
+          if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Fecha com ESC
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            menu.classList.remove("aberto");
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Item "Sair" dentro do dropdown
+        const menuSair = document.getElementById("menuSair");
+        if (menuSair) {
+          menuSair.addEventListener("click", async () => {
+            const confirmar = window.confirm(
+              "Deseja realmente sair do módulo?",
+            );
+            if (!confirmar) return;
+            await supabase.auth.signOut();
+            window.location.href = "../intranet.html";
+          });
+        }
+      }
+
+      // ============================================
+      // CARREGAR ÓRGÃOS (para o select)
+      // ============================================
+      async function carregarOrgaos() {
+        const { data, error } = await supabase
+          .from("orgaos")
+          .select("id, nome, sigla")
+          .eq("ativo", true)
+          .order("nome");
+        if (error) {
+          console.error("Erro ao carregar órgãos:", error);
+          return;
+        }
+        orgaosDisponiveis = data || [];
+
+        const sel = document.getElementById("inputOrgao");
+        sel.innerHTML = `<option value="">— Não definido (acervo global) —</option>`;
+        orgaosDisponiveis.forEach((o) => {
+          sel.innerHTML += `<option value="${o.id}">${escaparHtml(o.sigla ? o.sigla + " · " + o.nome : o.nome)}</option>`;
+        });
+      }
+
+      // ============================================
+      // CARREGAR CONFIGURAÇÕES
+      // ============================================
+      async function carregarConfiguracoes() {
+        const { data, error } = await supabase
+          .from("bib_configuracoes")
+          .select(
+            `
+            id, nome_biblioteca, orgao_responsavel_id,
+            prazo_padrao_dias, prazo_maximo_dias,
+            renovacoes_maximas, limite_livros_por_leitor,
+            dias_alerta_atraso, permite_reserva, updated_at
+          `,
+          )
+          .eq("id", 1)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Erro ao carregar configurações:", error);
+          window.showNotification(
+            "error",
+            "Erro ao carregar",
+            "Não foi possível carregar as configurações. Usando padrões.",
+          );
+          return;
+        }
+
+        if (data) {
+          configOriginal = {
+            nome_biblioteca: data.nome_biblioteca || PADROES.nome_biblioteca,
+            orgao_responsavel_id: data.orgao_responsavel_id || null,
+            prazo_padrao_dias:
+              data.prazo_padrao_dias ?? PADROES.prazo_padrao_dias,
+            prazo_maximo_dias:
+              data.prazo_maximo_dias ?? PADROES.prazo_maximo_dias,
+            renovacoes_maximas:
+              data.renovacoes_maximas ?? PADROES.renovacoes_maximas,
+            limite_livros_por_leitor:
+              data.limite_livros_por_leitor ?? PADROES.limite_livros_por_leitor,
+            dias_alerta_atraso:
+              data.dias_alerta_atraso ?? PADROES.dias_alerta_atraso,
+            permite_reserva: !!data.permite_reserva,
+          };
+          configAtual = { ...configOriginal };
+        }
+      }
+
+      // ============================================
+      // PREENCHER FORMULÁRIO
+      // ============================================
+      function preencherFormulario() {
+        document.getElementById("inputNomeBiblioteca").value =
+          configAtual.nome_biblioteca || "";
+        document.getElementById("inputOrgao").value =
+          configAtual.orgao_responsavel_id || "";
+        document.getElementById("inputPrazoPadrao").value =
+          configAtual.prazo_padrao_dias;
+        document.getElementById("inputPrazoMaximo").value =
+          configAtual.prazo_maximo_dias;
+        document.getElementById("inputRenovacoes").value =
+          configAtual.renovacoes_maximas;
+        document.getElementById("inputLimiteLivros").value =
+          configAtual.limite_livros_por_leitor;
+        document.getElementById("inputDiasAlerta").value =
+          configAtual.dias_alerta_atraso;
+        document.getElementById("toggleReservas").checked =
+          configAtual.permite_reserva;
+      }
+
+      // ============================================
+      // LER FORMULÁRIO → ESTADO
+      // ============================================
+      function lerFormulario() {
+        configAtual = {
+          nome_biblioteca:
+            document.getElementById("inputNomeBiblioteca").value.trim() ||
+            "Biblioteca Municipal",
+          orgao_responsavel_id: document.getElementById("inputOrgao").value
+            ? parseInt(document.getElementById("inputOrgao").value)
+            : null,
+          prazo_padrao_dias:
+            parseInt(document.getElementById("inputPrazoPadrao").value) ||
+            PADROES.prazo_padrao_dias,
+          prazo_maximo_dias:
+            parseInt(document.getElementById("inputPrazoMaximo").value) ||
+            PADROES.prazo_maximo_dias,
+          renovacoes_maximas:
+            parseInt(document.getElementById("inputRenovacoes").value) ?? 0,
+          limite_livros_por_leitor:
+            parseInt(document.getElementById("inputLimiteLivros").value) ||
+            PADROES.limite_livros_por_leitor,
+          dias_alerta_atraso:
+            parseInt(document.getElementById("inputDiasAlerta").value) || 0,
+          permite_reserva: document.getElementById("toggleReservas").checked,
+        };
+      }
+
+      // ============================================
+      // COMPARAR ESTADO COM ORIGINAL
+      // ============================================
+      function compararConfigs(a, b) {
+        const chaves = [
+          "nome_biblioteca",
+          "orgao_responsavel_id",
+          "prazo_padrao_dias",
+          "prazo_maximo_dias",
+          "renovacoes_maximas",
+          "limite_livros_por_leitor",
+          "dias_alerta_atraso",
+          "permite_reserva",
+        ];
+        return chaves.filter((k) => a[k] !== b[k]);
+      }
+
+      function atualizarStatusAlteracoes() {
+        lerFormulario();
+        const alterados = compararConfigs(configAtual, configOriginal);
+
+        const info = document.getElementById("infoAlteracoes");
+        const texto = document.getElementById("textoAlteracoes");
+        const btnSalvar = document.getElementById("btnSalvar");
+        const btnDescartar = document.getElementById("btnDescartar");
+
+        if (alterados.length === 0) {
+          info.classList.add("tudo-salvo");
+          info.querySelector("i").className = "fas fa-circle-check";
+          texto.textContent = "Todas as alterações estão salvas";
+          btnSalvar.disabled = true;
+          btnDescartar.disabled = true;
+        } else {
+          info.classList.remove("tudo-salvo");
+          info.querySelector("i").className = "fas fa-circle-exclamation";
+          texto.textContent = `${alterados.length} alteração(ões) não salva(s)`;
+          btnSalvar.disabled = !isAdmin;
+          btnDescartar.disabled = false;
+        }
+
+        atualizarPreview();
+      }
+
+      // ============================================
+      // PREVIEW DE PRAZO
+      // ============================================
+      function atualizarPreview() {
+        const prazoPadrao = parseInt(
+          document.getElementById("inputPrazoPadrao").value,
+        );
+        const prazoMax = parseInt(
+          document.getElementById("inputPrazoMaximo").value,
+        );
+
+        const previewEl = document.getElementById("previewPrazoTexto");
+        const dicaMax = document.getElementById("dicaPrazoMaximo");
+        const inputMax = document.getElementById("inputPrazoMaximo");
+
+        if (!prazoPadrao || prazoPadrao < 1) {
+          previewEl.textContent = "Informe um prazo padrão válido.";
+          return;
+        }
+
+        if (prazoMax && prazoMax < prazoPadrao) {
+          inputMax.classList.add("input-invalido");
+          dicaMax.textContent =
+            "O prazo máximo não pode ser menor que o prazo padrão.";
+          dicaMax.className = "form-hint erro";
+          previewEl.innerHTML =
+            "⚠️ <strong>Corrija o prazo máximo</strong> antes de salvar.";
+          return;
+        }
+
+        inputMax.classList.remove("input-invalido");
+        dicaMax.textContent = "O sistema bloqueia prazos acima deste valor.";
+        dicaMax.className = "form-hint";
+
+        // Calcula datas
+        const hj = hoje();
+        const devPadrao = new Date(hj);
+        devPadrao.setDate(devPadrao.getDate() + prazoPadrao);
+
+        const devMax = new Date(hj);
+        if (prazoMax) devMax.setDate(devMax.getDate() + prazoMax);
+
+        previewEl.innerHTML = `
+          Com o prazo padrão de <strong>${prazoPadrao} dias</strong>, um livro
+          retirado hoje (<strong>${formatarDataBR(hj)}</strong>) deve ser
+          devolvido até <strong>${formatarDataBR(devPadrao)}</strong>.
+          ${
+            prazoMax
+              ? `<br/>O prazo máximo permitido é de <strong>${prazoMax} dias</strong>
+                 (limite: <strong>${formatarDataBR(devMax)}</strong>).`
+              : ""
+          }
+        `;
+      }
+
+      // ============================================
+      // CARREGAR STATUS DO SISTEMA (contadores)
+      // ============================================
+      async function carregarStatus() {
+        // tenta a view; se não existir, faz queries individuais
+        const { data, error } = await supabase
+          .from("vw_bib_dashboard")
+          .select("*")
+          .maybeSingle();
+
+        if (!error && data) {
+          setTexto("stLivros", data.total_livros ?? 0);
+          setTexto("stExemplares", data.total_exemplares ?? 0);
+          setTexto("stLeitores", data.leitores_ativos ?? 0);
+          setTexto("stEmprestimos", data.emprestimos_abertos ?? 0);
+          setTexto("stAtrasados", data.emprestimos_atrasados ?? 0);
+          return;
+        }
+
+        // fallback (contagens individuais)
+        const [livros, exemplares, leitores, emprestimos, atrasados] =
+          await Promise.all([
+            supabase
+              .from("bib_livros")
+              .select("*", { count: "exact", head: true })
+              .eq("ativo", true),
+            supabase
+              .from("bib_exemplares")
+              .select("*", { count: "exact", head: true })
+              .eq("ativo", true),
+            supabase
+              .from("bib_leitores")
+              .select("*", { count: "exact", head: true })
+              .eq("status", "ATIVO"),
+            supabase
+              .from("bib_emprestimos")
+              .select("*", { count: "exact", head: true })
+              .in("status", ["ABERTO", "PARCIAL"]),
+            supabase
+              .from("bib_emprestimos")
+              .select("*", { count: "exact", head: true })
+              .in("status", ["ABERTO", "PARCIAL"])
+              .lt("prazo_devolucao", new Date().toISOString().slice(0, 10)),
+          ]);
+
+        setTexto("stLivros", livros.count ?? 0);
+        setTexto("stExemplares", exemplares.count ?? 0);
+        setTexto("stLeitores", leitores.count ?? 0);
+        setTexto("stEmprestimos", emprestimos.count ?? 0);
+        setTexto("stAtrasados", atrasados.count ?? 0);
+      }
+
+      // ============================================
+      // MODO LEITURA (não-ADMIN)
+      // ============================================
+      function aplicarModoLeitura() {
+        if (isAdmin) {
+          document.getElementById("avisoLeitura").style.display = "none";
+          return;
+        }
+
+        document.getElementById("avisoLeitura").style.display = "flex";
+
+        // Desabilita todos os campos
+        document
+          .querySelectorAll(
+            "#inputNomeBiblioteca, #inputOrgao, #inputPrazoPadrao, #inputPrazoMaximo, #inputRenovacoes, #inputLimiteLivros, #inputDiasAlerta, #toggleReservas",
+          )
+          .forEach((el) => {
+            el.disabled = true;
+          });
+
+        // Esconde ações de escrita
+        document.getElementById("btnSalvar").style.display = "none";
+        document.getElementById("btnDescartar").style.display = "none";
+        document.getElementById("btnRestaurarPadroes").style.display = "none";
+
+        // Ajusta o texto da barra final
+        setTexto(
+          "textoAlteracoes",
+          "Modo leitura — somente ADMIN pode editar as configurações",
+        );
+      }
+
+      // ============================================
+      // SALVAR
+      // ============================================
+      async function salvar() {
+        if (!isAdmin) {
+          window.showNotification(
+            "error",
+            "Sem permissão",
+            "Você não tem permissão para alterar as configurações.",
+          );
+          return;
+        }
+
+        lerFormulario();
+
+        // Validações
+        if (!configAtual.nome_biblioteca) {
+          window.showNotification(
+            "warning",
+            "Campo obrigatório",
+            "Informe o nome da biblioteca.",
+          );
+          return;
+        }
+
+        if (configAtual.prazo_padrao_dias < 1) {
+          window.showNotification(
+            "warning",
+            "Prazo inválido",
+            "O prazo padrão deve ser pelo menos 1 dia.",
+          );
+          return;
+        }
+
+        if (configAtual.prazo_maximo_dias < configAtual.prazo_padrao_dias) {
+          window.showNotification(
+            "warning",
+            "Prazos incoerentes",
+            "O prazo máximo deve ser maior ou igual ao prazo padrão.",
+          );
+          document.getElementById("inputPrazoMaximo").focus();
+          return;
+        }
+
+        if (configAtual.limite_livros_por_leitor < 1) {
+          window.showNotification(
+            "warning",
+            "Limite inválido",
+            "O limite de livros por leitor deve ser pelo menos 1.",
+          );
+          return;
+        }
+
+        const btn = document.getElementById("btnSalvar");
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Salvando...`;
+
+        try {
+          const { error } = await supabase
+            .from("bib_configuracoes")
+            .update({
+              nome_biblioteca: configAtual.nome_biblioteca,
+              orgao_responsavel_id: configAtual.orgao_responsavel_id,
+              prazo_padrao_dias: configAtual.prazo_padrao_dias,
+              prazo_maximo_dias: configAtual.prazo_maximo_dias,
+              renovacoes_maximas: configAtual.renovacoes_maximas,
+              limite_livros_por_leitor: configAtual.limite_livros_por_leitor,
+              dias_alerta_atraso: configAtual.dias_alerta_atraso,
+              permite_reserva: configAtual.permite_reserva,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", 1);
+          if (error) throw error;
+
+          configOriginal = { ...configAtual };
+          atualizarStatusAlteracoes();
+
+          window.showNotification(
+            "success",
+            "Configurações salvas",
+            "As novas regras já estão em vigor em todo o módulo.",
+            5000,
+          );
+        } catch (err) {
+          console.error(err);
+          window.showNotification(
+            "error",
+            "Erro ao salvar",
+            err.message || "Não foi possível salvar as configurações.",
+          );
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-save"></i> Salvar alterações`;
+        }
+      }
+
+      // ============================================
+      // DESCARTAR ALTERAÇÕES
+      // ============================================
+      function descartar() {
+        const alterados = compararConfigs(configAtual, configOriginal);
+        if (alterados.length === 0) return;
+
+        window.showConfirm(
+          "Descartar alterações",
+          `Existem <strong>${alterados.length} alteração(ões)</strong> não salva(s). Deseja realmente descartar?`,
+          () => {
+            configAtual = { ...configOriginal };
+            preencherFormulario();
+            atualizarStatusAlteracoes();
+            window.showNotification(
+              "info",
+              "Alterações descartadas",
+              "O formulário voltou ao último estado salvo.",
+            );
+          },
+          {
+            icone: "🗑️",
+            btnLabel: "Descartar",
+            btnClass: "btn-danger-outline",
+          },
+        );
+      }
+
+      // ============================================
+      // RESTAURAR PADRÕES DE FÁBRICA
+      // ============================================
+      function restaurarPadroes() {
+        window.showConfirm(
+          "Restaurar padrões",
+          `Deseja realmente restaurar <strong>todos os valores padrão de fábrica</strong>?<br/><br/>
+           <small style="color:#64748b;">Isso vai redefinir prazos, limites e demais regras. As alterações só passam a valer após clicar em <strong>Salvar alterações</strong>.</small>`,
+          () => {
+            configAtual = { ...PADROES };
+            preencherFormulario();
+            atualizarStatusAlteracoes();
+            window.showNotification(
+              "info",
+              "Padrões carregados",
+              "Revise os valores e clique em Salvar alterações para aplicar.",
+            );
+          },
+          {
+            icone: "♻️",
+            btnLabel: "Restaurar",
+            btnClass: "btn-danger-outline",
+          },
+        );
+      }
+
+      // ============================================
+      // EVENTOS
+      // ============================================
+      document
+        .querySelectorAll(
+          "#inputNomeBiblioteca, #inputOrgao, #inputPrazoPadrao, #inputPrazoMaximo, #inputRenovacoes, #inputLimiteLivros, #inputDiasAlerta, #toggleReservas",
+        )
+        .forEach((el) => {
+          el.addEventListener("input", atualizarStatusAlteracoes);
+          el.addEventListener("change", atualizarStatusAlteracoes);
+        });
+
+      document.getElementById("btnSalvar").addEventListener("click", salvar);
+      document
+        .getElementById("btnDescartar")
+        .addEventListener("click", descartar);
+      document
+        .getElementById("btnRestaurarPadroes")
+        .addEventListener("click", restaurarPadroes);
+
+      // Aviso antes de sair com alterações pendentes
+      window.addEventListener("beforeunload", (e) => {
+        const alterados = compararConfigs(configAtual, configOriginal);
+        if (alterados.length > 0 && isAdmin) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
+
+      // Toggle sidebar mobile
+      const btnToggle = document.getElementById("btnToggleSidebar");
+      const sidebar = document.getElementById("sidebar");
+      if (btnToggle && sidebar) {
+        btnToggle.addEventListener("click", () =>
+          sidebar.classList.toggle("aberta"),
+        );
+        sidebar.querySelectorAll("a").forEach((a) => {
+          a.addEventListener("click", () => sidebar.classList.remove("aberta"));
+        });
+      }
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        try {
+          const usuario = await verificarSessao();
+          if (!usuario) return;
+
+          renderizarUsuario();
+          configurarMenuAvatar();
+
+          await carregarOrgaos();
+          await carregarConfiguracoes();
+          preencherFormulario();
+          atualizarStatusAlteracoes();
+          atualizarPreview();
+          aplicarModoLeitura();
+          await carregarStatus();
+        } catch (err) {
+          console.error("Erro na inicialização:", err);
+          window.showNotification(
+            "error",
+            "Erro inesperado",
+            "Não foi possível inicializar a página.",
+          );
+        } finally {
+          esconderLoading();
+        }
+      }
+
+      init();
+    </script>
+      <script type="module" src="./biblioteca-saas.js"></script>
+  </body>
+</html>

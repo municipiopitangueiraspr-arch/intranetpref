@@ -1,0 +1,14 @@
+/* Canonical fixed navigation used by every administrative screen. */
+.shared-admin-sidebar { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+.shared-admin-sidebar .shared-nav-brand { font-family: inherit; }
+.shared-admin-sidebar .shared-nav-links a { letter-spacing: .005em; }
+.shared-admin-sidebar .shared-nav-links a span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Compatibility with the legacy dashboard grid: the sidebar is fixed, so the content must own the remaining viewport. */
+body.admin-saas .admin-app { display: block !important; min-height: 100vh; }
+body.admin-saas .admin-main { min-width: 0; min-height: 100vh; margin-left: var(--admin-sidebar-width, 272px) !important; }
+body.admin-saas .admin-topbar { width: auto; }
+body.admin-saas .admin-content { width: 100%; max-width: none; }
+@media (max-width: 900px) {
+  body.admin-saas .admin-main { margin-left: 0 !important; }
+}

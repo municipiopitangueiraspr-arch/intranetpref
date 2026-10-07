@@ -1,0 +1,17 @@
+{
+  "arquivo_origem": "relatorio-de-saldos-das-contratacoes-8.csv",
+  "data_extracao": "2026-04-27T15:34:08.742837",
+  "numero_processo": "2/2026",
+  "numero_ata": "6/2026",
+  "cnpj_fornecedor": "61.854.011/0001-23",
+  "razao_social": "VIAGOV LTDA  (CNPJ/CPF:",
+  "itens": [
+    {
+      "item": "1",
+      "descricao": "CAMINHÃO TANQUE (PIPA) - DESCRIÇÃO CONFORME EDITAL. - CAMINHÃO TANQUE (PIPA) - DESCRIÇÃO CONFORME EDITAL. (UND)",
+      "quant_contratada": 1.0,
+      "valor_unitario": 610000.0,
+      "valor_total": 610000.0
+    }
+  ]
+}

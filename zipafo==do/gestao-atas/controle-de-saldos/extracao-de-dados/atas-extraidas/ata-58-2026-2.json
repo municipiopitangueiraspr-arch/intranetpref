@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "60",
+    "processo_origem": "52/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "58/2026",
+    "numero_contratacao": "1513",
+    "numero_processo": "52/2026",
+    "numero_pregao": "15",
+    "modalidade": "Inexigibilidade de licitação",
+    "forma_julgamento": "Chamamento/credenciamento - Item - Qtd. Fixa",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-07-23",
+    "vigencia_inicio": "2026-07-23",
+    "vigencia_fim": "2027-07-23",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para adesão da Ata de Registro de Preços Nº 042/2025 da ULTRA VEICULOS ESPECIAIS LTDA, para aquisição de 02 (dois) veículos minivan para atender as demandas da Secretaria de Saúde deste município.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "ULTRA VEÍCULOS ESPECIAIS LTDA",
+    "cnpj": "33.441.004/0001-64"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "VEÍCULO MINIVAN (11 LUGARES) – COM AS SEGUINTES DESCRIÇÕES: TURBODIESEL, PORTA LATERAL CORREDIÇA, VEÍCULO VIDRADO, DIREÇÃO: HIDRÁULICA, ELETROHIDRAÚLICA OU ELÉTRICA, CÂMBIO MANUAL OU AUTOMÁTICO, MOTORIZAÇÃO MÍNIMA DE 1.5, MÍNIMO 120 CV DE POTÊNCIA, TRAÇÃO DIANTEIRA OU TRASEIRA, CAPACIDADE DE TRANSPORTE 10 PASSAGEIROS E 1 MOTORISTA.",
+      "unidade_medida": "UN",
+      "valor_unitario": 221000.0,
+      "quantidade_contratada": 2.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 2.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 442000.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 442000.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 442000.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 442000.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 58/2026 — ULTRA VEÍCULOS (Processo 52/2026). 1 item: Minivan 11 lugares (2 unidades). Totalmente executada. ⚠️ Nº Ata 58/2026 em conflito com Ata 58/2026 da NUTRICAO ORIGINAL (Processo 5/2026).",
+  "anexos": []
+}

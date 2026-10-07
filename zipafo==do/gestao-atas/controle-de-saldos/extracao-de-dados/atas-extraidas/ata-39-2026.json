@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "36",
+    "processo_origem": "40/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "39/2026",
+    "numero_contratacao": "1460",
+    "numero_processo": "40/2026",
+    "numero_pregao": "21",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Lote - Lote",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-19",
+    "vigencia_inicio": "2026-06-19",
+    "vigencia_fim": "2027-06-19",
+    "objeto": "Obedecido o disposto na lei Federal nº 14.133/21, suas atualizações e legislação correlata, fica instaurando Processo Administrativo para contratação de empresa para oferecimento de solução para controle eletrônico de ponto dos servidores municipais.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "MODENA MULTISOLUTIONS DE TECNOLOGIA LTDA",
+    "cnpj": "63.416.801/0001-52"
+  },
+  "itens": [
+    {
+      "numero": "4",
+      "descricao": "NOBREAK - DESCRIÇÃO CONFORME EDITAL",
+      "unidade_medida": "UN",
+      "valor_unitario": 358.0,
+      "quantidade_contratada": 4.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 4.0,
+      "quantidade_saldo": 0.0,
+      "valor_total": 1432.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 1432.0,
+      "valor_saldo": 0.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 1432.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 1432.0,
+    "valor_saldo_geral": 0.0
+  },
+  "observacoes": "Ata 39/2026 — MODENA MULTISOLUTIONS (Processo 40/2026). 1 item: Nobreak. Totalmente executada. ⚠️ Nº Ata 39/2026 vai colidir com o Processo 5/2026 (K MEDICA).",
+  "anexos": []
+}

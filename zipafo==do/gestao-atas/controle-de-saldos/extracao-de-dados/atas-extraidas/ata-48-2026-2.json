@@ -1,0 +1,73 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "75",
+    "processo_origem": "6/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "48/2026",
+    "numero_contratacao": "1478",
+    "numero_processo": "6/2026",
+    "numero_pregao": "6",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-26",
+    "vigencia_inicio": "2026-06-26",
+    "vigencia_fim": "2027-06-26",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06 e Lei Municipal nº 690/2021, eventual aquisição de material de limpeza e higiene.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "VENEZA DISTRIBUIDORA DE PRODUTOS HOSPITALARES LTDA",
+    "cnpj": "13.229.567/0001-86"
+  },
+  "itens": [
+    {
+      "numero": "19",
+      "descricao": "FRALDA INFANTIL, DE ALTA QUALIDADE, QUE ABSORVE A URINA UNIFORMEMENTE, TAMANHO M - EMBALAGEM COM 30 UNIDADES",
+      "unidade_medida": "UN",
+      "valor_unitario": 14.64,
+      "quantidade_contratada": 400.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 40.0,
+      "quantidade_saldo": 360.0,
+      "valor_total": 5856.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 585.6,
+      "valor_saldo": 5270.4,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "32",
+      "descricao": "FRALDA INFANTIL, DE ALTA QUALIDADE, QUE ABSORVE A URINA UNIFORMEMENTE, TAMANHO XXG - EMBALAGEM COM 30 UNIDADES",
+      "unidade_medida": "UN",
+      "valor_unitario": 6.36,
+      "quantidade_contratada": 800.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 80.0,
+      "quantidade_saldo": 720.0,
+      "valor_total": 5088.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 508.8,
+      "valor_saldo": 4579.2,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 10944.0,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 1094.4,
+    "valor_saldo_geral": 9849.6
+  },
+  "observacoes": "Ata 48/2026 — VENEZA DISTRIBUIDORA (Processo 6/2026). Fraldas (2 itens). Saldo do PDF: R$ 9.849,60.",
+  "anexos": []
+}

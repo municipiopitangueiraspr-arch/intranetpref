@@ -1,0 +1,74 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "saldo-de-contratacoes-2025.pdf",
+    "data_extracao": "2026-09-24T00:00:00Z",
+    "paginas_origem": "229",
+    "processo_origem": "73/2025",
+    "aviso": "Processo possui múltiplos fornecedores; este JSON refere-se apenas ao fornecedor CARNELOS & CARLI COMERCIO DE VARIEDADES LTDA."
+  },
+  "cabecalho": {
+    "numero_ata": "79/2025",
+    "numero_contratacao": "1336 | 79/2025",
+    "numero_processo": "73/2025",
+    "numero_pregao": "34",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2025-02-10",
+    "data_assinatura": "2025-09-05",
+    "vigencia_inicio": "2025-09-05",
+    "vigencia_fim": "2026-09-05",
+    "objeto": "Registro de preços para empresas constituídas nos moldes da Lei Complementar n° 123/06, para eventual aquisição de brinquedos em comemoração ao dia das crianças.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "CARNELOS & CARLI COMERCIO DE VARIEDADES LTDA",
+    "cnpj": "31.014.796/0001-65"
+  },
+  "itens": [
+    {
+      "numero": "1",
+      "descricao": "JOGO DA MEMÓRIA ELETRÔNICO DECO REBA CORES LUZES E SOM. FORMATO REDONDO. 6 LUZES COLORIDAS E BRILHANTES; LUZES E SONS PARA DAR UM OBJETIVO A BRINCADEIRA; COMPOSIÇÃO DO BRINQUEDO: PLÁSTICO ABS SEGURO E DE ALTA QUALIDADE E RESISTÊNCIA. DIMENSÕES DO BRINQUEDO: DIÂMETRO 22,5 CM, PODENDO SOFRER VARIAÇÃO PARA MAIS. EMBALAGEM: ALTURA 5 CM X LARGURA 27 CM X COMPRIMENTO 28 CM X PESO: 0,410 G. O PRODUTO DEVERÁ POSSUIR SELO DO INMETRO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 39.9,
+      "quantidade_contratada": 335.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 335.0,
+      "valor_total": 13366.5,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 13366.5,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    },
+    {
+      "numero": "3",
+      "descricao": "BOLA DE FUTEBOL EM PVC, PESANDO APROXIMADAMENTE 280 GRAMAS, COSTURA RESISTENTE. DIÂMETRO DE 67 A 70 CM/32 GOMOS – AS BOLAS DEVERÃO SE ENTREGUES CHEIAS E PRONTAS PARA USO.",
+      "unidade_medida": "UN",
+      "valor_unitario": 11.5,
+      "quantidade_contratada": 600.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 0.0,
+      "quantidade_saldo": 600.0,
+      "valor_total": 6900.0,
+      "valor_aditivo": 0.0,
+      "valor_executado": 0.0,
+      "valor_saldo": 6900.0,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 2,
+    "valor_contratado_geral": 20266.5,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 0.0,
+    "valor_saldo_geral": 20266.5
+  },
+  "observacoes": "Data de homologação registrada conforme o PDF (10/02/2025), diferente do padrão 09/02/2024 das demais atas deste documento. Todos os itens com saldo integral (nada executado). Totais conferem com o PDF: R$ 20.266,50 contratado.",
+  "anexos": []
+}

@@ -1,0 +1,56 @@
+{
+  "$schema_version": "1.0",
+  "metadata": {
+    "arquivo_origem": "Saldo de Contratações - GERAL.pdf",
+    "data_extracao": "2026-09-22T00:00:00Z",
+    "paginas_origem": "75-76",
+    "processo_origem": "6/2026"
+  },
+  "cabecalho": {
+    "numero_ata": "55/2026",
+    "numero_contratacao": "1484",
+    "numero_processo": "6/2026",
+    "numero_pregao": "6",
+    "modalidade": "Pregão eletrônico",
+    "forma_julgamento": "Menor Preco Por Item - Item",
+    "data_homologacao": "2026-02-19",
+    "data_assinatura": "2026-06-26",
+    "vigencia_inicio": "2026-06-26",
+    "vigencia_fim": "2027-06-26",
+    "objeto": "Registro de preços, nos moldes da Lei Complementar nº 123/06 e Lei Municipal nº 690/2021, eventual aquisição de material de limpeza e higiene.",
+    "orgao": "Prefeitura Municipal De Pitangueiras",
+    "categoria": ""
+  },
+  "fornecedor": {
+    "razao_social": "YNEMED PRODUTOS MEDICOS E HOSPITALARES LTDA",
+    "cnpj": "51.740.794/0001-60"
+  },
+  "itens": [
+    {
+      "numero": "46",
+      "descricao": "PALITO PARA CHURRASCO 25CM X 3,5MM - PCTE COM 100 UNIDADES",
+      "unidade_medida": "UN",
+      "valor_unitario": 7.13,
+      "quantidade_contratada": 120.0,
+      "quantidade_aditivo": 0.0,
+      "quantidade_executada": 9.0,
+      "quantidade_saldo": 111.0,
+      "valor_total": 855.6,
+      "valor_aditivo": 0.0,
+      "valor_executado": 64.17,
+      "valor_saldo": 791.43,
+      "categoria": "",
+      "marca": "",
+      "modelo": ""
+    }
+  ],
+  "totais": {
+    "quantidade_itens": 1,
+    "valor_contratado_geral": 855.6,
+    "valor_aditivo_geral": 0.0,
+    "valor_executado_geral": 64.17,
+    "valor_saldo_geral": 791.43
+  },
+  "observacoes": "Ata 55/2026 — YNEMED (Processo 6/2026). 1 item: Palito para churrasco. Saldo do PDF: R$ 791,43. Última ata do Processo 6/2026.",
+  "anexos": []
+}
