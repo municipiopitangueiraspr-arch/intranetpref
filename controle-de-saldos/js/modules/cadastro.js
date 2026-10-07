@@ -17,6 +17,7 @@ export class Cadastro {
     this.itensCadastroTemp = [];
     this.renderizarItensCadastro();
     await this.sistema.carregarCategorias();
+    await this.carregarResponsaveis();
     this.configurarEventos();
 
     // Carregar lista de atas e indicadores
@@ -178,6 +179,37 @@ export class Cadastro {
                   <input type="text" id="fornecedorCnpj" required inputmode="numeric" maxlength="18" placeholder="Digite CPF ou CNPJ">
                 </div>
               </div>
+              <div class="form-row">
+                <div class="form-group"><label>Nome Fantasia</label><input type="text" id="fornecedorFantasia" placeholder="Nome comercial"></div>
+                <div class="form-group"><label>E-mail principal</label><input type="email" id="fornecedorEmail" placeholder="contato@fornecedor.com.br"></div>
+                <div class="form-group"><label>Telefone principal</label><input type="tel" id="fornecedorTelefone1" placeholder="(00) 0000-0000"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Telefone alternativo</label><input type="tel" id="fornecedorTelefone2" placeholder="(00) 0000-0000"></div>
+                <div class="form-group"><label>Contato comercial</label><input type="text" id="fornecedorContatoNome" placeholder="Nome do contato"></div>
+                <div class="form-group"><label>E-mail do contato</label><input type="email" id="fornecedorContatoEmail" placeholder="comercial@fornecedor.com.br"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Telefone do contato</label><input type="tel" id="fornecedorContatoTelefone" placeholder="(00) 0000-0000"></div>
+                <div class="form-group"><label>Observações do fornecedor</label><input type="text" id="fornecedorObservacoes" placeholder="Informações úteis para contato"></div>
+              </div>
+              <small class="campo-ajuda-modalidade">Os dados ficam no cadastro reutilizável do fornecedor. O contato informado também é preservado como referência desta ata.</small>
+            </div>
+
+            <div class="cadastro-secao">
+              <div class="secao-titulo"><i class="fas fa-user-shield"></i> Responsáveis pela ata</div>
+              <small class="campo-ajuda-modalidade">Campos de identificação e governança. Nesta fase, não alteram as regras de pedidos ou aprovação.</small>
+              <div class="form-row">
+                <div class="form-group"><label>Gestor da ata</label><select id="gestorAtaId"><option value="">Selecione, se aplicável</option></select></div>
+                <div class="form-group"><label>Fiscal da ata</label><select id="fiscalAtaId"><option value="">Selecione, se aplicável</option></select></div>
+                <div class="form-group"><label>Fiscal substituto</label><select id="fiscalSubstitutoAtaId"><option value="">Selecione, se aplicável</option></select></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Órgão responsável</label><select id="orgaoResponsavelAtaId"><option value="">Selecione, se aplicável</option></select></div>
+                <div class="form-group"><label>Ato de designação</label><input type="text" id="atoDesignacaoAta" placeholder="Portaria, decreto ou outro ato"></div>
+                <div class="form-group"><label>Data da designação</label><input type="date" id="dataDesignacaoAta"></div>
+              </div>
+              <div class="form-row"><div class="form-group"><label>Observações dos responsáveis</label><textarea id="responsaveisObservacoesAta" rows="2" placeholder="Observações administrativas"></textarea></div></div>
             </div>
 
             <div class="cadastro-secao">
@@ -275,6 +307,32 @@ export class Cadastro {
     if (filtroStatus) {
       filtroStatus.addEventListener("change", () => this.filtrarListaAtas());
     }
+  }
+
+  async carregarResponsaveis() {
+    const [usuariosResult, orgaosResult] = await Promise.all([
+      supabase.from("usuarios").select("id, nome, email, cargo, ativo").eq("ativo", true).order("nome"),
+      supabase.from("orgaos").select("id, nome, sigla, ativo").eq("ativo", true).order("nome"),
+    ]);
+    const usuarios = usuariosResult.data || [];
+    const orgaos = orgaosResult.data || [];
+    ["gestorAtaId", "fiscalAtaId", "fiscalSubstitutoAtaId"].forEach((id) => {
+      const select = document.getElementById(id);
+      if (!select) return;
+      usuarios.forEach((usuario) => {
+        const option = document.createElement("option");
+        option.value = usuario.id;
+        option.textContent = `${usuario.nome || usuario.email}${usuario.cargo ? ` — ${usuario.cargo}` : ""}`;
+        select.appendChild(option);
+      });
+    });
+    const orgaoSelect = document.getElementById("orgaoResponsavelAtaId");
+    orgaos.forEach((orgao) => {
+      const option = document.createElement("option");
+      option.value = orgao.id;
+      option.textContent = orgao.sigla ? `${orgao.nome} (${orgao.sigla})` : orgao.nome;
+      orgaoSelect?.appendChild(option);
+    });
   }
 
   // ============================================================
@@ -1212,19 +1270,57 @@ export class Cadastro {
         .eq("cnpj", documento)
         .maybeSingle();
 
+      const fornecedorPayload = {
+        razao_social: document.getElementById("fornecedorRazao").value.trim(),
+        nome_fantasia: document.getElementById("fornecedorFantasia")?.value.trim() || null,
+        cnpj: documento,
+        email: document.getElementById("fornecedorEmail")?.value.trim() || null,
+        telefone1: document.getElementById("fornecedorTelefone1")?.value.trim() || null,
+        telefone2: document.getElementById("fornecedorTelefone2")?.value.trim() || null,
+        contato_nome: document.getElementById("fornecedorContatoNome")?.value.trim() || null,
+        contato_email: document.getElementById("fornecedorContatoEmail")?.value.trim() || null,
+        contato_telefone: document.getElementById("fornecedorContatoTelefone")?.value.trim() || null,
+        observacoes: document.getElementById("fornecedorObservacoes")?.value.trim() || null,
+      };
+
       if (exist) {
         fornecedorId = exist.id;
+        const { error: fornecedorError } = await supabase
+          .from("fornecedores")
+          .update(fornecedorPayload)
+          .eq("id", fornecedorId);
+        if (fornecedorError) throw fornecedorError;
       } else {
         const { data: novo, error: fe } = await supabase
           .from("fornecedores")
-          .insert({
-            razao_social: document.getElementById("fornecedorRazao").value,
-            cnpj: documento,
-          })
+          .insert(fornecedorPayload)
           .select()
           .single();
         if (fe) throw fe;
         fornecedorId = novo.id;
+      }
+
+      if (fornecedorPayload.contato_nome) {
+        const { data: contatoExistente } = await supabase
+          .from("representantes")
+          .select("id")
+          .eq("fornecedor_id", fornecedorId)
+          .eq("email", fornecedorPayload.contato_email || "")
+          .maybeSingle();
+        const contatoPayload = {
+          fornecedor_id: fornecedorId,
+          nome: fornecedorPayload.contato_nome,
+          cargo: "Comercial",
+          telefone: fornecedorPayload.contato_telefone,
+          email: fornecedorPayload.contato_email,
+          principal: true,
+          ativo: true,
+        };
+        if (contatoExistente) {
+          await supabase.from("representantes").update(contatoPayload).eq("id", contatoExistente.id);
+        } else {
+          await supabase.from("representantes").insert(contatoPayload);
+        }
       }
 
       const { data: ata, error: ae } = await supabase
@@ -1247,6 +1343,16 @@ export class Cadastro {
           ),
           usuario_cadastro_id: this.sistema.usuarioAtual.id,
           categoria_id: categoriaId,
+          gestor_id: document.getElementById("gestorAtaId")?.value || null,
+          fiscal_id: document.getElementById("fiscalAtaId")?.value || null,
+          fiscal_substituto_id: document.getElementById("fiscalSubstitutoAtaId")?.value || null,
+          orgao_responsavel_id: document.getElementById("orgaoResponsavelAtaId")?.value || null,
+          ato_designacao: document.getElementById("atoDesignacaoAta")?.value.trim() || null,
+          data_designacao: document.getElementById("dataDesignacaoAta")?.value || null,
+          responsaveis_observacoes: document.getElementById("responsaveisObservacoesAta")?.value.trim() || null,
+          fornecedor_contato_nome: fornecedorPayload.contato_nome,
+          fornecedor_contato_email: fornecedorPayload.contato_email || fornecedorPayload.email,
+          fornecedor_contato_telefone: fornecedorPayload.contato_telefone || fornecedorPayload.telefone1,
         })
         .select()
         .single();

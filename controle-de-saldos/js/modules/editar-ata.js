@@ -76,6 +76,27 @@ export class EditarAta {
         .eq("ativo", true)
         .order("nome");
       this.categoriasCache = categorias || [];
+
+      const [{ data: usuarios }, { data: orgaos }] = await Promise.all([
+        supabase.from("usuarios").select("id, nome, email, cargo, ativo").eq("ativo", true).order("nome"),
+        supabase.from("orgaos").select("id, nome, sigla, ativo").eq("ativo", true).order("nome"),
+      ]);
+      ["editarGestorAta", "editarFiscalAta", "editarFiscalSubstitutoAta"].forEach((id) => {
+        const select = document.getElementById(id);
+        usuarios?.forEach((usuario) => {
+          const option = document.createElement("option");
+          option.value = usuario.id;
+          option.textContent = `${usuario.nome || usuario.email}${usuario.cargo ? ` — ${usuario.cargo}` : ""}`;
+          select?.appendChild(option);
+        });
+      });
+      const orgaoSelect = document.getElementById("editarOrgaoResponsavelAta");
+      orgaos?.forEach((orgao) => {
+        const option = document.createElement("option");
+        option.value = orgao.id;
+        option.textContent = orgao.sigla ? `${orgao.nome} (${orgao.sigla})` : orgao.nome;
+        orgaoSelect?.appendChild(option);
+      });
     } catch (error) {
       console.error("Erro ao carregar dados auxiliares:", error);
       throw error;
@@ -340,6 +361,19 @@ export class EditarAta {
         categoriaSelect.appendChild(opt);
       });
     }
+
+    [
+      ["editarGestorAta", ata.gestor_id],
+      ["editarFiscalAta", ata.fiscal_id],
+      ["editarFiscalSubstitutoAta", ata.fiscal_substituto_id],
+      ["editarOrgaoResponsavelAta", ata.orgao_responsavel_id],
+    ].forEach(([id, value]) => {
+      const select = document.getElementById(id);
+      if (select) select.value = value || "";
+    });
+    document.getElementById("editarAtoDesignacaoAta").value = ata.ato_designacao || "";
+    document.getElementById("editarDataDesignacaoAta").value = ata.data_designacao || "";
+    document.getElementById("editarResponsaveisObservacoesAta").value = ata.responsaveis_observacoes || "";
 
     // Preencher itens
     this.renderizarItens();
@@ -641,6 +675,13 @@ export class EditarAta {
           valor_global: dadosAtualizados.valor_global,
           situacao: dadosAtualizados.situacao,
           observacao: dadosAtualizados.observacao,
+          gestor_id: dadosAtualizados.gestor_id,
+          fiscal_id: dadosAtualizados.fiscal_id,
+          fiscal_substituto_id: dadosAtualizados.fiscal_substituto_id,
+          orgao_responsavel_id: dadosAtualizados.orgao_responsavel_id,
+          ato_designacao: dadosAtualizados.ato_designacao,
+          data_designacao: dadosAtualizados.data_designacao,
+          responsaveis_observacoes: dadosAtualizados.responsaveis_observacoes,
           updated_at: new Date().toISOString(),
         })
         .eq("id", this.ataId);
@@ -820,6 +861,13 @@ export class EditarAta {
         parseFloat(document.getElementById("editarValorGlobal").value) || 0,
       situacao: document.getElementById("editarStatus").value,
       observacao: document.getElementById("editarObservacao").value.trim(),
+      gestor_id: document.getElementById("editarGestorAta")?.value ? parseInt(document.getElementById("editarGestorAta").value) : null,
+      fiscal_id: document.getElementById("editarFiscalAta")?.value ? parseInt(document.getElementById("editarFiscalAta").value) : null,
+      fiscal_substituto_id: document.getElementById("editarFiscalSubstitutoAta")?.value ? parseInt(document.getElementById("editarFiscalSubstitutoAta").value) : null,
+      orgao_responsavel_id: document.getElementById("editarOrgaoResponsavelAta")?.value ? parseInt(document.getElementById("editarOrgaoResponsavelAta").value) : null,
+      ato_designacao: document.getElementById("editarAtoDesignacaoAta")?.value.trim() || null,
+      data_designacao: document.getElementById("editarDataDesignacaoAta")?.value || null,
+      responsaveis_observacoes: document.getElementById("editarResponsaveisObservacoesAta")?.value.trim() || null,
       itens: itens,
     };
   }
