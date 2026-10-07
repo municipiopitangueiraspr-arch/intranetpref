@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <title>Gestão de Atas, Saldos e Pedidos | Intranet Municipal</title>
 
     <!-- ============================================================ -->
@@ -68,10 +67,14 @@
 
 
 
-<script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261004-unified-5">
+<script src="./shared/js/acessibilidade-intranet.js" defer></script>
+  <link rel="stylesheet" href="./shared/css/all.min.css?v=20261006-fontawesome-local-1">
+  <link rel="stylesheet" href="./shared/css/intranet-global.css?v=20261004-unified-5">
   <link rel="stylesheet" href="./css/gestao-atas-fab.css?v=20261006-drive-fixes-1">
-  <link rel="stylesheet" href="./css/atas-saldos-pedidos-redesign.css?v=20261006-ui-polish-1">
+  <link rel="stylesheet" href="./css/atas-saldos-pedidos-redesign.css?v=20261006-avatar-app-drawer-2">
+  <link rel="stylesheet" href="./css/relatorios.css?v=20261006-relatorios-redesign-1">
+  <link rel="stylesheet" href="./css/pedidos.css?v=20261006-pedidos-microinteracoes-1">
+  <link rel="stylesheet" href="./css/carrinho-page.css?v=20261007-cart-quantity-4">
 </head>
   <body data-intranet-module="atas" data-intranet-page="controle-de-saldos-gestao-atas">
     <!-- ============================================================ -->
@@ -366,11 +369,14 @@
         if (event.target === this) sistema.fecharModalVisualizarPedido();
       "
     >
-      <div class="modal-content intranet-style-cdebb85e89">
+      <div class="modal-content modal-content-pedido-detalhes intranet-style-cdebb85e89">
         <div class="modal-header">
-          <h2 class="modal-titulo">
-            <i class="fas fa-file-invoice"></i> Detalhes do Pedido
-          </h2>
+          <div>
+            <h2 class="modal-titulo">
+              <i class="fas fa-file-invoice"></i> Detalhes do Pedido
+            </h2>
+            <p class="modal-subtitulo">Revise os dados, itens e valores deste pedido.</p>
+          </div>
           <button
             class="modal-close"
             onclick="sistema.fecharModalVisualizarPedido()"
@@ -378,7 +384,7 @@
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div id="modalVisualizarPedidoConteudo"></div>
+        <div id="modalVisualizarPedidoConteudo" class="modal-pedido-detalhes-body"></div>
       </div>
     </div>
 
@@ -570,6 +576,50 @@
           >
             <i class="fas fa-exclamation-triangle"></i> Rejeitar Pedido
           </button>
+          <button type="button" class="btn-secondary" id="btnDevolverParaAjuste" onclick="sistema.pedidos.abrirModalDevolucaoAjuste()">
+            <i class="fas fa-rotate-left"></i> Devolver para ajuste
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalDevolucaoAjuste" class="modal" onclick="if (event.target === this) sistema.pedidos.fecharModalDevolucaoAjuste();">
+      <div class="modal-content">
+        <div class="modal-header"><div><h2 class="modal-titulo"><i class="fas fa-rotate-left"></i> Devolver para ajuste</h2><p class="modal-subtitulo">Sugira alterações sem exigir um novo pedido.</p></div><button class="modal-close" type="button" onclick="sistema.pedidos.fecharModalDevolucaoAjuste()"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body"><div class="info-box"><i class="fas fa-lightbulb"></i><span>O pedido volta ao solicitante, que poderá aceitar a sugestão ou contestá-la. A decisão fica na timeline.</span></div><div id="devolucaoAjusteItens"></div><label class="form-group" for="devolucaoAjusteJustificativa"><span><i class="fas fa-pen"></i> Justificativa <span class="obrigatorio">*</span></span><textarea id="devolucaoAjusteJustificativa" class="form-control" rows="4" minlength="10" maxlength="1000" placeholder="Explique o ajuste sugerido…"></textarea></label></div>
+        <div class="modal-footer"><button type="button" class="btn-cancelar" onclick="sistema.pedidos.fecharModalDevolucaoAjuste()">Cancelar</button><button type="button" class="btn-primary" id="btnConfirmarDevolucaoAjuste" onclick="sistema.pedidos.confirmarDevolucaoAjuste()"><i class="fas fa-paper-plane"></i> Enviar sugestão</button></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MODAL · ENCERRAMENTO DE PEDIDO                               -->
+    <!-- ============================================================ -->
+    <div id="modalRespostaDevolucao" class="modal" onclick="if (event.target === this) sistema.pedidos.fecharModalRespostaDevolucao();">
+      <div class="modal-content">
+        <div class="modal-header"><div><h2 class="modal-titulo"><i class="fas fa-comments"></i> Responder ao ajuste sugerido</h2><p class="modal-subtitulo">Você pode aceitar a sugestão ou contestá-la sem criar outro pedido.</p></div><button class="modal-close" type="button" onclick="sistema.pedidos.fecharModalRespostaDevolucao()"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body"><div class="info-box"><i class="fas fa-circle-info"></i><span id="respostaDevolucaoResumo">Carregando a sugestão…</span></div><label class="form-group" for="respostaDevolucaoJustificativa"><span><i class="fas fa-pen"></i> Justificativa <span class="label-hint">(obrigatória para contestar)</span></span><textarea id="respostaDevolucaoJustificativa" class="form-control" rows="4" maxlength="1000" placeholder="Se contestar, explique o motivo…"></textarea></label></div>
+        <div class="modal-footer"><button type="button" class="btn-cancelar" onclick="sistema.pedidos.fecharModalRespostaDevolucao()">Cancelar</button><button type="button" class="btn-secondary" onclick="sistema.pedidos.responderDevolucao(false)"><i class="fas fa-comment-dots"></i> Contestar</button><button type="button" class="btn-primary" onclick="sistema.pedidos.responderDevolucao(true)"><i class="fas fa-check"></i> Aceitar sugestão</button></div>
+      </div>
+    </div>
+
+    <div id="modalEncerrarPedido" class="modal" onclick="if (event.target === this) sistema.pedidos.fecharModalEncerrarPedido();">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-titulo"><i class="fas fa-flag-checkered"></i> Encerrar pedido</h2>
+            <p class="modal-subtitulo">O sistema validará as entregas e registrará esta decisão na timeline.</p>
+          </div>
+          <button class="modal-close" type="button" onclick="sistema.pedidos.fecharModalEncerrarPedido()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="info-box"><i class="fas fa-circle-info"></i><span>Somente pedidos com todos os itens entregues podem ser encerrados.</span></div>
+          <label class="form-group" for="observacaoEncerramento"><span><i class="fas fa-pen"></i> Observação <span class="label-hint">(opcional)</span></span>
+            <textarea id="observacaoEncerramento" class="form-control" rows="4" maxlength="1000" placeholder="Registre uma observação para a timeline…"></textarea>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancelar" onclick="sistema.pedidos.fecharModalEncerrarPedido()">Cancelar</button>
+          <button type="button" class="btn-primary" id="btnConfirmarEncerramento" onclick="sistema.pedidos.confirmarEncerramento()"><i class="fas fa-flag-checkered"></i> Encerrar pedido</button>
         </div>
       </div>
     </div>
@@ -691,7 +741,7 @@
     <!-- ============================================================ -->
     <!-- SCRIPT PRINCIPAL DO MÓDULO                                   -->
     <!-- ============================================================ -->
-    <script type="module" src="js/main.js?v=20261006-ui-polish-1"></script>
-    <script src="../shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+    <script type="module" src="js/main.js?v=20261007-cart-quantity-4"></script>
+    <script src="./shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
 </body>
 </html>

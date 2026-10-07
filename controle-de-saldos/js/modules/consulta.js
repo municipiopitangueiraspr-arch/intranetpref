@@ -2642,8 +2642,10 @@ export class Consulta {
         <div class="ata-card-body">
           <div class="ata-fornecedor">
             <i class="fas fa-building" aria-hidden="true"></i>
-            <span class="ata-card-fornecedor-nome">${fornecedorDestacado}</span>
-            ${ata.fornecedor?.cnpj ? `<span class="ata-card-cnpj">CNPJ ${this.formatarCnpj(ata.fornecedor.cnpj)}</span>` : ""}
+            <div class="ata-fornecedor-dados">
+              <span class="ata-card-fornecedor-nome">${fornecedorDestacado}</span>
+              ${ata.fornecedor?.cnpj ? `<span class="ata-card-cnpj">CNPJ ${this.formatarCnpj(ata.fornecedor.cnpj)}</span>` : ""}
+            </div>
           </div>
           <div class="ata-card-details">
             ${

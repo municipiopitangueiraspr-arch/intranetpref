@@ -1,18 +1,23 @@
 // ============================================
 // shared/js/supabase.js
-// Configuração do Supabase - Centralizada
+// Cliente único e persistente da autenticação da Intranet
 // ============================================
-
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-// Configuração do Supabase
 const SUPABASE_URL = "https://qgkjnzcqjhhqdgxmvtew.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_gbXPIpkbYvf3YKITplkjpg_eKrPHhYw";
 
-// Criar e exportar o cliente Supabase
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// A storageKey explícita garante que todas as páginas da Intranet, inclusive
+// módulos em subpastas, leiam exatamente a mesma sessão persistida.
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storageKey: "pitangueiras-intranet-auth",
+  },
+});
 
-// Exportar também as configurações para uso em outros lugares
 export const SUPABASE_CONFIG = {
   url: SUPABASE_URL,
   anonKey: SUPABASE_ANON_KEY,

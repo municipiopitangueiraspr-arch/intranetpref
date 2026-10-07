@@ -9,7 +9,7 @@ import { UI } from "./modules/ui.js";
 import { Consulta } from "./modules/consulta.js?v=20261006-ui-polish-1";
 import { Gestao } from "./modules/gestao.js";
 import { Cadastro } from "./modules/cadastro.js";
-import { Pedidos } from "./modules/pedidos.js";
+import { Pedidos } from "./modules/pedidos.js?v=20261006-pedidos-kanban-3";
 import { Aditivos } from "./modules/aditivos.js";
 // ============================================================
 // CORREÇÃO: Importar módulo Dashboard
@@ -21,7 +21,7 @@ import { Dashboard } from "./modules/dashboard.js";
 // O módulo é renderizado em #carrinhoContent e ativado via
 // sistema.ativarTab("carrinho").
 // ============================================================
-import { Carrinho } from "./modules/carrinho.js";
+import { Carrinho } from "./modules/carrinho.js?v=20261007-cart-fullwidth-1";
 // ============================================================
 // NOVO: Importar módulo Relatórios (Fase 1 — 6 relatórios)
 // O módulo é renderizado em #relatoriosContent e ativado via
@@ -38,7 +38,7 @@ import { SaaSExperience } from "./modules/saas-experience.js";
 // ============================================================
 // Layout compartilhado da intranet (sidebar + topbar)
 // ============================================================
-import { initLayout } from "../../shared/js/layout.js";
+import { initLayout } from "../../shared/js/layout.js?v=20261006-avatar-app-drawer-2";
 // ============================================================
 // REMOVIDAS: Importações de Orgaos e Usuarios
 // Agora gerenciados pelo módulo Core (core/orgaos/ e core/usuarios/)

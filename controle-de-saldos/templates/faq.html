@@ -1,54 +1,359 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#092d4f">
-<meta name="description" content="Manual interativo para consulta de atas, carrinho, pedidos, aprovação e entregas.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230A5C36'/%3E%3Cpath d='M16 19h32v8H16zm0 13h24v8H16zm0 13h18v8H16z' fill='white'/%3E%3C/svg%3E">
-<title>Manual de Atas, Saldos e Pedidos</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173b59">
+  <meta name="description" content="Central de ajuda da Gestão de Atas, Saldos e Pedidos: visão geral, consulta, relatórios, carrinho, pedidos e aprovações.">
+  <title>Central de Ajuda · Gestão de Atas</title>
+  <script src="../shared/js/acessibilidade-intranet.js?v=20261006-faq-theme-2" defer></script>
+  <link rel="stylesheet" href="../shared/css/all.min.css?v=20261006-fontawesome-local-1">
+  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261006-faq-theme-2">
+  <link rel="stylesheet" href="../css/atas-saldos-pedidos-redesign.css?v=20261006-faq-theme-2">
+  <style>
+    :root {
+      color-scheme: light;
+      --faq-ink: #173b59;
+      --faq-ink-2: #244965;
+      --faq-blue: #0b72b5;
+      --faq-blue-dark: #07558d;
+      --faq-teal: #0b7c72;
+      --faq-muted: #637b8d;
+      --faq-line: #dce7ed;
+      --faq-surface: #ffffff;
+      --faq-bg: #f3f7fa;
+      --faq-shadow: 0 14px 38px rgba(23, 59, 89, .09);
+      --faq-radius: 18px;
+    }
 
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+    body {
+      margin: 0;
+      padding: 0 !important;
+      min-width: 320px;
+      background: var(--faq-bg);
+      color: var(--faq-ink);
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.55;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .faq-progress-track { position: fixed; z-index: 10000; inset: 0 0 auto; height: 3px; background: transparent; }
+    .faq-progress { width: 0; height: 100%; background: linear-gradient(90deg, #47c5bb, #69baf0); transition: width .12s linear; }
+    .faq-page { width: min(1160px, calc(100% - 40px)); margin: 0 auto !important; padding: 20px 0 48px; }
+    .faq-topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+    .faq-brand { display: inline-flex; align-items: center; gap: 11px; color: var(--faq-ink); text-decoration: none; }
+    .faq-brand-mark { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 13px; color: #fff; background: linear-gradient(145deg, #0b72b5, #0b7c72); box-shadow: 0 8px 18px rgba(11, 114, 181, .2); font-size: 1.05rem; }
+    .faq-brand-copy { display: grid; line-height: 1.18; }
+    .faq-brand-copy strong { font-size: .86rem; font-weight: 900; letter-spacing: -.01em; }
+    .faq-brand-copy span { margin-top: 4px; color: var(--faq-muted); font-size: .68rem; font-weight: 700; }
+    .faq-print {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 13px;
+      border: 1px solid #cbdce6; border-radius: 11px; color: #31566d; background: #fff; font-size: .76rem; font-weight: 800; cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .faq-print:hover { transform: translateY(-1px); border-color: #91bbd2; background: #f5fbfe; box-shadow: 0 6px 15px rgba(23, 59, 89, .08); }
+    .faq-print:focus-visible, .faq-chip:focus-visible, .faq-jump:focus-visible, .faq-search:focus-visible, .faq-question summary:focus-visible { outline: 3px solid rgba(11, 114, 181, .35); outline-offset: 3px; }
 
-<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../../shared/css/intranet-global.css?v=20261004-unified-5">
-  <link rel="stylesheet" href="../css/atas-saldos-pedidos-redesign.css?v=20261006-drive-fixes-1">
+    .faq-hero {
+      position: relative; overflow: hidden; padding: clamp(28px, 5vw, 54px); border: 1px solid #153c5b; border-radius: 24px;
+      color: #fff; background: linear-gradient(122deg, #14334f 0%, #174d76 57%, #0b72b5 100%); box-shadow: 0 20px 46px rgba(17, 54, 84, .18);
+    }
+    .faq-hero::before, .faq-hero::after { position: absolute; content: ""; pointer-events: none; border: 1px solid rgba(255,255,255,.16); border-radius: 50%; }
+    .faq-hero::before { width: 360px; height: 360px; right: -70px; top: -205px; box-shadow: 0 0 0 34px rgba(255,255,255,.035), 0 0 0 68px rgba(255,255,255,.025); }
+    .faq-hero::after { width: 220px; height: 220px; right: 125px; bottom: -175px; background: rgba(255,255,255,.035); }
+    .faq-hero-content { position: relative; z-index: 1; max-width: 760px; }
+    .faq-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 13px; color: #bfe9ff; font-size: .68rem; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
+    .faq-eyebrow i { color: #71e0d4; }
+    .faq-hero h1 { max-width: 720px; margin: 0; color: #fff !important; font-size: clamp(1.8rem, 4.3vw, 3rem); font-weight: 900; letter-spacing: -.045em; line-height: 1.08; }
+    .faq-hero p { max-width: 650px; margin: 14px 0 0; color: #e2f1fa; font-size: clamp(.88rem, 1.7vw, 1.02rem); line-height: 1.65; }
+    .faq-hero-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .faq-hero-meta span { display: inline-flex; align-items: center; gap: 7px; min-height: 29px; padding: 5px 10px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; color: #f2f9fd; background: rgba(255,255,255,.09); font-size: .67rem; font-weight: 750; }
+
+    .faq-explore { margin: 24px 0 22px; }
+    .faq-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 0 0 12px; }
+    .faq-section-heading h2 { margin: 0; color: var(--faq-ink); font-size: 1rem; font-weight: 900; letter-spacing: -.02em; }
+    .faq-section-heading p { margin: 0; color: var(--faq-muted); font-size: .72rem; }
+    .faq-jumps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+    .faq-jump {
+      display: flex; min-height: 92px; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 13px;
+      border: 1px solid var(--faq-line); border-radius: 14px; color: var(--faq-ink); background: #fff; text-align: left; text-decoration: none;
+      box-shadow: 0 4px 12px rgba(23, 59, 89, .035); transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .faq-jump:hover { transform: translateY(-3px); border-color: #9bc8dc; box-shadow: 0 11px 22px rgba(23, 59, 89, .09); }
+    .faq-jump-icon { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 10px; color: var(--faq-blue); background: #eaf5fb; font-size: .81rem; }
+    .faq-jump:nth-child(3n+2) .faq-jump-icon { color: var(--faq-teal); background: #e7f7f3; }
+    .faq-jump span:last-child { font-size: .72rem; font-weight: 850; line-height: 1.2; }
+
+    .faq-tools { position: sticky; z-index: 20; top: 0; margin: 20px 0 18px; padding: 12px; border: 1px solid #d5e3eb; border-radius: 16px; background: rgba(255,255,255,.95); box-shadow: 0 8px 20px rgba(23, 59, 89, .07); backdrop-filter: blur(12px); }
+    .faq-search-row { display: flex; align-items: center; gap: 10px; }
+    .faq-search-icon { flex: 0 0 auto; margin-left: 4px; color: var(--faq-blue); }
+    .faq-search { width: 100%; min-width: 0; height: 39px; padding: 0 8px; border: 0; outline: 0; color: var(--faq-ink); background: transparent; font-size: .82rem; }
+    .faq-search::placeholder { color: #8297a5; }
+    .faq-count { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; color: #31566d; background: #edf4f8; font-size: .65rem; font-weight: 850; white-space: nowrap; }
+    .faq-filters { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .faq-chip { min-height: 30px; padding: 5px 10px; border: 1px solid transparent; border-radius: 999px; color: #60798a; background: #f3f7f9; font-size: .67rem; font-weight: 800; cursor: pointer; transition: color .16s ease, background .16s ease, border-color .16s ease, transform .16s ease; }
+    .faq-chip:hover { transform: translateY(-1px); color: var(--faq-blue-dark); background: #eaf4fa; }
+    .faq-chip[aria-pressed="true"] { border-color: #b8d9e8; color: #075e98; background: #e8f4fa; box-shadow: inset 0 0 0 1px rgba(11,114,181,.04); }
+
+    .faq-content { display: grid; gap: 14px; }
+    .faq-module { scroll-margin-top: 170px; padding: clamp(17px, 3vw, 24px); border: 1px solid var(--faq-line); border-radius: var(--faq-radius); background: var(--faq-surface); box-shadow: var(--faq-shadow); }
+    .faq-module[hidden], .faq-question[hidden], .faq-empty[hidden] { display: none !important; }
+    .faq-module-heading { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; padding-bottom: 13px; border-bottom: 1px solid #e8eff3; }
+    .faq-module-icon { display: grid; width: 39px; height: 39px; flex: 0 0 39px; place-items: center; border: 1px solid #d3e8f2; border-radius: 12px; color: var(--faq-blue); background: #edf7fb; font-size: .96rem; }
+    .faq-module:nth-child(even) .faq-module-icon { border-color: #cce9e2; color: var(--faq-teal); background: #edf9f5; }
+    .faq-module-heading h2 { margin: 0; color: var(--faq-ink); font-size: .98rem; font-weight: 900; letter-spacing: -.02em; }
+    .faq-module-heading p { margin: 3px 0 0; color: var(--faq-muted); font-size: .7rem; }
+    .faq-question { overflow: hidden; border: 1px solid #e3ebf0; border-radius: 12px; background: #fff; transition: border-color .16s ease, background .16s ease; }
+    .faq-question + .faq-question { margin-top: 8px; }
+    .faq-question[open] { border-color: #bed9e6; background: #fbfdfe; }
+    .faq-question summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 52px; padding: 12px 14px; color: #244965; font-size: .78rem; font-weight: 850; cursor: pointer; list-style: none; }
+    .faq-question summary::-webkit-details-marker { display: none; }
+    .faq-question summary::after { content: "+"; display: grid; width: 24px; height: 24px; flex: 0 0 24px; place-items: center; border-radius: 8px; color: var(--faq-blue); background: #edf6fa; font-size: 1rem; font-weight: 700; transition: transform .18s ease, color .18s ease, background .18s ease; }
+    .faq-question[open] summary::after { content: "−"; transform: rotate(180deg); color: #fff; background: var(--faq-blue); }
+    .faq-answer { padding: 0 15px 14px; color: #5d7485; font-size: .75rem; line-height: 1.65; }
+    .faq-answer p { margin: 0; }
+    .faq-answer p + p { margin-top: 8px; }
+    .faq-answer strong { color: #244965; }
+    .faq-answer ul { margin: 7px 0 0; padding-left: 20px; }
+    .faq-answer li + li { margin-top: 4px; }
+    .faq-empty { margin: 0; padding: 28px 16px; border: 1px dashed #b9cbd6; border-radius: 15px; color: var(--faq-muted); background: #fff; text-align: center; }
+    .faq-empty i { display: block; margin-bottom: 8px; color: var(--faq-blue); font-size: 1.25rem; }
+    .faq-empty strong { display: block; color: var(--faq-ink); font-size: .85rem; }
+    .faq-empty span { display: block; margin-top: 4px; font-size: .72rem; }
+    .faq-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; padding: 12px 2px 0; color: #728899; font-size: .66rem; }
+    .faq-footer i { margin-right: 5px; color: var(--faq-teal); }
+
+    @media (max-width: 920px) {
+      .faq-jumps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .faq-tools { top: 0; }
+    }
+    @media (max-width: 600px) {
+      .faq-page { width: min(100% - 24px, 1160px); padding: 12px 0 30px; }
+      .faq-topbar { margin-bottom: 12px; }
+      .faq-brand-mark { width: 38px; height: 38px; }
+      .faq-brand-copy strong { font-size: .77rem; }
+      .faq-brand-copy span { font-size: .62rem; }
+      .faq-print { min-width: 40px; width: 40px; padding: 0; font-size: 0; }
+      .faq-print-label { display: none; }
+      .faq-print i { font-size: .85rem; }
+      .faq-hero { border-radius: 19px; }
+      .faq-section-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
+      .faq-jumps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .faq-jump { min-height: 78px; padding: 10px; }
+      .faq-tools { margin-top: 15px; padding: 9px; }
+      .faq-search-row { gap: 6px; }
+      .faq-search { height: 36px; font-size: .76rem; }
+      .faq-count { padding: 4px 7px; font-size: .59rem; }
+      .faq-filters { gap: 5px; }
+      .faq-chip { min-height: 28px; padding: 4px 8px; font-size: .62rem; }
+      .faq-module { padding: 15px 12px; }
+      .faq-module-heading h2 { font-size: .9rem; }
+      .faq-question summary { min-height: 48px; padding: 11px; font-size: .73rem; }
+      .faq-answer { padding: 0 12px 12px; font-size: .71rem; }
+      .faq-footer { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+    @media print {
+      body { background: #fff; }
+      .faq-page { width: 100%; padding: 0; }
+      .faq-progress-track, .faq-print, .faq-tools, .faq-explore { display: none !important; }
+      .faq-hero { margin-bottom: 14px; padding: 18px; color: #fff !important; box-shadow: none; print-color-adjust: exact; }
+      .faq-hero h1, .faq-hero p { color: #fff !important; }
+      .faq-module { break-inside: avoid; padding: 12px; box-shadow: none; }
+      .faq-question { break-inside: avoid; }
+      .faq-question summary::after { display: none; }
+      .faq-footer { margin-top: 8px; }
+    }
+  </style>
+  <link rel="stylesheet" href="faq-theme.css?v=20261006-consistent-3">
 </head>
 <body data-intranet-module="atas" data-intranet-page="controle-de-saldos-templates-faq">
-<div class="app" data-intranet-scope="controle-de-saldos-templates-faq">
-<header class="topbar"><div class="brand"><button class="icon-btn" id="menuBtn" aria-label="Abrir menu" type="button">☰</button><div class="brand-mark"><span></span></div><span>Manual de Atas</span></div><div class="progress" aria-label="Progresso"><i id="progressBar"></i></div><div class="top-actions"><button class="icon-btn" id="printBtn" title="Imprimir" type="button">⤓</button></div></header>
-<div class="layout"><aside class="sidebar" id="sidebar"><h3>Comece por aqui</h3><nav class="nav" id="nav"><button data-target="inicio" class="active" type="button">⌂ <span>Visão geral</span><span class="num">01</span></button><button data-target="consulta" type="button">⌕ <span>Consultar atas</span><span class="num">02</span></button><button data-target="carrinho" type="button">🛒 <span>Carrinho</span><span class="num">03</span></button><button data-target="pedido" type="button">✓ <span>Finalizar pedido</span><span class="num">04</span></button><button data-target="aprovacao" type="button">◉ <span>Aprovação</span><span class="num">05</span></button><button data-target="entregas" type="button">▣ <span>Entregas</span><span class="num">06</span></button><button data-target="secretarias" type="button">✦ <span>Exemplos</span><span class="num">07</span></button><button data-target="licitacao" type="button">▥ <span>Visão da licitação</span><span class="num">08</span></button><button data-target="faq" type="button">? <span>Dúvidas rápidas</span><span class="num">09</span></button></nav><div class="side-tip"><strong>Dica rápida</strong><br>Use a busca para encontrar qualquer assunto do manual, como “retirar item”, “saldo” ou “fracionar entrega”.</div></aside><div class="backdrop" id="backdrop"></div>
-<main class="main" id="main">
-<section class="hero reveal" id="inicio" data-title="Visão geral"><div class="eyebrow">Manual rápido · Atas, Saldos e Pedidos</div><h1>Do saldo disponível ao pedido entregue.</h1><p>Um guia visual para você consultar atas, escolher itens, enviar pedidos para aprovação e acompanhar cada etapa sem precisar ligar para a licitação.</p><div class="hero-actions"><button class="btn btn-primary" data-go="consulta" type="button">Começar pelo passo a passo →</button><button class="btn btn-soft" data-go="secretarias" type="button">Ver exemplos por secretaria</button></div></section>
-<div class="search-wrap"><span class="search-icon">⌕</span><input id="search" placeholder="Busque no manual: saldo, carrinho, carne, aprovação..." autocomplete="off" aria-label="Busque no manual: saldo, carrinho, carne, aprovação..."></div><div class="chips" id="chips"><button class="chip active" data-filter="all" type="button">Todos</button><button class="chip" data-filter="consulta" type="button">Consulta</button><button class="chip" data-filter="pedido" type="button">Pedidos</button><button class="chip" data-filter="aprovacao" type="button">Aprovação</button><button class="chip" data-filter="entregas" type="button">Entregas</button><button class="chip" data-filter="secretarias" type="button">Exemplos</button></div>
-<section class="section" id="boas-vindas" data-title="Como usar o manual"><div class="section-head"><div><div class="section-kicker">Antes de começar</div><h2>Como usar este manual</h2></div><p>Leitura em 5 minutos</p></div><div class="grid grid-3"><div class="card role"><div class="role-icon">⌕</div><h3>1. Consulte</h3><p>Encontre a ata por número, fornecedor, item, órgão, categoria ou vigência. O saldo aparece antes de você montar qualquer pedido.</p></div><div class="card role blue"><div class="role-icon">🛒</div><h3>2. Monte</h3><p>Adicione o que precisa ao carrinho, revise quantidades e informe o local de entrega de cada grupo de itens.</p></div><div class="card role amber"><div class="role-icon">✓</div><h3>3. Acompanhe</h3><p>Envie para aprovação, leia as observações da secretária e acompanhe o pedido até a entrega.</p></div></div><div class="callout"><strong>Quem faz o quê?</strong><p>O solicitante monta e acompanha. A secretária da pasta aprova, rejeita ou pede ajustes. A licitação administra atas, saldos, fornecedores e relatórios.</p></div></section>
-<section class="section" id="perfis" data-title="Perfis e responsabilidades"><div class="section-head"><div><div class="section-kicker">Primeiro, entenda os papéis</div><h2>Cada pessoa decide no momento certo</h2></div></div><div class="grid grid-3"><div class="card role blue"><div class="role-icon">👩‍🍳</div><h3>Solicitante</h3><p>Consulta, escolhe os itens, monta o pedido, informa a entrega e acompanha o status.</p></div><div class="card role amber"><div class="role-icon">👩‍💼</div><h3>Secretária</h3><p>Analisa os pedidos da sua secretaria. Pode aprovar, rejeitar ou devolver com observações e ajustes.</p></div><div class="card role"><div class="role-icon">⚖</div><h3>Licitação</h3><p>Atualiza atas, aditivos e saldos; acompanha consumo, vencimentos, fornecedores e divergências.</p></div></div></section>
-<section class="section" id="consulta" data-title="Consultar atas"><div class="section-head"><div><div class="section-kicker">Passo 01 · Consulta</div><h2>Como encontrar uma ata?</h2><p>Comece sempre pela informação que você já tem.</p></div></div><div class="mock-side-by-side"><div class="mock"><div class="mock-top">☷ &nbsp; Consulta de Atas <span class="intranet-style-824dd7298a">🔔 3</span></div><div class="mock-body"><div class="mock-grid"><div class="mini-kpi"><small>Total</small><strong>124</strong></div><div class="mini-kpi"><small>30 dias</small><strong class="intranet-style-e0b2f59302">8</strong></div><div class="mini-kpi"><small>60 dias</small><strong>14</strong></div><div class="mini-kpi alert"><small>Alertas</small><strong>5</strong></div></div><div class="mock-search">⌕ &nbsp; ata, pregão, fornecedor, item ou CNPJ...</div><div class="mock-row"><div class="mock-row-head"><span>Ata 113/2025</span><span class="tag">ATIVA</span></div><div class="mock-note">Eletrodomésticos · Vigência até 19/11/2026</div><div class="mock-note"><b class="intranet-style-0f90a4976a">Saldo: R$ 649,76</b> · 1 item disponível</div></div><div class="mock-row amber"><div class="mock-row-head"><span>Ata 96/2025</span><span class="tag amber">SALDO BAIXO</span></div><div class="mock-note">Cooktop: 1 UN disponível · Bicicleta: esgotada</div></div></div></div><div class="card"><h3>Você pode filtrar por:</h3><div class="steps"><div class="step"><div class="step-no">⌕</div><div><h4>Busca global</h4><p>Número da ata, pregão, processo, objeto, fornecedor, CNPJ, categoria ou descrição do item.</p></div></div><div class="step"><div class="step-no">◈</div><div><h4>Órgão, status e categoria</h4><p>Refine por secretaria/órgão, ata ativa, próxima, vencida ou categoria cadastrada.</p></div></div><div class="step"><div class="step-no">◷</div><div><h4>Vigência</h4><p>Veja as vigentes hoje, vencendo em X dias, vencidas ou ainda não iniciadas.</p></div></div><div class="step"><div class="step-no">$</div><div><h4>Saldo e ordenação</h4><p>Marque com saldo, saldo baixo ou zerado. Ordene por vencimento, valor, fornecedor ou maior saldo.</p></div></div></div></div></div><div class="callout warning"><strong>Como interpretar o saldo?</strong><p>O saldo da ata pode existir no total, mas um item específico pode estar zerado. Confira a linha do item antes de adicionar. Exemplo real: na Ata 96/2025, o cooktop tem 1 unidade disponível, enquanto a bicicleta está com saldo zero.</p></div><div class="grid grid-2"><div class="card scenario"><span class="label">Exemplo · Saúde</span><h3>“Preciso de um micro-ondas para a UBS”</h3><p>Busque “microondas” ou a descrição do item. Na Ata 111/2025, o sistema mostra 1 unidade disponível, R$ 700,00 de saldo e vigência até 20/02/2027.</p></div><div class="card scenario"><span class="label">Exemplo · Cultura</span><h3>“Preciso de material para a fachada do evento”</h3><p>Filtre por categoria ou pesquise “ACM”. A Ata 93/2025 mostra saldo por item: 17 m² de ACM, 25 m² de letras caixa e 92 m² de lona.</p></div></div></section>
-<section class="section" id="carrinho" data-title="Carrinho"><div class="section-head"><div><div class="section-kicker">Passo 02 · Carrinho</div><h2>Como adicionar e retirar itens?</h2><p>O carrinho guarda suas escolhas enquanto você navega.</p></div></div><div class="grid grid-2"><div class="card"><div class="mock"><div class="mock-top">🛒 Meu Carrinho <span class="tag intranet-style-824dd7298a">3 itens</span></div><div class="mock-body"><div class="mock-row"><div class="mock-row-head"><span>Ata 113/2025</span><span>R$ 649,76</span></div><div class="mock-note">1x Fogão industrial 4 bocas <button class="btn btn-outline intranet-style-573a365eab" type="button">Retirar</button></div></div><div class="mock-row"><div class="mock-row-head"><span>Ata 93/2025</span><span>R$ 4.682,00</span></div><div class="mock-note">17 m² ACM + 25 m² letras caixa</div></div><div class="intranet-style-901f7d371d">Total <span class="intranet-style-0f90a4976a">R$ 5.331,76</span></div></div></div></div><div class="card"><h3>Passo a passo</h3><div class="steps"><div class="step"><div class="step-no">+</div><div><h4>Adicionar</h4><p>Na linha do item, confira saldo e preço e toque em <b>Adicionar</b>. O contador do carrinho aumenta.</p></div></div><div class="step"><div class="step-no">↔</div><div><h4>Alterar quantidade</h4><p>Abra “Meu Carrinho” ou “Ver carrinho completo” para ajustar a quantidade respeitando o saldo.</p></div></div><div class="step"><div class="step-no">−</div><div><h4>Retirar um item</h4><p>Toque em <b>Retirar</b> na linha do item. Isso remove somente aquele item, sem apagar os demais.</p></div></div><div class="step"><div class="step-no">⌫</div><div><h4>Limpar tudo</h4><p>Use <b>Limpar</b> quando quiser começar de novo. O sistema pede confirmação para evitar perda acidental.</p></div></div></div></div></div><div class="callout"><strong>Uma mesma compra pode usar várias atas.</strong><p>O sistema separa automaticamente os itens por ata e fornecedor na hora de gerar os pedidos. Você não precisa montar tudo em telas diferentes.</p></div></section>
-<section class="section" id="pedido" data-title="Finalizar pedido"><div class="section-head"><div><div class="section-kicker">Passo 03 · Finalização</div><h2>Como transformar o carrinho em pedido?</h2><p>Antes de enviar, confira quantidade, destino e resumo.</p></div></div><div class="grid grid-2"><div class="card"><div class="mock"><div class="mock-top">✓ Finalizar Pedido</div><div class="mock-body"><div class="mock-row"><div class="mock-row-head"><span>Ata 113/2025</span><span class="tag">1 item</span></div><div class="mock-note">Fogão industrial · 1 UN · R$ 649,76</div><label class="intranet-style-764bc2c9af">Local de entrega</label><div class="mock-search">Escola Municipal José Bonifácio</div></div><div class="mock-row"><div class="mock-row-head"><span>Ata 93/2025</span><span class="tag">2 itens</span></div><div class="mock-note">ACM e letras caixa · R$ 8.756,75</div><label class="intranet-style-764bc2c9af">Local de entrega</label><div class="mock-search">Centro Cultural Municipal</div></div><button class="btn btn-primary intranet-style-071fd51e21" type="button">Enviar para aprovação</button></div></div></div><div class="card"><h3>Checklist antes de enviar</h3><div class="steps"><div class="step"><div class="step-no">1</div><div><h4>Quantidade</h4><p>Não ultrapasse o saldo exibido na ata. Se precisar de mais, fale com a secretária/licitação antes de enviar.</p></div></div><div class="step"><div class="step-no">2</div><div><h4>Local de entrega</h4><p>Escolha o destino correto. Cada ata/fornecedor pode ter um local diferente.</p></div></div><div class="step"><div class="step-no">3</div><div><h4>Resumo</h4><p>Confira valor, itens e agrupamento por ata. Depois toque em <b>Enviar para aprovação</b>.</p></div></div></div></div></div><div class="callout warning"><strong>Depois do envio, o pedido fica aguardando aprovação.</strong><p>Você ainda poderá acompanhar o pedido, mas alterações importantes passam pela análise da secretária responsável pela sua pasta.</p></div></section>
-<section class="section" id="aprovacao" data-title="Aprovação"><div class="section-head"><div><div class="section-kicker">Passo 04 · Aprovação</div><h2>O que acontece depois que envio?</h2><p>O pedido chega à fila da secretária.</p></div></div><div class="grid grid-2"><div class="card"><div class="mock"><div class="mock-top">✓ Fila de Aprovação <span class="intranet-style-824dd7298a">3 pendentes</span></div><div class="mock-body"><div class="mock-row amber"><div class="mock-row-head"><span>PED-2026-0042</span><span class="tag amber">AGUARDANDO</span></div><div class="mock-note">Nutrição · R$ 3.842,00 · 4 itens</div><div class="mock-note">Solicitante: Ana Souza · enviado hoje</div></div><div class="mock-row"><div class="mock-row-head"><span>PED-2026-0041</span><span class="tag">APROVADO</span></div><div class="mock-note">Esporte · R$ 1.280,00</div></div><div class="mock-row red"><div class="mock-row-head"><span>PED-2026-0038</span><span class="tag red">REJEITADO</span></div><div class="mock-note">Saúde · saldo insuficiente</div></div></div></div></div><div class="card"><h3>A secretária pode:</h3><div class="steps"><div class="step"><div class="step-no">✓</div><div><h4>Aprovar</h4><p>Confirma o pedido e libera para o próximo passo da licitação/entrega.</p></div></div><div class="step"><div class="step-no">✎</div><div><h4>Observar e ajustar</h4><p>Pode registrar uma observação, corrigir itens/quantidades conforme a regra do sistema e devolver o pedido para entendimento.</p></div></div><div class="step"><div class="step-no">×</div><div><h4>Rejeitar</h4><p>Informa o motivo, por exemplo: saldo insuficiente, local incorreto ou necessidade de priorização.</p></div></div></div></div></div><div class="callout"><strong>Onde eu vejo a resposta?</strong><p>Abra “Pedidos” e filtre por status: Aguardando Aprovação, Aprovados, Rejeitados ou Todos. O solicitante também pode acompanhar seus próprios pedidos.</p></div></section>
-<section class="section" id="nutricao" data-title="Exemplo Nutrição"><div class="section-head"><div><div class="section-kicker">Exemplo completo · Nutrição</div><h2>Carne, hortifrúti e verduras</h2><p>Uma situação cotidiana, do pedido à entrega fracionada.</p></div></div><div class="card scenario"><div class="example-head"><div class="avatar">🍲</div><div><h3>Ana, nutricionista da alimentação escolar</h3><p>Secretaria de Educação · precisa abastecer as cozinhas da rede</p></div></div><div class="timeline"><div class="step"><div class="step-no">1</div><div><h4>Ana consulta</h4><p>Busca as atas por “carne”, “hortifrúti” e “verduras”. Confere o saldo disponível e escolhe quantidades para o próximo ciclo.</p></div></div><div class="step"><div class="step-no">2</div><div><h4>Ana monta e envia</h4><p>Adiciona carne bovina, banana, tomate e folhas ao carrinho. Informa “Cozinha Central” como local de entrega e envia para aprovação.</p></div></div><div class="step"><div class="step-no">3</div><div><h4>A secretária analisa</h4><p>Percebe que a quantidade de verduras está acima do planejamento semanal. Registra: “Reduzir folhas para 80 kg e manter a carne. Entrega na terça-feira.”</p></div></div><div class="step"><div class="step-no">4</div><div><h4>Ana revisa</h4><p>Abre o pedido, lê a observação, confirma o ajuste e reenviará. Se discordar, pode conversar internamente antes da decisão final.</p></div></div><div class="step"><div class="step-no">5</div><div><h4>Pedido aprovado</h4><p>O pedido segue com status aprovado. Ana acompanha cada item e recebe o histórico das alterações.</p></div></div></div></div><div class="table-wrap card intranet-style-f977fa761c"><table class="table" aria-label="Tabela de dados"><thead><tr><th>Grupo</th><th>Quantidade inicial</th><th>Decisão</th><th>Entrega</th></tr></thead><tbody><tr><td>Carne bovina</td><td>180 kg</td><td><span class="tag">Mantida</span></td><td>Terça · Cozinha Central</td></tr><tr><td>Hortifrúti</td><td>120 kg</td><td><span class="tag">Mantido</span></td><td>Terça · Cozinha Central</td></tr><tr><td>Verduras</td><td>110 kg</td><td><span class="tag amber">Ajustada para 80 kg</span></td><td>Terça · Cozinha Central</td></tr></tbody></table></div></section>
-<section class="section" id="entregas" data-title="Entregas"><div class="section-head"><div><div class="section-kicker">Passo 05 · Entrega</div><h2>Como fracionar uma entrega?</h2><p>Ideal para itens perecíveis ou entregas em lotes.</p></div></div><div class="grid grid-2"><div class="card"><div class="mock"><div class="mock-top">▣ Fracionar Entregas</div><div class="mock-body"><div class="mock-row"><div class="mock-row-head"><span>Carne bovina · 180 kg</span><span class="tag">Aprovado</span></div><div class="mock-note">Entrega 1 · 90 kg · 02/10 · Cozinha Central</div><div class="mock-note">Entrega 2 · 90 kg · 09/10 · Cozinha Central</div></div><div class="mock-row"><div class="mock-row-head"><span>Hortifrúti · 120 kg</span><span class="tag amber">Fracionado</span></div><div class="mock-note">Entrega 1 · 60 kg · 02/10</div><div class="mock-note">Entrega 2 · 60 kg · 09/10</div></div><button class="btn btn-soft intranet-style-071fd51e21" type="button">+ Adicionar cronograma</button></div></div></div><div class="card"><h3>Quando usar?</h3><div class="steps"><div class="step"><div class="step-no">1</div><div><h4>Perecíveis</h4><p>Carne, hortifrúti e verduras podem chegar em mais de uma data para preservar qualidade e espaço de armazenamento.</p></div></div><div class="step"><div class="step-no">2</div><div><h4>Grandes volumes</h4><p>Materiais de evento, fachada ou equipamentos podem ser entregues em lotes conforme a obra avança.</p></div></div><div class="step"><div class="step-no">3</div><div><h4>Registrar cada parte</h4><p>Informe quantidade, data e local de cada entrega. O total do cronograma precisa fechar com o total aprovado.</p></div></div></div></div></div><div class="callout warning"><strong>Atenção ao total</strong><p>Se o pedido tem 180 kg aprovados, os cronogramas somados precisam resultar em 180 kg. Se precisar diminuir ou aumentar, volte para a secretária antes de salvar.</p></div></section>
-<section class="section" id="secretarias" data-title="Exemplos por secretaria"><div class="section-head"><div><div class="section-kicker">Exemplos para o dia a dia</div><h2>Cada secretaria encontra seu caso aqui</h2><p>Use estes cenários como referência na primeira compra.</p></div></div><div class="grid grid-2"><div class="card scenario"><span class="label">Esporte</span><h3>Materiais para treino</h3><p>Busque bolas, cones ou redes; compare saldo por item; monte o carrinho para o ginásio e envie para aprovação da Secretaria de Esporte.</p><div class="status-line"><span class="dot"></span> Dica: confira se a ata está ativa antes de escolher.</div></div><div class="card scenario"><span class="label">Assistência Social</span><h3>Itens para atendimento</h3><p>Pesquise cestas, itens de apoio ou materiais de oficina. Separe locais de entrega quando CRAS diferentes receberem os itens.</p><div class="status-line"><span class="dot amber"></span> Dica: um pedido pode ter destinos distintos por ata.</div></div><div class="card scenario"><span class="label">Saúde</span><h3>Equipamentos para UBS</h3><p>Busque pelo nome do equipamento, confira fabricante/fornecedor, quantidade contratada e saldo. Adicione somente o que está disponível.</p><div class="status-line"><span class="dot"></span> Dica: o saldo do item é mais importante que o saldo total da ata.</div></div><div class="card scenario"><span class="label">Cultura</span><h3>Materiais para eventos</h3><p>Use filtros de categoria e vigência para localizar ACM, letras caixa, lonas ou outros materiais. Acompanhe o consumo por item.</p><div class="status-line"><span class="dot amber"></span> Dica: veja atas próximas ao vencimento antes de planejar o evento.</div></div></div></section>
-<section class="section" id="licitacao" data-title="Visão da licitação"><div class="section-head"><div><div class="section-kicker">Para quem administra</div><h2>Licitação acompanha sem responder tudo no telefone</h2><p>O sistema concentra o que antes estava espalhado.</p></div></div><div class="grid grid-2"><div class="card"><div class="mock"><div class="mock-top">▥ Painel Administrativo</div><div class="mock-body"><div class="mock-grid"><div class="mini-kpi"><small>Valor contratado</small><strong>R$ 2,45 mi</strong></div><div class="mini-kpi"><small>Saldo disponível</small><strong>R$ 820 mil</strong></div><div class="mini-kpi alert"><small>Alertas críticos</small><strong>5</strong></div><div class="mini-kpi"><small>Pedidos pendentes</small><strong>12</strong></div></div><div class="mock-row amber"><div class="mock-row-head"><span>Atas próximas do vencimento</span><span>8</span></div><div class="mock-note">Acesse a consulta já filtrada em 30, 60 ou 90 dias.</div></div><div class="mock-row"><div class="mock-row-head"><span>Relatórios</span><span class="tag">Exportar</span></div><div class="mock-note">Consumo por órgão, categoria, fornecedor, item, status e auditoria.</div></div></div></div></div><div class="card"><h3>O que a gestão consegue antecipar?</h3><div class="steps"><div class="step"><div class="step-no">◷</div><div><h4>Atas vencendo</h4><p>Planejar novas contratações antes de interromper o abastecimento.</p></div></div><div class="step"><div class="step-no">▥</div><div><h4>Consumo</h4><p>Identificar quais órgãos, categorias e itens estão consumindo mais.</p></div></div><div class="step"><div class="step-no">!</div><div><h4>Riscos</h4><p>Encontrar saldo baixo, pedidos pendentes, divergências e itens esgotados.</p></div></div><div class="step"><div class="step-no">↓</div><div><h4>Relatórios</h4><p>Exportar visões para reunião, auditoria e tomada de decisão.</p></div></div></div></div></div></section>
-<section class="section" id="faq" data-title="Dúvidas rápidas"><div class="section-head"><div><div class="section-kicker">FAQ</div><h2>Dúvidas que aparecem no primeiro acesso</h2><p>Toque para abrir a resposta.</p></div></div><div id="faqList"><div class="faq"><button type="button">Posso consultar sem ligar para a licitação?<span>＋</span></button><div class="answer">Sim. A consulta mostra ata, item, fornecedor, vigência, quantidade disponível, valor unitário e saldo. Ligue apenas quando houver uma situação que realmente precise de análise.</div></div><div class="faq"><button type="button">O que significa “saldo zerado”?<span>＋</span></button><div class="answer">Significa que aquele item não tem quantidade disponível para novo pedido. Outra linha da mesma ata pode ainda ter saldo; confira item por item.</div></div><div class="faq"><button type="button">Posso retirar um item depois de adicionar?<span>＋</span></button><div class="answer">Sim. Abra o carrinho e use “Retirar” na linha do item. Para apagar tudo, use “Limpar” e confirme.</div></div><div class="faq"><button type="button">Minha secretária pode alterar o pedido?<span>＋</span></button><div class="answer">Ela pode analisar, registrar observações e, conforme o fluxo configurado, ajustar itens/quantidades ou devolver o pedido para revisão. Leia sempre o motivo ou a observação registrada.</div></div><div class="faq"><button type="button">O que faço se meu pedido for rejeitado?<span>＋</span></button><div class="answer">Abra o pedido, leia o motivo e corrija o que for necessário: quantidade, local, ata ou planejamento. Depois monte um novo pedido ou siga a orientação da secretaria.</div></div><div class="faq"><button type="button">Como entrego carne e verduras em dias diferentes?<span>＋</span></button><div class="answer">Depois da aprovação, use o fracionamento de entregas. Crie cronogramas com quantidade, data e local. A soma dos lotes deve ser igual ao total aprovado.</div></div><div class="faq"><button type="button">Posso misturar itens de várias atas?<span>＋</span></button><div class="answer">Sim. O carrinho aceita itens de várias atas, mas gera o agrupamento correto por ata e fornecedor na finalização.</div></div><div class="faq"><button type="button">Como encontro um pedido antigo?<span>＋</span></button><div class="answer">Em “Pedidos”, use os filtros de status, número do pedido, número da ata, fornecedor e datas de criação/aprovação. Depois exporte se precisar compartilhar.</div></div></div><div class="callout"><strong>Se ainda ficou com dúvida</strong><p>Antes de chamar o suporte, pesquise uma palavra-chave neste manual e confira o status do pedido. Na maioria dos casos, a resposta está na ata, no carrinho ou na fila de aprovação.</p></div></section>
-<footer class="footer"><span>Manual de Atas, Saldos e Pedidos · versão de orientação</span><span>Feito para reduzir retrabalho e acelerar compras</span></footer>
-</main></div><div class="toast" id="toast">Seção aberta</div>
-</div>
-<script>
-(function(){
- const sidebar=document.getElementById('sidebar'),backdrop=document.getElementById('backdrop'),menuBtn=document.getElementById('menuBtn'),main=document.getElementById('main'),toast=document.getElementById('toast'),search=document.getElementById('search'),progress=document.getElementById('progressBar');
- const sections=[...document.querySelectorAll('.section')];
- function closeMenu(){sidebar.classList.remove('open');backdrop.style.display='none'}
- menuBtn.addEventListener('click',()=>{sidebar.classList.toggle('open');backdrop.style.display=sidebar.classList.contains('open')?'block':'none'});backdrop.addEventListener('click',closeMenu);
- function go(id){const el=document.getElementById(id);if(!el)return;el.scrollIntoView({behavior:'smooth',block:'start'});closeMenu();toast.textContent='Abrindo: '+(el.dataset.title||'seção');toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800)}
- document.querySelectorAll('[data-go],[data-target]').forEach(el=>el.addEventListener('click',()=>go(el.dataset.go||el.dataset.target)));
- document.querySelectorAll('.faq button').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open')));
- document.getElementById('printBtn').addEventListener('click',()=>window.print());
- document.querySelectorAll('.chip').forEach(chip=>chip.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));chip.classList.add('active');const f=chip.dataset.filter;document.querySelectorAll('.section').forEach(s=>{s.classList.toggle('hidden',f!=='all'&&!s.id.includes(f)&&s.id!=='boas-vindas'&&s.id!=='perfis'&&s.id!=='faq')});}));
- search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();document.querySelectorAll('.faq,.card,.callout').forEach(el=>{el.classList.toggle('hidden',q && !el.textContent.toLowerCase().includes(q))});if(q){sections.forEach(s=>{if(s.textContent.toLowerCase().includes(q))s.classList.remove('hidden')})}});
- const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.target===e.target.id));const idx=Math.max(0,sections.indexOf(e.target));progress.style.width=Math.min(100,((idx+1)/sections.length)*100)+'%';}}),{rootMargin:'-20% 0px -65% 0px',threshold:0});sections.forEach(s=>io.observe(s));
- document.querySelectorAll('.hero,.section').forEach((el,i)=>{el.style.animationDelay=(i*.04)+'s'});
-})();
-</script>
+  <div class="faq-progress-track" aria-hidden="true"><div class="faq-progress" id="faqProgress"></div></div>
+  <main class="faq-page" id="faqPage">
+    <header class="faq-topbar">
+      <a class="faq-brand" href="#inicio" aria-label="Central de Ajuda, início">
+        <span class="faq-brand-mark" aria-hidden="true"><i class="fas fa-life-ring"></i></span>
+        <span class="faq-brand-copy"><strong>Central de Ajuda</strong><span>Gestão de Atas, Saldos e Pedidos</span></span>
+      </a>
+      <button class="faq-print" id="faqPrint" type="button" title="Imprimir ou salvar o guia em PDF"><i class="fas fa-print" aria-hidden="true"></i><span class="faq-print-label">Imprimir guia</span></button>
+    </header>
+
+    <section class="faq-hero" id="inicio" aria-labelledby="faqTitle">
+      <div class="faq-hero-content">
+        <span class="faq-eyebrow"><i class="fas fa-compass" aria-hidden="true"></i> Ajuda rápida · interface atual</span>
+        <h1 id="faqTitle">Encontre o próximo passo. Sem perder tempo.</h1>
+        <p>Respostas diretas para consultar atas, acompanhar indicadores, analisar relatórios e conduzir pedidos — do carrinho à aprovação.</p>
+        <div class="faq-hero-meta">
+          <span><i class="fas fa-layer-group" aria-hidden="true"></i> 6 módulos</span>
+          <span><i class="fas fa-magnifying-glass" aria-hidden="true"></i> Busca por assunto</span>
+          <span><i class="fas fa-universal-access" aria-hidden="true"></i> Navegação acessível</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-explore" aria-labelledby="faqExploreTitle">
+      <div class="faq-section-heading">
+        <h2 id="faqExploreTitle">Ir direto ao módulo</h2>
+        <p>Escolha uma área para ver suas perguntas frequentes.</p>
+      </div>
+      <nav class="faq-jumps" aria-label="Navegação rápida por módulo">
+        <a class="faq-jump" href="#sec-visao-geral" data-faq-jump="visao-geral"><span class="faq-jump-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span><span>Visão Geral</span></a>
+        <a class="faq-jump" href="#sec-consulta" data-faq-jump="consulta"><span class="faq-jump-icon"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></span><span>Consulta</span></a>
+        <a class="faq-jump" href="#sec-relatorios" data-faq-jump="relatorios"><span class="faq-jump-icon"><i class="fas fa-chart-pie" aria-hidden="true"></i></span><span>Relatórios</span></a>
+        <a class="faq-jump" href="#sec-carrinho" data-faq-jump="carrinho"><span class="faq-jump-icon"><i class="fas fa-cart-shopping" aria-hidden="true"></i></span><span>Meu Carrinho</span></a>
+        <a class="faq-jump" href="#sec-pedidos" data-faq-jump="pedidos"><span class="faq-jump-icon"><i class="fas fa-file-invoice" aria-hidden="true"></i></span><span>Pedidos</span></a>
+        <a class="faq-jump" href="#sec-aprovacoes" data-faq-jump="aprovacoes"><span class="faq-jump-icon"><i class="fas fa-clipboard-check" aria-hidden="true"></i></span><span>Aprovações</span></a>
+      </nav>
+    </section>
+
+    <section class="faq-tools" aria-label="Pesquisar e filtrar perguntas">
+      <div class="faq-search-row">
+        <i class="fas fa-search faq-search-icon" aria-hidden="true"></i>
+        <input class="faq-search" id="faqSearch" type="search" autocomplete="off" placeholder="Busque um assunto: saldo, favorito, entrega, aprovação…" aria-label="Buscar nas perguntas frequentes">
+        <span class="faq-count" id="faqCount" aria-live="polite">Carregando perguntas</span>
+      </div>
+      <div class="faq-filters" role="group" aria-label="Filtrar perguntas por módulo">
+        <button class="faq-chip" type="button" data-faq-filter="todos" aria-pressed="true">Todos</button>
+        <button class="faq-chip" type="button" data-faq-filter="visao-geral" aria-pressed="false">Visão Geral</button>
+        <button class="faq-chip" type="button" data-faq-filter="consulta" aria-pressed="false">Consulta</button>
+        <button class="faq-chip" type="button" data-faq-filter="relatorios" aria-pressed="false">Relatórios</button>
+        <button class="faq-chip" type="button" data-faq-filter="carrinho" aria-pressed="false">Meu Carrinho</button>
+        <button class="faq-chip" type="button" data-faq-filter="pedidos" aria-pressed="false">Pedidos</button>
+        <button class="faq-chip" type="button" data-faq-filter="aprovacoes" aria-pressed="false">Aprovações</button>
+      </div>
+    </section>
+
+    <div class="faq-content" id="faqContent">
+      <section class="faq-module" id="sec-visao-geral" data-faq-section="visao-geral" aria-labelledby="title-visao-geral">
+        <div class="faq-module-heading"><span class="faq-module-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span><div><h2 id="title-visao-geral">Visão Geral</h2><p>Indicadores, prioridades e atalhos para acompanhar a operação.</p></div></div>
+        <details class="faq-question" data-faq-item><summary>O que mostram os indicadores da Visão Geral?</summary><div class="faq-answer"><p>O painel reúne quatro indicadores: <strong>Atas Ativas</strong>, <strong>Valor Contratado</strong>, <strong>Saldo Utilizável</strong> e <strong>Alertas</strong>. Os cartões podem levar diretamente à consulta correspondente. Os blocos abaixo destacam informações como decisões pendentes, pedidos recentes, risco de saldo, execução orçamentária e próximos vencimentos.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como filtro o período ou exporto o painel?</summary><div class="faq-answer"><p>Use o filtro de período no topo para visualizar <strong>Hoje</strong>, <strong>Últimos 7 dias</strong> ou <strong>Últimos 30 dias</strong>. Quando disponíveis no seu acesso, os botões <strong>PDF</strong> e <strong>Excel</strong> exportam o painel e seus dados.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Por que o painel muda conforme meu perfil?</summary><div class="faq-answer"><p>Alguns blocos são próprios de quem solicita pedidos e outros de quem pode aprová-los. A Visão Geral adapta a apresentação ao perfil e às permissões da conta; por isso, duas pessoas podem ver prioridades diferentes.</p></div></details>
+      </section>
+
+      <section class="faq-module" id="sec-consulta" data-faq-section="consulta" aria-labelledby="title-consulta">
+        <div class="faq-module-heading"><span class="faq-module-icon"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></span><div><h2 id="title-consulta">Consulta</h2><p>Localize atas, confira vigência e saldo por item antes de montar um pedido.</p></div></div>
+        <details class="faq-question" data-faq-item><summary>Como encontro uma ata ou um item?</summary><div class="faq-answer"><p>A <strong>Busca Global</strong> procura por número da ata, pregão, processo, objeto, fornecedor, CNPJ, categoria e descrição do item. Refine a lista com fornecedor, órgão, status, categoria, vigência, faixa de valor e saldo; também é possível ordenar os resultados.</p><p>Os cartões de resumo para 30, 60 e 90 dias aplicam rapidamente filtros de vencimento.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como verifico a validade e o saldo disponível?</summary><div class="faq-answer"><p>Confira o status e a data de vigência da ata. Depois, abra os itens: o saldo pode variar de um item para outro, mesmo quando a ata ainda tem saldo total. Use os filtros de saldo para localizar itens disponíveis, com saldo baixo ou zerado.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como salvo uma ata para consultar depois?</summary><div class="faq-answer"><p>Use a estrela do cartão/linha da ata para marcá-la. O botão <strong>Minhas Favoritas</strong> mostra as atas salvas para a sua conta; <strong>Mostrar Todas</strong> retorna à lista completa. Favoritar não altera a ata nem reserva saldo.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como começo um pedido a partir da Consulta?</summary><div class="faq-answer"><p>Abra a ata, confira o item, o saldo e a quantidade desejada e adicione o item ao carrinho. Você pode continuar consultando outras atas antes de revisar o carrinho.</p></div></details>
+      </section>
+
+      <section class="faq-module" id="sec-relatorios" data-faq-section="relatorios" aria-labelledby="title-relatorios">
+        <div class="faq-module-heading"><span class="faq-module-icon"><i class="fas fa-chart-pie" aria-hidden="true"></i></span><div><h2 id="title-relatorios">Relatórios</h2><p>Análises por tema, com filtros e acesso rápido aos relatórios favoritos.</p></div></div>
+        <details class="faq-question" data-faq-item><summary>Como escolho e executo um relatório?</summary><div class="faq-answer"><p>Os relatórios estão organizados por assunto. Abra o cartão da análise desejada, preencha os filtros que ela oferece e use <strong>Aplicar</strong> para atualizar os indicadores, o gráfico e a tabela de resultados.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como adiciono um relatório aos favoritos?</summary><div class="faq-answer"><p>Toque na estrela do cartão. O relatório fica salvo para a sua conta e pode ser encontrado na aba <strong>Relatórios Favoritos</strong>. Toque novamente na estrela para removê-lo. A lista de favoritos é independente das atas favoritas da Consulta.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Posso baixar ou imprimir os resultados?</summary><div class="faq-answer"><p>Quando disponíveis para a análise aberta, use os controles de exportação <strong>CSV</strong> ou <strong>PDF</strong>. Os filtros aplicados ajudam a delimitar o resultado que será consultado ou exportado.</p></div></details>
+      </section>
+
+      <section class="faq-module" id="sec-carrinho" data-faq-section="carrinho" aria-labelledby="title-carrinho">
+        <div class="faq-module-heading"><span class="faq-module-icon"><i class="fas fa-cart-shopping" aria-hidden="true"></i></span><div><h2 id="title-carrinho">Meu Carrinho</h2><p>Revise quantidades e destinos antes de gerar os pedidos.</p></div></div>
+        <details class="faq-question" data-faq-item><summary>Posso juntar itens de mais de uma ata?</summary><div class="faq-answer"><p>Sim. O carrinho reúne os itens que você adicionou. Na finalização, o sistema agrupa os itens por ata e cria os pedidos correspondentes; por isso, uma única finalização pode gerar mais de um pedido.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como altero ou retiro um item?</summary><div class="faq-answer"><p>Revise os itens no carrinho, ajuste a quantidade dentro do saldo disponível ou remova apenas o item que não deseja. Confira o total antes de confirmar a criação dos pedidos.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Por que preciso informar o local de entrega?</summary><div class="faq-answer"><p>O local é associado ao pedido gerado para aquela ata. Se a finalização envolver mais de uma ata ou destino, confira cada bloco e preencha o local correspondente antes de confirmar.</p></div></details>
+      </section>
+
+      <section class="faq-module" id="sec-pedidos" data-faq-section="pedidos" aria-labelledby="title-pedidos">
+        <div class="faq-module-heading"><span class="faq-module-icon"><i class="fas fa-file-invoice" aria-hidden="true"></i></span><div><h2 id="title-pedidos">Pedidos</h2><p>Acompanhe cada solicitação e consulte seus detalhes e movimentações.</p></div></div>
+        <details class="faq-question" data-faq-item><summary>Onde acompanho o andamento de um pedido?</summary><div class="faq-answer"><p>Abra <strong>Pedidos</strong> para localizar a solicitação. Expanda o pedido para ver os itens, o local de entrega, os detalhes e a timeline de movimentações. O status apresentado indica a etapa atual.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como descubro por que um pedido foi reprovado?</summary><div class="faq-answer"><p>Abra os detalhes do pedido e consulte o motivo associado ao status de reprovação. Se a solicitação tiver sido devolvida para ajuste, o solicitante pode usar <strong>Responder ao ajuste</strong> quando essa ação estiver disponível.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como acompanho a entrega de um pedido aprovado?</summary><div class="faq-answer"><p>Os detalhes de pedidos aprovados podem apresentar cronograma, recebimentos e ações de acompanhamento conforme o status e as permissões da sua conta. Consulte a timeline para ver as movimentações já registradas.</p></div></details>
+      </section>
+
+      <section class="faq-module" id="sec-aprovacoes" data-faq-section="aprovacoes" aria-labelledby="title-aprovacoes">
+        <div class="faq-module-heading"><span class="faq-module-icon"><i class="fas fa-clipboard-check" aria-hidden="true"></i></span><div><h2 id="title-aprovacoes">Aprovações</h2><p>Decisões pendentes, análise dos itens e registro do resultado.</p></div></div>
+        <details class="faq-question" data-faq-item><summary>Quem consegue aprovar ou reprovar pedidos?</summary><div class="faq-answer"><p>As ações de aprovação são exibidas para os perfis autorizados, como <strong>ADMIN</strong> e <strong>SECRETARIO</strong>. A fila e os pedidos disponíveis respeitam o perfil e as permissões da conta.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>Como faço uma análise antes de decidir?</summary><div class="faq-answer"><p>Abra o pedido, confira os itens, quantidades, valores e local de entrega e, quando necessário, consulte a timeline. Em seguida, use <strong>Aprovar</strong> ou <strong>Rejeitar</strong>; a reprovação permite consultar o motivo registrado.</p></div></details>
+        <details class="faq-question" data-faq-item><summary>O que acontece se o pedido voltar para ajuste?</summary><div class="faq-answer"><p>O solicitante verá o status de devolução e, quando a opção estiver disponível nos detalhes, poderá selecionar <strong>Responder ao ajuste</strong> para dar continuidade à análise.</p></div></details>
+      </section>
+    </div>
+
+    <p class="faq-empty" id="faqEmpty" hidden><i class="fas fa-magnifying-glass" aria-hidden="true"></i><strong>Nenhuma resposta encontrada</strong><span>Tente outro termo ou escolha “Todos” para limpar o filtro por módulo.</span></p>
+    <footer class="faq-footer"><span><i class="fas fa-circle-check" aria-hidden="true"></i>Conteúdo organizado conforme os módulos atuais.</span><span>Use a busca ou filtre por módulo para encontrar uma resposta.</span></footer>
+  </main>
+
+  <script>
+    (() => {
+      const search = document.getElementById("faqSearch");
+      const count = document.getElementById("faqCount");
+      const empty = document.getElementById("faqEmpty");
+      const sections = [...document.querySelectorAll("[data-faq-section]")];
+      const questions = [...document.querySelectorAll("[data-faq-item]")];
+      const chips = [...document.querySelectorAll("[data-faq-filter]")];
+      let activeFilter = "todos";
+
+      const normalize = (value) => String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("pt-BR");
+
+      function applyFilters() {
+        const query = normalize(search.value.trim());
+        let visible = 0;
+        sections.forEach((section) => {
+          const categoryMatches = activeFilter === "todos" || section.dataset.faqSection === activeFilter;
+          const sectionQuestions = [...section.querySelectorAll("[data-faq-item]")];
+          let visibleInSection = 0;
+          sectionQuestions.forEach((question) => {
+            const textMatches = !query || normalize(question.textContent).includes(query);
+            const show = categoryMatches && textMatches;
+            question.hidden = !show;
+            if (show) {
+              visible += 1;
+              visibleInSection += 1;
+              if (query) question.open = true;
+            }
+          });
+          section.hidden = visibleInSection === 0;
+        });
+        count.textContent = `${visible} ${visible === 1 ? "resposta" : "respostas"}`;
+        empty.hidden = visible !== 0;
+      }
+
+      chips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+          activeFilter = chip.dataset.faqFilter || "todos";
+          chips.forEach((item) => item.setAttribute("aria-pressed", String(item === chip)));
+          applyFilters();
+        });
+      });
+      search.addEventListener("input", applyFilters);
+      document.querySelectorAll("[data-faq-jump]").forEach((link) => {
+        link.addEventListener("click", () => {
+          const filter = link.dataset.faqJump;
+          activeFilter = filter;
+          chips.forEach((chip) => chip.setAttribute("aria-pressed", String(chip.dataset.faqFilter === filter)));
+          applyFilters();
+        });
+      });
+
+      const progress = document.getElementById("faqProgress");
+      const updateProgress = () => {
+        const root = document.documentElement;
+        const scrollable = root.scrollHeight - root.clientHeight;
+        const percent = scrollable > 0 ? (root.scrollTop / scrollable) * 100 : 0;
+        progress.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+      };
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener("resize", updateProgress);
+
+      document.getElementById("faqPrint").addEventListener("click", () => window.print());
+      let openedBeforePrint = [];
+      window.addEventListener("beforeprint", () => {
+        openedBeforePrint = questions.map((question) => question.open);
+        questions.forEach((question) => { question.open = true; });
+      });
+      window.addEventListener("afterprint", () => {
+        questions.forEach((question, index) => { question.open = Boolean(openedBeforePrint[index]); });
+      });
+
+      applyFilters();
+      updateProgress();
+    })();
+  </script>
 </body>
 </html>

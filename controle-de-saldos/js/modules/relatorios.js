@@ -1,6 +1,6 @@
 // ============================================================
 // controle-de-saldos/js/modules/relatorios.js
-// Módulo de Relatórios — 26 relatórios completos
+// Módulo de Relatórios — 29 relatórios completos
 // ------------------------------------------------------------
 // ESTRUTURA:
 //
@@ -84,6 +84,9 @@ export class Relatorios {
     this.graficoAtual = null; // instância Chart.js ativa
     this._carregando = false;
     this._htmlCarregado = false;
+    this.favoritosRelatorios = new Set();
+    this._favoritosCarregados = false;
+    this.filtroIndice = "favoritos";
 
     // ============================================================
     // DEFINIÇÃO DOS GRUPOS
@@ -122,7 +125,7 @@ export class Relatorios {
     ];
 
     // ============================================================
-    // METADADOS DOS 26 RELATÓRIOS
+    // METADADOS DOS RELATÓRIOS
     // ------------------------------------------------------------
     // Tipos possíveis:
     //   · "periodo"             → data início + fim
@@ -147,10 +150,10 @@ export class Relatorios {
         grupo: "visao_geral",
       },
       {
-        id: "execucao_por_ata",
-        titulo: "Execução por Ata",
+        id: "saude_atas",
+        titulo: "Saúde das Atas",
         descricao:
-          "Percentual executado (consumido) do valor contratado de cada ata.",
+          "Visão consolidada de contratação, consumo, saldo, vigência e execução por ata.",
         icone: "fa-tasks",
         tipo: "periodo",
         grupo: "visao_geral",
@@ -165,11 +168,11 @@ export class Relatorios {
         grupo: "visao_geral",
       },
       {
-        id: "saldo_consolidado_ata",
-        titulo: "Saldo Consolidado por Ata",
+        id: "riscos_pendencias",
+        titulo: "Central de Riscos e Pendências",
         descricao:
-          "Visão executiva do saldo atual, contratado, consumido e % de execução de cada ata.",
-        icone: "fa-wallet",
+          "Prioriza pedidos parados, devoluções, vencimentos e valores que exigem ação.",
+        icone: "fa-shield-heart",
         tipo: "snapshot",
         grupo: "visao_geral",
       },
@@ -234,6 +237,33 @@ export class Relatorios {
 
       // ----------------------------------------------------------
       // GRUPO · PEDIDOS
+      {
+        id: "pedidos_parados_etapa",
+        titulo: "Pedidos Parados por Etapa",
+        descricao:
+          "Pedidos sem avanço há X dias, agrupados pela etapa que exige a próxima ação.",
+        icone: "fa-road-barrier",
+        tipo: "dias",
+        grupo: "pedidos",
+      },
+      {
+        id: "devolucoes_ajuste",
+        titulo: "Devoluções para Ajuste",
+        descricao:
+          "Acompanha motivos, tempo de resposta e pedidos que aguardam correção.",
+        icone: "fa-rotate-left",
+        tipo: "periodo",
+        grupo: "pedidos",
+      },
+      {
+        id: "risco_abastecimento",
+        titulo: "Risco de Abastecimento",
+        descricao:
+          "Compara o saldo atual com a demanda pendente para antecipar rupturas.",
+        icone: "fa-triangle-exclamation",
+        tipo: "snapshot",
+        grupo: "pedidos",
+      },
       // ----------------------------------------------------------
       {
         id: "pedidos_por_status",
@@ -436,6 +466,7 @@ export class Relatorios {
     if (this.relatorioAtivo) {
       await this._renderizarRelatorio(this.relatorioAtivo);
     } else {
+      await this._carregarFavoritos();
       this.renderizarIndice();
     }
 
@@ -451,6 +482,29 @@ export class Relatorios {
     container.dataset.relatoriosInit = "1";
 
     container.addEventListener("click", async (e) => {
+      const filtroIndice = e.target.closest("[data-relatorios-filtro]");
+      if (filtroIndice) {
+        e.preventDefault();
+        this.filtroIndice = filtroIndice.dataset.relatoriosFiltro === "favoritos" ? "favoritos" : "todos";
+        this.renderizarIndice();
+        return;
+      }
+
+      const botaoFavorito = e.target.closest("[data-action='alternar-favorito']");
+      if (botaoFavorito) {
+        e.preventDefault();
+        e.stopPropagation();
+        await this.alternarFavorito(botaoFavorito.dataset.relatorio, botaoFavorito);
+        return;
+      }
+
+      const botaoAbrir = e.target.closest("[data-action='abrir-relatorio']");
+      if (botaoAbrir) {
+        e.preventDefault();
+        await this.abrirRelatorio(botaoAbrir.dataset.relatorio);
+        return;
+      }
+
       const card = e.target.closest(".relatorio-card");
       if (card) {
         const id = card.dataset.relatorio;
@@ -509,33 +563,49 @@ export class Relatorios {
     if (blocoIndice) blocoIndice.style.display = "block";
     if (!grid) return;
 
+    const somenteFavoritos = this.filtroIndice === "favoritos";
+    const relatoriosVisiveis = this.RELATORIOS.filter(
+      (relatorio) => !somenteFavoritos || this.favoritosRelatorios.has(relatorio.id),
+    );
+    const tituloIndice = document.getElementById("relatoriosIndiceTitulo");
+    if (tituloIndice) {
+      tituloIndice.textContent = somenteFavoritos ? "Relatórios Favoritos" : "Todos os relatórios";
+    }
+    const dicaIndice = document.getElementById("relatoriosContextHint");
+    if (dicaIndice) {
+      dicaIndice.innerHTML = somenteFavoritos
+        ? '<i class="fas fa-star"></i> Acesse rapidamente as análises que você salvou'
+        : '<i class="fas fa-hand-pointer"></i> Escolha uma análise para começar';
+    }
+    const quantidadeFavoritos = document.getElementById("relatoriosFavoritosCount");
+    if (quantidadeFavoritos) quantidadeFavoritos.textContent = this.favoritosRelatorios.size;
+    document.querySelectorAll("[data-relatorios-filtro]").forEach((botao) => {
+      const ativo = botao.dataset.relatoriosFiltro === this.filtroIndice;
+      botao.classList.toggle("ativo", ativo);
+      botao.setAttribute("aria-selected", String(ativo));
+    });
+
+    if (somenteFavoritos && relatoriosVisiveis.length === 0) {
+      grid.innerHTML = `
+        <div class="relatorios-favoritos-vazio">
+          <i class="fas fa-star" aria-hidden="true"></i>
+          <h3>Nenhum relatório favoritado ainda</h3>
+          <p>Explore todos os relatórios e use a estrela em um cartão para salvá-lo aqui.</p>
+          <button type="button" data-relatorios-filtro="todos">Ver todos os relatórios</button>
+        </div>
+      `;
+      return;
+    }
+
     const gruposHtml = this.GRUPOS.map((grupo) => {
-      const relatoriosDoGrupo = this.RELATORIOS.filter(
-        (r) => r.grupo === grupo.id,
+      const relatoriosDoGrupo = relatoriosVisiveis.filter(
+        (relatorio) => relatorio.grupo === grupo.id,
       );
 
       if (relatoriosDoGrupo.length === 0) return "";
 
       const cardsHtml = relatoriosDoGrupo
-        .map(
-          (r) => `
-          <div
-            class="relatorio-card"
-            data-relatorio="${r.id}"
-            data-grupo="${r.grupo}"
-            role="button"
-            tabindex="0"
-            aria-label="Abrir relatório: ${this._escapeHtml(r.titulo)}"
-          >
-            <div class="relatorio-card-icon">
-              <i class="fas ${r.icone}"></i>
-            </div>
-            <h3 class="relatorio-card-titulo">${this._escapeHtml(r.titulo)}</h3>
-            <p class="relatorio-card-descricao">${this._escapeHtml(r.descricao)}</p>
-            <i class="fas fa-arrow-right relatorio-card-arrow"></i>
-          </div>
-        `,
-        )
+        .map((relatorio) => this._renderizarCardRelatorio(relatorio))
         .join("");
 
       return `
@@ -560,16 +630,124 @@ export class Relatorios {
     }).join("");
 
     grid.innerHTML = gruposHtml;
+  }
 
-    grid.querySelectorAll(".relatorio-card").forEach((card) => {
-      card.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          const id = card.dataset.relatorio;
-          if (id) this.abrirRelatorio(id);
-        }
-      });
-    });
+  _renderizarCardRelatorio(relatorio) {
+    const favorito = this.favoritosRelatorios.has(relatorio.id);
+    const rotuloFavorito = favorito
+      ? `Remover dos favoritos: ${relatorio.titulo}`
+      : `Favoritar relatório: ${relatorio.titulo}`;
+    return `
+          <div
+            class="relatorio-card"
+            data-relatorio="${relatorio.id}"
+            data-grupo="${relatorio.grupo}"
+            role="group"
+            aria-label="Abrir relatório: ${this._escapeHtml(relatorio.titulo)}"
+          >
+            <div class="relatorio-card-icon">
+              <i class="fas ${relatorio.icone}"></i>
+            </div>
+            <button
+              class="btn-favorito-relatorio ${favorito ? "ativo" : ""}"
+              type="button"
+              data-action="alternar-favorito"
+              data-relatorio="${relatorio.id}"
+              aria-label="${this._escapeHtml(rotuloFavorito)}"
+              aria-pressed="${favorito}"
+              title="${this._escapeHtml(rotuloFavorito)}"
+            >
+              <i class="fas fa-star" aria-hidden="true"></i>
+            </button>
+            <h3 class="relatorio-card-titulo">${this._escapeHtml(relatorio.titulo)}</h3>
+            <p class="relatorio-card-descricao">${this._escapeHtml(relatorio.descricao)}</p>
+            <button
+              class="relatorio-card-arrow relatorio-card-open"
+              type="button"
+              data-action="abrir-relatorio"
+              data-relatorio="${relatorio.id}"
+              aria-label="Abrir relatório: ${this._escapeHtml(relatorio.titulo)}"
+            ><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+          </div>
+    `;
+  }
+
+  async _carregarFavoritos() {
+    if (this._favoritosCarregados) return;
+    const usuarioId = this.sistema.usuarioAtual?.id;
+    if (!usuarioId) {
+      this.favoritosRelatorios.clear();
+      this._favoritosCarregados = true;
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("relatorios_favoritos")
+      .select("relatorio_id")
+      .eq("usuario_id", usuarioId);
+    if (error) {
+      this._favoritosCarregados = false;
+      console.warn("Não foi possível carregar os relatórios favoritos:", error.message);
+      this.sistema.ui.mostrarToast("aviso", "Não foi possível sincronizar seus relatórios favoritos.");
+      return;
+    }
+
+    const idsDisponiveis = new Set(this.RELATORIOS.map((relatorio) => relatorio.id));
+    this.favoritosRelatorios = new Set(
+      (data || [])
+        .map((linha) => String(linha.relatorio_id))
+        .filter((id) => idsDisponiveis.has(id)),
+    );
+    this._favoritosCarregados = true;
+  }
+
+  async alternarFavorito(relatorioId, botao = null) {
+    const usuarioId = this.sistema.usuarioAtual?.id;
+    if (!usuarioId || !this.RELATORIOS.some((relatorio) => relatorio.id === relatorioId)) {
+      this.sistema.ui.mostrarToast("erro", "Não foi possível identificar o usuário ou o relatório.");
+      return;
+    }
+
+    const eraFavorito = this.favoritosRelatorios.has(relatorioId);
+    const animarEstrela = (elemento) => {
+      if (!elemento) return;
+      elemento.classList.remove("animar-favorito");
+      void elemento.offsetWidth;
+      elemento.classList.add("animar-favorito");
+      elemento.addEventListener("animationend", () => elemento.classList.remove("animar-favorito"), { once: true });
+      window.setTimeout(() => elemento.classList.remove("animar-favorito"), 700);
+    };
+    if (botao) {
+      botao.disabled = true;
+      animarEstrela(botao);
+    }
+    try {
+      const consulta = supabase.from("relatorios_favoritos");
+      const { error } = eraFavorito
+        ? await consulta.delete().eq("usuario_id", usuarioId).eq("relatorio_id", relatorioId)
+        : await consulta.insert({ usuario_id: usuarioId, relatorio_id: relatorioId });
+      if (error) throw error;
+
+      if (eraFavorito) {
+        this.favoritosRelatorios.delete(relatorioId);
+        this.sistema.ui.mostrarToast("sucesso", "Relatório removido dos favoritos.");
+      } else {
+        this.favoritosRelatorios.add(relatorioId);
+        this.sistema.ui.mostrarToast("sucesso", "Relatório adicionado aos favoritos.");
+      }
+      this._favoritosCarregados = true;
+      this.renderizarIndice();
+      const estrelaAtual = [...document.querySelectorAll("[data-action='alternar-favorito']")]
+        .find((elemento) => elemento.dataset.relatorio === relatorioId);
+      animarEstrela(estrelaAtual);
+    } catch (error) {
+      console.error("Erro ao atualizar relatório favorito:", error);
+      this.sistema.ui.mostrarToast("erro", "Não foi possível atualizar este favorito. Tente novamente.");
+      if (botao) {
+        botao.disabled = false;
+        botao.classList.remove("animar-favorito");
+      }
+    }
   }
 
   // ============================================================
@@ -683,15 +861,13 @@ export class Relatorios {
         case "atas_vencendo":
           await this._relAtasVencendo(meta);
           break;
-        case "execucao_por_ata":
+        case "saude_atas":
           await this._relExecucaoPorAta(meta);
           break;
         case "projecao_esgotamento":
           await this._relProjecaoEsgotamento(meta);
           break;
-        case "saldo_consolidado_ata":
-          await this._relSaldoConsolidadoAta(meta);
-          break;
+
 
         // -------- Consumo --------
         case "consumo_por_orgao":
@@ -714,6 +890,18 @@ export class Relatorios {
           break;
 
         // -------- Pedidos --------
+        case "riscos_pendencias":
+          await this._relRiscosPendencias(meta);
+          break;
+        case "pedidos_parados_etapa":
+          await this._relPedidosParadosEtapa(meta);
+          break;
+        case "devolucoes_ajuste":
+          await this._relDevolucoesAjuste(meta);
+          break;
+        case "risco_abastecimento":
+          await this._relRiscoAbastecimento(meta);
+          break;
         case "pedidos_por_status":
           await this._relPedidosPorStatus(meta);
           break;
@@ -2928,6 +3116,142 @@ export class Relatorios {
   }
 
   // ============================================================
+  // RELATÓRIO · CENTRAL DE RISCOS E PENDÊNCIAS
+  // ============================================================
+  async _relRiscosPendencias() {
+    const hoje = this._hoje();
+    const limite = new Date(hoje);
+    limite.setDate(limite.getDate() + 30);
+    const corte = new Date(hoje);
+    corte.setDate(corte.getDate() - 7);
+
+    const [atasRes, pedidosRes, devolucoesRes] = await Promise.all([
+      supabase.from("atas").select("id, numero_ata, data_fim_vigencia, valor_global, situacao")
+        .in("situacao", ["ATIVA", "PROXIMA"])
+        .gte("data_fim_vigencia", this._toISODate(hoje))
+        .lte("data_fim_vigencia", this._toISODate(limite)),
+      supabase.from("pedidos").select("id, numero_pedido, status_aprovacao, valor_total, created_at")
+        .in("status_aprovacao", ["AGUARDANDO_APROVACAO", "DEVOLVIDO_AJUSTE", "EM_ENTREGA"]),
+      supabase.from("pedidos_devolucoes").select("id, status, criado_em")
+        .eq("status", "AGUARDANDO_SOLICITANTE"),
+    ]);
+    if (atasRes.error) throw atasRes.error;
+    if (pedidosRes.error) throw pedidosRes.error;
+    if (devolucoesRes.error) throw devolucoesRes.error;
+
+    const linhas = [];
+    if ((atasRes.data || []).length) linhas.push({
+      prioridade: "Atenção", tipo: "Vencimento", quantidade: atasRes.data.length,
+      valor: atasRes.data.reduce((s, a) => s + (a.valor_global || 0), 0),
+      detalhe: `Ata(s) encerrando nos próximos 30 dias`, acao: "Revisar vigências"
+    });
+    const parados = (pedidosRes.data || []).filter((p) => new Date(p.created_at || 0) < corte);
+    if (parados.length) linhas.push({
+      prioridade: "Crítico", tipo: "Pedidos parados", quantidade: parados.length,
+      valor: parados.reduce((s, p) => s + (p.valor_total || 0), 0),
+      detalhe: "Pedidos sem avanço há mais de 7 dias", acao: "Abrir fila"
+    });
+    if ((devolucoesRes.data || []).length) linhas.push({
+      prioridade: "Atenção", tipo: "Ajustes pendentes", quantidade: devolucoesRes.data.length,
+      valor: 0, detalhe: "Devoluções aguardando resposta do solicitante", acao: "Acompanhar ajustes"
+    });
+    if (!linhas.length) linhas.push({ prioridade: "Estável", tipo: "Nenhuma pendência crítica", quantidade: 0, valor: 0, detalhe: "Não foram identificados riscos na janela atual", acao: "Continuar monitorando" });
+
+    this.dadosAtuais = linhas;
+    this.colunasAtuais = [
+      { key: "prioridade", label: "Prioridade", align: "center", formato: (v) => `<span class="status-badge ${v === "Crítico" ? "status-rejeitado" : v === "Atenção" ? "status-aguardando" : "status-aprovado"}">${v}</span>` },
+      { key: "tipo", label: "Risco / Pendência" },
+      { key: "quantidade", label: "Qtd.", align: "right" },
+      { key: "valor", label: "Valor envolvido", align: "right", formato: (v) => this.sistema.ui.formatarMoeda(v) },
+      { key: "detalhe", label: "Leitura gerencial" },
+      { key: "acao", label: "Próxima ação" },
+    ];
+    this._renderizarKpis([
+      { label: "Frentes de atenção", valor: linhas.filter((l) => l.prioridade !== "Estável").length, cor: "erro" },
+      { label: "Pedidos parados", valor: parados.length, cor: "aviso" },
+      { label: "Atas vencendo", valor: (atasRes.data || []).length, cor: "info" },
+      { label: "Devoluções abertas", valor: (devolucoesRes.data || []).length, cor: "sucesso" },
+    ]);
+    this._renderizarTabela(linhas, this.colunasAtuais);
+  }
+
+  // ============================================================
+  // RELATÓRIO · PEDIDOS PARADOS POR ETAPA
+  // ============================================================
+  async _relPedidosParadosEtapa() {
+    const dias = this.filtrosAtivos.dias || 7;
+    const corte = new Date(this._hoje());
+    corte.setDate(corte.getDate() - dias);
+    const { data: pedidos, error } = await supabase.from("pedidos").select(
+      "id, numero_pedido, status_aprovacao, valor_total, created_at, data_solicitacao, usuario:usuarios(nome), orgao:orgaos(nome, sigla)"
+    ).in("status_aprovacao", ["AGUARDANDO_APROVACAO", "DEVOLVIDO_AJUSTE", "EM_ENTREGA"])
+      .lt("created_at", corte.toISOString()).order("created_at", { ascending: true });
+    if (error) throw error;
+    const rotulos = { AGUARDANDO_APROVACAO: "Aguardando aprovação", DEVOLVIDO_AJUSTE: "Devolvido para ajuste", EM_ENTREGA: "Em entrega" };
+    const linhas = (pedidos || []).map((p) => ({
+      id: p.id, numero_pedido: p.numero_pedido || "N/I", etapa: rotulos[p.status_aprovacao] || p.status_aprovacao,
+      solicitante: p.usuario?.nome || "N/I", orgao: p.orgao?.sigla || p.orgao?.nome || "N/I",
+      data_base: p.data_solicitacao || p.created_at, dias_parado: Math.max(0, this._diffDias(p.data_solicitacao || p.created_at) || 0), valor_total: p.valor_total || 0,
+    })).sort((a, b) => b.dias_parado - a.dias_parado);
+    this.dadosAtuais = linhas;
+    this.colunasAtuais = [
+      { key: "numero_pedido", label: "Pedido" }, { key: "etapa", label: "Etapa" }, { key: "solicitante", label: "Solicitante" },
+      { key: "orgao", label: "Órgão", align: "center" }, { key: "dias_parado", label: "Dias parado", align: "right", formato: (v) => `<span class="${v >= 30 ? "destaque-erro" : v >= 15 ? "destaque-aviso" : "destaque-info"}">${v}</span>` },
+      { key: "valor_total", label: "Valor", align: "right", formato: (v) => this.sistema.ui.formatarMoeda(v) },
+    ];
+    const valor = linhas.reduce((s, l) => s + l.valor_total, 0);
+    this._renderizarKpis([{ label: "Pedidos parados", valor: linhas.length, cor: "erro" }, { label: "Valor parado", valor: this.sistema.ui.formatarMoeda(valor), cor: "aviso" }, { label: "Maior espera", valor: `${linhas[0]?.dias_parado || 0} dias`, cor: "erro" }, { label: "Etapas afetadas", valor: new Set(linhas.map((l) => l.etapa)).size, cor: "info" }]);
+    this._renderizarTabela(linhas, this.colunasAtuais);
+  }
+
+  // ============================================================
+  // RELATÓRIO · DEVOLUÇÕES PARA AJUSTE
+  // ============================================================
+  async _relDevolucoesAjuste() {
+    const inicio = this.filtrosAtivos.dataInicio;
+    const fim = this.filtrosAtivos.dataFim;
+    let query = supabase.from("pedidos_devolucoes").select("id, pedido_id, justificativa, status, criado_em, respondido_em, pedido:pedidos(numero_pedido, valor_total, usuario:usuarios(nome), orgao:orgaos(nome, sigla))").order("criado_em", { ascending: false });
+    if (inicio) query = query.gte("criado_em", `${inicio}T00:00:00`);
+    if (fim) query = query.lte("criado_em", `${fim}T23:59:59`);
+    const { data, error } = await query;
+    if (error) throw error;
+    const status = { AGUARDANDO_SOLICITANTE: "Aguardando solicitante", ACEITA: "Aceita", CONTESTADA: "Contestada", EXPIRADA: "Expirada" };
+    const linhas = (data || []).map((d) => ({
+      id: d.id, pedido: d.pedido?.numero_pedido || `#${d.pedido_id}`, solicitante: d.pedido?.usuario?.nome || "N/I",
+      orgao: d.pedido?.orgao?.sigla || d.pedido?.orgao?.nome || "N/I", situacao: status[d.status] || d.status,
+      criado_em: d.criado_em, tempo_resposta: d.respondido_em ? `${Math.max(0, Math.round((new Date(d.respondido_em).getTime() - new Date(d.criado_em).getTime()) / (1000 * 60 * 60 * 24)))} dias` : "Em aberto",
+      valor_total: d.pedido?.valor_total || 0, motivo: d.justificativa || "—",
+    }));
+    this.dadosAtuais = linhas;
+    this.colunasAtuais = [{ key: "pedido", label: "Pedido" }, { key: "solicitante", label: "Solicitante" }, { key: "orgao", label: "Órgão", align: "center" }, { key: "situacao", label: "Situação", align: "center" }, { key: "criado_em", label: "Devolvido em", formato: (v) => this.sistema.ui.formatarData(v) }, { key: "tempo_resposta", label: "Resposta" }, { key: "motivo", label: "Motivo", formato: (v) => this._escapeHtml((v || "").slice(0, 70)) }];
+    const abertas = linhas.filter((l) => l.situacao === "Aguardando solicitante").length;
+    this._renderizarKpis([{ label: "Devoluções no período", valor: linhas.length, cor: "info" }, { label: "Aguardando resposta", valor: abertas, cor: "aviso" }, { label: "Respondidas", valor: linhas.length - abertas, cor: "sucesso" }, { label: "Valor envolvido", valor: this.sistema.ui.formatarMoeda(linhas.reduce((s, l) => s + l.valor_total, 0)), cor: "erro" }]);
+    this._renderizarTabela(linhas, this.colunasAtuais);
+  }
+
+  // ============================================================
+  // RELATÓRIO · RISCO DE ABASTECIMENTO
+  // ============================================================
+  async _relRiscoAbastecimento() {
+    const [itensRes, pedidosRes] = await Promise.all([
+      supabase.from("itens_ata").select("id, item_numero, descricao, unidade_medida, saldo_quantidade, valor_unitario, ata:atas(numero_ata, situacao)").in("ata.situacao", ["ATIVA", "PROXIMA"]),
+      supabase.from("itens_pedido").select("item_ata_id, quantidade_solicitada, pedido:pedidos(status_aprovacao)")
+    ]);
+    if (itensRes.error) throw itensRes.error;
+    if (pedidosRes.error) throw pedidosRes.error;
+    const demanda = {};
+    (pedidosRes.data || []).forEach((i) => { if (["AGUARDANDO_APROVACAO", "DEVOLVIDO_AJUSTE"].includes(i.pedido?.status_aprovacao)) demanda[i.item_ata_id] = (demanda[i.item_ata_id] || 0) + (i.quantidade_solicitada || 0); });
+    const linhas = (itensRes.data || []).map((i) => {
+      const saldo = i.saldo_quantidade || 0, pendente = demanda[i.id] || 0, cobertura = saldo - pendente;
+      return { id: i.id, ata: i.ata?.numero_ata || "N/I", item: i.item_numero || "—", descricao: i.descricao || "—", unidade: i.unidade_medida || "UN", saldo, demanda_pendente: pendente, saldo_projetado: cobertura, risco: cobertura <= 0 ? "Ruptura" : cobertura <= saldo * .25 ? "Atenção" : "Confortável", impacto: Math.max(0, -cobertura) * (i.valor_unitario || 0) };
+    }).filter((i) => i.demanda_pendente > 0).sort((a, b) => a.saldo_projetado - b.saldo_projetado);
+    this.dadosAtuais = linhas;
+    this.colunasAtuais = [{ key: "ata", label: "Ata" }, { key: "item", label: "Item", align: "center" }, { key: "descricao", label: "Descrição", formato: (v) => this._escapeHtml((v || "").slice(0, 60)) }, { key: "saldo", label: "Saldo atual", align: "right" }, { key: "demanda_pendente", label: "Demanda pendente", align: "right" }, { key: "saldo_projetado", label: "Saldo projetado", align: "right", formato: (v) => `<span class="${v <= 0 ? "destaque-erro" : "destaque-info"}">${v}</span>` }, { key: "risco", label: "Classificação", align: "center" }, { key: "impacto", label: "Impacto", align: "right", formato: (v) => this.sistema.ui.formatarMoeda(v) }];
+    this._renderizarKpis([{ label: "Itens com demanda", valor: linhas.length, cor: "info" }, { label: "Em ruptura", valor: linhas.filter((l) => l.risco === "Ruptura").length, cor: "erro" }, { label: "Em atenção", valor: linhas.filter((l) => l.risco === "Atenção").length, cor: "aviso" }, { label: "Impacto estimado", valor: this.sistema.ui.formatarMoeda(linhas.reduce((s, l) => s + l.impacto, 0)), cor: "erro" }]);
+    this._renderizarTabela(linhas, this.colunasAtuais);
+  }
+
+  // ============================================================
   // ============================================================
   // RELATÓRIO 11 · PEDIDOS POR STATUS
   // ============================================================
@@ -2951,6 +3275,11 @@ export class Relatorios {
       AGUARDANDO_APROVACAO: "Aguardando Aprovação",
       APROVADO: "Aprovado",
       REPROVADO: "Rejeitado",
+      DEVOLVIDO_AJUSTE: "Devolvido para ajuste",
+      EM_ENTREGA: "Em entrega",
+      FINALIZADO: "Finalizado",
+      ENCERRADO: "Encerrado",
+      CANCELADO: "Cancelado",
       PEDIDO_REALIZADO: "Realizado",
     };
 
@@ -3016,6 +3345,11 @@ export class Relatorios {
       APROVADO: "#059669",
       REPROVADO: "#dc2626",
       AGUARDANDO_APROVACAO: "#d97706",
+      DEVOLVIDO_AJUSTE: "#b45309",
+      EM_ENTREGA: "#2563eb",
+      FINALIZADO: "#0f766e",
+      ENCERRADO: "#475569",
+      CANCELADO: "#64748b",
       PEDIDO_REALIZADO: "#2563eb",
     };
 
@@ -3338,6 +3672,11 @@ export class Relatorios {
       AGUARDANDO_APROVACAO: "Aguardando",
       APROVADO: "Aprovado",
       REPROVADO: "Rejeitado",
+      DEVOLVIDO_AJUSTE: "Devolvido para ajuste",
+      EM_ENTREGA: "Em entrega",
+      FINALIZADO: "Finalizado",
+      ENCERRADO: "Encerrado",
+      CANCELADO: "Cancelado",
       PEDIDO_REALIZADO: "Realizado",
     };
 
@@ -3635,7 +3974,7 @@ export class Relatorios {
     const porItem = {};
     (itensPedido || []).forEach((ip) => {
       const ped = ip.pedido;
-      if (!ped || ped.status_aprovacao !== "AGUARDANDO_APROVACAO") return;
+      if (!ped || !["AGUARDANDO_APROVACAO", "DEVOLVIDO_AJUSTE"].includes(ped.status_aprovacao)) return;
       if (!porItem[ip.item_ata_id]) porItem[ip.item_ata_id] = [];
       porItem[ip.item_ata_id].push({
         numero_pedido: ped.numero_pedido,

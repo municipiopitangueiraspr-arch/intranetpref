@@ -76,6 +76,36 @@
   </div>
 
   <!-- ============================================================ -->
+  <!-- FAIXA DE ALERTA CONTEXTUAL (NOVO)                            -->
+  <!-- ------------------------------------------------------------ -->
+  <!-- Aparece só quando há pendência real. O JS (`carregarFaixa-    -->
+  <!-- Alerta()`) decide o conteúdo conforme o perfil do usuário.    -->
+  <!--                                                              -->
+  <!-- Por padrão começa `display: none`. O JS muda pra `flex`     -->
+  <!-- se houver pelo menos um item a mostrar.                       -->
+  <!-- ============================================================ -->
+  <div
+    class="dashboard-faixa-alerta intranet-style-361fb88beb"
+    id="dashboardFaixaAlerta"
+
+  >
+    <div class="dashboard-alertas-cabecalho">
+      <div>
+        <span class="dashboard-alertas-kicker"><i class="fas fa-bolt"></i> Prioridade da secretaria</span>
+        <h2><i class="fas fa-shield-heart"></i> Atenção necessária</h2>
+        <p>Veja o que precisa de intervenção agora.</p>
+      </div>
+      <span class="dashboard-alertas-atualizacao"><i class="fas fa-clock"></i> Ações diretas</span>
+    </div>
+    <div
+      class="dashboard-faixa-alerta-conteudo"
+      id="dashboardFaixaAlertaConteudo"
+    >
+      <!-- Conteúdo dinâmico renderizado por dashboard.js -->
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
   <!-- CARDS DE INDICADORES (KPIs) - 4 CARDS                        -->
   <!-- Agora com sparkline + comparativo                            -->
   <!-- ============================================================ -->
@@ -183,28 +213,6 @@
       <div class="kpi-sparkline">
         <canvas id="sparklineAlertasCanvas" width="80" height="40"></canvas>
       </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- FAIXA DE ALERTA CONTEXTUAL (NOVO)                            -->
-  <!-- ------------------------------------------------------------ -->
-  <!-- Aparece só quando há pendência real. O JS (`carregarFaixa-    -->
-  <!-- Alerta()`) decide o conteúdo conforme o perfil do usuário.    -->
-  <!--                                                              -->
-  <!-- Por padrão começa `display: none`. O JS muda pra `flex`     -->
-  <!-- se houver pelo menos um item a mostrar.                       -->
-  <!-- ============================================================ -->
-  <div
-    class="dashboard-faixa-alerta intranet-style-361fb88beb"
-    id="dashboardFaixaAlerta"
-
-  >
-    <div
-      class="dashboard-faixa-alerta-conteudo"
-      id="dashboardFaixaAlertaConteudo"
-    >
-      <!-- Conteúdo dinâmico renderizado por dashboard.js -->
     </div>
   </div>
 

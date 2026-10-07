@@ -5,6 +5,7 @@
 // ============================================
 
 import { supabase } from "../shared/js/supabase.js";
+import { initLayout } from "../shared/js/layout.js?v=20261007-session-sso-3";
 import { OrgaosService } from "../shared/js/services/orgaos-service.js";
 import { UsuariosService } from "../shared/js/services/usuarios-service.js";
 
@@ -2251,7 +2252,7 @@ function exportarLista(formato) {
       "'": "&#39;",
     })[caractere]);
     const brasaoUrl = new URL("../brasao-pref.png", window.location.href).href;
-    const cssUrl = new URL("../shared/css/intranet-global.css?v=20261004-unified-5", window.location.href).href;
+    const cssUrl = new URL("../shared/css/intranet-global.css?v=20261005-fontawesome-local-1", window.location.href).href;
     const linhas = dados.map((a) => `<tr><td>${escaparHtml(a.tipo_sigla)}</td><td>${escaparHtml(a.numero)}/${escaparHtml(a.ano)}</td><td>${escaparHtml(a.orgao_nome)}</td><td>${escaparHtml(a.ementa)}</td><td>${escaparHtml(a.status)}</td><td>${escaparHtml(formatarData(a.data_publicacao))}</td></tr>`).join("");
     printWindow.document.write(`
       <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Atos Oficiais</title>
@@ -2497,34 +2498,12 @@ window.editarGestor = () => {};
 window.excluirGestorHandler = () => {};
 
 // ========== NAVEGAÇÃO E INICIALIZAÇÃO ==========
-function initNavCards() {
-  document.querySelectorAll(".card-nav").forEach((card) => {
-    card.addEventListener("click", () => {
-      const page = card.getAttribute("data-page");
-      mostrarPagina(page);
-    });
-  });
-}
-
 function mostrarPagina(page) {
   document.querySelectorAll(".page").forEach((p) => (p.style.display = "none"));
   const target = document.getElementById(
     `page${page.charAt(0).toUpperCase() + page.slice(1)}`,
   );
   if (target) target.style.display = "block";
-  document
-    .querySelectorAll(".card-nav")
-    .forEach((c) => c.classList.remove("active"));
-  document
-    .querySelector(`.card-nav[data-page="${page}"]`)
-    ?.classList.add("active");
-  const nomes = {
-    dashboard: "Dashboard",
-    atos: "Gestão de Atos",
-    configuracoes: "Configurações",
-  };
-  document.getElementById("painelBreadcrumbCurrent").textContent =
-    nomes[page] || page;
   if (page === "atos") carregarListaAtos();
   if (page === "configuracoes") {
     renderizarTiposAtoInline();
@@ -2557,48 +2536,64 @@ async function recarregarTudo() {
   await popularSelectOrgaos("filtroOrgao", true);
 }
 
+async function obterPerfilDaSessaoIntranet() {
+  // Ao navegar entre páginas, o Supabase pode ainda estar restaurando o
+  // token persistido no storage. Aguarda o evento inicial sem pedir login.
+  for (let tentativa = 0; tentativa < 12; tentativa += 1) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (session?.user?.id) {
+      const { data: perfil, error } = await supabase
+        .from("usuarios")
+        .select("id, uuid, nome, email, perfil, ativo, orgao_id, foto_url")
+        .eq("uuid", session.user.id)
+        .maybeSingle();
+      if (!error && perfil && perfil.ativo !== false) return perfil;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  return null;
+}
+
 async function initAuth() {
   mostrarLoading(true);
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) {
-    window.location.href = "../index.html";
-    return;
-  }
-  const { data: perfil, error } = await supabase
-    .from("usuarios")
-    .select("id, nome, perfil, email, ativo")
-    .eq("uuid", session.user.id)
-    .single();
-  if (error || !perfil || !perfil.ativo) {
-    showNotification("error", "Acesso negado", "Usuário inválido ou inativo.");
-    await supabase.auth.signOut();
-    window.location.href = "../index.html";
-    return;
-  }
-  usuarioAtual = {
-    id: perfil.id,
-    nome: perfil.nome,
-    perfil: perfil.perfil,
-    email: perfil.email,
-    uuid: session.user.id,
-  };
-  document.getElementById("topbarUserName").innerText = usuarioAtual.nome;
-  document.getElementById("topbarUserPerfil").innerText = usuarioAtual.perfil;
-  if (usuarioAtual.perfil !== "ADMIN" && usuarioAtual.perfil !== "SECRETARIO") {
-    document
-      .querySelectorAll("#novoAtoBtn, #novoAtoDashboardBtn")
-      .forEach((btn) => btn && (btn.style.display = "none"));
-  }
+  const perfilSessao = await obterPerfilDaSessaoIntranet();
+  const perfil = await initLayout({
+    supabase,
+    usuarioInicial: perfilSessao,
+    rotaIntranet: "../intranet.html",
+    brand: {
+      nome: "Atos Oficiais",
+      subtitulo: "Gestão normativa",
+      icone: "fa-file-signature",
+    },
+    iconeTitulo: "fa-file-signature",
+    titulo: "Atos Oficiais",
+    subtitulo: "Publicações, versões e transparência normativa",
+    moduloAtivo: "atos-oficiais",
+    menu: [
+      { section: "Principal", itens: [
+        { id: "atos-oficiais", rota: "painel-adm-atos-oficiais.html#dashboard", icone: "fa-gauge-high", label: "Visão geral" },
+        { id: "atos-registro", rota: "painel-adm-atos-oficiais.html#atos", icone: "fa-file-circle-plus", label: "Atos oficiais" },
+        { id: "atos-configuracoes", rota: "painel-adm-atos-oficiais.html#configuracoes", icone: "fa-sliders", label: "Configurações" },
+      ]},
+      { section: "Acesso público", itens: [
+        { id: "atos-portal", rota: "portal-atos-oficiais.html#home", icone: "fa-globe", label: "Portal público" },
+        { id: "atos-ajuda", rota: "faq-atos-oficiais.html", icone: "fa-circle-question", label: "Central de ajuda" },
+      ]},
+    ],
+    rotaVoltar: "../intranet.html",
+    textoVoltar: "Voltar à Intranet",
+    menuUsuario: { rotaPerfil: "../perfil.html", rotaAjuda: "faq-atos-oficiais.html" },
+  });
+
+  if (!perfil) return;
+  usuarioAtual = perfil;
   await recarregarTudo();
-  initNavCards();
   initConfigTabs();
   initBuscaReversaAutocomplete();
   initAnexosUpload();
-  document
-    .getElementById("logoutBtn")
-    .addEventListener("click", () => fazerLogout());
   document
     .getElementById("novoAtoBtn")
     .addEventListener("click", () => abrirAtoModal());
@@ -2618,7 +2613,12 @@ async function initAuth() {
   initUploads();
   initTags();
   setupSugestaoNumero();
-  mostrarPagina("dashboard");
+  const paginaDoHash = () => {
+    const pagina = window.location.hash.replace(/^#/, "");
+    mostrarPagina(["dashboard", "atos", "configuracoes"].includes(pagina) ? pagina : "dashboard");
+  };
+  window.addEventListener("hashchange", paginaDoHash);
+  paginaDoHash();
 
   document.querySelectorAll(".view-tab").forEach((tab) => {
     tab.addEventListener("click", () => {

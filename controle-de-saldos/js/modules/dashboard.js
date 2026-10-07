@@ -80,7 +80,7 @@ export class Dashboard {
     if (!container) return;
 
     // Buscar o template HTML
-    const response = await fetch("templates/dashboard.html");
+    const response = await fetch("templates/dashboard.html?v=20261006-dashboard-prioridades-1");
     const html = await response.text();
     container.innerHTML = html;
 
@@ -624,7 +624,7 @@ export class Dashboard {
   }
 
   scrollParaAlertas() {
-    const card = document.getElementById("cardAlertasPrioritarios");
+    const card = document.getElementById("dashboardFaixaAlerta");
     if (card) {
       card.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -983,6 +983,7 @@ export class Dashboard {
             tipo: "aviso",
             icone: "fa-hourglass-half",
             texto: `Você tem ${count} pedido(s) aguardando aprovação.`,
+            acaoLabel: "Revisar pedidos",
             acao: () => this.sistema.ativarTab("pedidos"),
           });
         }
@@ -1010,6 +1011,7 @@ export class Dashboard {
             tipo: "aviso",
             icone: "fa-clipboard-check",
             texto: `${countPedidos} pedido(s) aguardando sua aprovação.`,
+            acaoLabel: "Revisar agora",
             acao: () => this.sistema.ativarTab("pedidos"),
           });
         }
@@ -1031,7 +1033,8 @@ export class Dashboard {
           itens.push({
             tipo: "critico",
             icone: "fa-calendar-times",
-            texto: `${countVenc} ata(s) vencem nos próximos 15 dias.`,
+            texto: `${countVenc || 0} ata(s) vencem nos próximos 15 dias.`,
+            acaoLabel: "Ver vencimentos",
             acao: () => this.irParaConsulta({ tipo: "vencimento", dias: 15 }),
           });
         }
@@ -1044,6 +1047,7 @@ export class Dashboard {
       }
 
       faixa.style.display = "flex";
+      faixa.dataset.alertasCount = String(itens.length);
       conteudo.innerHTML = itens
         .map(
           (i, idx) => `
@@ -1052,9 +1056,12 @@ export class Dashboard {
             class="alerta-faixa-item alerta-faixa-${i.tipo}"
             data-alerta-faixa-idx="${idx}"
           >
-            <i class="fas ${i.icone}"></i>
-            <span class="alerta-faixa-texto">${this._escapeHtml(i.texto)}</span>
-            <i class="fas fa-arrow-right alerta-faixa-seta"></i>
+            <span class="alerta-faixa-icone"><i class="fas ${i.icone}"></i></span>
+            <span class="alerta-faixa-copy">
+              <strong class="alerta-faixa-titulo">${i.tipo === "critico" ? "Crítico" : "Atenção"}</strong>
+              <span class="alerta-faixa-texto">${this._escapeHtml(i.texto)}</span>
+            </span>
+            <span class="alerta-faixa-acao">${this._escapeHtml(i.acaoLabel || "Ver detalhes")} <i class="fas fa-arrow-right alerta-faixa-seta"></i></span>
           </button>
         `,
         )

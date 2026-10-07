@@ -18,9 +18,11 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261004-unified-5">
+  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
+  <link rel="stylesheet" href="painel-adm-atos-oficiais.css?v=20261007-shell-1">
+<link rel="stylesheet" href="atos-oficiais-intranet-theme.css?v=20261007-identity-1">
 </head>
-  <body data-intranet-module="atos-oficiais" data-intranet-page="gestao-de-atos-oficiais-painel-adm-atos-oficiais">
+  <body data-intranet-module="atos-oficiais" data-intranet-page="painel-adm-atos-oficiais">
     <!-- ============================================ -->
     <!-- OVERLAY DE CARREGAMENTO                      -->
     <!-- ============================================ -->
@@ -1178,68 +1180,15 @@
     <!-- ============================================ -->
     <!-- LAYOUT PRINCIPAL                            -->
     <!-- ============================================ -->
-    <div class="admin-layout">
-      <!-- TOPBAR -->
-      <header class="topbar">
-        <div class="topbar-left">
-          <img
-            src="../brasao-pref.png"
-            alt="Brasão"
-            class="brasao-img"
-            onerror="
-              this.src =
-                'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%23f8fafc\' stroke=\'%230d5e3a\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'58\' font-size=\'12\' text-anchor=\'middle\' fill=\'%230f172a\'%3EPMG%3C/text%3E%3C/svg%3E'
-            "
-          />
-          <h2 id="pageTitle">Gestão de Atos Oficiais</h2>
-        </div>
-        <div class="topbar-right">
-          <div class="topbar-user">
-            <i class="fas fa-user-circle"></i> <span id="topbarUserName"></span>
-            <span class="badge-perfil" id="topbarUserPerfil"></span>
-          </div>
-          <button class="btn btn-outline btn-sm" id="logoutBtn" type="button">
-            <i class="fas fa-sign-out-alt"></i> Sair
-          </button>
-        </div>
-      </header>
-
-      <!-- CARDS DE NAVEGAÇÃO -->
-      <div class="cards-nav">
-        <div class="card-nav active" data-page="dashboard">
-          <div class="card-nav-icon"><i class="fas fa-chart-pie"></i></div>
-          <div class="card-nav-title">Dashboard</div>
-          <div class="card-nav-desc">Visão analítica</div>
-        </div>
-        <div class="card-nav" data-page="atos">
-          <div class="card-nav-icon"><i class="fas fa-file-signature"></i></div>
-          <div class="card-nav-title">Atos</div>
-          <div class="card-nav-desc">Registro e consulta</div>
-        </div>
-        <div class="card-nav" data-page="configuracoes">
-          <div class="card-nav-icon"><i class="fas fa-sliders-h"></i></div>
-          <div class="card-nav-title">Configurações</div>
-          <div class="card-nav-desc">Parâmetros</div>
-        </div>
-        <!-- ============================================================ -->
-        <!-- REMOVIDO: Card "Órgãos" e "Usuários" das configurações       -->
-        <!-- Agora gerenciados pelo módulo Core                           -->
-        <!-- ============================================================ -->
-      </div>
-
-      <!-- CONTEÚDO PRINCIPAL -->
+    <div class="app-layout" id="mainSystem">
+      <aside class="sidebar" id="sidebar" aria-label="Navegação principal da intranet"></aside>
+      <div class="main-area">
+        <header class="topbar" id="topbar"></header>
+        <main class="conteudo conteudo-full">
+          <div class="admin-layout">
+      <!-- CONTEÚDO DO MÓDULO: navegação concentrada na sidebar global -->
       <div class="content-area">
-        <nav
-          class="painel-breadcrumb"
-          id="painelBreadcrumb"
-          aria-label="Breadcrumb"
-        >
-          <a href="#" data-nav="dashboard">Painel</a>
-          <span class="separator">/</span>
-          <span class="current" id="painelBreadcrumbCurrent">Dashboard</span>
-        </nav>
-
-        <!-- DASHBOARD -->
+      <!-- DASHBOARD -->
         <div class="page" id="pageDashboard">
           <div class="card">
             <div class="card-header">
@@ -1627,6 +1576,9 @@
           </div>
         </div>
       </div>
+          </div>
+        </main>
+      </div>
     </div>
 
     <!-- ============================================ -->
@@ -1755,6 +1707,7 @@
     ></script>
 
     <!-- Módulo principal do painel -->
-    <script type="module" src="painel-adm-atos-oficiais.js"></script>
+    <script type="module" src="painel-adm-atos-oficiais.js?v=20261007-session-storage-1"></script>
+    <script src="../shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
   </body>
 </html>

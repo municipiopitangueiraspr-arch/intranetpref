@@ -30,36 +30,52 @@
 
 <div class="relatorios-container" id="relatoriosContent" data-intranet-scope="controle-de-saldos-templates-relatorios">
   <!-- ============================================================ -->
-  <!-- MODO 1 · ÍNDICE DE RELATÓRIOS                                  -->
+    <!-- MODO 1 · ÍNDICE DE RELATÓRIOS                                  -->
   <!-- ------------------------------------------------------------ -->
   <!-- Este bloco é o que o usuário vê ao clicar em "Relatórios"    -->
-  <!-- no menu lateral. Contém 6 cards, um por relatório.            -->
+  <!-- no menu lateral. Contém os cards agrupados por finalidade.            -->
   <!-- O JS preenche o #relatoriosIndiceGrid com os cards.           -->
   <!--                                                              -->
   <!-- Estrutura:                                                    -->
-  <!--   · Header com título + subtítulo                            -->
+    <!--   · Breadcrumb + barra de contexto                            -->
   <!--   · Grid responsivo com os cards                              -->
   <!--                                                              -->
   <!-- Ao clicar num card, o JS esconde este bloco e mostra o        -->
   <!-- #relatoriosAtivo, que é o "modo 2".                          -->
   <!-- ============================================================ -->
   <div class="relatorios-indice" id="relatoriosIndice">
-    <!-- ---------- Cabeçalho do índice ---------- -->
-    <div class="relatorios-indice-header">
-      <div class="relatorios-indice-titulo-wrapper">
-        <h2 class="relatorios-indice-titulo">
-          <i class="fas fa-chart-bar"></i>
-          Relatórios
-        </h2>
-        <p class="relatorios-indice-subtitulo">
-          Selecione um relatório para visualizar e exportar
-        </p>
+    <!-- ---------- Breadcrumb + contexto ---------- -->
+    <nav class="atas-breadcrumb relatorios-breadcrumb" aria-label="Trilha de navegação">
+      <a href="#dashboard"><i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span></a>
+      <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
+      <span aria-current="page">Relatórios</span>
+    </nav>
+    <div class="relatorios-context-bar">
+      <div class="relatorios-context-title">
+        <span class="relatorios-context-icon"><i class="fas fa-chart-column"></i></span>
+        <div>
+          <span class="relatorios-context-kicker">Central de análises</span>
+          <strong id="relatoriosIndiceTitulo">Relatórios Favoritos</strong>
+        </div>
       </div>
+      <span class="relatorios-context-hint" id="relatoriosContextHint"><i class="fas fa-star"></i> Acesse rapidamente as análises que você salvou</span>
+    </div>
+
+    <div class="relatorios-indice-controles" role="tablist" aria-label="Filtrar relatórios">
+      <button class="relatorios-filtro-tab" type="button" role="tab" data-relatorios-filtro="todos" aria-selected="false" aria-controls="relatoriosIndiceGrid">
+        <i class="fas fa-layer-group" aria-hidden="true"></i>
+        <span>Todos os relatórios</span>
+      </button>
+      <button class="relatorios-filtro-tab ativo" type="button" role="tab" data-relatorios-filtro="favoritos" aria-selected="true" aria-controls="relatoriosIndiceGrid">
+        <i class="fas fa-star" aria-hidden="true"></i>
+        <span>Relatórios Favoritos</span>
+        <span class="relatorios-filtro-count" id="relatoriosFavoritosCount">0</span>
+      </button>
     </div>
 
     <!-- ---------- Grid de cards (preenchido pelo JS) ---------- -->
     <!--
-      O JS injeta os 6 cards aqui. Cada card tem:
+      O JS injeta os cards aqui. Cada card tem:
         · data-relatorio="atas_vencendo" (id único)
         · ícone + título + descrição curta
         · classe .relatorio-card (hover/elevação)
@@ -173,7 +189,7 @@
     <div
       class="relatorios-grafico-wrapper intranet-style-4bd109053b"
       id="relatoriosGraficoWrapper"
-
+     
     >
       <div class="relatorios-grafico-card">
         <div class="relatorios-grafico-header">

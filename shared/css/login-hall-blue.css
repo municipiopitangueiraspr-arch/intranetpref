@@ -540,3 +540,168 @@ html body[data-intranet-page="index"] #loginModalOverlay .modal-login .modal-log
   box-shadow: none !important;
   filter: drop-shadow(0 4px 7px rgba(28, 48, 66, .16)) !important;
 }
+
+
+/* Ajustes visuais solicitados · header do hall · 2026-10-06 */
+body[data-intranet-page="intranet"] .barra-usuario {
+  padding: 14px 20px !important;
+  background: #edf5fc !important;
+  border-color: #c4d8ea !important;
+  box-shadow: 0 8px 20px rgba(20, 76, 124, .10) !important;
+}
+body[data-intranet-page="intranet"] .brasao-header {
+  padding: clamp(34px, 4.5vw, 54px) clamp(26px, 4vw, 52px) !important;
+  min-height: 188px;
+}
+body[data-intranet-page="intranet"] .brasao-img-container {
+  background: rgba(255, 255, 255, .96) !important;
+  border-color: rgba(255, 255, 255, .98) !important;
+  box-shadow: 0 10px 28px rgba(3, 25, 48, .28) !important;
+}
+body[data-intranet-page="intranet"] .brasao-oficial {
+  display: block;
+  padding: 5px;
+  filter: drop-shadow(0 2px 3px rgba(18, 48, 78, .16));
+}
+body[data-intranet-page="intranet"] .avatar-btn > img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+body[data-intranet-page="intranet"] .boas-vindas h1 .fas,
+body[data-intranet-page="intranet"] .brasao-header :is(.fas, .far, .fab),
+body[data-intranet-page="intranet"] .selo-seguranca span .fas {
+  color: #58d8ff !important;
+  text-shadow: 0 0 14px rgba(88, 216, 255, .28);
+}
+body[data-intranet-page="intranet"] .module-search-shell > .fas,
+body[data-intranet-page="intranet"] .module-search-meta span:first-child {
+  color: #0877db !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card .card-icon,
+body[data-intranet-page="intranet"] #adminSection .sistema-card .card-icon {
+  color: #0877db !important;
+  background: #e3f2ff !important;
+  border-color: #9dccf2 !important;
+  box-shadow: 0 6px 14px rgba(8, 119, 219, .16) !important;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 2) .card-icon { color: #079b78 !important; background: #e1f8f1 !important; border-color: #91dec9 !important; }
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 3) .card-icon { color: #d87800 !important; background: #fff0cf !important; border-color: #f0c873 !important; }
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 4) .card-icon { color: #8a51d1 !important; background: #f0e7ff !important; border-color: #c9a9f1 !important; }
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 5) .card-icon { color: #078d9f !important; background: #def7fa !important; border-color: #8bd7df !important; }
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 6) .card-icon { color: #ca405b !important; background: #ffe6eb !important; border-color: #f1a9b9 !important; }
+
+
+/* Acessos rápidos do menu do avatar — somente módulos autorizados pelo hall. */
+body[data-intranet-page="intranet"] .avatar-menu {
+  width: min(340px, calc(100vw - 24px));
+  max-height: min(78vh, 620px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #b6cbd9 #f4f8fb;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick {
+  margin: 8px 0 5px;
+  padding: 11px 10px 7px;
+  border-top: 1px solid #e2ebf2;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 4px 8px;
+  color: #668095;
+  font-size: .65rem;
+  font-weight: 900;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-title i {
+  color: #0b72b5;
+  font-size: .72rem;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-list {
+  display: grid;
+  gap: 4px;
+}
+body[data-intranet-page="intranet"] .avatar-menu-item.avatar-menu-quick-link {
+  display: flex;
+  width: 100%;
+  min-height: 40px;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #31566d;
+  background: transparent;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 750;
+  text-align: left;
+  cursor: pointer;
+  transition: color .16s ease, background .16s ease, border-color .16s ease, transform .16s ease;
+}
+body[data-intranet-page="intranet"] .avatar-menu-item.avatar-menu-quick-link:hover,
+body[data-intranet-page="intranet"] .avatar-menu-item.avatar-menu-quick-link:focus-visible {
+  transform: translateX(2px);
+  border-color: #d4e5ef;
+  color: #075e98;
+  background: #edf6fb;
+  outline: none;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-icon {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  place-items: center;
+  border: 1px solid #d6e9f3;
+  border-radius: 8px;
+  color: #0b72b5;
+  background: #f0f8fc;
+  font-size: .72rem;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-arrow {
+  flex: 0 0 auto;
+  color: #9aafbc;
+  font-size: .62rem;
+  transition: color .16s ease, transform .16s ease;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-link:hover .avatar-menu-quick-arrow,
+body[data-intranet-page="intranet"] .avatar-menu-quick-link:focus-visible .avatar-menu-quick-arrow {
+  transform: translate(1px, -1px);
+  color: #0b72b5;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-empty {
+  margin: 2px 4px 6px;
+  padding: 9px 10px;
+  border: 1px dashed #c8d9e3;
+  border-radius: 9px;
+  color: #708797;
+  background: #f8fbfd;
+  font-size: .68rem;
+  line-height: 1.45;
+}
+@media (max-width: 480px) {
+  body[data-intranet-page="intranet"] .avatar-menu {
+    width: min(320px, calc(100vw - 18px));
+    max-height: 76vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-intranet-page="intranet"] .avatar-menu-item.avatar-menu-quick-link,
+  body[data-intranet-page="intranet"] .avatar-menu-quick-arrow {
+    transition: none;
+  }
+}

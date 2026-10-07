@@ -115,18 +115,17 @@ export class Carrinho {
   gerarHTML() {
     return `
       <div class="carrinho-view">
-        <!-- Breadcrumb -->
-        <div class="breadcrumb-carrinho">
-          <a href="#consulta" id="breadcrumbInicio">Início</a>
-          <span class="separator">/</span>
-          <span class="current">Meu Carrinho</span>
-          <span
-            data-intranet-style="e15fab066798"
-          >
-            <i class="fas fa-shopping-cart"></i>
-            <span id="qtdItensCarrinho">0</span> itens
-          </span>
-        </div>
+        <nav class="atas-breadcrumb carrinho-breadcrumb" aria-label="Trilha de navegação">
+          <a href="#dashboard" id="breadcrumbVisaoGeral">
+            <i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span>
+          </a>
+          <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
+          <a href="#consulta" id="breadcrumbInicio">
+            <i class="fas fa-magnifying-glass" aria-hidden="true"></i><span>Consultas</span>
+          </a>
+          <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
+          <span aria-current="page">Meu Carrinho</span>
+        </nav>
 
         <!-- Loading (oculto por padrão — load é instantâneo do storage) -->
         <div class="loading-container" id="carrinhoLoading" data-intranet-style="2d281201779c">
@@ -193,7 +192,16 @@ export class Carrinho {
       });
     }
 
-    // Link "Início" do breadcrumb — navega para a view de consulta
+    // Link "Visão geral" da trilha de navegação
+    const breadcrumbDashboard = document.getElementById("breadcrumbVisaoGeral");
+    if (breadcrumbDashboard) {
+      breadcrumbDashboard.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.sistema.ativarTab("dashboard");
+      });
+    }
+
+    // Link "Consultas" da trilha de navegação
     const breadcrumbInicio = document.getElementById("breadcrumbInicio");
     if (breadcrumbInicio) {
       breadcrumbInicio.addEventListener("click", (e) => {
@@ -370,7 +378,19 @@ export class Carrinho {
                   <tr>
                     <td class="item-numero">${i.itemNumero || "-"}</td>
                     <td class="item-descricao">${i.itemDescricao || "Item"}</td>
-                    <td class="numeric">${i.quantidade || 0}</td>
+                    <td class="numeric">
+                      <input
+                        class="item-quantidade"
+                        data-item-id="${i.id}"
+                        type="number"
+                        min="1"
+                        step="1"
+                        inputmode="numeric"
+                        value="${Math.max(1, Number(i.quantidade) || 1)}"
+                        aria-label="Quantidade do item ${i.itemNumero || ""}"
+                        title="Edite a quantidade ou use as setas"
+                      >
+                    </td>
                     <td class="numeric">${this.sistema.ui.formatarMoeda(
                       i.valorUnitario || 0,
                     )}</td>
@@ -423,6 +443,30 @@ export class Carrinho {
         if (itemId) this.removerItem(itemId);
       });
     });
+
+    // Permite editar a quantidade digitando ou usando as setas do input number.
+    lista.querySelectorAll(".item-quantidade").forEach((input) => {
+      input.addEventListener("change", () => {
+        const itemId = input.dataset.itemId;
+        const quantidade = Math.max(1, Math.floor(Number(input.value) || 1));
+        if (itemId) this.atualizarQuantidade(itemId, quantidade);
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          input.blur();
+        }
+      });
+    });
+  }
+
+  atualizarQuantidade(itemId, quantidade) {
+    const item = (this.sistema.carrinho || []).find((i) => String(i.id) === String(itemId));
+    if (!item) return;
+    item.quantidade = Math.max(1, Math.floor(Number(quantidade) || 1));
+    item.valorTotal = item.quantidade * (Number(item.valorUnitario) || 0);
+    this.sistema.salvarCarrinhoStorage();
+    this.renderizar();
   }
 
   // ============================================================

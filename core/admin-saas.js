@@ -92,7 +92,7 @@ function renderLoadError(error) {
   const content = $("#dashboardContent");
   if (!content) return;
   content.hidden = false;
-  content.innerHTML = `<div class="admin-load-error"><i class="fas fa-cloud-exclamation"></i><h2>Não foi possível atualizar o painel</h2><p>O painel continua disponível, mas a fonte de dados demorou ou não respondeu. Você pode tentar novamente sem sair da página.</p><button type="button" id="adminRetry"><i class="fas fa-rotate"></i> Tentar novamente</button><small>${escapeHtml(error?.message || "Falha de comunicação com o serviço administrativo.")}</small></div>`;
+  content.innerHTML = `<div class="admin-load-error"><i class="fas fa-triangle-exclamation"></i><h2>Não foi possível atualizar o painel</h2><p>O painel continua disponível, mas a fonte de dados demorou ou não respondeu. Você pode tentar novamente sem sair da página.</p><button type="button" id="adminRetry"><i class="fas fa-rotate"></i> Tentar novamente</button><small>${escapeHtml(error?.message || "Falha de comunicação com o serviço administrativo.")}</small></div>`;
   $("#adminRetry")?.addEventListener("click", load);
 }
 

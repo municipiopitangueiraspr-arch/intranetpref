@@ -134,11 +134,15 @@ export async function initLayout(config = {}) {
   }
 
   // ---------- 3. Carrega usuário autenticado ----------
-  let usuario = null;
-  try {
-    usuario = await carregarUsuario(supabase);
-  } catch (err) {
-    console.error("[layout] Erro ao carregar usuário:", err);
+  // Páginas que já validaram a sessão podem passar o perfil pronto. Isso
+  // evita uma segunda leitura durante a restauração assíncrona do Supabase.
+  let usuario = cfg.usuarioInicial || null;
+  if (!usuario) {
+    try {
+      usuario = await carregarUsuario(supabase);
+    } catch (err) {
+      console.error("[layout] Erro ao carregar usuário:", err);
+    }
   }
 
   // Não autenticado → redireciona
@@ -173,6 +177,8 @@ export async function initLayout(config = {}) {
   configurarMenuUsuario();
   configurarLogout(supabase, cfg);
   configurarRetornoModulo();
+  // Carrega atalhos por permissão sem bloquear a inicialização do módulo.
+  void carregarAtalhosModulos(supabase, usuario, cfg);
 
   // ---------- 9. Expõe o usuário globalmente (atalho de conveniência) ----------
   window.usuarioLogado = usuario;
@@ -345,6 +351,7 @@ function renderTopbar(cfg, usuario) {
   const avatarVisual = fotoUrl ? `<img class="avatar-foto" data-intranet-style="9f8aa4036d64" src="${fotoUrl}" alt="Foto de ${nome}" loading="lazy">` : `<span>${iniciais}</span>`;
   const retorno = `${window.location.pathname}${window.location.search}${window.location.hash}`;
   const perfilHref = `${menuUsuario?.rotaPerfil || "../perfil.html"}?returnTo=${encodeURIComponent(retorno)}`;
+  const intranetHref = escaparAtributo(resolverUrlIntranet(cfg));
 
   const usuarioDireitaHtml = menuUsuario
     ? `
@@ -364,6 +371,7 @@ function renderTopbar(cfg, usuario) {
             <strong>${nome}</strong>
             <span>${email}</span>
           </div>
+          <div class="avatar-menu-divisor"></div>
           <a
             href="${escaparAtributo(perfilHref)}"
             class="avatar-menu-item"
@@ -387,6 +395,18 @@ function renderTopbar(cfg, usuario) {
           >
             <i class="fas fa-right-from-bracket"></i> Sair
           </button>
+          <div class="avatar-menu-divisor"></div>
+          <section class="avatar-module-switcher" aria-labelledby="avatarModuleSwitcherTitle">
+            <h2 class="avatar-module-switcher-title" id="avatarModuleSwitcherTitle">
+              <i class="fas fa-shuffle" aria-hidden="true"></i> Trocar de módulo
+            </h2>
+            <nav class="avatar-module-switcher-list" id="avatarModuleLinks" aria-label="Módulos autorizados">
+              <p class="avatar-module-switcher-status" role="status" aria-live="polite">Carregando seus módulos…</p>
+            </nav>
+            <a class="avatar-menu-item avatar-module-switcher-all" data-avatar-module-link href="${intranetHref}" role="menuitem">
+              <i class="fas fa-table-cells-large" aria-hidden="true"></i> Ver todos os módulos
+            </a>
+          </section>
         </div>
       </div>
     `
@@ -428,6 +448,103 @@ function renderTopbar(cfg, usuario) {
       ${usuarioDireitaHtml}
     </div>
   `;
+}
+
+/* =====================================================================
+   Atalhos de módulos do avatar · aplica as mesmas regras do hall
+   ===================================================================== */
+function resolverUrlIntranet(cfg = {}) {
+  const rota = cfg.rotaIntranet || cfg.rotaVoltar || DEFAULTS.rotaIntranet;
+  try {
+    return new URL(rota, window.location.href).href;
+  } catch (_) {
+    return new URL(DEFAULTS.rotaIntranet, window.location.href).href;
+  }
+}
+
+async function carregarAtalhosModulos(supabase, usuario, cfg = {}) {
+  const host = document.getElementById("avatarModuleLinks");
+  if (!host) return;
+
+  try {
+    const { data: modulos, error: erroModulos } = await supabase
+      .from("modulos_sistema")
+      .select("nome, descricao, icone, rota, ordem")
+      .eq("ativo", true)
+      .eq("visivel_intranet", true)
+      .order("ordem", { ascending: true });
+    if (erroModulos) throw erroModulos;
+
+    let permitidos;
+    if (usuario?.perfil === "ADMIN") {
+      permitidos = new Set((modulos || []).map((modulo) => String(modulo.nome || "")));
+    } else {
+      if (!usuario?.id) throw new Error("Identificador do usuário ausente.");
+      const { data: permissoes, error: erroPermissoes } = await supabase
+        .from("usuarios_modulos")
+        .select("modulo")
+        .eq("usuario_id", usuario.id)
+        .eq("permitido", true);
+      if (erroPermissoes) throw erroPermissoes;
+      permitidos = new Set((permissoes || []).map((permissao) => String(permissao.modulo || "")));
+    }
+
+    const titulos = {
+      painel_prefeito: "Painel Executivo",
+      atas: "Gestão de Atas, Saldos e Pedidos",
+      estoque: "Estoque",
+      tarefas: "Gestão de Tarefas",
+      atosoficiais: "Atos Oficiais",
+      biblioteca: "Biblioteca Municipal",
+      compras: "Compras Públicas",
+    };
+    const urlIntranet = new URL(resolverUrlIntranet(cfg));
+    const baseModulos = new URL(".", urlIntranet);
+    const itens = (modulos || []).filter((modulo) => permitidos.has(String(modulo.nome || "")))
+      .map((modulo) => {
+        const rota = String(modulo.rota || "").trim();
+        if (!rota || rota === "#" || rota.startsWith("#")) return null;
+        let destino;
+        try {
+          destino = new URL(rota.replace(/^\/+/, ""), baseModulos);
+        } catch (_) {
+          return null;
+        }
+        if (destino.origin !== window.location.origin) return null;
+
+        const nome = String(modulo.nome || "").trim();
+        const descricao = String(modulo.descricao || "").trim();
+        const titulo = titulos[nome.toLowerCase()] || descricao || nome.replace(/[_-]+/g, " ") || "Módulo";
+        const tokens = String(modulo.icone || "fa-cube").trim().split(/\s+/)
+          .filter((token) => /^[a-z0-9_-]+$/i.test(token));
+        const temPrefixoFontAwesome = tokens.some((token) => ["fa", "fas", "far", "fab", "fa-solid", "fa-regular", "fa-brands"].includes(token));
+        const icone = (temPrefixoFontAwesome ? tokens : ["fas", ...tokens]).join(" ") || "fas fa-cube";
+        return { href: destino.href, titulo, icone };
+      })
+      .filter(Boolean);
+
+    if (!itens.length) {
+      host.innerHTML = '<p class="avatar-module-switcher-status" role="status">Nenhum módulo com acesso direto está disponível.</p>';
+      return;
+    }
+
+    const caminhoAtual = window.location.pathname.replace(/\/+$/, "") || "/";
+    host.innerHTML = itens.map((item) => {
+      const caminhoDestino = new URL(item.href).pathname.replace(/\/+$/, "") || "/";
+      const atual = caminhoDestino === caminhoAtual;
+      return `
+        <a class="avatar-menu-item avatar-module-link${atual ? " is-current" : ""}"
+           href="${escaparAtributo(item.href)}" title="${escaparAtributo(item.titulo)}" role="menuitem" data-avatar-module-link
+           ${atual ? 'aria-current="page"' : ""}>
+          <span class="avatar-module-icon"><i class="${escaparAtributo(item.icone)}" aria-hidden="true"></i></span>
+          <span class="avatar-module-label">${escaparHtml(item.titulo)}</span>
+          ${atual ? '<span class="avatar-module-current">Atual</span>' : ""}
+        </a>`;
+    }).join("");
+  } catch (erro) {
+    console.warn("[layout] Não foi possível carregar os módulos do menu:", erro);
+    host.innerHTML = '<p class="avatar-module-switcher-status" role="status">Não foi possível carregar seus acessos. Use “Ver todos os módulos”.</p>';
+  }
 }
 
 /* =====================================================================
@@ -568,6 +685,11 @@ function configurarMenuUsuario() {
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") fechar();
+  });
+
+  menu.addEventListener("click", (event) => {
+    const alvo = event.target instanceof Element ? event.target : event.target?.parentElement;
+    if (alvo?.closest("[data-avatar-module-link]")) fechar();
   });
 }
 
