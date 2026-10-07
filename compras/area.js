@@ -90,6 +90,7 @@ function renderAreaLinks() {
     <a href="index.html"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Painel</a>
     <a href="index.html#tab-processes"><i class="fa-solid fa-folder-tree" aria-hidden="true"></i> Processos</a>
     <a href="artefatos.html"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> ETP / TR</a>
+    <a href="modelos.html"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Modelos</a>
     <a href="decisoes.html"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Decisões</a>
     <a href="governanca.html"><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i> Regras e fontes</a>
     ${auditLink}

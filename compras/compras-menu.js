@@ -14,6 +14,7 @@ export const COMPRAS_MENU = [
       { id: "compras-configuracao", rota: "index.html#tab-settings", icone: "fa-sliders", label: "Configuração" },
       { id: "compras-operacao", rota: "operacao.html", icone: "fa-layer-group", label: "Central operacional" },
       { id: "compras-artefatos", rota: "artefatos.html", icone: "fa-file-lines", label: "ETP, TR e documentos" },
+      { id: "compras-modelos", rota: "modelos.html", icone: "fa-sliders", label: "Modelos de documentos" },
       { id: "compras-decisoes", rota: "decisoes.html", icone: "fa-scale-balanced", label: "Decisões e atos" },
       { id: "compras-governanca", rota: "governanca.html", icone: "fa-book-bookmark", label: "Regras e fontes" },
       { id: "compras-auditoria", rota: "auditoria.html", icone: "fa-clipboard-check", label: "Trilha de auditoria" },
