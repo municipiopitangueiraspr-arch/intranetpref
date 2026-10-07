@@ -63,24 +63,30 @@ export class EditarAta {
   async carregarDadosAuxiliares() {
     try {
       // Carregar fornecedores
-      const { data: fornecedores } = await supabase
+      const { data: fornecedores, error: fornecedoresError } = await supabase
         .from("fornecedores")
-        .select("id, razao_social, cnpj")
+        .select("id, razao_social, cnpj, nome_fantasia, email, telefone1, telefone2, contato_nome, contato_email, contato_telefone, observacoes")
         .order("razao_social");
+      if (fornecedoresError) throw fornecedoresError;
       this.fornecedoresCache = fornecedores || [];
 
       // Carregar categorias
-      const { data: categorias } = await supabase
+      const { data: categorias, error: categoriasError } = await supabase
         .from("categorias")
         .select("id, nome")
         .eq("ativo", true)
         .order("nome");
+      if (categoriasError) throw categoriasError;
       this.categoriasCache = categorias || [];
 
-      const [{ data: usuarios }, { data: orgaos }] = await Promise.all([
+      const [usuariosResult, orgaosResult] = await Promise.all([
         supabase.from("usuarios").select("id, nome, email, cargo, ativo").eq("ativo", true).order("nome"),
         supabase.from("orgaos").select("id, nome, sigla, ativo").eq("ativo", true).order("nome"),
       ]);
+      if (usuariosResult.error) throw usuariosResult.error;
+      if (orgaosResult.error) throw orgaosResult.error;
+      const usuarios = usuariosResult.data || [];
+      const orgaos = orgaosResult.data || [];
       ["editarGestorAta", "editarFiscalAta", "editarFiscalSubstitutoAta"].forEach((id) => {
         const select = document.getElementById(id);
         usuarios?.forEach((usuario) => {
@@ -295,6 +301,7 @@ export class EditarAta {
       data_fim_vigencia: "Vigência Fim",
       valor_global: "Valor Global",
       situacao: "Status",
+      observacoes: "Observações",
       observacao: "Observações",
       item_descricao: "Item - Descrição",
       item_quantidade: "Item - Quantidade",
@@ -326,7 +333,7 @@ export class EditarAta {
     document.getElementById("editarDataFim").value =
       ata.data_fim_vigencia || "";
     document.getElementById("editarValorGlobal").value = ata.valor_global || "";
-    document.getElementById("editarObservacao").value = ata.observacao || "";
+    document.getElementById("editarObservacao").value = ata.observacoes || ata.observacao || "";
 
     // Preencher status
     const statusSelect = document.getElementById("editarStatus");
@@ -345,6 +352,29 @@ export class EditarAta {
         opt.textContent = `${f.razao_social}${f.cnpj ? ` (${this.formatarCnpj(f.cnpj)})` : ""}`;
         if (f.id === ata.fornecedor_id) opt.selected = true;
         fornecedorSelect.appendChild(opt);
+      });
+      const fornecedorAtual = this.fornecedoresCache.find((f) => f.id === ata.fornecedor_id);
+      const camposFornecedor = {
+        editarFornecedorFantasia: fornecedorAtual?.nome_fantasia,
+        editarFornecedorEmail: fornecedorAtual?.email,
+        editarFornecedorTelefone1: fornecedorAtual?.telefone1,
+        editarFornecedorTelefone2: fornecedorAtual?.telefone2,
+        editarFornecedorContatoNome: fornecedorAtual?.contato_nome,
+        editarFornecedorContatoEmail: fornecedorAtual?.contato_email,
+        editarFornecedorContatoTelefone: fornecedorAtual?.contato_telefone,
+        editarFornecedorObservacoes: fornecedorAtual?.observacoes,
+      };
+      Object.entries(camposFornecedor).forEach(([id, value]) => {
+        const campo = document.getElementById(id);
+        if (campo) campo.value = value || "";
+      });
+      const podeEditarFornecedor = this.sistema.usuarioAtual?.perfil === "ADMIN";
+      Object.keys(camposFornecedor).forEach((id) => {
+        const campo = document.getElementById(id);
+        if (campo) {
+          campo.disabled = !podeEditarFornecedor;
+          campo.title = podeEditarFornecedor ? "" : "Somente administradores podem editar o cadastro do fornecedor.";
+        }
       });
     }
 
@@ -656,6 +686,8 @@ export class EditarAta {
       // Coletar dados do formulário
       const dadosAtualizados = this.coletarDadosFormulario();
 
+      await this.salvarFornecedor(dadosAtualizados);
+
       // Verificar o que mudou
       const alteracoes = this.compararDados(this.ataDados, dadosAtualizados);
 
@@ -674,7 +706,7 @@ export class EditarAta {
           data_fim_vigencia: dadosAtualizados.data_fim_vigencia,
           valor_global: dadosAtualizados.valor_global,
           situacao: dadosAtualizados.situacao,
-          observacao: dadosAtualizados.observacao,
+          observacoes: dadosAtualizados.observacoes,
           gestor_id: dadosAtualizados.gestor_id,
           fiscal_id: dadosAtualizados.fiscal_id,
           fiscal_substituto_id: dadosAtualizados.fiscal_substituto_id,
@@ -728,6 +760,56 @@ export class EditarAta {
         "erro",
         error.message || "Erro ao salvar alterações.",
       );
+    }
+  }
+
+  // ============================================================
+  // VALIDAR FORMULÁRIO
+  // ============================================================
+  async salvarFornecedor(dadosAtualizados) {
+    const fornecedorAtual = this.fornecedoresCache.find(
+      (fornecedor) => fornecedor.id === dadosAtualizados.fornecedor_id,
+    );
+    if (!fornecedorAtual || this.sistema.usuarioAtual?.perfil !== "ADMIN") return;
+
+    const fornecedor = dadosAtualizados.fornecedor;
+    const campos = [
+      "nome_fantasia", "email", "telefone1", "telefone2", "contato_nome",
+      "contato_email", "contato_telefone", "observacoes",
+    ];
+    const mudou = campos.some((campo) => (fornecedorAtual[campo] || "") !== (fornecedor[campo] || ""));
+    if (!mudou) return;
+
+    const { error } = await supabase
+      .from("fornecedores")
+      .update(fornecedor)
+      .eq("id", fornecedorAtual.id);
+    if (error) throw error;
+
+    if (fornecedor.contato_nome) {
+      const { data: contatoExistente, error: contatoBuscaError } = await supabase
+        .from("representantes")
+        .select("id")
+        .eq("fornecedor_id", fornecedorAtual.id)
+        .eq("principal", true)
+        .eq("ativo", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (contatoBuscaError) throw contatoBuscaError;
+      const contatoPayload = {
+        fornecedor_id: fornecedorAtual.id,
+        nome: fornecedor.contato_nome,
+        cargo: "Comercial",
+        telefone: fornecedor.contato_telefone,
+        email: fornecedor.contato_email,
+        principal: true,
+        ativo: true,
+      };
+      const resposta = contatoExistente
+        ? await supabase.from("representantes").update(contatoPayload).eq("id", contatoExistente.id)
+        : await supabase.from("representantes").insert(contatoPayload);
+      if (resposta.error) throw resposta.error;
     }
   }
 
@@ -860,7 +942,7 @@ export class EditarAta {
       valor_global:
         parseFloat(document.getElementById("editarValorGlobal").value) || 0,
       situacao: document.getElementById("editarStatus").value,
-      observacao: document.getElementById("editarObservacao").value.trim(),
+      observacoes: document.getElementById("editarObservacao").value.trim(),
       gestor_id: document.getElementById("editarGestorAta")?.value ? parseInt(document.getElementById("editarGestorAta").value) : null,
       fiscal_id: document.getElementById("editarFiscalAta")?.value ? parseInt(document.getElementById("editarFiscalAta").value) : null,
       fiscal_substituto_id: document.getElementById("editarFiscalSubstitutoAta")?.value ? parseInt(document.getElementById("editarFiscalSubstitutoAta").value) : null,
@@ -868,6 +950,16 @@ export class EditarAta {
       ato_designacao: document.getElementById("editarAtoDesignacaoAta")?.value.trim() || null,
       data_designacao: document.getElementById("editarDataDesignacaoAta")?.value || null,
       responsaveis_observacoes: document.getElementById("editarResponsaveisObservacoesAta")?.value.trim() || null,
+      fornecedor: {
+        nome_fantasia: document.getElementById("editarFornecedorFantasia")?.value.trim() || null,
+        email: document.getElementById("editarFornecedorEmail")?.value.trim() || null,
+        telefone1: document.getElementById("editarFornecedorTelefone1")?.value.trim() || null,
+        telefone2: document.getElementById("editarFornecedorTelefone2")?.value.trim() || null,
+        contato_nome: document.getElementById("editarFornecedorContatoNome")?.value.trim() || null,
+        contato_email: document.getElementById("editarFornecedorContatoEmail")?.value.trim() || null,
+        contato_telefone: document.getElementById("editarFornecedorContatoTelefone")?.value.trim() || null,
+        observacoes: document.getElementById("editarFornecedorObservacoes")?.value.trim() || null,
+      },
       itens: itens,
     };
   }
@@ -889,7 +981,7 @@ export class EditarAta {
       { key: "data_fim_vigencia", nome: "Vigência Fim" },
       { key: "valor_global", nome: "Valor Global" },
       { key: "situacao", nome: "Status" },
-      { key: "observacao", nome: "Observações" },
+      { key: "observacoes", nome: "Observações" },
     ];
 
     for (const campo of campos) {

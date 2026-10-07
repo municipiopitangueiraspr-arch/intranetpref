@@ -314,6 +314,8 @@ export class Cadastro {
       supabase.from("usuarios").select("id, nome, email, cargo, ativo").eq("ativo", true).order("nome"),
       supabase.from("orgaos").select("id, nome, sigla, ativo").eq("ativo", true).order("nome"),
     ]);
+    if (usuariosResult.error) throw usuariosResult.error;
+    if (orgaosResult.error) throw orgaosResult.error;
     const usuarios = usuariosResult.data || [];
     const orgaos = orgaosResult.data || [];
     ["gestorAtaId", "fiscalAtaId", "fiscalSubstitutoAtaId"].forEach((id) => {
@@ -1236,6 +1238,14 @@ export class Cadastro {
       }
     }
 
+    const vigenciaInicio = document.getElementById("vigenciaInicio").value;
+    const vigenciaFim = document.getElementById("vigenciaFim").value;
+    if (vigenciaInicio && vigenciaFim && new Date(vigenciaFim) < new Date(vigenciaInicio)) {
+      this.sistema.ui.mostrarToast("erro", "A vigência final deve ser posterior à inicial.");
+      document.getElementById("vigenciaFim").focus();
+      return;
+    }
+
     let categoriaId = null;
     const categoriaNome = document
       .getElementById("categoriaInput")
@@ -1305,7 +1315,10 @@ export class Cadastro {
           .from("representantes")
           .select("id")
           .eq("fornecedor_id", fornecedorId)
-          .eq("email", fornecedorPayload.contato_email || "")
+          .eq("principal", true)
+          .eq("ativo", true)
+          .order("created_at", { ascending: false })
+          .limit(1)
           .maybeSingle();
         const contatoPayload = {
           fornecedor_id: fornecedorId,
@@ -1316,11 +1329,10 @@ export class Cadastro {
           principal: true,
           ativo: true,
         };
-        if (contatoExistente) {
-          await supabase.from("representantes").update(contatoPayload).eq("id", contatoExistente.id);
-        } else {
-          await supabase.from("representantes").insert(contatoPayload);
-        }
+        const resposta = contatoExistente
+          ? await supabase.from("representantes").update(contatoPayload).eq("id", contatoExistente.id)
+          : await supabase.from("representantes").insert(contatoPayload);
+        if (resposta.error) throw resposta.error;
       }
 
       const { data: ata, error: ae } = await supabase
