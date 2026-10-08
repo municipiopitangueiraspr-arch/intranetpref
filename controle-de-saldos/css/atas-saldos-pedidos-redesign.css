@@ -2526,12 +2526,12 @@ html body[data-intranet-module="atas"] #mainSystem #consultaContent #atasLista .
 
 /* =====================================================================
    CAMADA UNIFICADA · demais abas do módulo
-   Visão geral · Relatórios · Saldos · Cadastro · Carrinho · Aditivos · FAQ
+   Visão geral · Relatórios · Saldos · Cadastro · Carrinho · Aditivos · Central de Ajuda
    ===================================================================== */
 body[data-intranet-module="atas"] #mainSystem :is(#dashboardContent, #relatoriosContent, #gestaoContent, #cadastroContent, #carrinhoContent, #aditivosContent, #faqContent) {
   color: var(--atas-ink);
 }
-body[data-intranet-module="atas"] #mainSystem :is(.dashboard-container, .relatorios-container, .gestao-container, .cadastro-container, .aditivos-container, .carrinho-view, .faq-view-shell) {
+body[data-intranet-module="atas"] #mainSystem :is(.dashboard-container, .relatorios-container, .gestao-container, .cadastro-container, .aditivos-container, .carrinho-view) {
   max-width: 1440px; margin: 0 auto; border-radius: 16px;
 }
 body[data-intranet-module="atas"] #mainSystem :is(.gestao-header, .cadastro-header, .aditivos-header, .relatorios-indice-header, .relatorios-ativo-header, .carrinho-view > .breadcrumb-carrinho) {
@@ -2582,8 +2582,6 @@ body[data-intranet-module="atas"] #mainSystem :is(.tabela-carrinho, .tabela-iten
 body[data-intranet-module="atas"] #mainSystem :is(.item-remover, .btn-visualizar-aditivo, .btn-aplicar-aditivo, .btn-voltar-relatorio, .btn-limpar-carrinho, .btn-limpar, .btn-exportar) { border-radius: 9px !important; transition: transform .2s ease, box-shadow .2s ease, background .2s ease !important; }
 body[data-intranet-module="atas"] #mainSystem :is(.item-remover, .btn-visualizar-aditivo, .btn-aplicar-aditivo, .btn-voltar-relatorio, .btn-limpar-carrinho, .btn-limpar, .btn-exportar):hover { transform: translateY(-2px); box-shadow: 0 7px 14px rgba(23,59,89,.12); }
 body[data-intranet-module="atas"] #mainSystem :is(.carrinho-resumo, .finalizacao-bloco-total, .gestao-stats, .cadastro-indicadores, .relatorios-kpis) { gap: 14px; }
-body[data-intranet-module="atas"] #mainSystem .faq-view-shell { min-height: 620px; overflow: hidden; border: 1px solid #d5e3ea; background: #fff; box-shadow: 0 10px 26px rgba(23,59,89,.08); }
-body[data-intranet-module="atas"] #mainSystem .faq-view-shell iframe { display: block; width: 100%; min-height: 78vh; border: 0; background: #fff; }
 body[data-intranet-module="atas"] #mainSystem :is(.dashboard-card, .relatorios-grafico-card, .relatorios-resultado, .auditoria-saldos-card) h2,
 body[data-intranet-module="atas"] #mainSystem :is(.dashboard-card, .relatorios-grafico-card, .relatorios-resultado, .auditoria-saldos-card) h3 { color: var(--atas-ink) !important; }
 body[data-intranet-module="atas"] #mainSystem :is(.dashboard-card, .relatorios-grafico-card, .relatorios-resultado, .auditoria-saldos-card) h2 i,
@@ -2592,8 +2590,6 @@ body[data-intranet-module="atas"] #mainSystem :is(.dashboard-card, .relatorios-g
 body[data-intranet-module="atas"] #mainSystem :is(.dashboard-card, .relatorios-grafico-card, .relatorios-resultado, .auditoria-saldos-card) :is(.lista-item, .fila-destaque-item, .risco-item):hover { background: #f3f8fb; transform: translateX(3px); }
 @media (max-width: 760px) {
   body[data-intranet-module="atas"] #mainSystem :is(.gestao-header, .cadastro-header, .aditivos-header, .relatorios-indice-header, .relatorios-ativo-header) { border-radius: 11px !important; }
-  body[data-intranet-module="atas"] #mainSystem .faq-view-shell { min-height: 520px; }
-  body[data-intranet-module="atas"] #mainSystem .faq-view-shell iframe { min-height: 74vh; }
 }
 @media (prefers-reduced-motion: reduce) {
   body[data-intranet-module="atas"] #mainSystem *, body[data-intranet-module="atas"] #mainSystem *::before, body[data-intranet-module="atas"] #mainSystem *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }

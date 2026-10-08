@@ -22,8 +22,10 @@
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
   <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261006-ui-polish-1">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261008-pwa-1">
 </head>
-  <body data-intranet-module="plataforma" data-intranet-page="index">
+  <body data-intranet-module="plataforma" data-intranet-page="index" data-pwa-worker="./service-worker.js">
     <!-- ========== MODAL DE LOGIN ========== -->
     <div class="modal-overlay" id="loginModalOverlay">
       <div class="modal-login">
@@ -379,5 +381,6 @@
         await verificarSessaoExistente();
       });
     </script>
-  </body>
+    <script src="shared/js/pwa-install.js?v=20261008-pwa-1" defer></script>
+</body>
 </html>

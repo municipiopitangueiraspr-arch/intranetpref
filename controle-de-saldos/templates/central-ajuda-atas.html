@@ -1,0 +1,102 @@
+<section class="central-ajuda-page" aria-labelledby="centralAjudaTitulo">
+  <nav class="atas-breadcrumb" aria-label="Trilha de navegação">
+    <a href="#dashboard"><i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span></a>
+    <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
+    <span aria-current="page">Central de ajuda</span>
+  </nav>
+
+  <header class="consulta-page-heading central-ajuda-heading">
+    <span class="consulta-page-icon"><i class="fas fa-circle-question" aria-hidden="true"></i></span>
+    <div>
+      <h1 id="centralAjudaTitulo">Central de ajuda</h1>
+      <p>Orientações práticas para usar Atas, Saldos e Pedidos com segurança.</p>
+    </div>
+    <button class="central-ajuda-imprimir" type="button" data-ajuda-action="imprimir">
+      <i class="fas fa-file-pdf" aria-hidden="true"></i><span>Baixar guia PDF</span>
+    </button>
+  </header>
+
+  <div class="filtros-container central-ajuda-tools" aria-label="Pesquisar e filtrar orientações">
+    <div class="filtros-grid central-ajuda-search-grid">
+      <div class="filtro-grupo filtro-busca-global">
+        <label class="filtro-label" for="centralAjudaBusca"><i class="fas fa-search" aria-hidden="true"></i> Buscar na central de ajuda</label>
+        <input class="filtro-input" id="centralAjudaBusca" type="search" autocomplete="off" placeholder="Busque por saldo, pedido, aprovação, ata ou carrinho...">
+      </div>
+      <div class="filtro-grupo">
+        <label class="filtro-label" for="centralAjudaModulo"><i class="fas fa-layer-group" aria-hidden="true"></i> Módulo</label>
+        <select class="filtro-select" id="centralAjudaModulo">
+          <option value="todos">Todos os módulos</option>
+          <option value="visao-geral">Visão geral</option>
+          <option value="consulta">Consulta</option>
+          <option value="saldos">Saldos e consumo</option>
+          <option value="relatorios">Relatórios</option>
+          <option value="pedidos">Pedidos e aprovações</option>
+          <option value="carrinho">Meu carrinho</option>
+        </select>
+      </div>
+      <button type="button" class="central-ajuda-limpar" data-ajuda-action="limpar">Limpar filtros</button>
+    </div>
+    <div class="central-ajuda-status" role="status" aria-live="polite"><span id="centralAjudaContagem">24 orientações disponíveis</span></div>
+  </div>
+
+  <div class="resumo-rapido central-ajuda-resumo" aria-label="Módulos documentados">
+    <button class="resumo-card" type="button" data-ajuda-modulo="visao-geral"><span class="resumo-icone"><i class="fas fa-chart-pie" aria-hidden="true"></i></span><span class="resumo-copy"><span class="resumo-numero">01</span><span class="resumo-label">Visão geral</span></span></button>
+    <button class="resumo-card resumo-vencimento-30" type="button" data-ajuda-modulo="consulta"><span class="resumo-icone"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></span><span class="resumo-copy"><span class="resumo-numero">02</span><span class="resumo-label">Consulta</span></span></button>
+    <button class="resumo-card resumo-vencimento-60" type="button" data-ajuda-modulo="saldos"><span class="resumo-icone"><i class="fas fa-boxes-stacked" aria-hidden="true"></i></span><span class="resumo-copy"><span class="resumo-numero">03</span><span class="resumo-label">Saldos</span></span></button>
+    <button class="resumo-card resumo-vencimento-90" type="button" data-ajuda-modulo="relatorios"><span class="resumo-icone"><i class="fas fa-chart-column" aria-hidden="true"></i></span><span class="resumo-copy"><span class="resumo-numero">04</span><span class="resumo-label">Relatórios</span></span></button>
+    <button class="resumo-card resumo-alertas" type="button" data-ajuda-modulo="pedidos"><span class="resumo-icone"><i class="fas fa-file-circle-check" aria-hidden="true"></i></span><span class="resumo-copy"><span class="resumo-numero">05</span><span class="resumo-label">Aprovações</span></span></button>
+    <button class="resumo-card central-ajuda-card-carrinho" type="button" data-ajuda-modulo="carrinho"><span class="resumo-icone"><i class="fas fa-cart-shopping" aria-hidden="true"></i></span><span class="resumo-copy"><span class="resumo-numero">06</span><span class="resumo-label">Carrinho</span></span></button>
+  </div>
+
+  <div class="central-ajuda-lista" id="centralAjudaLista">
+    <section class="central-ajuda-modulo" data-ajuda-secao="visao-geral">
+      <div class="central-ajuda-modulo-cabecalho"><span class="central-ajuda-modulo-icone"><i class="fas fa-chart-pie" aria-hidden="true"></i></span><div><h2>Visão geral</h2><p>O painel inicial para entender prioridades, alertas e próximos passos.</p></div></div>
+      <details class="central-ajuda-item" open><summary>O que encontro na Visão geral?</summary><div><p>O painel reúne indicadores de operação, alertas de vigência, pedidos recentes, decisões pendentes e atalhos para as áreas do sistema. Use-o como ponto de partida antes de entrar em uma tarefa específica.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como interpretar os indicadores do painel?</summary><div><p>Leia os cartões em conjunto: atas vigentes mostram a base contratual; saldo disponível mostra a capacidade de consumo; pedidos e aprovações mostram o fluxo de trabalho. Sempre abra o detalhe quando precisar conferir valores e datas.</p></div></details>
+      <details class="central-ajuda-item"><summary>O que fazer quando aparece um alerta?</summary><div><p>Abra o atalho indicado, confira a ata ou o pedido e verifique a data de vigência, o saldo do item e o responsável pela próxima decisão. O painel é somente leitura; as alterações acontecem nas telas operacionais.</p></div></details>
+      <details class="central-ajuda-item"><summary>Por que a visão muda conforme meu perfil?</summary><div><p>O sistema respeita as permissões do usuário. Secretários e solicitantes visualizam fluxos de pedido; perfis de gestão visualizam saldos, cadastros e decisões compatíveis com seu acesso.</p></div></details>
+    </section>
+
+    <section class="central-ajuda-modulo" data-ajuda-secao="consulta">
+      <div class="central-ajuda-modulo-cabecalho"><span class="central-ajuda-modulo-icone"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></span><div><h2>Consulta</h2><p>Encontre atas, fornecedores, itens, vigências e saldos.</p></div></div>
+      <details class="central-ajuda-item"><summary>Como encontro uma ata ou um item?</summary><div><p>Use a Busca Global por número da ata, pregão, processo, objeto, fornecedor, CPF/CNPJ, categoria ou descrição. Depois refine por órgão, status, categoria e vigência.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como uso os cartões de 30, 60 e 90 dias?</summary><div><p>Os cartões aplicam filtros rápidos de vencimento. O cartão de alertas mostra atas vencidas. Para voltar à lista completa, selecione Total de atas ou limpe os filtros.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como verifico o saldo disponível?</summary><div><p>Abra a ata e consulte os itens correspondentes. O saldo é específico de cada item e pode ser diferente do valor vigente total da ata. Confira também a unidade de medida e o consumo registrado.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como adiciono um item ao carrinho?</summary><div><p>Abra os detalhes da ata, localize um item com saldo disponível, informe a quantidade e use a ação de adicionar ao carrinho. O sistema valida a disponibilidade antes de permitir o pedido.</p></div></details>
+    </section>
+
+    <section class="central-ajuda-modulo" data-ajuda-secao="saldos">
+      <div class="central-ajuda-modulo-cabecalho"><span class="central-ajuda-modulo-icone"><i class="fas fa-boxes-stacked" aria-hidden="true"></i></span><div><h2>Saldos e consumo</h2><p>Acompanhe o valor vigente, o consumo e o saldo utilizável por item.</p></div></div>
+      <details class="central-ajuda-item"><summary>Qual é a diferença entre valor vigente e saldo disponível?</summary><div><p>Valor vigente representa o valor contratado ou registrado na ata. Saldo disponível representa o que ainda pode ser consumido nos itens, considerando os consumos efetivados e as regras do fluxo financeiro.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como identifico um saldo baixo ou zerado?</summary><div><p>Use os filtros da área de Saldos e consumo e confira a situação individual dos itens. Antes de criar um pedido, confirme sempre o saldo da unidade requisitante.</p></div></details>
+      <details class="central-ajuda-item"><summary>O que acontece depois de uma aprovação?</summary><div><p>A aprovação efetiva o consumo conforme o fluxo do sistema. Rejeições não devem reduzir saldo; estornos devolvem o consumo conforme as regras autorizadas.</p></div></details>
+      <details class="central-ajuda-item"><summary>Por que os valores aparecem com centavos?</summary><div><p>Os valores monetários são exibidos com duas casas decimais para preservar a precisão financeira, por exemplo: R$ 184,45.</p></div></details>
+    </section>
+
+    <section class="central-ajuda-modulo" data-ajuda-secao="relatorios">
+      <div class="central-ajuda-modulo-cabecalho"><span class="central-ajuda-modulo-icone"><i class="fas fa-chart-column" aria-hidden="true"></i></span><div><h2>Relatórios</h2><p>Transforme os dados operacionais em consultas e análises.</p></div></div>
+      <details class="central-ajuda-item"><summary>Como executar um relatório?</summary><div><p>Abra o relatório desejado, preencha os filtros disponíveis e selecione Aplicar. Revise os indicadores e a tabela antes de exportar ou compartilhar a informação.</p></div></details>
+      <details class="central-ajuda-item"><summary>Quais filtros devo usar?</summary><div><p>Escolha o período, órgão, fornecedor, situação da ata ou situação do pedido conforme a pergunta que deseja responder. Filtros mais específicos ajudam a reduzir resultados ambíguos.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como exporto os resultados?</summary><div><p>Quando habilitado no relatório, use os comandos de exportação para CSV ou PDF. A exportação respeita os filtros aplicados na tela.</p></div></details>
+      <details class="central-ajuda-item"><summary>Os relatórios alteram os dados?</summary><div><p>Não. Relatórios são consultas de leitura. Cadastros, pedidos, aprovações e ajustes devem ser feitos nas áreas operacionais correspondentes.</p></div></details>
+    </section>
+
+    <section class="central-ajuda-modulo" data-ajuda-secao="pedidos">
+      <div class="central-ajuda-modulo-cabecalho"><span class="central-ajuda-modulo-icone"><i class="fas fa-file-circle-check" aria-hidden="true"></i></span><div><h2>Pedidos e aprovações</h2><p>Crie, acompanhe, edite, aprove ou rejeite solicitações.</p></div></div>
+      <details class="central-ajuda-item"><summary>Como acompanho meus pedidos?</summary><div><p>Abra Pedidos e aprovações para consultar o status, expandir um pedido e visualizar seus itens. A seta e a área clicável indicam que existem detalhes adicionais.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como o secretário aprova um pedido?</summary><div><p>Abra o pedido, revise órgão, ata, itens, quantidades e valores. Se estiver correto, use Aprovar. A aprovação registra a decisão e segue o fluxo financeiro do sistema.</p></div></details>
+      <details class="central-ajuda-item"><summary>Posso alterar a quantidade antes de aprovar?</summary><div><p>Quando o perfil e o status permitirem, edite a quantidade do item, confira o novo total e registre a decisão. A alteração deve ser feita antes da aprovação final.</p></div></details>
+      <details class="central-ajuda-item"><summary>O que acontece quando um pedido é rejeitado?</summary><div><p>A rejeição mantém o pedido fora da execução e registra o motivo informado pelo responsável. O solicitante pode consultar a justificativa e ajustar o pedido quando o fluxo permitir.</p></div></details>
+    </section>
+
+    <section class="central-ajuda-modulo" data-ajuda-secao="carrinho">
+      <div class="central-ajuda-modulo-cabecalho"><span class="central-ajuda-modulo-icone"><i class="fas fa-cart-shopping" aria-hidden="true"></i></span><div><h2>Meu carrinho</h2><p>Revise quantidades, valores e itens antes de encaminhar pedidos.</p></div></div>
+      <details class="central-ajuda-item"><summary>Posso reunir itens de mais de uma ata?</summary><div><p>Sim. O carrinho organiza os itens selecionados por ata e a finalização gera os pedidos correspondentes conforme a composição da seleção.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como altero a quantidade?</summary><div><p>Use o campo numérico ou as setas de incremento e redução. O sistema deve respeitar o saldo disponível; confira o total atualizado antes de finalizar.</p></div></details>
+      <details class="central-ajuda-item"><summary>Como removo um item?</summary><div><p>Use a ação Remover na linha do item. Revise o resumo depois da remoção para garantir que o valor e a quantidade ficaram corretos.</p></div></details>
+      <details class="central-ajuda-item"><summary>O que acontece ao encaminhar o carrinho?</summary><div><p>O sistema valida os itens e cria a solicitação para o fluxo de pedidos e aprovações. Depois, acompanhe o status na tela de Pedidos e aprovações.</p></div></details>
+    </section>
+  </div>
+
+  <p class="central-ajuda-vazio" id="centralAjudaVazio" hidden><i class="fas fa-magnifying-glass" aria-hidden="true"></i><strong>Nenhuma orientação encontrada</strong><span>Tente outro termo ou limpe os filtros.</span></p>
+</section>
