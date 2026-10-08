@@ -3,109 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Visão Executiva | Intranet Municipal</title>
+    <title>Visão Executiva | Atas, Saldos e Pedidos</title>
+    <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261008-drive-prefeito-2" />
+    <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261008-drive-prefeito-1" />
+    <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261008-drive-prefeito-header-1" />
+    <link rel="stylesheet" href="./painel-prefeito.css?v=20261008-drive-prefeito-redesign-1" />
     <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-    <link rel="stylesheet" href="../shared/css/all.min.css?v=20261006-fontawesome-local-1" />
-    <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261004-unified-5" />
-    <link rel="stylesheet" href="./painel-prefeito.css?v=20261008-executive-shell-1" />
   </head>
-  <body class="painel-executivo" data-intranet-module="visao-executiva" data-intranet-page="painel-estrategico-do-prefeito-painel-prefeito">
+  <body class="painel-executivo" data-intranet-module="atas" data-intranet-page="controle-de-saldos-gestao-atas">
     <div class="app-layout" id="mainSystem">
       <aside class="sidebar" id="sidebar"></aside>
       <div class="main-area">
         <header class="topbar" id="topbar"></header>
         <main class="conteudo conteudo-full painel-conteudo">
-          <div id="loading" class="painel-state painel-state-loading" role="status" aria-live="polite">
-            <span class="painel-spinner" aria-hidden="true"></span>
-            Carregando indicadores consolidados...
-          </div>
-
-          <div id="erro" class="painel-state painel-state-error" role="alert" hidden>
-            <i class="fas fa-circle-exclamation" aria-hidden="true"></i>
-            <div>
-              <strong>Não foi possível carregar a visão executiva</strong>
-              <span id="erroTexto"></span>
-            </div>
-            <button id="tentar" class="btn btn-outline" type="button">Tentar novamente</button>
-          </div>
-
-          <section id="dashboard" class="painel-dashboard" hidden>
-            <div class="painel-context-bar">
-              <div class="painel-context-copy">
-                <i class="fas fa-shield-halved" aria-hidden="true"></i>
-                <span><strong>Visão executiva agregada</strong> · Dados institucionais somente leitura, filtrados pelo tenant e sem exposição de dados pessoais.</span>
-              </div>
-              <span class="painel-updated" id="updated">—</span>
-            </div>
-
-            <section id="visao-geral" class="painel-hero" aria-labelledby="tituloVisaoGeral">
-              <div class="painel-hero-copy">
-                <span class="eyebrow">Centro Integrado de Gestão</span>
-                <h1 id="tituloVisaoGeral">Decisões baseadas em evidências</h1>
-                <p>Uma leitura única da operação municipal. Novos módulos podem publicar indicadores aqui sem alterar a estrutura desta tela.</p>
-                <div id="resumoGrid" class="painel-summary-grid" aria-label="Resumo executivo"></div>
-              </div>
-              <div class="painel-period-card">
-                <div class="painel-section-heading">
-                  <div>
-                    <span class="eyebrow">Período de análise</span>
-                    <h2>Atualizar visão</h2>
-                  </div>
-                  <i class="fas fa-calendar-days" aria-hidden="true"></i>
-                </div>
-                <div class="painel-period-fields">
-                  <label for="inicio">Início<input id="inicio" type="date" /></label>
-                  <label for="fim">Fim<input id="fim" type="date" /></label>
-                </div>
-                <button id="atualizar" class="btn btn-primary painel-refresh" type="button"><i class="fas fa-arrows-rotate" aria-hidden="true"></i> Atualizar indicadores</button>
-              </div>
+          <section id="dashboard" class="painel-dashboard">
+            <section id="visao-geral" class="painel-hero" aria-labelledby="tituloPainel">
+              <div class="painel-hero-copy"><span class="eyebrow">Centro Integrado de Gestão</span><h1 id="tituloPainel">Capacidade de atendimento e execução</h1><p>Uma leitura executiva para saber se o Município tem contratos, saldo e fluxo de pedidos suficientes para atender às necessidades das secretarias.</p><div id="summaryGrid" class="painel-summary-grid"></div></div>
+              <div class="painel-control-card"><div class="painel-section-heading"><div><span class="eyebrow">Período de decisão</span><h2>Atualizar visão</h2></div><i class="fas fa-calendar-days" aria-hidden="true"></i></div><div class="painel-period-fields"><label for="inicio">Início<input id="inicio" type="date" /></label><label for="fim">Fim<input id="fim" type="date" /></label></div><button id="atualizar" class="btn btn-primary" type="button"><i class="fas fa-arrows-rotate" aria-hidden="true"></i> Atualizar indicadores</button><p class="painel-control-note"><i class="fas fa-circle-info" aria-hidden="true"></i> O período altera pedidos e tendências. Vigências e alertas operacionais consideram a posição atual.</p></div>
             </section>
 
-            <section id="ritmo-operacional" class="painel-card painel-trend-card" aria-labelledby="tituloTendencias">
-              <div class="painel-card-heading">
-                <div>
-                  <span class="eyebrow">Evolução no tempo</span>
-                  <h2 id="tituloTendencias">Ritmo operacional por módulo</h2>
-                  <p>Comparativo agregado das séries publicadas pelos módulos disponíveis.</p>
-                </div>
-                <div id="trendLegend" class="painel-legend" aria-label="Legenda das tendências"></div>
-              </div>
-              <div id="trendChart" class="painel-trend-chart"></div>
-            </section>
+            <section id="saude-atas" class="painel-section" aria-labelledby="tituloSaude"><div class="painel-section-heading"><div><span class="eyebrow">Saúde contratual</span><h2 id="tituloSaude">Atas e capacidade de atendimento</h2><p>Quanto está contratado, quanto ainda pode ser utilizado e onde existe risco de continuidade.</p></div><span class="painel-section-count">Atas e saldos</span></div><div id="healthGrid" class="painel-health-grid"></div><div class="painel-execution-layout"><div class="painel-panel"><div class="painel-panel-heading"><div><span class="eyebrow">Execução financeira</span><h3>Consumo do valor contratado</h3></div><strong id="executionPct">—</strong></div><div class="painel-progress-large"><span id="executionBar"></span></div><div class="painel-progress-labels"><span>Consumido: <b id="consumedValue">—</b></span><span>Saldo: <b id="balanceValue">—</b></span></div></div><div class="painel-panel painel-reading"><div class="painel-panel-heading"><div><span class="eyebrow">Leitura executiva</span><h3>O que merece atenção</h3></div><i class="fas fa-lightbulb" aria-hidden="true"></i></div><p id="healthReading">—</p></div></div></section>
 
-            <section id="modulos" class="painel-section" aria-labelledby="tituloModulos">
-              <div class="painel-section-heading">
-                <div>
-                  <span class="eyebrow">Ecossistema municipal</span>
-                  <h2 id="tituloModulos">Módulos e indicadores</h2>
-                  <p>Esta área cresce junto com a Intranet. Cada módulo publica seus próprios indicadores, leituras e alertas.</p>
-                </div>
-                <span id="moduleCount" class="painel-section-count">—</span>
-              </div>
-              <div id="moduleGrid" class="painel-module-grid"></div>
-            </section>
+            <section id="pedidos-decisoes" class="painel-section" aria-labelledby="tituloPedidos"><div class="painel-section-heading"><div><span class="eyebrow">Fluxo decisório</span><h2 id="tituloPedidos">Pedidos e decisões</h2><p>O volume de solicitações, o que já foi autorizado e o que ainda está parado aguardando análise.</p></div><a class="painel-section-link" href="../controle-de-saldos/gestao-atas.html#pedidos">Abrir pedidos e aprovações <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div><div class="painel-orders-layout"><div class="painel-panel"><div class="painel-panel-heading"><div><span class="eyebrow">Funil do período</span><h3>Distribuição das decisões</h3></div><strong id="ordersTotal">—</strong></div><div id="ordersFunnel" class="painel-funnel"></div></div><div class="painel-panel"><div class="painel-panel-heading"><div><span class="eyebrow">Pressão operacional</span><h3>Indicadores de decisão</h3></div><i class="fas fa-gauge-high" aria-hidden="true"></i></div><div id="decisionGrid" class="painel-decision-grid"></div></div></div></section>
 
-            <section id="alertas" class="painel-section" aria-labelledby="tituloAlertas">
-              <div class="painel-section-heading">
-                <div>
-                  <span class="eyebrow">Gestão por exceção</span>
-                  <h2 id="tituloAlertas">Alertas executivos</h2>
-                  <p>Ocorrências agregadas que merecem acompanhamento da administração.</p>
-                </div>
-                <span id="alertCount" class="painel-section-count">—</span>
-              </div>
-              <div id="alertsList" class="painel-alerts-grid"></div>
-            </section>
+            <section id="tendencias" class="painel-section" aria-labelledby="tituloTendencias"><div class="painel-section-heading"><div><span class="eyebrow">Evolução</span><h2 id="tituloTendencias">Ritmo de pedidos</h2><p>Volume mensal de solicitações para identificar aceleração ou redução da demanda.</p></div><span class="painel-section-count">Últimos meses disponíveis</span></div><div id="trendLegend" class="painel-legend"></div><div id="trendChart" class="painel-trend-chart"></div></section>
 
-            <footer class="painel-footer">
-              <span><i class="fas fa-circle-check" aria-hidden="true"></i> Dados consultados com escopo de tenant</span>
-              <span>Atualização sob demanda · Visão somente leitura</span>
-            </footer>
+            <section id="alertas" class="painel-section" aria-labelledby="tituloAlertas"><div class="painel-section-heading"><div><span class="eyebrow">Gestão por exceção</span><h2 id="tituloAlertas">Riscos que exigem acompanhamento</h2><p>Alertas agregados para orientar a prioridade da administração.</p></div><span id="alertCount" class="painel-section-count">—</span></div><div id="alertsList" class="painel-alerts-grid"></div></section>
+            <footer class="painel-footer"><span><i class="fas fa-circle-check" aria-hidden="true"></i> Dados consultados com escopo de tenant</span><span>Visão somente leitura · Atualização sob demanda</span></footer>
           </section>
         </main>
       </div>
     </div>
-    <script src="../shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
-    <script type="module" src="./painel-prefeito.js?v=20261008-dynamic-modules-1"></script>
+    <script src="../shared/js/system-shell.js?v=20261008-drive-prefeito-1"></script>
+    <script type="module" src="./painel-prefeito.js?v=20261008-drive-prefeito-finance-2"></script>
   </body>
 </html>
