@@ -19,7 +19,7 @@ const pages = {
   auditoria: { id: "compras-auditoria", title: "Trilha de auditoria", subtitle: "Histórico de alterações por entidade e horário", icon: "fa-clipboard-check", lead: "Consulte a trilha técnica e os relatórios de auditoria do tenant. O acesso é exclusivo do administrador.", nav: "auditoria.html" },
   processo: { id: "compras-processos", title: "Ficha do processo", subtitle: "Visão independente do ciclo e dos artefatos vinculados", icon: "fa-folder-open", lead: "Etapas, documentos, tarefas, decisões, artefatos e contratos relacionados ao mesmo processo.", nav: "index.html#tab-processes" },
 };
-const state = { user: null, membership: null, tenantId: null, processes: [], models: [], rules: [], resources: { artifacts: [], versions: [], documents: [], decisions: [], stages: [], tasks: [], contracts: [], events: [] }, page: null };
+const state = { user: null, membership: null, tenantId: null, processes: [], rules: [], resources: { artifacts: [], versions: [], documents: [], decisions: [], stages: [], tasks: [], contracts: [], events: [] }, page: null };
 let resourceRequestToken = 0;
 
 function notify(message, tone = "success") {
@@ -54,13 +54,6 @@ async function loadMembership() {
     .eq("tenant_id", state.tenantId).order("ano", { ascending: false }).order("created_at", { ascending: false }).limit(300);
   if (processError) throw processError;
   state.processes = processes || [];
-  const [modelRows, versionRows] = await Promise.all([
-    supabase.from("compras_modelos_artefato").select("id,chave,nome,tipo,descricao,ativo").eq("tenant_id", state.tenantId).eq("ativo", true).order("nome").limit(100),
-    supabase.from("compras_modelos_artefato_versoes").select("id,modelo_id,versao,situacao,estrutura,publicada_em,created_at").eq("tenant_id", state.tenantId).eq("situacao", "publicada").order("created_at", { ascending: false }).limit(200),
-  ]);
-  if (modelRows.error) throw modelRows.error;
-  if (versionRows.error) throw versionRows.error;
-  state.models = (modelRows.data || []).map((model) => ({ ...model, versoes: (versionRows.data || []).filter((version) => version.modelo_id === model.id) })).filter((model) => model.versoes.length);
   const context = $("#context-bar"); context.hidden = false;
   context.innerHTML = `<i class="fa-solid fa-building" aria-hidden="true"></i><span><strong>${manager(state) ? "Acesso de gestão" : "Acesso de leitura"}</strong> · ${esc(human(state.membership.role))}</span>`;
   if (["governanca", "decisoes", "artefatos"].includes(state.page) && !manager(state)) {
@@ -90,57 +83,45 @@ function renderAreaLinks() {
     <a href="index.html"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Painel</a>
     <a href="index.html#tab-processes"><i class="fa-solid fa-folder-tree" aria-hidden="true"></i> Processos</a>
     <a href="artefatos.html"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> ETP / TR</a>
-    <a href="modelos.html"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Modelos</a>
     <a href="decisoes.html"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Decisões</a>
     <a href="governanca.html"><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i> Regras e fontes</a>
     ${auditLink}
   </nav>`;
 }
-function modelVersionOptions() {
-  const versions = state.models.flatMap((model) => model.versoes.map((version) => ({ ...version, model })));
-  return `<option value="">Selecione o modelo publicado</option>${versions.map((v) => `<option value="${esc(v.id)}" data-tipo="${esc(v.model.tipo)}">${esc(v.model.nome)} · v${esc(v.versao)}</option>`).join("")}`;
-}
-function selectedModelVersion(id) {
-  return state.models.flatMap((model) => model.versoes.map((version) => ({ ...version, model }))).find((version) => version.id === id) || null;
-}
-function configuredFieldsHtml(modelVersion) {
-  if (!modelVersion?.estrutura?.secoes?.length) return `<div class="dialog-callout">Selecione um modelo publicado para carregar sua estrutura.</div>`;
-  return modelVersion.estrutura.secoes.map((section) => `<fieldset class="artifact-section span-2"><legend>${esc(section.codigo)} — ${esc(section.titulo)}</legend>${(section.campos || []).map((field) => {
-    const required = field.obrigatorio ? "required" : "";
-    const help = [field.fundamento, field.ajuda].filter(Boolean).map((value) => `<span class="form-help">${esc(value)}</span>`).join("");
-    return `<div class="form-field span-2"><label for="artifact-answer-${esc(field.chave)}">${esc(field.rotulo)}${field.obrigatorio ? " *" : ""}</label><textarea class="artifact-answer" id="artifact-answer-${esc(field.chave)}" name="${esc(field.chave)}" data-artifact-key="${esc(field.chave)}" ${required} maxlength="12000" rows="4"></textarea>${help}</div>`;
-  }).join("")}</fieldset>`).join("");
-}
 function renderArtifactsPage() {
   const canWrite = manager(state);
-  const defaultVersion = state.models.flatMap((model) => model.versoes.map((version) => ({ ...version, model })))[0];
-  const modelOptions = modelVersionOptions();
-  const typeOptions = state.models.flatMap((model) => model.versoes.map((version) => `<option value="${esc(model.tipo)}" data-model-version="${esc(version.id)}">${esc(model.nome)} · v${esc(version.versao)}</option>`)).join("") || `<option value="etp">Estudo Técnico Preliminar (ETP)</option>`;
   $("#area-workspace").innerHTML = `${renderAreaLinks()}
-    <section class="surface-card area-intro"><p class="eyebrow">Modelos oficiais e configuráveis</p><h2>Preencha o documento conforme a estrutura publicada</h2><p>O formulário é carregado do modelo versionado no banco. O modelo inicial reproduz a estrutura oficial dos ETPs analisados; alterações futuras deverão criar uma nova versão e não modificar documentos já iniciados.</p></section>
-    ${canWrite ? `<section class="surface-card area-form-card"><div class="card-heading"><div><p class="eyebrow">Nova versão</p><h2>ETP, TR ou outro artefato configurável</h2></div><span class="heading-icon"><i class="fa-solid fa-file-circle-plus" aria-hidden="true"></i></span></div>
+    <section class="surface-card area-intro"><p class="eyebrow">Minutas guiadas</p><h2>Prepare e revise os documentos do processo</h2><p>Use estes campos como estrutura de trabalho. A versão só fica registrada como rascunho ou em revisão; aprovação, assinatura e publicação exigem conferência formal da equipe.</p></section>
+    ${canWrite ? `<section class="surface-card area-form-card"><div class="card-heading"><div><p class="eyebrow">Nova versão</p><h2>ETP, TR, edital ou outro artefato</h2></div><span class="heading-icon"><i class="fa-solid fa-file-circle-plus" aria-hidden="true"></i></span></div>
       <form id="artifact-form" class="form-grid area-form"><div class="form-field span-2"><label for="artifact-process">Processo *</label><select id="artifact-process" name="processo_id" required>${processOptions()}</select></div>
       <div class="form-field"><label for="artifact-existing">Documento existente (opcional)</label><select id="artifact-existing" name="artefato_id"><option value="">Criar novo documento</option></select><span class="form-help">Escolha um documento para criar a próxima revisão sem apagar as anteriores.</span></div>
-      <div class="form-field"><label for="artifact-model-version">Modelo publicado *</label><select id="artifact-model-version" name="modelo_versao_id" required>${modelOptions}</select><span class="form-help">A versão do modelo fica gravada no ETP para preservar o histórico.</span></div>
-      <div class="form-field span-2"><label for="artifact-type">Tipo</label><select id="artifact-type" name="tipo" required disabled>${typeOptions}</select></div>
+      <div class="form-field"><label for="artifact-type">Tipo *</label><select id="artifact-type" name="tipo" required><option value="etp">Estudo Técnico Preliminar (ETP)</option><option value="termo_referencia">Termo de Referência (TR)</option><option value="projeto_basico">Projeto Básico</option><option value="edital">Edital / minuta</option><option value="parecer_tecnico">Parecer técnico</option><option value="mapa_pesquisa_precos">Mapa de pesquisa de preços</option><option value="nota_autorizacao">Nota de autorização</option><option value="ata_sessao">Ata de sessão</option><option value="outro">Outro artefato</option></select></div>
       <div class="form-field span-2"><label for="artifact-title">Título do documento *</label><input id="artifact-title" name="titulo" maxlength="300" required placeholder="Ex.: ETP — aquisição de materiais de expediente" /></div>
-      <div id="configured-artifact-fields" class="form-grid span-2">${configuredFieldsHtml(defaultVersion)}</div>
+      <div class="form-field"><label>Necessidade e problema</label><textarea name="necessidade" maxlength="6000" placeholder="Qual problema público precisa ser resolvido? Quem será atendido?"></textarea></div>
+      <div class="form-field"><label>Requisitos e resultados esperados</label><textarea name="requisitos" maxlength="6000" placeholder="Descreva requisitos funcionais, níveis de serviço e resultados esperados."></textarea></div>
+      <div class="form-field"><label>Alternativas e justificativa da solução</label><textarea name="alternativas" maxlength="6000" placeholder="Registre alternativas avaliadas e a justificativa técnica informada."></textarea></div>
+      <div class="form-field"><label>Estimativa e memória de cálculo</label><textarea name="estimativa" maxlength="6000" placeholder="Indique quantitativos, fontes, premissas e memória de cálculo."></textarea></div>
+      <div class="form-field"><label>Riscos e medidas de tratamento</label><textarea name="riscos" maxlength="6000" placeholder="Riscos identificados, impacto, prevenção e responsável."></textarea></div>
+      <div class="form-field"><label>Critérios de recebimento e aceite</label><textarea name="criterios_aceite" maxlength="6000" placeholder="Como a equipe verificará a entrega e a qualidade?"></textarea></div>
+      <div class="form-field"><label>Modelo de execução e fiscalização</label><textarea name="execucao" maxlength="6000" placeholder="Descreva acompanhamento, medição, fiscalização e obrigações propostas."></textarea></div>
       <div class="form-field"><label>Situação inicial</label><select name="situacao"><option value="rascunho">Rascunho</option><option value="em_revisao">Enviar para revisão</option></select></div>
+      <div class="form-field span-2"><label>Notas complementares</label><textarea name="observacoes" maxlength="6000" placeholder="Fontes consultadas, pontos pendentes e observações da equipe."></textarea></div>
       <div class="area-actions span-2"><button class="button button-primary" type="submit"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Salvar versão</button></div></form></section>` : `<section class="surface-card">${noData("Seu perfil pode consultar documentos do processo; somente Compras ou o administrador cadastra versões.")}</section>`}
     <section class="surface-card"><div class="list-toolbar"><div><p class="eyebrow">Histórico imutável</p><h2>Versões registradas</h2><p class="muted-text">Escolha o processo para consultar seus documentos e revisões.</p></div><label class="form-field area-process-filter" for="artifact-filter-process"><span>Processo</span><select id="artifact-filter-process">${processOptions()}</select></label></div><div id="artifact-list">${noData("Selecione um processo para consultar os artefatos.")}</div></section>`;
-  if (canWrite) {
-    bindProcessSelect("#artifact-model-version", (id) => {
-      const version = selectedModelVersion(id);
-      const fields = $("#configured-artifact-fields"); if (fields) fields.innerHTML = configuredFieldsHtml(version);
-      const type = $("#artifact-type"); if (type) type.value = version?.model?.tipo || "etp";
-    });
-    bindProcessSelect("#artifact-process", (id) => { $("#artifact-filter-process").value = id; return loadSelectedProcessResources(id); });
-    bindForm("artifact-form", saveArtifact);
-  }
-  bindProcessSelect("#artifact-filter-process", (id) => { if (canWrite && $("#artifact-process")) $("#artifact-process").value = id; return loadSelectedProcessResources(id); });
+  bindProcessSelect("#artifact-filter-process", (id) => {
+    if (canWrite && $("#artifact-process")) $("#artifact-process").value = id;
+    return loadSelectedProcessResources(id);
+  });
+  if (canWrite) bindProcessSelect("#artifact-process", (id) => {
+    $("#artifact-filter-process").value = id;
+    return loadSelectedProcessResources(id);
+  });
+  if (canWrite) bindForm("artifact-form", saveArtifact);
   const initial = initialProcessId();
-  if (initial) { $("#artifact-filter-process").value = initial; if (canWrite) $("#artifact-process").value = initial; }
-  if (canWrite && defaultVersion) { $("#artifact-model-version").value = defaultVersion.id; $("#artifact-type").value = defaultVersion.model.tipo; }
+  if (initial) {
+    $("#artifact-filter-process").value = initial;
+    if (canWrite) $("#artifact-process").value = initial;
+  }
   loadSelectedProcessResources(initial);
 }
 function renderDecisionsPage() {
@@ -255,7 +236,7 @@ async function loadSelectedProcessResources(processId) {
     const artifactIds = artifactRows.map((artifact) => artifact.id);
     for (let offset = 0; artifactIds.length; offset += 500) {
       const { data, error } = await supabase.from("compras_artefato_versoes")
-        .select("id,artefato_id,versao,situacao,conteudo,respostas,modelo_versao_id,created_by,created_at")
+        .select("id,artefato_id,versao,situacao,conteudo,created_by,created_at")
         .eq("tenant_id", tenantId).in("artefato_id", artifactIds)
         .order("created_at", { ascending: false }).range(offset, offset + 499);
       if (!isCurrentRequest()) return;
@@ -288,40 +269,29 @@ function fillArtifactChoices(processId) {
 async function saveArtifact(form) {
   if (!manager(state)) throw new Error("Somente Compras ou o administrador pode registrar artefatos.");
   const d = new FormData(form); const processId = String(d.get("processo_id"));
-  const modelVersionId = String(d.get("modelo_versao_id") || "");
-  const modelVersion = selectedModelVersion(modelVersionId);
   if (!state.processes.some((p) => p.id === processId)) throw new Error("Selecione um processo permitido.");
-  if (!modelVersion) throw new Error("Selecione um modelo publicado.");
-  const respostas = Object.fromEntries([...form.querySelectorAll(".artifact-answer")].map((field) => [field.dataset.artifactKey, String(field.value || "").trim()]));
-  const required = [...form.querySelectorAll(".artifact-answer[required]")].find((field) => !String(field.value || "").trim());
-  if (required) { required.focus(); throw new Error(`Preencha o campo obrigatório: ${required.closest(".form-field")?.querySelector("label")?.textContent || required.name}`); }
-  const { data, error } = await supabase.rpc("compras_registrar_artefato_configurado", {
-    p_processo_id: processId, p_tipo: modelVersion.model.tipo, p_titulo: String(d.get("titulo") || "").trim(), p_modelo_versao_id: modelVersion.id,
-    p_respostas: respostas, p_artefato_id: String(d.get("artefato_id") || "") || null, p_situacao: d.get("situacao"),
+  const payload = {
+    necessidade: String(d.get("necessidade") || "").trim(), requisitos: String(d.get("requisitos") || "").trim(), alternativas: String(d.get("alternativas") || "").trim(),
+    estimativa: String(d.get("estimativa") || "").trim(), riscos: String(d.get("riscos") || "").trim(), criterios_aceite: String(d.get("criterios_aceite") || "").trim(),
+    execucao: String(d.get("execucao") || "").trim(), observacoes: String(d.get("observacoes") || "").trim(), origem: "interface_compras_v1",
+  };
+  const { data, error } = await supabase.rpc("compras_registrar_artefato_versao", {
+    p_processo_id: processId, p_tipo: d.get("tipo"), p_titulo: String(d.get("titulo")).trim(), p_conteudo: payload,
+    p_artefato_id: String(d.get("artefato_id") || "") || null, p_situacao: d.get("situacao"),
   });
   if (error) throw error;
   const row = Array.isArray(data) ? data[0] : data;
-  notify(`Versão ${row?.numero_versao || ""} registrada com o modelo ${modelVersion.model.nome} v${modelVersion.versao}.`);
+  notify(`Versão ${row?.numero_versao || ""} registrada. O documento continua como rascunho/em revisão; não foi aprovado nem publicado.`);
   form.reset();
   const process = $("#artifact-process"); if (process) process.value = processId;
-  const model = $("#artifact-model-version"); if (model) { model.value = modelVersion.id; $("#configured-artifact-fields").innerHTML = configuredFieldsHtml(modelVersion); }
   await loadSelectedProcessResources(processId);
-}
-function configuredResponseSummary(version) {
-  if (!version?.respostas || !version.modelo_versao_id) return "";
-  const modelVersion = selectedModelVersion(version.modelo_versao_id);
-  const fields = modelVersion?.estrutura?.secoes?.flatMap((section) => (section.campos || []).map((field) => ({ ...field, section: section.codigo }))) || [];
-  return fields.map((field) => {
-    const value = String(version.respostas[field.chave] || "").trim();
-    return value ? `<div><dt>${esc(field.section)} · ${esc(field.rotulo)}</dt><dd>${esc(value)}</dd></div>` : "";
-  }).filter(Boolean).join("");
 }
 function renderResourceList() {
   const target = $("#artifact-list"); if (!target) return;
   if (!state.resources.artifacts.length) { target.innerHTML = noData("Ainda não há artefatos cadastrados para este processo."); return; }
   target.innerHTML = `<div class="version-list">${state.resources.artifacts.map((a) => {
     const versions = state.resources.versions.filter((v) => v.artefato_id === a.id).sort((x,y) => y.versao-x.versao);
-    return `<article class="version-card"><div class="version-card-head"><div><span class="eyebrow">${esc(human(a.tipo))}</span><h3>${esc(a.titulo)}</h3></div><span class="status-pill">${versions.length} versão(ões)</span></div>${versions.map((v) => `<details class="version-detail"><summary>Versão ${esc(v.versao)} · ${esc(human(v.situacao))} · ${esc(date(v.created_at))}</summary><dl class="content-summary">${configuredResponseSummary(v) || Object.entries(v.conteudo || {}).filter(([k,val]) => !["origem"].includes(k) && String(val || "").trim()).map(([k,val]) => `<div><dt>${esc(human(k))}</dt><dd>${esc(val)}</dd></div>`).join("") || "<div><dd>Sem campos preenchidos nesta versão.</dd></div>"}</dl></details>`).join("")}</article>`;
+    return `<article class="version-card"><div class="version-card-head"><div><span class="eyebrow">${esc(human(a.tipo))}</span><h3>${esc(a.titulo)}</h3></div><span class="status-pill">${versions.length} versão(ões)</span></div>${versions.map((v) => `<details class="version-detail"><summary>Versão ${esc(v.versao)} · ${esc(human(v.situacao))} · ${esc(date(v.created_at))}</summary><dl class="content-summary">${Object.entries(v.conteudo || {}).filter(([k,val]) => !["origem"].includes(k) && String(val || "").trim()).map(([k,val]) => `<div><dt>${esc(human(k))}</dt><dd>${esc(val)}</dd></div>`).join("") || "<div><dd>Sem campos preenchidos nesta versão.</dd></div>"}</dl></details>`).join("")}</article>`;
   }).join("")}</div>`;
 }
 function fillDecisionChoices() {
