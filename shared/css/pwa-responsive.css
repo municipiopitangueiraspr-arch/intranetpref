@@ -77,6 +77,34 @@ body[data-intranet-module="atas"] select,
 body[data-intranet-module="atas"] textarea { font-size: 16px; }
 
 @media (max-width: 1024px) {
+  /* O menu continua largo o bastante para exibir os nomes; somente a
+     posição muda para off-canvas. As duas classes cobrem os controladores
+     antigo e compartilhado durante a transição de versões. */
+  body[data-intranet-module="atas"] .sidebar,
+  body[data-intranet-module="atas"] .system-sidebar {
+    left: -300px;
+    width: min(86vw, 300px);
+    min-width: 260px;
+    visibility: visible;
+  }
+  body[data-intranet-module="atas"] .sidebar.aberta,
+  body[data-intranet-module="atas"] .sidebar.is-open,
+  body[data-intranet-module="atas"] .system-sidebar.aberta,
+  body[data-intranet-module="atas"] .system-sidebar.is-open {
+    left: 0;
+  }
+  body[data-intranet-module="atas"] .sidebar .menu-label,
+  body[data-intranet-module="atas"] .sidebar .brand-text,
+  body[data-intranet-module="atas"] .system-sidebar .menu-label,
+  body[data-intranet-module="atas"] .system-sidebar .brand-text {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  body[data-intranet-module="atas"] .sidebar-nav a,
+  body[data-intranet-module="atas"] .sidebar-voltar a {
+    min-height: 46px;
+  }
   body[data-intranet-module="atas"] .topbar { position: sticky; top: 0; z-index: 800; }
   body[data-intranet-module="atas"] .topbar-titulo h1 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }

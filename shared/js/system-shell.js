@@ -11,15 +11,15 @@
     sidebar.classList.add('system-sidebar');
     sidebar.setAttribute('aria-label', sidebar.getAttribute('aria-label') || 'Navegação principal da intranet');
 
+    const toggles = [...document.querySelectorAll(toggleSelector)];
+    const toggleAlreadyBound = toggles.some((button) => button.dataset.sidebarToggleBound === 'true');
     let backdrop = document.querySelector('.system-sidebar-backdrop');
-    if (!backdrop) {
+    if (!toggleAlreadyBound && !backdrop) {
       backdrop = document.createElement('div');
       backdrop.className = 'system-sidebar-backdrop';
       backdrop.setAttribute('aria-hidden', 'true');
       document.body.appendChild(backdrop);
     }
-
-    const toggles = [...document.querySelectorAll(toggleSelector)];
     const setOpen = (open) => {
       sidebar.classList.toggle('is-open', open);
       sidebar.classList.toggle('aberta', open);
@@ -30,8 +30,13 @@
       });
       if (open) sidebar.querySelector('a,button,[tabindex]:not([tabindex="-1"])')?.focus({preventScroll:true});
     };
-    toggles.forEach((button) => button.addEventListener('click', () => setOpen(!sidebar.classList.contains('is-open'))));
-    backdrop.addEventListener('click', () => setOpen(false));
+    if (!toggleAlreadyBound) {
+      toggles.forEach((button) => {
+        button.dataset.sidebarToggleBound = 'true';
+        button.addEventListener('click', () => setOpen(!sidebar.classList.contains('is-open')));
+      });
+      backdrop?.addEventListener('click', () => setOpen(false));
+    }
     sidebar.querySelectorAll('a').forEach((link) => {
       const href = link.getAttribute('href') || '';
       try {
@@ -41,7 +46,7 @@
           link.setAttribute('aria-current', 'page');
         }
       } catch (_) { /* link externo ou placeholder: não interferir */ }
-      link.addEventListener('click', () => setOpen(false));
+      if (!toggleAlreadyBound) link.addEventListener('click', () => setOpen(false));
     });
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') setOpen(false);

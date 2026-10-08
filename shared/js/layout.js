@@ -583,6 +583,10 @@ function marcarItemAtivo(moduloAtivo) {
 function configurarToggleMobile(sidebar) {
   const btn = document.getElementById("btnToggleSidebar");
   if (!btn) return;
+  // O system-shell também conhece o hamburger. Um único controlador evita
+  // que um listener abra o menu e o outro o feche no mesmo clique.
+  if (btn.dataset.sidebarToggleBound === "true") return;
+  btn.dataset.sidebarToggleBound = "true";
   btn.dataset.layoutBound = "true";
 
   // ---------- Backdrop (cria se não existir) ----------
