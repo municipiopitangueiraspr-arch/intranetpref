@@ -47,7 +47,11 @@ No projeto Supabase `gestao-atas-pitangueiras` (`qgkjnzcqjhhqdgxmvtew`), a migra
 
 Os testes HTTP sem credenciais confirmaram preflight permitido (`OPTIONS 200`), rejeição de origem não autorizada (`403`) e resposta de requisição inválida para a origem oficial (`400`), sem executar login. Os fluxos reais de login bem-sucedido/falho e OAuth ainda não foram exercitados com contas de teste. Falhas de provedores externos dependem de Auth Audit Logs do Supabase gravados em Postgres; na inspeção anterior, `auth.audit_log_entries` estava vazio.
 
-O frontend está na branch local `feat/admin-security-audit`; o push para GitHub Pages e a sincronização reversa para o Google Drive ainda estão pendentes nesta revisão. As verificações locais cobriram build e sintaxe JS, parsing PostgreSQL, compilação/bundle TypeScript, auditoria de HTML/assets/âncoras e `git diff --check`. A auditoria informativa continua listando 30 folhas CSS sem referência; nenhuma foi removida.
+O commit `ef54c5f` foi publicado em `main` por fast-forward. O workflow do GitHub Pages (`37939720888`) concluiu com sucesso; a [página de Auditoria e Logs](https://municipiopitangueiraspr-arch.github.io/intranetpref/core/auditoria/) e os dois CSS administrativos responderam `200`.
+
+A sincronização reversa no Google Drive concluiu para os 24 arquivos alterados: 18 atualizados e 6 criados, incluindo a estrutura `supabase/functions/security-login`. Os hashes MD5 foram conferidos após o upload; nenhum arquivo foi excluído.
+
+As verificações locais cobriram build e sintaxe JS, parsing PostgreSQL, compilação/bundle TypeScript, auditoria de HTML/assets/âncoras e `git diff --check`. A auditoria informativa continua listando 30 folhas CSS sem referência; nenhuma foi removida.
 
 ## Referências oficiais
 
