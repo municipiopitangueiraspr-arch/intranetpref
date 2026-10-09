@@ -36,3 +36,38 @@ body.saas-admin .security-error { color:#991b1b; }
   body.saas-admin .security-log-meta { align-items:flex-start; flex-direction:column; }
   body.saas-admin .security-page-controls { justify-content:center; }
 }
+
+/* Alertas internos do centro de segurança. */
+body.saas-admin .security-alert-panel { margin:0 0 18px; }
+body.saas-admin .security-alert-head { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:12px; }
+body.saas-admin .security-alert-head h2 { margin:5px 0 4px; color:#102a43; font-size:1.05rem; font-weight:850; }
+body.saas-admin .security-alert-head p { margin:0; color:#4b6379; font-size:.72rem; }
+body.saas-admin .security-alert-updated { color:#4b6379; font-size:.67rem; font-weight:750; white-space:nowrap; }
+body.saas-admin .security-alert-list { display:grid; gap:9px; }
+body.saas-admin .security-alert-item { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:14px; padding:12px 14px; border:1px solid #d9e2ec; border-left:4px solid #94a3b8; border-radius:11px; background:#fff; }
+body.saas-admin .security-alert-item.critical { border-left-color:#dc2626; background:linear-gradient(100deg,#fff7f7,#fff); }
+body.saas-admin .security-alert-item.warning { border-left-color:#d97706; background:linear-gradient(100deg,#fffbeb,#fff); }
+body.saas-admin .security-alert-item.review { border-left-color:#2563eb; background:linear-gradient(100deg,#eff6ff,#fff); }
+body.saas-admin .security-alert-meta { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+body.saas-admin .security-alert-severity { display:inline-flex; padding:3px 8px; border-radius:999px; font-size:.59rem; font-weight:900; letter-spacing:.04em; text-transform:uppercase; }
+body.saas-admin .security-alert-severity.critical { color:#991b1b; background:#fee2e2; }
+body.saas-admin .security-alert-severity.warning { color:#92400e; background:#fef3c7; }
+body.saas-admin .security-alert-severity.review { color:#1e40af; background:#dbeafe; }
+body.saas-admin .security-alert-window { color:#4b6379; font-size:.62rem; font-weight:700; }
+body.saas-admin .security-alert-main > strong { display:block; color:#102a43; font-size:.78rem; }
+body.saas-admin .security-alert-main > p { margin:4px 0 0; color:#486581; font-size:.69rem; line-height:1.45; }
+body.saas-admin .security-alert-count { display:grid; justify-items:end; color:#486581; font-size:.62rem; }
+body.saas-admin .security-alert-count > strong { color:#102a43; font-size:1.1rem; line-height:1.1; }
+body.saas-admin .security-alert-count > small { margin-top:4px; color:#4b6379; font-size:.58rem; white-space:nowrap; }
+body.saas-admin .security-alert-empty { display:flex; align-items:center; gap:11px; padding:12px 14px; border:1px solid #bbf7d0; border-radius:11px; color:#166534; background:#f0fdf4; }
+body.saas-admin .security-alert-empty strong { display:block; font-size:.76rem; }
+body.saas-admin .security-alert-empty p { margin:3px 0 0; color:#486581; font-size:.68rem; }
+body.saas-admin .security-alert-empty-icon { display:grid; width:32px; height:32px; flex:0 0 32px; place-items:center; border-radius:10px; color:#15803d; background:#dcfce7; }
+body.saas-admin .security-alert-empty-error { display:block; border-color:#fecaca; color:#991b1b; background:#fef2f2; }
+body.saas-admin .security-alert-footnote { margin:9px 0 0; color:#4b6379; font-size:.62rem; }
+@media (max-width:620px) {
+  body.saas-admin .security-alert-head { flex-direction:column; gap:6px; }
+  body.saas-admin .security-alert-item { grid-template-columns:1fr; }
+  body.saas-admin .security-alert-count { grid-template-columns:auto auto; justify-items:start; align-items:baseline; gap:5px; }
+  body.saas-admin .security-alert-count > small { grid-column:1 / -1; }
+}

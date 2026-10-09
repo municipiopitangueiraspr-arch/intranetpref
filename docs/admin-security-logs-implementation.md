@@ -32,14 +32,26 @@ Os eventos customizados de autenticação são limitados à janela administrativ
 
 Os eventos armazenam identificador mascarado, etiqueta HMAC com chave backend-only, resultado/código fechado, IP confiável, user-agent e UUID autenticado quando disponível. Senhas, tokens e respostas brutas da Auth não são persistidos. IP e agente são dados potencialmente identificáveis e ficam visíveis apenas ao ADMIN global.
 
+## Alertas internos
+
+A RPC `public.admin_security_alerts()` calcula os alertas no momento da consulta, exige ADMIN ativo e não persiste cópias dos eventos. A interface atualiza a trilha e os alertas a cada 60 segundos enquanto a página está visível. Alertas não são enviados a e-mail, chat ou serviço externo; se uma consulta falhar, os dados anteriores são ocultados no navegador.
+
+- **Volume de autenticação (15 min):** conta `failure` e `pending`, iguais ao rate limit. Há aviso a partir de 5 tentativas por identificador HMAC e 15 por IP; a severidade crítica começa em 8 e 30, respectivamente. O resumo nunca retorna o IP bruto. Na trilha, IP e agente continuam visíveis somente ao ADMIN ativo, conforme requisito operacional.
+- **Disponibilidade do Auth (15 min):** aviso a partir de 5 `auth_service_error`; crítico a partir de 10.
+- **OAuth (15 min):** apenas eventos nativos `action=login` com provedor não vazio/não e-mail e campo explícito `error` ou `error_code`; aviso em 3 e crítico em 5. Não são inferidas falhas a partir de tentativas sem resultado explícito. A classificação precisa ser confirmada com um evento OAuth real em homologação.
+- **Operações transacionais (24 h):** alterações em `app_tenant_memberships` e exclusões físicas registradas na trilha geram sinal de revisão; o detalhe deve ser conferido nos logs transacionais, sem exibir snapshots.
+
+Os alertas são estado derivado, não um histórico de incidentes durável. Para notificações fora do painel, é necessário definir destino e mecanismo próprios; esta entrega não habilita exportação nem encaminha dados identificáveis.
+
 ## Ordem obrigatória de implantação
 
 1. Aplicar `supabase/migrations/20261009130000-admin-security-audit.sql` no projeto `qgkjnzcqjhhqdgxmvtew`. Confirmar os jobs `security-login-retention-180d` e `security-login-pending-cleanup`.
-2. Implantar `supabase/functions/security-login/index.ts` com `verify_jwt = false` de `supabase/config.toml`: o endpoint precisa aceitar o primeiro login sem sessão. Conferir CORS/origens e o cabeçalho confiável de IP no ambiente real.
-3. Confirmar as variáveis backend `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`. Se `SECURITY_LOGIN_ALLOWED_ORIGINS` estiver configurada, incluir `https://municipiopitangueiraspr-arch.github.io`.
-4. Em homologação, validar login ativo, senha inválida, perfil ausente, usuário inativo, burst concorrente acima do limite, IP/agente, logout de sessão rejeitada, ausência de credenciais nos eventos e jobs de retenção/pendências. Para sucesso OAuth, confirmar `last_sign_in_at` no Admin API e o comportamento da AMR quando presente; para falhas OAuth, conferir se o retorno rejeitado gera evento nativo com metadados suficientes para identificar o resultado.
-5. **Somente após migration, jobs e Edge Function validados, publicar o frontend no GitHub Pages.** O login fecha com segurança se o backend ainda não estiver implantado; publicar a interface primeiro interromperia novos logins.
-6. Sincronizar no Google Drive a mesma revisão publicada no GitHub.
+2. Aplicar `supabase/migrations/20261009143000-admin-security-alerts.sql`; confirmar o índice `auditoria_eventos_security_alerts_idx`, a função `admin_security_alerts()` como `SECURITY DEFINER` e execução somente para `authenticated`, com check de ADMIN interno.
+3. Implantar `supabase/functions/security-login/index.ts` com `verify_jwt = false` de `supabase/config.toml`: o endpoint precisa aceitar o primeiro login sem sessão. Conferir CORS/origens e o cabeçalho confiável de IP no ambiente real. A extensão dos alertas não altera nem exige novo deploy da Edge Function.
+4. Confirmar as variáveis backend `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`. Se `SECURITY_LOGIN_ALLOWED_ORIGINS` estiver configurada, incluir `https://municipiopitangueiraspr-arch.github.io`.
+5. Em homologação, validar login ativo, senha inválida, perfil ausente, usuário inativo, burst concorrente acima do limite, IP/agente, logout de sessão rejeitada, ausência de credenciais nos eventos e jobs de retenção/pendências. Para sucesso OAuth, confirmar `last_sign_in_at` no Admin API e o comportamento da AMR quando presente; para falhas OAuth, conferir se o retorno rejeitado gera evento nativo com metadados suficientes para identificar o resultado.
+6. **Somente após migrations, jobs e Edge Function validados, publicar o frontend no GitHub Pages.** O login fecha com segurança se o backend ainda não estiver implantado; publicar a interface primeiro interromperia novos logins.
+7. Sincronizar no Google Drive a mesma revisão publicada no GitHub.
 
 ## Estado e validação desta branch
 
@@ -58,3 +70,4 @@ As verificações locais cobriram build e sintaxe JS, parsing PostgreSQL, compil
 - [Supabase JWT claims](https://supabase.com/docs/guides/auth/jwt-fields) — `amr` é opcional; inclui os métodos `oauth` e `password` quando emitido.
 - [Supabase user object](https://supabase.com/docs/guides/auth/users) — documenta `last_sign_in_at`.
 - [Supabase Auth Admin getUserById](https://supabase.com/docs/reference/javascript/auth-admin-getuserbyid) — operação server-side que exige chave secreta.
+- [Supabase Log Drains](https://supabase.com/docs/guides/observability/log-drains) — referência para encaminhamento externo, caso um canal de notificação venha a ser definido.

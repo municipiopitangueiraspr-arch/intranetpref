@@ -11,7 +11,7 @@
   <script src="../../shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="../../shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
   <link rel="stylesheet" href="../css/admin-pages-theme.css?v=20261009-security-console-1">
-  <link rel="stylesheet" href="../css/admin-security-logs.css?v=20261009-security-console-1">
+  <link rel="stylesheet" href="../css/admin-security-logs.css?v=20261009-security-alerts-1">
 </head>
 <body class="saas-admin" data-intranet-module="core" data-intranet-page="core-auditoria-index">
   <div class="app-layout">
@@ -27,6 +27,11 @@
           <div class="hero-actions"><button class="btn btn-primary" id="btnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar</button></div>
         </section>
         <p class="security-privacy-note"><i class="fas fa-shield-halved"></i> Acesso restrito a administradores. Os registros próprios guardam IP quando fornecido pelo gateway, agente do navegador e têm retenção de 180 dias. Falhas em provedores externos dependem dos Auth Audit Logs do Supabase e de sua retenção configurada. Senhas, tokens e valores completos de registros não são exibidos.</p>
+        <section class="card security-alert-panel" aria-labelledby="securityAlertsTitle">
+          <div class="security-alert-head"><div><span class="eyebrow">Monitoramento interno · ADMIN</span><h2 id="securityAlertsTitle">Alertas ativos</h2><p>Volume de tentativas, falhas OAuth explicitamente identificadas e alterações ou exclusões sensíveis.</p></div><span class="security-alert-updated" id="alertsUpdatedAt" aria-live="polite">Aguardando verificação…</span></div>
+          <div class="security-alert-list" id="securityAlerts" role="region" aria-label="Sinais ativos de segurança"><div class="security-loading">Verificando sinais de segurança…</div></div>
+          <p class="security-alert-footnote">Atualização a cada 60 segundos enquanto o painel estiver aberto. Os avisos de volume antecedem o bloqueio do rate limit; nenhum dado é enviado a serviços externos.</p>
+        </section>
         <section class="card" aria-label="Filtros de auditoria">
           <div class="security-filters">
             <div class="security-filter"><label for="filterSearch">Buscar por pessoa, identificador, entidade ou IP</label><input id="filterSearch" type="search" maxlength="120" placeholder="Ex.: nome, IP, entidade…" autocomplete="off"></div>
@@ -46,7 +51,7 @@
       </main>
     </div>
   </div>
-  <script type="module" src="../auditoria.js?v=20261009-security-console-3"></script>
+  <script type="module" src="../auditoria.js?v=20261009-security-alerts-1"></script>
   <script src="../admin-navigation.js?v=20261009-security-console-1"></script>
   <script src="../../shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
 </body>
