@@ -1,4 +1,4 @@
-const CACHE_NAME = 'intranet-shell-v20261009-admin-security-4';
+const CACHE_NAME = 'intranet-shell-v20261009-admin-security-5';
 const STATIC_SHELL = [
   './',
   './index.html',

@@ -89,7 +89,7 @@
 /* =====================================================================
    CONSTANTES PADRÃO
    ===================================================================== */
-import { conectarPresencaOnline } from "./online-presence.js";
+import { conectarPresencaOnline } from "./online-presence.js?v=20261009-presence-auth-2";
 
 const DEFAULTS = {
   rotaIntranet: "../intranet.html",

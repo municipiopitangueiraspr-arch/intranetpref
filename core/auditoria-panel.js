@@ -1,5 +1,5 @@
 import { supabase } from "../shared/js/supabase.js";
-import { initLayout } from "../shared/js/layout.js?v=20261009-audit-shell-2";
+import { initLayout } from "../shared/js/layout.js?v=20261009-audit-shell-3";
 
 const $ = (selector) => document.querySelector(selector);
 const PAGE_SIZE = 25;

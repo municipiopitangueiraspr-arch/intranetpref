@@ -39,8 +39,22 @@ export async function conectarPresencaOnline(
     }
   };
 
+  let falhaReportada = false;
+  const informarIndisponivelUmaVez = (error) => {
+    if (falhaReportada) return;
+    falhaReportada = true;
+    informarIndisponivel(error);
+  };
+  const autorizacaoNegada = (error) => {
+    const mensagem = [error?.message, error?.cause?.message, error?.cause?.cause?.message]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    return /unauthorized|do not have permissions|not authorized/.test(mensagem);
+  };
+
   if (!session?.access_token || !session?.user?.id) {
-    informarIndisponivel(new Error("Sessão autenticada não disponível."));
+    informarIndisponivelUmaVez(new Error("Sessão autenticada não disponível."));
     return null;
   }
 
@@ -69,23 +83,27 @@ export async function conectarPresencaOnline(
           const trackStatus = await channel.track({ online: true });
           if (trackStatus !== "ok") {
             rastreando = false;
-            informarIndisponivel(
+            informarIndisponivelUmaVez(
               new Error(`Não foi possível registrar presença (${trackStatus}).`),
             );
             return;
           }
           rastreando = true;
+          falhaReportada = false;
           atualizarContagem();
         } catch (trackError) {
           rastreando = false;
-          informarIndisponivel(trackError);
+          informarIndisponivelUmaVez(trackError);
         }
         return;
       }
 
       if (["CHANNEL_ERROR", "TIMED_OUT", "CLOSED"].includes(status)) {
         rastreando = false;
-        informarIndisponivel(error || new Error(`Realtime: ${status}`));
+        informarIndisponivelUmaVez(error || new Error(`Realtime: ${status}`));
+        if (autorizacaoNegada(error)) {
+          void channel.unsubscribe().catch(() => {});
+        }
       }
     });
 
