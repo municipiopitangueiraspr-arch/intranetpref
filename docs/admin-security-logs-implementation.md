@@ -24,7 +24,7 @@ As transações vêm da trilha canônica `public.auditoria_eventos`. A página m
 
 A central administrativa é **global**: o perfil `ADMIN` ativo da plataforma, validado por `app_private.current_user_is_admin()`, consulta registros de qualquer tenant no projeto Supabase. Isso é intencional para o Painel Central existente, que já agrega tenants. As RPCs `SECURITY DEFINER` bypassam a RLS tenant-level da trilha canônica, mas fazem explicitamente esse check global antes de retornar dados. Não são apropriadas para uma tela de `tenant_admin`; uma futura superfície tenant-scoped deverá incluir `tenant_id` nos eventos e aplicar membership/escopo em cada RPC.
 
-A migration cria `public.fn_is_admin()` como compatibilidade para RPCs antigas **somente se o objeto estiver ausente**; as RPCs novas chamam diretamente o helper versionado. Acesso direto à tabela de log customizada é revogado para `PUBLIC`, `anon` e `authenticated`; as RPCs administrativas concedem execução apenas a `authenticated`, com check interno.
+A migration cria `public.fn_is_admin()` como compatibilidade para RPCs antigas **somente se o objeto estiver ausente**; as RPCs novas chamam diretamente o helper versionado. O acesso direto à tabela de log customizada é revogado para `PUBLIC`, `anon` e `authenticated`; as RPCs são executáveis por `authenticated` com check interno de ADMIN. `service_role` conserva seu privilégio administrativo próprio.
 
 ## Retenção e privacidade
 
@@ -53,17 +53,15 @@ Os alertas são estado derivado, não um histórico de incidentes durável. Para
 6. **Somente após migrations, jobs e Edge Function validados, publicar o frontend no GitHub Pages.** O login fecha com segurança se o backend ainda não estiver implantado; publicar a interface primeiro interromperia novos logins.
 7. Sincronizar no Google Drive a mesma revisão publicada no GitHub.
 
-## Estado e validação desta branch
+## Estado e validação da revisão (2026-10-09)
 
-No projeto Supabase `gestao-atas-pitangueiras` (`qgkjnzcqjhhqdgxmvtew`), a migration foi aplicada e conferida: tabela de eventos, RPCs administrativas e os jobs `security-login-pending-cleanup` (`*/5 * * * *`) e `security-login-retention-180d` (`0 * * * *`) estão presentes. A Edge Function `security-login` foi implantada na versão 2 com `verify_jwt = false`.
+No projeto Supabase `gestao-atas-pitangueiras` (`qgkjnzcqjhhqdgxmvtew`), as migrations de logs e alertas estão aplicadas. A função `admin_security_alerts()` foi conferida como `SECURITY DEFINER`; o catálogo confirma execução por `authenticated` e `service_role`, sem execução por `anon` nem `PUBLIC`. O índice parcial `auditoria_eventos_security_alerts_idx` existe. Também permanecem ativos os jobs `security-login-pending-cleanup` (`*/5 * * * *`) e `security-login-retention-180d` (`0 * * * *`), e a Edge Function `security-login` segue implantada com `verify_jwt = false`.
 
-Os testes HTTP sem credenciais confirmaram preflight permitido (`OPTIONS 200`), rejeição de origem não autorizada (`403`) e resposta de requisição inválida para a origem oficial (`400`), sem executar login. Em 2026-10-09, habilitei **Authentication → Audit Logs → Write audit logs to the database** no Dashboard do projeto `gestao-atas-pitangueiras`; após recarregar a tela, o controle permaneceu ativo. A consulta à tabela mostrou zero linhas no momento da verificação. Não foram criadas tentativas artificiais; a captura será confirmada com eventos reais de autenticação. A validação de como o Supabase classifica uma falha OAuth específica continua pendente, pois a aplicação não infere resultado se o evento nativo não o informar.
+A gravação Postgres dos Auth Audit Logs nativos foi habilitada em **Authentication → Audit Logs → Write audit logs to the database**. Não foram criadas tentativas artificiais nem executado login contra contas reais. A classificação de uma falha OAuth depende de evento nativo com resultado explícito e ainda deve ser confirmada em homologação.
 
-O commit `ef54c5f` foi publicado em `main` por fast-forward. O workflow do GitHub Pages (`37939720888`) concluiu com sucesso; a [página de Auditoria e Logs](https://municipiopitangueiraspr-arch.github.io/intranetpref/core/auditoria/) e os dois CSS administrativos responderam `200`.
+A revisão foi publicada em `main`; o workflow do GitHub Pages concluiu com sucesso e a [página de Auditoria e Logs](https://municipiopitangueiraspr-arch.github.io/intranetpref/core/auditoria/) foi atualizada. A pasta `INTRANET` no Google Drive espelha os seis caminhos desta etapa; os hashes MD5 foram conferidos após o envio e nenhum arquivo foi excluído.
 
-A sincronização reversa no Google Drive concluiu para os 24 arquivos alterados: 18 atualizados e 6 criados, incluindo a estrutura `supabase/functions/security-login`. Os hashes MD5 foram conferidos após o upload; nenhum arquivo foi excluído.
-
-As verificações locais cobriram build e sintaxe JS, parsing PostgreSQL, compilação/bundle TypeScript, auditoria de HTML/assets/âncoras e `git diff --check`. A auditoria informativa continua listando 30 folhas CSS sem referência; nenhuma foi removida.
+As verificações locais passaram: sintaxe JavaScript, parsing da migration, `git diff --check`, referências/arquivos sem caminhos quebrados ou diferenças de capitalização e verificação específica da página no auditor de acessibilidade. O auditor de acessibilidade ainda relata 137 achados em outras páginas do repositório; não foram alteradas nesta etapa. Não foi feito teste autenticado da interface em sessão ADMIN real.
 
 ## Referências oficiais
 
