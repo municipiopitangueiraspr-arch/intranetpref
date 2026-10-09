@@ -88,6 +88,8 @@
 /* =====================================================================
    CONSTANTES PADRÃO
    ===================================================================== */
+import { conectarPresencaOnline } from "./online-presence.js";
+
 const DEFAULTS = {
   rotaIntranet: "../intranet.html",
   textoVoltar: "Voltar à intranet",
@@ -182,6 +184,24 @@ export async function initLayout(config = {}) {
 
   // ---------- 9. Expõe o usuário globalmente (atalho de conveniência) ----------
   window.usuarioLogado = usuario;
+
+  // Mantém a presença enquanto o servidor estiver em qualquer módulo do sistema.
+  void supabase.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      console.warn("[layout] Não foi possível obter a sessão para presença:", error);
+      return;
+    }
+    const session = data?.session;
+    if (session && session.user.id === usuario.uuid) {
+      void conectarPresencaOnline(supabase, session, undefined, (presenceError) => {
+        if (presenceError) {
+          console.warn("[layout] Presença online indisponível:", presenceError);
+        }
+      });
+    }
+  }).catch((error) => {
+    console.warn("[layout] Não foi possível iniciar presença online:", error);
+  });
 
   // ---------- 10. Callback opcional para a página ----------
   if (typeof cfg.onUsuario === "function") {

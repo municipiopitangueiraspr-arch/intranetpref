@@ -300,7 +300,7 @@
           >
           <span
             ><i class="fas fa-user-shield"></i>
-            <span id="onlineCount">7</span> servidores online</span
+            <span id="onlineCount" aria-live="polite" aria-label="Conectando à contagem de servidores online">—</span> servidores online</span
           >
         </div>
         <div class="links-rapidos">
@@ -401,6 +401,7 @@
 
     <script type="module">
 import { supabase } from "./shared/js/supabase.js";
+import { conectarPresencaOnline } from "./shared/js/online-presence.js";
       // ============================================
       // CONFIGURAÇÃO SUPABASE
       // ============================================
@@ -428,6 +429,7 @@ import { supabase } from "./shared/js/supabase.js";
       // VARIÁVEIS DE ESTADO
       // ============================================
       let usuarioLogado = null; // { id, uuid, email, nome, perfil, cargo, orgao_id }
+      let canalPresencaServidores = null;
       let orgaosList = []; // armazenar órgãos para o select
 
       // Rotas dos módulos carregadas do banco (nome -> rota)
@@ -955,6 +957,7 @@ import { supabase } from "./shared/js/supabase.js";
         // Renderizar os cards de módulos + card "Meu Perfil"
         await carregarModulosParaUsuario();
 
+        await iniciarPresencaServidores(session);
         document.getElementById("hallContent").style.display = "";
         atualizarDataRodape();
         return true;
@@ -968,6 +971,15 @@ import { supabase } from "./shared/js/supabase.js";
           "Encerrar sessão",
           "Tem certeza que deseja sair da intranet?",
           async () => {
+            if (canalPresencaServidores) {
+              const canal = canalPresencaServidores;
+              canalPresencaServidores = null;
+              try {
+                await supabase.removeChannel(canal);
+              } catch (error) {
+                console.warn("[Intranet] Não foi possível encerrar a presença:", error);
+              }
+            }
             await supabase.auth.signOut();
             usuarioLogado = null;
             window.location.href = "index.html";
@@ -1051,9 +1063,41 @@ import { supabase } from "./shared/js/supabase.js";
         const dataStr = `${hoje.getDate()} de ${meses[hoje.getMonth()]} de ${hoje.getFullYear()}`;
         const elData = document.getElementById("dataAtual");
         if (elData) elData.innerText = dataStr;
-        const onlineCount = document.getElementById("onlineCount");
-        if (onlineCount)
-          onlineCount.innerText = Math.floor(Math.random() * 15) + 3;
+      }
+
+      async function iniciarPresencaServidores(session) {
+        const elContagem = document.getElementById("onlineCount");
+        if (!elContagem) return;
+
+        elContagem.textContent = "—";
+        elContagem.setAttribute(
+          "aria-label",
+          "Conectando à contagem de servidores online",
+        );
+
+        canalPresencaServidores = await conectarPresencaOnline(
+          supabase,
+          session,
+          (count) => {
+            elContagem.textContent = new Intl.NumberFormat("pt-BR").format(count);
+            elContagem.setAttribute("aria-label", `${count} servidores online`);
+            elContagem.title = "Contagem atualizada em tempo real";
+          },
+          (error) => {
+            elContagem.textContent = "—";
+            elContagem.setAttribute(
+              "aria-label",
+              "Contagem de servidores online indisponível",
+            );
+            elContagem.title = "Contagem temporariamente indisponível";
+            if (error) {
+              console.warn(
+                "[Intranet] Contagem de presença indisponível:",
+                error,
+              );
+            }
+          },
+        );
       }
 
       // ============================================
