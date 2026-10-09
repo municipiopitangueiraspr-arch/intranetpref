@@ -22,7 +22,7 @@
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
   <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261007-avatar-data-url-1">
-  <link rel="manifest" href="./manifest.webmanifest">
+  <script src="shared/js/pwa-device.js?v=20261009-mobile-only-1" data-manifest-href="./manifest.webmanifest"></script>
   <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261008-pwa-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="intranet" data-pwa-worker="./service-worker.js">
@@ -1207,6 +1207,6 @@ import { supabase } from "./shared/js/supabase.js";
       const _carregarModulosComPesquisa = carregarModulosParaUsuario;
       carregarModulosParaUsuario = async function () { await _carregarModulosComPesquisa(); configurarPesquisaModulos(); };
     </script>
-    <script src="shared/js/pwa-install.js?v=20261008-pwa-1" defer></script>
+    <script src="shared/js/pwa-install.js?v=20261009-mobile-only-1" defer></script>
 </body>
 </html>

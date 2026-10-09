@@ -107,19 +107,19 @@
       <div class="header-bottom">
         <div class="container">
           <nav class="portal-nav" aria-label="Navegação principal">
-            <a href="#home" class="nav-link active" data-section="home"
+            <a href="#secaoHome" class="nav-link active" data-section="home"
               ><i class="fas fa-home"></i> Início</a
             >
-            <a href="#busca" class="nav-link" data-section="busca"
+            <a href="#secaoBusca" class="nav-link" data-section="busca"
               ><i class="fas fa-search"></i> Buscar Atos</a
             >
-            <a href="#orgaos" class="nav-link" data-section="orgaos"
+            <a href="#secaoOrgaos" class="nav-link" data-section="orgaos"
               ><i class="fas fa-building"></i> Órgãos</a
             >
-            <a href="#estatisticas" class="nav-link" data-section="estatisticas"
+            <a href="#secaoEstatisticas" class="nav-link" data-section="estatisticas"
               ><i class="fas fa-chart-bar"></i> Estatísticas</a
             >
-            <a href="#sobre" class="nav-link" data-section="sobre"
+            <a href="#secaoSobre" class="nav-link" data-section="sobre"
               ><i class="fas fa-info-circle"></i> Sobre</a
             >
           </nav>
@@ -138,7 +138,7 @@
           aria-label="Breadcrumb"
 
         >
-          <a href="#home" data-nav="home">Início</a>
+          <a href="#secaoHome" data-nav="home">Início</a>
           <span class="separator">/</span>
           <span class="current" id="breadcrumbCurrent"></span>
         </nav>
@@ -974,7 +974,14 @@
           document.getElementById("btnBackToTop").style.display =
             window.scrollY > 500 ? "flex" : "none";
         });
-        navegarSecao("home");
+        const hashSecao = {
+          secaoHome: "home",
+          secaoBusca: "busca",
+          secaoOrgaos: "orgaos",
+          secaoEstatisticas: "estatisticas",
+          secaoSobre: "sobre",
+        }[window.location.hash.slice(1)];
+        navegarSecao(hashSecao || "home");
       });
       function executarBuscaReversa() {
         /* implementado no JS principal */

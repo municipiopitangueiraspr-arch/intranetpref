@@ -1,4 +1,4 @@
-const CACHE_NAME = 'intranet-shell-v20261008-1';
+const CACHE_NAME = 'intranet-shell-v20261009-1';
 const STATIC_SHELL = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const STATIC_SHELL = [
   './pwa-icon-192.png',
   './pwa-icon-512.png',
   './shared/css/pwa-responsive.css',
+  './shared/js/pwa-device.js',
   './shared/js/pwa-install.js',
   './shared/js/acessibilidade-intranet.js'
 ];

@@ -22,7 +22,7 @@
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
   <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261006-ui-polish-1">
-  <link rel="manifest" href="./manifest.webmanifest">
+  <script src="shared/js/pwa-device.js?v=20261009-mobile-only-1" data-manifest-href="./manifest.webmanifest"></script>
   <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261008-pwa-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="index" data-pwa-worker="./service-worker.js">
@@ -381,6 +381,6 @@
         await verificarSessaoExistente();
       });
     </script>
-    <script src="shared/js/pwa-install.js?v=20261008-pwa-1" defer></script>
+    <script src="shared/js/pwa-install.js?v=20261009-mobile-only-1" defer></script>
 </body>
 </html>
