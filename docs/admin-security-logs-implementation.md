@@ -39,11 +39,15 @@ Os eventos armazenam identificador mascarado, etiqueta HMAC com chave backend-on
 3. Confirmar as variáveis backend `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`. Se `SECURITY_LOGIN_ALLOWED_ORIGINS` estiver configurada, incluir `https://municipiopitangueiraspr-arch.github.io`.
 4. Em homologação, validar login ativo, senha inválida, perfil ausente, usuário inativo, burst concorrente acima do limite, IP/agente, logout de sessão rejeitada, ausência de credenciais nos eventos e jobs de retenção/pendências. Para sucesso OAuth, confirmar `last_sign_in_at` no Admin API e o comportamento da AMR quando presente; para falhas OAuth, habilitar Auth Audit Logs com armazenamento Postgres e validar um retorno rejeitado.
 5. **Somente após migration, jobs e Edge Function validados, publicar o frontend no GitHub Pages.** O login fecha com segurança se o backend ainda não estiver implantado; publicar a interface primeiro interromperia novos logins.
-6. Sincronizar o Google Drive após a publicação, se desejado. Nenhuma sincronização foi feita nesta etapa.
+6. Sincronizar no Google Drive a mesma revisão publicada no GitHub.
 
 ## Estado e validação desta branch
 
-As alterações estão na branch local `feat/admin-security-audit`. Nenhuma migration foi aplicada, nenhuma Edge Function foi implantada e nada foi enviado ao GitHub Pages ou Google Drive. As verificações locais cobriram build e sintaxe JS, parsing PostgreSQL, compilação/bundle TypeScript, auditoria de HTML/assets/âncoras e `git diff --check`. A auditoria informativa continua listando 30 folhas CSS sem referência; nenhuma foi removida.
+No projeto Supabase `gestao-atas-pitangueiras` (`qgkjnzcqjhhqdgxmvtew`), a migration foi aplicada e conferida: tabela de eventos, RPCs administrativas e os jobs `security-login-pending-cleanup` (`*/5 * * * *`) e `security-login-retention-180d` (`0 * * * *`) estão presentes. A Edge Function `security-login` foi implantada na versão 2 com `verify_jwt = false`.
+
+Os testes HTTP sem credenciais confirmaram preflight permitido (`OPTIONS 200`), rejeição de origem não autorizada (`403`) e resposta de requisição inválida para a origem oficial (`400`), sem executar login. Os fluxos reais de login bem-sucedido/falho e OAuth ainda não foram exercitados com contas de teste. Falhas de provedores externos dependem de Auth Audit Logs do Supabase gravados em Postgres; na inspeção anterior, `auth.audit_log_entries` estava vazio.
+
+O frontend está na branch local `feat/admin-security-audit`; o push para GitHub Pages e a sincronização reversa para o Google Drive ainda estão pendentes nesta revisão. As verificações locais cobriram build e sintaxe JS, parsing PostgreSQL, compilação/bundle TypeScript, auditoria de HTML/assets/âncoras e `git diff --check`. A auditoria informativa continua listando 30 folhas CSS sem referência; nenhuma foi removida.
 
 ## Referências oficiais
 
