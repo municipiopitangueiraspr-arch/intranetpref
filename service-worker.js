@@ -1,12 +1,15 @@
-const CACHE_NAME = 'intranet-shell-v20261009-1';
+const CACHE_NAME = 'intranet-shell-v20261009-2';
 const STATIC_SHELL = [
   './',
   './index.html',
   './intranet.html',
-  './manifest.webmanifest',
-  './favicon.svg',
-  './pwa-icon-192.png',
-  './pwa-icon-512.png',
+  './manifest.webmanifest?v=20261009-brasao-2',
+  './favicon.svg?v=20261009-brasao-2',
+  './favicon-32x32.png?v=20261009-brasao-2',
+  './favicon.ico?v=20261009-brasao-2',
+  './apple-touch-icon.png?v=20261009-brasao-2',
+  './pwa-icon-brasao-192.png',
+  './pwa-icon-brasao-512.png',
   './shared/css/pwa-responsive.css',
   './shared/js/pwa-device.js',
   './shared/js/pwa-install.js',
