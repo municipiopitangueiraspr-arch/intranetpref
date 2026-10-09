@@ -1,7 +1,7 @@
 import { supabase } from "../shared/js/supabase.js";
 import { initLayout } from "../shared/js/layout.js";
 import { COMPRAS_MENU } from "./compras-menu.js";
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], esc=v=>String(v??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), human=v=>String(v||'—').replaceAll('_',' ').replace(/\b\p{L}/gu,c=>c.toUpperCase()), asDate=v=>v?new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeZone:'UTC'}).format(new Date(`${v}T00:00:00Z`)):'—', money=v=>v==null?'—':new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v));
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], esc=v=>String(v??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), human=v=>String(v||'—').replaceAll('_',' ').replace(/\b\p{L}/gu,c=>c.toUpperCase()), asDate=v=>v?new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeZone:'UTC'}).format(new Date(`${v}T00:00:00Z`)):'—', money=v=>v==null?'—':new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(v));
 const state={user:null,tenantId:null,role:'leitor',processes:[],suppliers:[],contracts:[],proposals:[],appeals:[],executions:[],integrations:[],transmissions:[],delegations:[],escalations:[]};
 const manager=()=>['tenant_admin','compras_manager'].includes(state.role);
 function toast(msg,tone='success'){const n=document.createElement('div');n.className='toast';n.dataset.tone=tone;n.textContent=msg;$('#toast-region').append(n);setTimeout(()=>n.remove(),4200)}
