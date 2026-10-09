@@ -61,7 +61,8 @@
 
    Configuração aceita (todas opcionais, exceto supabase):
      supabase         cliente Supabase já inicializado
-     brand            { nome, subtitulo, icone }  — cabeçalho da sidebar
+     brand            { nome, subtitulo, icone, imagem } — cabeçalho da sidebar;
+                      imagem aceita caminho relativo e usa ../brasao-pref.png por padrão
      iconeTitulo      ícone Font Awesome do título da topbar
      titulo           título principal da página (topbar)
      subtitulo        subtítulo da página (topbar)
@@ -259,10 +260,11 @@ function renderSidebar(cfg, usuario) {
   const adminOnlyIds = Array.isArray(cfg.adminOnly) ? cfg.adminOnly : [];
 
   // ---------- Cabeçalho (marca) ----------
+  const brasaoSrc = cfg.brand.imagem || "../brasao-pref.png";
   const brandHtml = `
     <div class="sidebar-brand">
       <div class="brand-icon" aria-label="Brasão do Município">
-        <img class="brasao-municipio" src="../brasao-pref.png" alt="Brasão do Município" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <img class="brasao-municipio" src="${escaparAtributo(brasaoSrc)}" alt="Brasão do Município" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <i class="fas ${escaparHtml(cfg.brand.icone)}" aria-hidden="true" data-intranet-style="304557ef7fda"></i>
       </div>
       <div class="brand-text">

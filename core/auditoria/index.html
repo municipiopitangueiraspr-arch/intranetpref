@@ -3,58 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#102a43">
+  <meta name="description" content="Central administrativa de segurança e auditoria da Intranet Municipal de Pitangueiras.">
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png?v=20261009-brasao-2">
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg?v=20261009-brasao-2">
   <link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png?v=20261009-brasao-2">
   <link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico?v=20261009-brasao-2">
-  <title>Auditoria e Logs · Governança</title>
-  <script src="../../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../../shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
-  <link rel="stylesheet" href="../css/admin-pages-theme.css?v=20261009-security-console-1">
-  <link rel="stylesheet" href="../css/admin-security-logs.css?v=20261009-security-alerts-1">
-  <link rel="stylesheet" href="../../shared/css/identidade-intranet.css?v=20261004-canonico-2">
-  <link rel="stylesheet" href="../../shared/css/acessibilidade-intranet.css?v=20261004-shell-fix-4">
+  <title>Segurança e Auditoria · Intranet Municipal</title>
+  <!-- Tema autocontido: não incluir o CSS global legado, que redefine o shell. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+  <link rel="stylesheet" href="../../shared/css/vendor-fontawesome/all.min.css?v=20261004-unified-5">
+  <link rel="stylesheet" href="../css/admin-audit-console.css?v=20261009-audit-console-2">
 </head>
-<body class="saas-admin" data-intranet-module="core" data-intranet-page="core-auditoria-index">
-  <div class="app-layout">
-    <aside class="sidebar" id="sidebar" aria-label="Navegação de governança"><div class="sidebar-brand"><div class="brand-icon"><i class="fas fa-shield-halved"></i></div><div class="brand-text"><h2>Governança</h2><span>Administração central</span></div></div><div class="admin-tenant-chip"><i class="fas fa-building-columns"></i><span>Ambiente municipal</span><b>ADMIN</b></div></aside>
+<body data-intranet-module="core" data-intranet-page="core-auditoria-v2">
+  <a class="audit-skip-link" href="#auditMain">Ir para o conteúdo principal</a>
+  <div class="app-layout" id="mainSystem">
+    <aside class="sidebar" id="sidebar" aria-label="Navegação administrativa"></aside>
     <div class="main-area">
-      <header class="topbar">
-        <div class="intranet-style-74d926832e"><button class="btn-toggle-sidebar" id="btnToggleSidebar" aria-label="Abrir menu" type="button"><i class="fas fa-bars"></i></button><div class="topbar-titulo"><h1><i class="fas fa-clock-rotate-left"></i> Auditoria e logs</h1><p>Histórico de autenticação e alterações operacionais</p></div></div>
-        <div class="topbar-direita"><div class="topbar-info"><strong id="topbarNome">—</strong><span id="topbarData">—</span></div><div class="avatar-usuario" id="avatarIniciais">?</div><button class="btn-sair" id="btnSair" title="Sair" type="button"><i class="fas fa-right-from-bracket"></i></button></div>
-      </header>
-      <main class="conteudo">
-        <section class="page-header security-hero">
-          <div><span class="eyebrow">Centro de segurança · ADMIN</span><h2>Trilha de autenticação e transações</h2><p>Consulte autenticações, tentativas malsucedidas e alterações de dados com contexto de rede.</p></div>
-          <div class="hero-actions"><button class="btn btn-primary" id="btnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar</button></div>
-        </section>
-        <p class="security-privacy-note"><i class="fas fa-shield-halved"></i> Acesso restrito a administradores. Os registros próprios guardam IP quando fornecido pelo gateway, agente do navegador e têm retenção de 180 dias. Falhas em provedores externos dependem dos Auth Audit Logs do Supabase e de sua retenção configurada. Senhas, tokens e valores completos de registros não são exibidos.</p>
-        <section class="card security-alert-panel" aria-labelledby="securityAlertsTitle">
-          <div class="security-alert-head"><div><span class="eyebrow">Monitoramento interno · ADMIN</span><h2 id="securityAlertsTitle">Alertas ativos</h2><p>Volume de tentativas, falhas OAuth explicitamente identificadas e alterações ou exclusões sensíveis.</p></div><span class="security-alert-updated" id="alertsUpdatedAt" aria-live="polite">Aguardando verificação…</span></div>
-          <div class="security-alert-list" id="securityAlerts" role="region" aria-label="Sinais ativos de segurança"><div class="security-loading">Verificando sinais de segurança…</div></div>
-          <p class="security-alert-footnote">Atualização a cada 60 segundos enquanto o painel estiver aberto. Os avisos de volume antecedem o bloqueio do rate limit; nenhum dado é enviado a serviços externos.</p>
-        </section>
-        <section class="card" aria-label="Filtros de auditoria">
-          <div class="security-filters">
-            <div class="security-filter"><label for="filterSearch">Buscar por pessoa, identificador, entidade ou IP</label><input id="filterSearch" type="search" maxlength="120" placeholder="Ex.: nome, IP, entidade…" autocomplete="off"></div>
-            <div class="security-filter"><label for="filterCategory">Tipo de registro</label><select id="filterCategory"><option value="all">Todos</option><option value="access">Autenticações</option><option value="transactions">Transações</option></select></div>
-            <div class="security-filter"><label for="filterPeriod">Período</label><select id="filterPeriod"><option value="24h">Últimas 24 horas</option><option value="7d">Últimos 7 dias</option><option value="30d" selected>Últimos 30 dias</option><option value="180d">Últimos 180 dias</option></select></div>
-            <div class="security-filter-actions"><button class="btn btn-primary" id="btnFiltrar" type="button"><i class="fas fa-filter"></i> Filtrar</button></div>
+      <header class="topbar" id="topbar" aria-label="Cabeçalho da intranet"></header>
+      <main class="conteudo conteudo-full audit-main" id="auditMain">
+        <div class="audit-gate" id="auditGate" role="status" aria-live="polite">
+          <span class="audit-spinner" aria-hidden="true"></span>
+          <span>Validando sessão e autorização administrativa…</span>
+        </div>
+
+        <div class="audit-console" id="auditConsole" hidden>
+          <section class="audit-hero" aria-labelledby="auditTitle">
+            <div class="audit-hero-copy">
+              <div class="audit-eyebrow"><i class="fas fa-shield-halved" aria-hidden="true"></i> Governança · Segurança</div>
+              <h2 id="auditTitle">Central de segurança e auditoria</h2>
+              <p>Uma trilha única para autenticações, tentativas malsucedidas e alterações administrativas.</p>
+              <div class="audit-trust-list" aria-label="Controles do painel">
+                <span><i class="fas fa-user-shield" aria-hidden="true"></i> Acesso ADMIN</span>
+                <span><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Retenção de 180 dias</span>
+                <span><i class="fas fa-rotate" aria-hidden="true"></i> Atualização a cada 60 s</span>
+              </div>
+            </div>
+            <div class="audit-hero-actions">
+              <span class="audit-live-pill"><span class="audit-live-dot" aria-hidden="true"></span> Monitoramento ativo</span>
+              <button class="audit-button audit-button-primary" id="btnAtualizar" type="button">
+                <i class="fas fa-rotate" aria-hidden="true"></i> Atualizar agora
+              </button>
+            </div>
+          </section>
+
+          <div class="audit-status" id="auditStatus" role="status" aria-live="polite">
+            <i class="fas fa-circle-check" aria-hidden="true"></i>
+            <span>Carregando os registros autorizados…</span>
           </div>
-          <div class="security-log-meta"><span id="resultCount">—</span><span>Eventos de alteração exibem somente os nomes dos campos, sem valores anteriores/novos.</span></div>
-          <div class="table-container">
-            <table class="table security-log-table" aria-label="Registros administrativos de autenticação e transação">
-              <thead><tr><th>Categoria</th><th>Resultado</th><th>Responsável / identificação</th><th>Evento / entidade</th><th>IP</th><th>Agente do navegador</th><th>Data e hora</th></tr></thead>
-              <tbody id="auditBody"><tr><td colspan="7" class="security-loading">Carregando registros administrativos…</td></tr></tbody>
-            </table>
-          </div>
-          <div class="security-page-controls"><button class="btn btn-secondary" id="btnPrev" type="button" disabled><i class="fas fa-chevron-left"></i> Anterior</button><span id="pageIndicator">Página 1</span><button class="btn btn-secondary" id="btnNext" type="button" disabled>Próxima <i class="fas fa-chevron-right"></i></button></div>
-        </section>
+
+          <section class="audit-metrics" aria-label="Resumo da consulta">
+            <article class="audit-metric-card">
+              <span class="audit-metric-icon blue"><i class="fas fa-list-check" aria-hidden="true"></i></span>
+              <div><span class="audit-metric-label">Eventos encontrados</span><strong id="metricTotal">—</strong><small id="metricTotalDetail">Aplicados os filtros selecionados</small></div>
+            </article>
+            <article class="audit-metric-card">
+              <span class="audit-metric-icon teal"><i class="fas fa-bell" aria-hidden="true"></i></span>
+              <div><span class="audit-metric-label">Alertas ativos</span><strong id="metricAlerts">—</strong><small>Regras operacionais monitoradas</small></div>
+            </article>
+            <article class="audit-metric-card">
+              <span class="audit-metric-icon red"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></span>
+              <div><span class="audit-metric-label">Críticos</span><strong id="metricCritical">—</strong><small>Exigem análise prioritária</small></div>
+            </article>
+            <article class="audit-metric-card">
+              <span class="audit-metric-icon navy"><i class="fas fa-box-archive" aria-hidden="true"></i></span>
+              <div><span class="audit-metric-label">Retenção aplicada</span><strong>180 dias</strong><small>Limpeza automática no banco</small></div>
+            </article>
+          </section>
+
+          <section class="audit-panel" aria-labelledby="alertsTitle">
+            <div class="audit-panel-heading">
+              <div>
+                <span class="audit-section-kicker">Atenção operacional</span>
+                <h3 id="alertsTitle">Alertas de segurança</h3>
+                <p>Limiares de autenticação e operações sensíveis, recalculados no banco.</p>
+              </div>
+              <span class="audit-updated" id="alertsUpdatedAt">Aguardando consulta</span>
+            </div>
+            <div class="audit-alert-list" id="auditAlerts" aria-live="polite">
+              <div class="audit-empty">Os alertas serão exibidos após validar o acesso.</div>
+            </div>
+          </section>
+
+          <section class="audit-panel audit-events-panel" aria-labelledby="eventsTitle">
+            <div class="audit-panel-heading audit-panel-heading-row">
+              <div>
+                <span class="audit-section-kicker">Rastreabilidade</span>
+                <h3 id="eventsTitle">Trilha de eventos</h3>
+                <p>Autenticação nativa e transações canônicas em uma consulta paginada.</p>
+              </div>
+              <span class="audit-results-count" id="resultCount">—</span>
+            </div>
+
+            <form class="audit-filters" id="auditFilters">
+              <label class="audit-filter audit-filter-search" for="filterSearch">
+                <span>Buscar</span>
+                <span class="audit-input-wrap"><i class="fas fa-magnifying-glass" aria-hidden="true"></i><input id="filterSearch" type="search" maxlength="120" placeholder="Nome, operação, origem ou IP" autocomplete="off"></span>
+              </label>
+              <label class="audit-filter" for="filterCategory">
+                <span>Categoria</span>
+                <select id="filterCategory">
+                  <option value="all">Todas</option>
+                  <option value="access">Acessos</option>
+                  <option value="transactions">Transações</option>
+                </select>
+              </label>
+              <label class="audit-filter" for="filterPeriod">
+                <span>Período</span>
+                <select id="filterPeriod">
+                  <option value="24h">Últimas 24 horas</option>
+                  <option value="7d">Últimos 7 dias</option>
+                  <option value="30d" selected>Últimos 30 dias</option>
+                  <option value="180d">Últimos 180 dias</option>
+                </select>
+              </label>
+              <button class="audit-button audit-button-secondary" id="btnFiltrar" type="submit"><i class="fas fa-filter" aria-hidden="true"></i> Aplicar filtros</button>
+            </form>
+
+            <div class="audit-table-wrap">
+              <table class="audit-table" aria-label="Eventos administrativos de acesso e transação">
+                <caption class="audit-sr-only">Registro cronológico de autenticações e transações administrativas.</caption>
+                <thead>
+                  <tr><th scope="col">Quando</th><th scope="col">Tipo</th><th scope="col">Resultado</th><th scope="col">Responsável</th><th scope="col">Evento</th><th scope="col">IP</th><th scope="col">Navegador</th><th scope="col">Origem</th></tr>
+                </thead>
+                <tbody id="auditRows"><tr><td colspan="8" class="audit-table-state">Aguardando autorização.</td></tr></tbody>
+              </table>
+            </div>
+
+            <div class="audit-pagination">
+              <span id="pageIndicator">Página 1</span>
+              <div>
+                <button class="audit-button audit-button-pagination" id="btnPrev" type="button" disabled><i class="fas fa-chevron-left" aria-hidden="true"></i> Anterior</button>
+                <button class="audit-button audit-button-pagination" id="btnNext" type="button" disabled>Próxima <i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+              </div>
+            </div>
+            <p class="audit-limit-notice" id="auditLimitNotice" role="status" hidden>O limite desta consulta é 5.025 registros por filtro. Refine o período, a categoria ou a busca para localizar outros eventos.</p>
+          </section>
+
+          <footer class="audit-footer">
+            <span><i class="fas fa-lock" aria-hidden="true"></i> Dados exibidos somente para ADMIN autenticado</span>
+            <span id="auditFooterUpdated">A atualização não envia registros para serviços externos.</span>
+          </footer>
+        </div>
       </main>
     </div>
   </div>
-  <script type="module" src="../auditoria.js?v=20261009-security-alerts-1"></script>
-  <script src="../admin-navigation.js?v=20261009-security-console-1"></script>
-  <script src="../../shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+
+  <script type="module" src="../auditoria-panel.js?v=20261009-audit-console-2"></script>
 </body>
 </html>
