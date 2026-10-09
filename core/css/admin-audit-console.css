@@ -281,6 +281,7 @@ body[data-intranet-page="core-auditoria-v2"] .audit-gate {
   font-size: .85rem;
   font-weight: 700;
 }
+body[data-intranet-page="core-auditoria-v2"] .audit-gate[hidden] { display: none !important; }
 body[data-intranet-page="core-auditoria-v2"] .audit-gate.is-denied { color: var(--audit-red); }
 body[data-intranet-page="core-auditoria-v2"] .audit-spinner {
   width: 19px;
