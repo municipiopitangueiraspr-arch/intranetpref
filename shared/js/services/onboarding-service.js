@@ -11,7 +11,7 @@
 //   • Utilitários de validação de força de senha
 // ============================================
 
-import { supabase } from "../supabase.js";
+import { supabase, SUPABASE_CONFIG } from "../supabase.js";
 
 export const OnboardingService = {
   // ============================================
@@ -118,13 +118,21 @@ export const OnboardingService = {
         throw new Error("Usuário não autenticado.");
       }
 
-      // --- Reautentica com a senha atual ---
-      const { error: reauthError } = await supabase.auth.signInWithPassword({
-        email: user.email,
-        password: senhaAtual,
+      // --- Reautentica pelo backend auditado; ele não armazena a senha ---
+      const response = await fetch(`${SUPABASE_CONFIG.url}/functions/v1/security-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: SUPABASE_CONFIG.anonKey },
+        body: JSON.stringify({ action: "password_login", email: user.email, password: senhaAtual }),
+        cache: "no-store",
       });
-      if (reauthError) {
-        throw new Error("Senha atual incorreta.");
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.session?.access_token || !payload.session?.refresh_token) {
+        throw new Error(payload.message || "Senha atual incorreta.");
+      }
+      const { data: sessionData, error: sessionError } = await supabase.auth.setSession(payload.session);
+      if (sessionError || sessionData.user?.id !== user.id) {
+        await supabase.auth.signOut();
+        throw new Error("Não foi possível confirmar a reautenticação da conta atual.");
       }
 
       // --- Atualiza a senha no Supabase Auth ---

@@ -91,6 +91,6 @@ function closeModal(){$('modal').classList.remove('show')}
 async function boot(){if(!await ensureAdmin())return;await loadCatalog();await Promise.all([loadRequests(),loadUsers(),loadAudit()])}
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelectorAll('.tabpage').forEach(x=>x.hidden=x.id!==t.dataset.tab);if(t.dataset.tab==='users')loadUsers();if(t.dataset.tab==='audit')loadAudit()});$('loadRequests').onclick=loadRequests;$('loadUsers').onclick=loadUsers;$('refresh').onclick=boot;$('userForm').onsubmit=saveUser;$('closeModal').onclick=closeModal;$('cancelModal').onclick=closeModal;$('logout').onclick=async()=>{await supabase.auth.signOut();location.href='index.html'};boot();
 </script>
-<script src="core/admin-navigation.js?v=20261002-shared-nav-v3"></script>
+<script src="core/admin-navigation.js?v=20261009-security-console-1"></script>
   <script src="shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
 </body></html>

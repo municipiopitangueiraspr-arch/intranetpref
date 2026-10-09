@@ -67,18 +67,25 @@ class SistemaGestaoAtas {
   async fazerLogin() {
     const errorDiv = document.getElementById("loginError");
     errorDiv.style.display = "none";
-    const email = document.getElementById("loginEmail").value;
+    const email = document.getElementById("loginEmail").value.trim();
     const senha = document.getElementById("loginSenha").value;
     try {
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password: senha,
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/security-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON_KEY },
+        body: JSON.stringify({ action: "password_login", email, password: senha }),
+        cache: "no-store",
       });
-      if (error) throw error;
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.session?.access_token || !payload.session?.refresh_token) {
+        throw new Error(payload.message || "Não foi possível validar o acesso com segurança.");
+      }
+      const { data, error } = await supabaseClient.auth.setSession(payload.session);
+      if (error || !data?.user) throw new Error("Não foi possível estabelecer a sessão segura.");
       await this.carregarUsuario(data.user.id);
     } catch (error) {
       errorDiv.style.display = "block";
-      errorDiv.innerHTML = "❌ " + error.message;
+      errorDiv.textContent = "❌ " + (error.message || "Falha na autenticação.");
     }
   }
 

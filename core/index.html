@@ -19,6 +19,7 @@
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
+  <link rel="stylesheet" href="css/admin-security-console.css?v=20261009-security-console-1">
 </head>
 <body class="admin-saas" data-intranet-module="core" data-intranet-page="core-index">
   <div class="admin-app">
@@ -65,6 +66,12 @@
 
           <section class="admin-kpi-grid" id="kpiGrid"></section>
 
+          <section class="security-overview" id="seguranca" aria-labelledby="securityOverviewTitle">
+            <div class="security-overview-header"><div><span class="admin-eyebrow">Segurança de acesso</span><h3 id="securityOverviewTitle">Autenticação e atividade recente</h3><p>Falhas, autenticações confirmadas, origem de rede e transações auditadas.</p></div><a class="admin-link" href="auditoria/index.html">Abrir central de logs <i class="fas fa-arrow-right"></i></a></div>
+            <div class="security-stats" id="securityStats" aria-live="polite"></div>
+            <div class="security-events-wrap"><table class="security-events-table" aria-label="Eventos recentes de autenticação"><thead><tr><th>Resultado</th><th>Identificador</th><th>IP</th><th>Agente do navegador</th><th>Quando</th></tr></thead><tbody id="securityEventsBody"><tr><td colspan="5" class="security-empty">Carregando registros de autenticação…</td></tr></tbody></table></div>
+          </section>
+
           <div class="admin-section-heading" id="modulos"><div><span class="admin-eyebrow">Ecossistema</span><h2>Operação em um só lugar</h2><p>Leia o estado da plataforma e acesse rapidamente cada domínio de gestão.</p></div><a class="admin-link" href="modulos/index.html">Gerenciar catálogo <i class="fas fa-arrow-up-right-from-square"></i></a></div>
           <div class="admin-main-grid">
             <section class="admin-card admin-card-wide"><div class="admin-card-header"><div><span class="admin-eyebrow">Catálogo</span><h3>Módulos da Intranet</h3><p>Disponibilidade, visibilidade e acesso por domínio.</p></div><i class="fas fa-cubes admin-heading-icon"></i></div><div class="module-grid" id="moduleGrid"></div></section>
@@ -87,8 +94,8 @@
     </section>
   </div>
   <div class="admin-toast-stack" id="notificationCenter" aria-live="polite"></div>
-  <script type="module" src="admin-central.js?v=20261002-admin-central-v2"></script>
-  <script src="admin-navigation.js?v=20261003-shared-nav-v1"></script>
+  <script type="module" src="admin-central.js?v=20261009-security-console-3"></script>
+  <script src="admin-navigation.js?v=20261009-security-console-1"></script>
   <script src="../shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
 </body>
 </html>

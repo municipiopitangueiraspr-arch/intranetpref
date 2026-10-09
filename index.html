@@ -112,7 +112,16 @@
     </script>
 
     <script type="module">
-	import { supabase } from "./shared/js/supabase.js";
+	import { supabase, SUPABASE_CONFIG } from "./shared/js/supabase.js";
+      const OAUTH_AUDIT_MARKER = "intranet.oauth_audit_started_at";
+      function consumeOAuthAuditMarker(session) {
+        const startedAt = Number(sessionStorage.getItem(OAUTH_AUDIT_MARKER) || 0);
+        if (startedAt) sessionStorage.removeItem(OAUTH_AUDIT_MARKER);
+        if (!startedAt) return { started: false, verified: false };
+        const now = Date.now();
+        return { started: true, startedAt, verified: !!session?.access_token && now - startedAt <= 10 * 60 * 1000 && startedAt <= now + 120_000 };
+      }
+      let oauthSuccessAuditSent = false;
       // Configuração do Supabase
       // ============================================
       // SISTEMA DE NOTIFICAÇÕES
@@ -245,13 +254,19 @@
       // ============================================
       async function fazerLogin(email, senha) {
         try {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password: senha,
+          const response = await fetch(`${SUPABASE_CONFIG.url}/functions/v1/security-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", apikey: SUPABASE_CONFIG.anonKey },
+            body: JSON.stringify({ action: "password_login", email, password: senha }),
+            cache: "no-store",
           });
-          if (error) throw new Error(error.message);
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok || !payload.session?.access_token || !payload.session?.refresh_token) {
+            throw new Error(payload.message || "Não foi possível validar o acesso com segurança.");
+          }
+          const { data, error: sessionError } = await supabase.auth.setSession(payload.session);
+          if (sessionError || !data?.user) throw new Error("Não foi possível estabelecer a sessão segura.");
 
-          // Buscar dados do usuário na tabela 'usuarios'
           const { data: usuario, error: userError } = await supabase
             .from("usuarios")
             .select("id, nome, email, perfil, orgao_id, ativo")
@@ -260,16 +275,11 @@
 
           if (userError || !usuario) {
             await supabase.auth.signOut();
-            throw new Error(
-              "Usuário não possui perfil no sistema. Contate o administrador.",
-            );
+            throw new Error("Usuário não possui perfil no sistema. Contate o administrador.");
           }
-
-          if (usuario.ativo === false) {
+          if (usuario.ativo !== true) {
             await supabase.auth.signOut();
-            throw new Error(
-              "Seu usuário está inativo. Contate o administrador.",
-            );
+            throw new Error("Seu usuário está inativo. Contate o administrador.");
           }
 
           const statusLogin = document.getElementById("loginStatus");
@@ -278,7 +288,6 @@
             statusLogin.dataset.estado = "sucesso";
             statusLogin.textContent = "Acesso validado. Entrando na intranet...";
           }
-
           await decidirDestino();
           return true;
         } catch (err) {
@@ -288,22 +297,42 @@
             statusLogin.dataset.estado = "erro";
             statusLogin.textContent = err.message || "Não foi possível validar o acesso.";
           }
-          window.showNotification(
-            "error",
-            "Falha na autenticação",
-            err.message,
-          );
-          console.error(err);
+          window.showNotification("error", "Falha na autenticação", err.message || "Não foi possível validar o acesso.");
+          console.error("[Login] Falha no fluxo de autenticação segura:", err);
+          return false;
+        }
+      }
+
+      async function registrarSucessoOAuth(session, startedAt) {
+        if (oauthSuccessAuditSent || !session?.access_token) return false;
+        oauthSuccessAuditSent = true;
+        try {
+          const response = await fetch(`${SUPABASE_CONFIG.url}/functions/v1/security-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", apikey: SUPABASE_CONFIG.anonKey, Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({ action: "oauth_success", oauth_started_at: startedAt }),
+            cache: "no-store",
+          });
+          if (!response.ok) throw new Error("O serviço de auditoria não confirmou o acesso OAuth.");
+          return true;
+        } catch (error) {
+          console.warn("[Login] Serviço de auditoria OAuth indisponível.", error);
+          await supabase.auth.signOut();
           return false;
         }
       }
 
       async function entrarComGoogle() {
+        const redirectTo = new URL("./index.html", window.location.href);
+        sessionStorage.setItem(OAUTH_AUDIT_MARKER, String(Date.now()));
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
-          options: { redirectTo: new URL("./index.html", window.location.href).href },
+          options: { redirectTo: redirectTo.href },
         });
-        if (error) window.showNotification("error", "Google não configurado", "O provedor Google precisa ser habilitado no Supabase antes do primeiro uso.");
+        if (error) {
+          sessionStorage.removeItem(OAUTH_AUDIT_MARKER);
+          window.showNotification("error", "Google não configurado", "O provedor Google precisa ser habilitado no Supabase antes do primeiro uso.");
+        }
       }
 
       // ============================================
@@ -315,6 +344,20 @@
         } = await supabase.auth.getSession();
 
         if (session) {
+          const oauthAuditContext = consumeOAuthAuditMarker(session);
+          if (oauthAuditContext.started) {
+            if (!oauthAuditContext.verified) {
+              await supabase.auth.signOut();
+              document.getElementById("loginModalOverlay").style.display = "flex";
+              window.showNotification("error", "Login não validado", "Não foi possível confirmar o retorno seguro do provedor. Tente novamente.");
+              return;
+            }
+            const auditRecorded = await registrarSucessoOAuth(session, oauthAuditContext.startedAt);
+            if (!auditRecorded) {
+              document.getElementById("loginModalOverlay").style.display = "flex";
+              return;
+            }
+          }
           const { data: usuario } = await supabase
             .from("usuarios")
             .select("id, ativo")
@@ -324,8 +367,15 @@
             window.location.href = "acesso.html";
             return;
           }
+          if (usuario.ativo !== true) {
+            await supabase.auth.signOut();
+            document.getElementById("loginModalOverlay").style.display = "flex";
+            window.showNotification("error", "Acesso não autorizado", "Esta conta não possui um perfil ativo na intranet.");
+            return;
+          }
           await decidirDestino();
         } else {
+          sessionStorage.removeItem(OAUTH_AUDIT_MARKER);
           // Mostrar modal de login
           document.getElementById("loginModalOverlay").style.display = "flex";
           document.getElementById("loginEmail").focus();
@@ -340,7 +390,7 @@
         .addEventListener("submit", async (e) => {
           e.preventDefault();
           const email = document.getElementById("loginEmail").value.trim();
-          const senha = document.getElementById("loginSenha").value.trim();
+          const senha = document.getElementById("loginSenha").value;
           const btnEntrar = document.getElementById("btnEntrar");
           const statusLogin = document.getElementById("loginStatus");
           if (!email || !senha) {

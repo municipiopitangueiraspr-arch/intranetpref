@@ -1,27 +1,53 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png?v=20261009-brasao-2">
-<link rel="icon" type="image/svg+xml" href="../../favicon.svg?v=20261009-brasao-2">
-<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png?v=20261009-brasao-2">
-<link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico?v=20261009-brasao-2">
-<title>Auditoria e Logs · Core</title>
-
-
-
-
-
-
-<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png?v=20261009-brasao-2">
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg?v=20261009-brasao-2">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png?v=20261009-brasao-2">
+  <link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico?v=20261009-brasao-2">
+  <title>Auditoria e Logs · Governança</title>
+  <script src="../../shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="../../shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
+  <link rel="stylesheet" href="../css/admin-pages-theme.css?v=20261009-security-console-1">
+  <link rel="stylesheet" href="../css/admin-security-logs.css?v=20261009-security-console-1">
 </head>
 <body class="saas-admin" data-intranet-module="core" data-intranet-page="core-auditoria-index">
-<div class="app-layout">
-<aside class="sidebar" id="sidebar" aria-label="Navegação de governança"><div class="sidebar-brand"><div class="brand-icon"><i class="fas fa-shield-halved"></i></div><div class="brand-text"><h2>Governança</h2><span>Administração central</span></div></div><div class="admin-tenant-chip"><i class="fas fa-building-columns"></i><span>Ambiente municipal</span><b>ADMIN</b></div><nav class="sidebar-nav"><div class="nav-section">Visão central</div><a href="../index.html"><i class="fas fa-table-cells"></i> Painel executivo</a><a href="../modulos/index.html"><i class="fas fa-cubes"></i> Catálogo de módulos</a><a href="index.html" class="active"><i class="fas fa-clock-rotate-left"></i> Auditoria e logs</a><div class="nav-section">Identidades e acesso</div><a href="../usuarios/index.html"><i class="fas fa-users"></i> Usuários</a><a href="../orgaos/index.html"><i class="fas fa-building"></i> Órgãos e unidades</a><a href="../permissoes/index.html"><i class="fas fa-key"></i> Perfis e permissões</a><div class="nav-section">Sistema</div><a href="../modulos/index.html"><i class="fas fa-sliders"></i> Configurar módulos</a><a href="../../intranet.html"><i class="fas fa-arrow-left"></i> Voltar à intranet</a></nav><div class="sidebar-voltar"><i class="fas fa-lock"></i><span><strong>Acesso protegido</strong><small>Somente perfil ADMIN</small></span></div></aside>
-<div class="main-area"><header class="topbar"><div class="intranet-style-74d926832e"><button class="btn-toggle-sidebar" id="btnToggleSidebar" aria-label="Abrir menu" type="button"><i class="fas fa-bars"></i></button><div class="topbar-titulo"><h1><i class="fas fa-clock-rotate-left"></i> Auditoria e logs</h1><p>Rastreabilidade dos eventos administrativos do sistema</p></div></div><div class="topbar-direita"><div class="topbar-info"><strong id="topbarNome">—</strong><span id="topbarData">—</span></div><div class="avatar-usuario" id="avatarIniciais">?</div><button class="btn-sair" id="btnSair" title="Sair" type="button"><i class="fas fa-right-from-bracket"></i></button></div></header>
-<main class="conteudo"><section class="page-header"><div><h2>Trilha de auditoria</h2><p>Eventos canônicos, responsáveis e origem das alterações relevantes.</p></div><button class="btn btn-primary" id="btnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar eventos</button></section><div class="card" id="auditCard"><div class="loading-container" id="loadingAudit"><div class="loading-spinner"></div><p>Carregando eventos de auditoria…</p></div><div class="table-container" id="auditTableWrap" hidden><table class="table" aria-label="Tabela de dados"><thead><tr><th>Evento</th><th>Entidade</th><th>Responsável</th><th>Origem</th><th>Data e hora</th></tr></thead><tbody id="auditBody"></tbody></table></div></div></main></div></div>
-<script type="module" src="../auditoria.js?v=20261002-audit-v2"></script>
-  <script src="../admin-navigation.js?v=20261003-shared-nav-v2"></script>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar" aria-label="Navegação de governança"><div class="sidebar-brand"><div class="brand-icon"><i class="fas fa-shield-halved"></i></div><div class="brand-text"><h2>Governança</h2><span>Administração central</span></div></div><div class="admin-tenant-chip"><i class="fas fa-building-columns"></i><span>Ambiente municipal</span><b>ADMIN</b></div></aside>
+    <div class="main-area">
+      <header class="topbar">
+        <div class="intranet-style-74d926832e"><button class="btn-toggle-sidebar" id="btnToggleSidebar" aria-label="Abrir menu" type="button"><i class="fas fa-bars"></i></button><div class="topbar-titulo"><h1><i class="fas fa-clock-rotate-left"></i> Auditoria e logs</h1><p>Histórico de autenticação e alterações operacionais</p></div></div>
+        <div class="topbar-direita"><div class="topbar-info"><strong id="topbarNome">—</strong><span id="topbarData">—</span></div><div class="avatar-usuario" id="avatarIniciais">?</div><button class="btn-sair" id="btnSair" title="Sair" type="button"><i class="fas fa-right-from-bracket"></i></button></div>
+      </header>
+      <main class="conteudo">
+        <section class="page-header security-hero">
+          <div><span class="eyebrow">Centro de segurança · ADMIN</span><h2>Trilha de autenticação e transações</h2><p>Consulte autenticações, tentativas malsucedidas e alterações de dados com contexto de rede.</p></div>
+          <div class="hero-actions"><button class="btn btn-primary" id="btnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar</button></div>
+        </section>
+        <p class="security-privacy-note"><i class="fas fa-shield-halved"></i> Acesso restrito a administradores. Os registros próprios guardam IP quando fornecido pelo gateway, agente do navegador e têm retenção de 180 dias. Falhas em provedores externos dependem dos Auth Audit Logs do Supabase e de sua retenção configurada. Senhas, tokens e valores completos de registros não são exibidos.</p>
+        <section class="card" aria-label="Filtros de auditoria">
+          <div class="security-filters">
+            <div class="security-filter"><label for="filterSearch">Buscar por pessoa, identificador, entidade ou IP</label><input id="filterSearch" type="search" maxlength="120" placeholder="Ex.: nome, IP, entidade…" autocomplete="off"></div>
+            <div class="security-filter"><label for="filterCategory">Tipo de registro</label><select id="filterCategory"><option value="all">Todos</option><option value="access">Autenticações</option><option value="transactions">Transações</option></select></div>
+            <div class="security-filter"><label for="filterPeriod">Período</label><select id="filterPeriod"><option value="24h">Últimas 24 horas</option><option value="7d">Últimos 7 dias</option><option value="30d" selected>Últimos 30 dias</option><option value="180d">Últimos 180 dias</option></select></div>
+            <div class="security-filter-actions"><button class="btn btn-primary" id="btnFiltrar" type="button"><i class="fas fa-filter"></i> Filtrar</button></div>
+          </div>
+          <div class="security-log-meta"><span id="resultCount">—</span><span>Eventos de alteração exibem somente os nomes dos campos, sem valores anteriores/novos.</span></div>
+          <div class="table-container">
+            <table class="table security-log-table" aria-label="Registros administrativos de autenticação e transação">
+              <thead><tr><th>Categoria</th><th>Resultado</th><th>Responsável / identificação</th><th>Evento / entidade</th><th>IP</th><th>Agente do navegador</th><th>Data e hora</th></tr></thead>
+              <tbody id="auditBody"><tr><td colspan="7" class="security-loading">Carregando registros administrativos…</td></tr></tbody>
+            </table>
+          </div>
+          <div class="security-page-controls"><button class="btn btn-secondary" id="btnPrev" type="button" disabled><i class="fas fa-chevron-left"></i> Anterior</button><span id="pageIndicator">Página 1</span><button class="btn btn-secondary" id="btnNext" type="button" disabled>Próxima <i class="fas fa-chevron-right"></i></button></div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="../auditoria.js?v=20261009-security-console-3"></script>
+  <script src="../admin-navigation.js?v=20261009-security-console-1"></script>
   <script src="../../shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
-</body></html>
+</body>
+</html>

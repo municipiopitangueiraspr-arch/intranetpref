@@ -1,0 +1,95 @@
+/* Core Administrativo — alinhado à identidade visual de Atas, Saldos e Pedidos. */
+body.admin-saas {
+  --core-ink: #102a43;
+  --core-navy: #092d4f;
+  --core-blue: #0b63ce;
+  --core-sky: #0ea5e9;
+  --core-teal: #14b8a6;
+  --core-amber: #f59e0b;
+  --core-line: #dbe5ee;
+  --core-muted: #64748b;
+  --core-bg: #f4f7fb;
+  margin: 0;
+  color: var(--core-ink);
+  background: var(--core-bg);
+  font-family: Manrope, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+body.admin-saas .admin-app { min-height: 100vh; background: var(--core-bg); }
+body.admin-saas .admin-sidebar,
+body.admin-saas .shared-admin-sidebar {
+  background: linear-gradient(180deg, #092d4f 0%, #06365d 58%, #062e50 100%) !important;
+  box-shadow: 10px 0 30px rgba(8,40,69,.13) !important;
+}
+body.admin-saas .admin-brand-mark,
+body.admin-saas .shared-nav-mark { color: #fff !important; background: linear-gradient(135deg,#0b63ce,#0ea5e9) !important; }
+body.admin-saas .admin-topbar {
+  background: rgba(255,255,255,.96) !important;
+  border-bottom: 1px solid var(--core-line) !important;
+  box-shadow: 0 2px 10px rgba(18,52,79,.04) !important;
+}
+body.admin-saas .admin-topbar::before { background: linear-gradient(90deg,var(--core-blue),var(--core-sky) 55%,var(--core-teal)) !important; }
+body.admin-saas .admin-breadcrumb,
+body.admin-saas .admin-topbar h1,
+body.admin-saas .admin-card h3,
+body.admin-saas .admin-section-heading h2 { color: var(--core-ink) !important; }
+body.admin-saas .admin-content { background: var(--core-bg); }
+body.admin-saas .admin-shell { max-width: 1680px; margin: 0 auto; }
+body.admin-saas .admin-product-bar {
+  border: 0 !important;
+  background: linear-gradient(115deg,#092d4f 0%,#063b69 60%,#0b63ce 100%) !important;
+  box-shadow: 0 16px 34px rgba(8,40,69,.16) !important;
+}
+body.admin-saas .admin-product-bar h2,
+body.admin-saas .admin-product-bar p,
+body.admin-saas .admin-product-bar .admin-eyebrow { color: #fff !important; }
+body.admin-saas .admin-button-primary { background: linear-gradient(110deg,#0b76da,#0754af) !important; }
+body.admin-saas .admin-button-soft { color: #eaf2ff !important; background: rgba(255,255,255,.10) !important; border-color: rgba(255,255,255,.25) !important; }
+body.admin-saas .admin-trust-row { color: #486581; }
+body.admin-saas .admin-kpi,
+body.admin-saas .admin-card,
+body.admin-saas .security-overview {
+  border: 1px solid var(--core-line) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 16px rgba(25,63,88,.06) !important;
+}
+body.admin-saas .admin-kpi { border-top: 3px solid var(--core-blue) !important; }
+body.admin-saas .admin-kpi.green { border-top-color: var(--core-teal) !important; }
+body.admin-saas .admin-kpi.amber { border-top-color: var(--core-amber) !important; }
+body.admin-saas .admin-kpi.violet { border-top-color: var(--core-sky) !important; }
+body.admin-saas .admin-kpi-icon { color: #fff !important; background: linear-gradient(145deg,#1687ef,#0758b8) !important; }
+body.admin-saas .admin-kpi.green .admin-kpi-icon { background: linear-gradient(145deg,#14a975,#087c59) !important; }
+body.admin-saas .admin-kpi.amber .admin-kpi-icon { background: linear-gradient(145deg,#f8b318,#db8500) !important; }
+body.admin-saas .admin-table th { background: linear-gradient(135deg,#102a43,#1e3a8a) !important; }
+body.admin-saas .admin-table td { border-bottom-color: #e7eef3 !important; }
+body.admin-saas .admin-link,
+body.admin-saas .admin-heading-icon { color: var(--core-blue) !important; }
+body.admin-saas .security-overview { padding: 20px; margin: 20px 0; }
+body.admin-saas .security-overview-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px; }
+body.admin-saas .security-overview-header h3 { margin:4px 0; color:var(--core-ink); }
+body.admin-saas .security-overview-header p { margin:0; color:var(--core-muted); font-size:.82rem; }
+body.admin-saas .security-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+body.admin-saas .security-stat { min-height:80px; padding:14px; border:1px solid var(--core-line); border-radius:12px; background:#f8fbff; }
+body.admin-saas .security-stat strong { display:block; color:var(--core-ink); font-size:1.4rem; }
+body.admin-saas .security-stat span { color:var(--core-muted); font-size:.72rem; font-weight:700; }
+body.admin-saas .security-stat.failure { border-left:3px solid #dc2626; }
+body.admin-saas .security-stat.success { border-left:3px solid var(--core-teal); }
+body.admin-saas .security-stat.transaction { border-left:3px solid var(--core-blue); }
+body.admin-saas .security-events-wrap { overflow:auto; border:1px solid var(--core-line); border-radius:11px; }
+body.admin-saas .security-events-table { width:100%; min-width:740px; border-collapse:collapse; }
+body.admin-saas .security-events-table th { padding:10px 12px; color:#fff; background:#102a43; text-align:left; font-size:.62rem; letter-spacing:.06em; text-transform:uppercase; }
+body.admin-saas .security-events-table td { padding:10px 12px; border-bottom:1px solid #e7eef3; color:#334e68; font-size:.72rem; }
+body.admin-saas .security-badge { display:inline-flex; padding:4px 8px; border-radius:999px; font-size:.62rem; font-weight:800; }
+body.admin-saas .security-badge.success { color:#166534; background:#dcfce7; }
+body.admin-saas .security-badge.failure { color:#991b1b; background:#fee2e2; }
+body.admin-saas .security-muted { color:var(--core-muted); font-size:.68rem; }
+body.admin-saas .security-empty { padding:16px; color:var(--core-muted); text-align:center; font-size:.76rem; }
+@media (max-width: 900px) {
+  body.admin-saas .security-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  body.admin-saas .security-overview-header { display:block; }
+}
+@media (max-width: 560px) {
+  body.admin-saas .security-stats { gap:8px; }
+  body.admin-saas .security-stat { min-height:70px; padding:10px; }
+  body.admin-saas .security-stat strong { font-size:1.15rem; }
+}

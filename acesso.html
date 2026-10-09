@@ -42,9 +42,18 @@
       <div id="status" class="msg hidden" role="status" aria-live="polite"></div>
     </main>
     <script type="module">
-      import { supabase } from "./shared/js/supabase.js";
+      import { supabase, SUPABASE_CONFIG } from "./shared/js/supabase.js";
 
       const $ = (id) => document.getElementById(id);
+      const OAUTH_AUDIT_MARKER = "intranet.oauth_audit_started_at";
+      function consumeOAuthAuditMarker(session) {
+        const startedAt = Number(sessionStorage.getItem(OAUTH_AUDIT_MARKER) || 0);
+        if (startedAt) sessionStorage.removeItem(OAUTH_AUDIT_MARKER);
+        if (!startedAt) return { started: false, verified: false };
+        const now = Date.now();
+        return { started: true, startedAt, verified: !!session?.access_token && now - startedAt <= 10 * 60 * 1000 && startedAt <= now + 120_000 };
+      }
+      let oauthSuccessAuditSent = false;
       function msg(text) {
         $("status").textContent = text;
         $("status").classList.remove("hidden");
@@ -53,15 +62,39 @@
       async function check() {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
+          sessionStorage.removeItem(OAUTH_AUDIT_MARKER);
           $("googleStep").classList.remove("hidden");
           return;
+        }
+        const oauthAuditContext = consumeOAuthAuditMarker(session);
+        if (oauthAuditContext.started && !oauthAuditContext.verified) {
+          await supabase.auth.signOut();
+          msg("Não foi possível validar o retorno OAuth com segurança. Tente novamente.");
+          return;
+        }
+        if (oauthAuditContext.started && !oauthSuccessAuditSent) {
+          oauthSuccessAuditSent = true;
+          try {
+            const response = await fetch(`${SUPABASE_CONFIG.url}/functions/v1/security-login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", apikey: SUPABASE_CONFIG.anonKey, Authorization: `Bearer ${session.access_token}` },
+              body: JSON.stringify({ action: "oauth_success", oauth_started_at: oauthAuditContext.startedAt }),
+              cache: "no-store",
+            });
+            if (!response.ok) throw new Error("O serviço de auditoria não confirmou o acesso OAuth.");
+          } catch (error) {
+            console.warn("[Acesso] Serviço de auditoria OAuth indisponível.", error);
+            await supabase.auth.signOut();
+            msg("Não foi possível registrar o acesso com segurança. Tente novamente em instantes.");
+            return;
+          }
         }
         const { data: profile } = await supabase
           .from("usuarios")
           .select("id,nome,email,ativo")
           .eq("uuid", session.user.id)
           .maybeSingle();
-        if (profile?.ativo !== false && profile) {
+        if (profile?.ativo === true) {
           location.href = "intranet.html";
           return;
         }
@@ -85,11 +118,16 @@
       }
 
       $("btnGoogle").onclick = async () => {
+        const redirectTo = new URL("./acesso.html", window.location.href);
+        sessionStorage.setItem(OAUTH_AUDIT_MARKER, String(Date.now()));
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
-          options: { redirectTo: new URL("./acesso.html", window.location.href).href },
+          options: { redirectTo: redirectTo.href },
         });
-        if (error) $("googleMsg").textContent = `Não foi possível iniciar o Google: ${error.message}`;
+        if (error) {
+          sessionStorage.removeItem(OAUTH_AUDIT_MARKER);
+          $("googleMsg").textContent = `Não foi possível iniciar o Google: ${error.message}`;
+        }
       };
 
       $("requestForm").onsubmit = async (event) => {

@@ -70,15 +70,22 @@ class SistemaGestaoAtas {
     const email = document.getElementById("loginEmail").value;
     const senha = document.getElementById("loginSenha").value;
     try {
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password: senha,
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/security-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON_KEY },
+        body: JSON.stringify({ action: "password_login", email, password: senha }),
+        cache: "no-store",
       });
-      if (error) throw error;
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.session?.access_token || !payload.session?.refresh_token) {
+        throw new Error(payload.message || "Não foi possível validar o acesso com segurança.");
+      }
+      const { data, error } = await supabaseClient.auth.setSession(payload.session);
+      if (error || !data?.user) throw error || new Error("Não foi possível estabelecer a sessão segura.");
       await this.carregarUsuario(data.user.id);
     } catch (error) {
       errorDiv.style.display = "block";
-      errorDiv.innerHTML = "❌ " + error.message;
+      errorDiv.textContent = "❌ " + error.message;
     }
   }
 
@@ -88,10 +95,13 @@ class SistemaGestaoAtas {
       .select("*, orgao:orgaos(*)")
       .eq("uuid", uuid)
       .single();
-    if (error || !usuario) return;
+    if (error || !usuario || usuario.ativo !== true) {
+      await supabaseClient.auth.signOut();
+      throw new Error("Conta indisponível ou sem perfil ativo no sistema.");
+    }
     this.usuarioAtual = usuario;
-    document.getElementById("userName").innerHTML = usuario.nome;
-    document.getElementById("userRole").innerHTML = usuario.perfil;
+    document.getElementById("userName").textContent = usuario.nome || "Usuário";
+    document.getElementById("userRole").textContent = usuario.perfil || "";
     const iniciais =
       usuario.nome
         .split(" ")
@@ -99,7 +109,7 @@ class SistemaGestaoAtas {
         .join("")
         .substring(0, 2)
         .toUpperCase() || "U";
-    document.getElementById("userAvatar").innerHTML = iniciais;
+    document.getElementById("userAvatar").textContent = iniciais;
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("mainSystem").style.display = "block";
     await this.carregarOrgaos();

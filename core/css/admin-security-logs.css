@@ -1,0 +1,38 @@
+/* Auditoria e Segurança — mesma linguagem visual de Atas/Saldos/Pedidos. */
+body.saas-admin .security-hero { align-items:flex-start; }
+body.saas-admin .security-hero .eyebrow { color:#bfdbfe; font-size:.64rem; font-weight:850; letter-spacing:.12em; text-transform:uppercase; }
+body.saas-admin .security-hero .hero-actions { display:flex; gap:9px; flex-wrap:wrap; }
+body.saas-admin .security-privacy-note { margin:0 0 18px; padding:12px 15px; border:1px solid #bfdbfe; border-radius:12px; color:#334e68; background:linear-gradient(100deg,#eff6ff,#f0fdfa); font-size:.72rem; }
+body.saas-admin .security-filters { display:grid; grid-template-columns:minmax(210px,1.5fr) minmax(150px,.8fr) minmax(150px,.8fr) auto; align-items:end; gap:12px; margin-bottom:14px; }
+body.saas-admin .security-filter { display:grid; gap:6px; }
+body.saas-admin .security-filter label { color:#486581; font-size:.66rem; font-weight:800; }
+body.saas-admin .security-filter input,
+body.saas-admin .security-filter select { min-height:40px; padding:8px 10px; border:1px solid #d5e0e9; border-radius:9px; color:#102a43; background:#fff; }
+body.saas-admin .security-filter-actions { display:flex; gap:8px; }
+body.saas-admin .security-log-meta { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:12px 0; color:#64748b; font-size:.7rem; }
+body.saas-admin .security-log-table { min-width:1120px !important; }
+body.saas-admin .security-log-table th { white-space:nowrap; }
+body.saas-admin .security-log-table td { vertical-align:top; }
+body.saas-admin .security-log-table .ua-cell { max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+body.saas-admin .security-result { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-size:.62rem; font-weight:850; white-space:nowrap; }
+body.saas-admin .security-result.success { color:#166534; background:#dcfce7; }
+body.saas-admin .security-result.failure { color:#991b1b; background:#fee2e2; }
+body.saas-admin .security-result.recorded { color:#1e3a8a; background:#dbeafe; }
+body.saas-admin .security-category { color:#31546e; font-weight:750; }
+body.saas-admin .security-page-controls { display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:14px; }
+body.saas-admin .security-page-controls button:disabled { opacity:.45; cursor:not-allowed; transform:none !important; }
+body.saas-admin .security-loading,
+body.saas-admin .security-error { padding:25px 16px; color:#64748b; text-align:center; font-size:.78rem; }
+body.saas-admin .security-error { color:#991b1b; }
+@media (max-width: 920px) {
+  body.saas-admin .security-filters { grid-template-columns:1fr 1fr; }
+  body.saas-admin .security-filter:first-child { grid-column:1 / -1; }
+}
+@media (max-width: 620px) {
+  body.saas-admin .security-filters { grid-template-columns:1fr; }
+  body.saas-admin .security-filter:first-child { grid-column:auto; }
+  body.saas-admin .security-filter-actions { justify-content:stretch; }
+  body.saas-admin .security-filter-actions button { flex:1; }
+  body.saas-admin .security-log-meta { align-items:flex-start; flex-direction:column; }
+  body.saas-admin .security-page-controls { justify-content:center; }
+}
