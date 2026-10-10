@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 
 const root = new URL('../', import.meta.url).pathname;
 const required = [
-  'shared/css/system-mother.css',
+  'shared/css/intranet-global.css',
   'shared/js/system-shell.js',
   'biblioteca/dashboard.html',
   'controle-de-saldos/gestao-atas.html',
@@ -19,7 +19,7 @@ for (const file of required) if (!existsSync(join(root, file))) errors.push(`mis
 const entries = required.filter((file) => file.endsWith('.html'));
 for (const file of entries) {
   const html = readFileSync(join(root, file), 'utf8');
-  if (!html.includes('shared/css/system-mother.css')) errors.push(`${file}: missing shared CSS include`);
+  if (!html.includes('shared/css/intranet-global.css')) errors.push(`${file}: missing shared CSS include`);
   if (!html.includes('shared/js/system-shell.js')) errors.push(`${file}: missing shared shell include`);
 }
 const jsFiles = [];

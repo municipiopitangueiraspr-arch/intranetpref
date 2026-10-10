@@ -57,9 +57,13 @@ function formatarData(data) {
 }
 
 function formatarMoeda(valor) {
-  return (valor || 0).toLocaleString("pt-BR", {
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) return "R$ 0,00";
+  return numero.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
 }
 

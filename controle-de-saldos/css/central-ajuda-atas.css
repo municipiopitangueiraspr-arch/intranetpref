@@ -1,0 +1,149 @@
+/* Central de Ajuda · view SPA integrada ao shell de Consulta. */
+body[data-intranet-module="atas"] #mainSystem #faqContent {
+  width: 100% !important;
+  max-width: none !important;
+  padding: 0 !important;
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 0 38px;
+  color: #102a43;
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-heading {
+  position: relative;
+  margin: 0 0 24px;
+  padding: 18px 20px;
+  border: 1px solid #d5e3ea;
+  border-radius: 14px;
+  background: linear-gradient(120deg, #ffffff 0%, #f3f8fb 100%);
+  box-shadow: 0 8px 22px rgba(23,59,89,.07);
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-heading h1 {
+  margin: 0;
+  color: #102a43;
+  font-size: clamp(1.12rem, 1.5vw, 1.38rem);
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-heading p { margin: 3px 0 0; color: #64748b; font-size: .79rem; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-imprimir {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  margin-left: auto;
+  padding: 0 12px;
+  border: 1px solid #cbdce6;
+  border-radius: 9px;
+  color: #31566d;
+  background: #fff;
+  font: inherit;
+  font-size: .73rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-imprimir:hover { border-color: #0b72b5; color: #07558d; background: #f4f9fc; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-tools {
+  width: 100%;
+  margin: 0 0 30px;
+  padding: 12px 14px;
+  border: 1px solid #d5e3ea;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 7px 20px rgba(23,59,89,.06);
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-search-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, 240px) auto !important;
+  align-items: end;
+  gap: 12px;
+  margin: 0;
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-search-grid .filtro-busca-global { grid-column: auto !important; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-search-grid .filtro-grupo { min-width: 0; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid #e7eef3;
+  color: #64748b;
+  font-size: .72rem;
+  font-weight: 700;
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-limpar {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #cbdce6;
+  border-radius: 9px;
+  color: #176bb2;
+  background: #f7fbfd;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-limpar:hover { border-color: #8db9d3; color: #07558d; background: #eef7fb; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-resumo {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  margin: 0 0 24px;
+}
+body[data-intranet-module="atas"] #mainSystem #faqContent .resumo-card { min-height: 76px; }
+body[data-intranet-module="atas"] #mainSystem #faqContent .resumo-card.ajuda-ativo { border-color: #0b63ce; box-shadow: 0 0 0 3px rgba(11,99,206,.12), 0 10px 24px rgba(23,59,89,.1); }
+body[data-intranet-module="atas"] #mainSystem #faqContent .central-ajuda-card-carrinho { border-top-color: #2d8f82; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-lista { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #d5e3ea;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #fff 0%, #f7fbfd 100%);
+  box-shadow: 0 8px 20px rgba(23,59,89,.06);
+}
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo-cabecalho { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 13px; border-bottom: 1px solid #e4edf2; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo-icone { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border-radius: 10px; color: #0b63ce; background: #eaf3fc; font-size: 1.05rem; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo:nth-child(3n+2) .central-ajuda-modulo-icone { color: #147d70; background: #e7f7f3; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo:nth-child(3n+3) .central-ajuda-modulo-icone { color: #af7400; background: #fff6dc; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo h2 { margin: 0; color: #102a43; font-size: .98rem; font-weight: 850; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo-cabecalho p { margin: 3px 0 0; color: #64748b; font-size: .71rem; line-height: 1.4; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item { overflow: hidden; border: 1px solid #e0eaf0; border-radius: 10px; background: #fff; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item + .central-ajuda-item { margin-top: 8px; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item[open] { border-color: #b8d4e2; background: #fbfdfe; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 49px; padding: 11px 13px; color: #244965; font-size: .76rem; font-weight: 800; cursor: pointer; list-style: none; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item summary::-webkit-details-marker { display: none; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item summary::after { content: "+"; display: grid; width: 23px; height: 23px; flex: 0 0 23px; place-items: center; border-radius: 7px; color: #0b72b5; background: #edf6fa; font-size: 1rem; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item[open] summary::after { content: "−"; color: #fff; background: #0b72b5; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item > div { padding: 0 13px 13px; color: #5d7485; font-size: .73rem; line-height: 1.6; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item > div p { margin: 0; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-item > div strong { color: #244965; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-vazio { margin: 14px 0 0; padding: 36px 20px; border: 1px dashed #b9cbd6; border-radius: 14px; color: #64748b; background: #fff; text-align: center; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-vazio[hidden] { display: none; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-vazio i { display: block; margin-bottom: 8px; color: #0b72b5; font-size: 1.4rem; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-vazio strong { display: block; color: #102a43; font-size: .85rem; }
+body[data-intranet-module="atas"] #mainSystem .central-ajuda-vazio span { display: block; margin-top: 4px; font-size: .72rem; }
+@media (max-width: 900px) {
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-resumo { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-lista { grid-template-columns: 1fr; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-search-grid { grid-template-columns: minmax(0, 1fr) minmax(190px, .65fr) auto !important; }
+}
+@media (max-width: 620px) {
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-page { padding-bottom: 24px; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-heading { align-items: flex-start; flex-wrap: wrap; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-search-grid { grid-template-columns: 1fr !important; align-items: stretch; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-tools { padding: 12px; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo { padding: 15px 12px; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-status { align-items: flex-start; flex-direction: column; gap: 6px; }
+}
+@media print {
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-tools,
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-resumo,
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-imprimir { display: none !important; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-lista { grid-template-columns: 1fr; }
+  body[data-intranet-module="atas"] #mainSystem .central-ajuda-modulo { break-inside: avoid; box-shadow: none; }
+}

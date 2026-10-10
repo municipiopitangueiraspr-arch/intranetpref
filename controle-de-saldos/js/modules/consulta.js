@@ -324,13 +324,6 @@ export class Consulta {
         <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
         <span aria-current="page">Consulta</span>
       </nav>
-      <header class="consulta-page-heading">
-        <span class="consulta-page-icon" aria-hidden="true"><i class="fas fa-file-contract"></i></span>
-        <div>
-          <h2>Gestão de Atas, Saldos e Pedidos</h2>
-          <p>Consulte, acompanhe e gerencie as atas de registro de preços, saldos e pedidos.</p>
-        </div>
-      </header>
       <div class="filtros-container">
         <!-- ============================================================ -->
         <!-- RESULTADOS RÁPIDOS - CARD CLICÁVEIS                          -->
@@ -1051,7 +1044,11 @@ export class Consulta {
     const listaAtas = document.getElementById("atasLista");
     if (listaAtas) {
       listaAtas.addEventListener("click", (e) => {
-        const btnFavorita = e.target.closest("[data-action='toggle-favorita']");
+        const target =
+          e.target instanceof Element ? e.target : e.target?.parentElement;
+        if (!target) return;
+
+        const btnFavorita = target.closest("[data-action='toggle-favorita']");
         if (btnFavorita) {
           e.stopPropagation();
           e.preventDefault();
@@ -1059,7 +1056,7 @@ export class Consulta {
           return;
         }
         // ----- 0.a) Botão "Adicionar" no bloco de itens correspondentes -----
-        const btnAddCarrinho = e.target.closest(
+        const btnAddCarrinho = target.closest(
           "[data-action='add-item-carrinho']",
         );
         if (btnAddCarrinho) {
@@ -1077,7 +1074,7 @@ export class Consulta {
         // Sem este handler, o clique borbulha até o .ata-card (que tem
         // data-action='abrir-detalhes') e abre o modal de detalhes.
         // Com stopPropagation, o clique é capturado aqui e NÃO sobe.
-        const btnRemCarrinho = e.target.closest(
+        const btnRemCarrinho = target.closest(
           "[data-action='rem-item-carrinho']",
         );
         if (btnRemCarrinho) {
@@ -1092,7 +1089,7 @@ export class Consulta {
         }
 
         // ----- 1) Botão "ver todos os itens correspondentes" -----
-        const btnVerTodos = e.target.closest("[data-action='ver-todos-itens']");
+        const btnVerTodos = target.closest("[data-action='ver-todos-itens']");
         if (btnVerTodos) {
           e.stopPropagation();
           e.preventDefault();
@@ -1104,7 +1101,7 @@ export class Consulta {
         }
 
         // ----- 2) Botão "recolher itens" -----
-        const btnRecolher = e.target.closest("[data-action='recolher-itens']");
+        const btnRecolher = target.closest("[data-action='recolher-itens']");
         if (btnRecolher) {
           e.stopPropagation();
           e.preventDefault();
@@ -1116,13 +1113,22 @@ export class Consulta {
         }
 
         // ----- 3) Card inteiro OU botão "Ver Itens" → abrir detalhes -----
-        const alvoDetalhes = e.target.closest("[data-action='abrir-detalhes']");
+        const alvoDetalhes = target.closest(
+          "[data-action='abrir-detalhes']",
+        );
         if (alvoDetalhes) {
           e.stopPropagation();
           e.preventDefault();
           const ataId = alvoDetalhes.dataset.ataId;
           if (ataId) {
-            this.abrirDetalhes(ataId);
+            void this.abrirDetalhes(ataId).catch((error) => {
+              console.error("[Consulta] Falha ao abrir detalhes da ata:", error);
+              this.sistema.ui.mostrarToast(
+                "erro",
+                "Não foi possível abrir os itens",
+                "Tente novamente. Se o problema continuar, recarregue a consulta.",
+              );
+            });
           }
           return;
         }
@@ -1405,7 +1411,60 @@ export class Consulta {
       this.atualizarControleFavoritas();
       return;
     }
-    (data || []).forEach((row) => this._favoritasIds.add(String(row.ata_id)));
+    const favoritas = data || [];
+    const idsFavoritos = favoritas
+      .map((row) => String(row.ata_id))
+      .filter(Boolean);
+
+    // Favoritas vencidas deixam de ser favoritas de forma persistente.
+    // A limpeza acontece somente depois de consultar as atas; em caso de
+    // falha nessa segunda consulta, preservamos a lista para não apagar
+    // preferências sem confirmação do estado da ata.
+    if (idsFavoritos.length > 0) {
+      const hoje = new Date();
+      const hojeIso = [
+        hoje.getFullYear(),
+        String(hoje.getMonth() + 1).padStart(2, "0"),
+        String(hoje.getDate()).padStart(2, "0"),
+      ].join("-");
+      const { data: atasFavoritas, error: atasError } = await supabase
+        .from("atas")
+        .select("id, data_fim_vigencia, situacao")
+        .in("id", idsFavoritos);
+
+      if (atasError) {
+        console.warn("Não foi possível validar o vencimento das favoritas:", atasError.message);
+        idsFavoritos.forEach((id) => this._favoritasIds.add(id));
+      } else {
+        const vencidasIds = (atasFavoritas || [])
+          .filter((ata) => {
+            const fim = ata.data_fim_vigencia
+              ? String(ata.data_fim_vigencia).slice(0, 10)
+              : null;
+            return ata.situacao === "VENCIDA" || (fim && fim < hojeIso);
+          })
+          .map((ata) => String(ata.id));
+
+        if (vencidasIds.length > 0) {
+          const { error: limpezaError } = await supabase
+            .from("atas_favoritas")
+            .delete()
+            .eq("usuario_id", usuarioId)
+            .in("ata_id", vencidasIds);
+          if (limpezaError) {
+            console.warn("Não foi possível remover favoritas vencidas:", limpezaError.message);
+            idsFavoritos.forEach((id) => this._favoritasIds.add(id));
+          } else {
+            const vencidasSet = new Set(vencidasIds);
+            idsFavoritos
+              .filter((id) => !vencidasSet.has(id))
+              .forEach((id) => this._favoritasIds.add(id));
+          }
+        } else {
+          idsFavoritos.forEach((id) => this._favoritasIds.add(id));
+        }
+      }
+    }
     this.atualizarControleFavoritas();
   }
   atualizarControleFavoritas() {
@@ -2473,7 +2532,9 @@ export class Consulta {
     const lista = Array.isArray(atas) ? atas : [];
     const vencidasLista = lista.filter((a) => a.situacao === "VENCIDA");
     const ativasLista = lista.filter((a) => a.situacao !== "VENCIDA");
-    const total = ativasLista.length;
+    // “Total” corresponde ao conjunto completo mostrado pelo filtro
+    // total (inclui atas vencidas); as janelas de vencimento usam só não vencidas.
+    const total = lista.length;
     let venc30 = 0,
       venc60 = 0,
       venc90 = 0;
@@ -2526,7 +2587,7 @@ export class Consulta {
       }[ata.situacao] || "status-ativa";
     const categoriaNome = ata.categoria?.nome || "Outros";
     const favorita = this._favoritasIds.has(String(ata.id));
-    const botaoFavorita = `<button type="button" class="btn-favoritar-ata ${favorita ? "ativo" : ""}" data-action="toggle-favorita" data-ata-id="${ata.id}" aria-pressed="${favorita}" aria-label="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}" title="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}"><i class="${favorita ? "fas" : "far"} fa-star" aria-hidden="true"></i><span>${favorita ? "Favoritada" : "Favoritar"}</span></button>`;
+    const botaoFavorita = `<button type="button" class="btn-favoritar-ata ${favorita ? "ativo" : ""}" data-action="toggle-favorita" data-ata-id="${ata.id}" aria-pressed="${favorita}" aria-label="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}" title="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}"><i class="${favorita ? "fas" : "far"} fa-star" aria-hidden="true"></i>${favorita ? "" : "<span>Favoritar</span>"}</button>`;
 
     // Calcular valor consumido para exibição
     const itens = ata.itens || [];
@@ -2634,8 +2695,10 @@ export class Consulta {
         <div class="ata-card-body">
           <div class="ata-fornecedor">
             <i class="fas fa-building" aria-hidden="true"></i>
-            <span class="ata-card-fornecedor-nome">${fornecedorDestacado}</span>
-            ${ata.fornecedor?.cnpj ? `<span class="ata-card-cnpj">CNPJ ${this.formatarCnpj(ata.fornecedor.cnpj)}</span>` : ""}
+            <div class="ata-fornecedor-dados">
+              <span class="ata-card-fornecedor-nome">${fornecedorDestacado}</span>
+              ${ata.fornecedor?.cnpj ? `<span class="ata-card-cnpj">CNPJ ${this.formatarCnpj(ata.fornecedor.cnpj)}</span>` : ""}
+            </div>
           </div>
           <div class="ata-card-details">
             ${
@@ -2897,16 +2960,34 @@ export class Consulta {
       `;
     }
 
-    // Conteúdo (tabela de itens)
-    this.renderizarConteudoModalDetalhes(ata);
-
-    // Abre o modal
     const modal = document.getElementById("modalDetalhes");
-    if (modal) {
-      modal.classList.add("active");
-      // Foco no botão de fechar para acessibilidade
-      modal.querySelector(".modal-close")?.focus();
+    const conteudo = document.getElementById("modalConteudo");
+    if (!modal || !conteudo) {
+      console.error("[Consulta] Estrutura do modal de detalhes não encontrada.");
+      this.sistema.ui.mostrarToast(
+        "erro",
+        "Detalhes indisponíveis",
+        "A janela de detalhes não está disponível nesta tela.",
+      );
+      return;
     }
+
+    // Abre primeiro para que uma falha no renderer não deixe o clique sem resposta.
+    modal.classList.add("active");
+    try {
+      this.renderizarConteudoModalDetalhes(ata);
+    } catch (error) {
+      console.error("[Consulta] Falha ao renderizar itens da ata:", error);
+      conteudo.replaceChildren();
+      const aviso = document.createElement("p");
+      aviso.setAttribute("role", "alert");
+      aviso.textContent =
+        "Não foi possível carregar os itens desta ata. Feche a janela e tente novamente.";
+      conteudo.append(aviso);
+    }
+
+    // Foco no botão de fechar para acessibilidade.
+    modal.querySelector(".modal-close")?.focus();
   }
 
   // ============================================================

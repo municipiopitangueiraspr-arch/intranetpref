@@ -6,10 +6,10 @@
 import { supabase } from "./supabase.js";
 import { Auth } from "./modules/auth.js";
 import { UI } from "./modules/ui.js";
-import { Consulta } from "./modules/consulta.js?v=20261005-shell-cards-1";
+import { Consulta } from "./modules/consulta.js?v=20261006-ui-polish-1";
 import { Gestao } from "./modules/gestao.js";
 import { Cadastro } from "./modules/cadastro.js";
-import { Pedidos } from "./modules/pedidos.js";
+import { Pedidos } from "./modules/pedidos.js?v=20261006-pedidos-kanban-3";
 import { Aditivos } from "./modules/aditivos.js";
 // ============================================================
 // CORREÇÃO: Importar módulo Dashboard
@@ -21,7 +21,7 @@ import { Dashboard } from "./modules/dashboard.js";
 // O módulo é renderizado em #carrinhoContent e ativado via
 // sistema.ativarTab("carrinho").
 // ============================================================
-import { Carrinho } from "./modules/carrinho.js";
+import { Carrinho } from "./modules/carrinho.js?v=20261007-cart-fullwidth-1";
 // ============================================================
 // NOVO: Importar módulo Relatórios (Fase 1 — 6 relatórios)
 // O módulo é renderizado em #relatoriosContent e ativado via
@@ -31,14 +31,14 @@ import { Carrinho } from "./modules/carrinho.js";
 // ============================================================
 import { Relatorios } from "./modules/relatorios.js";
 // ============================================================
-// NOVO: Módulo FAQ — manual interativo para secretários
+// Central de Ajuda integrada ao shell do módulo
 // ============================================================
-import { FAQ } from "./modules/faq.js";
+import { CentralAjudaAtas } from "./modules/central-ajuda-atas.js";
 import { SaaSExperience } from "./modules/saas-experience.js";
 // ============================================================
 // Layout compartilhado da intranet (sidebar + topbar)
 // ============================================================
-import { initLayout } from "../../shared/js/layout.js";
+import { initLayout } from "../../shared/js/layout.js?v=20261006-avatar-app-drawer-2";
 // ============================================================
 // REMOVIDAS: Importações de Orgaos e Usuarios
 // Agora gerenciados pelo módulo Core (core/orgaos/ e core/usuarios/)
@@ -106,7 +106,7 @@ class SistemaGestaoAtas {
     // NOVO: Instanciar módulo Relatórios
     // ============================================================
     this.relatorios = new Relatorios(this);
-    this.faq = new FAQ(this);
+    this.centralAjuda = new CentralAjudaAtas(this);
     this.saasExperience = new SaaSExperience(this);
     // ============================================================
     // REMOVIDOS: Módulos Orgaos e Usuarios
@@ -144,8 +144,7 @@ class SistemaGestaoAtas {
 
         // Topbar identifica o módulo; cada view apresenta seu próprio título.
         iconeTitulo: "fa-layer-group",
-        titulo: "Gestão de Atas",
-        subtitulo: "Saldos, consumo e pedidos",
+        titulo: "Gestão de Atas, Saldos e Pedidos",
         // Menu do usuário alinhado ao padrão da Biblioteca Municipal.
         // A Ajuda abre a view FAQ já existente neste módulo.
         menuUsuario: {
@@ -337,6 +336,142 @@ class SistemaGestaoAtas {
     return this._cache.fornecedores;
   }
 
+  // Em telas estreitas, o FAB não deve cobrir filtros, botões ou cards clicáveis.
+  configurarCarrinhoFlutuanteMobile() {
+    const fab = document.getElementById("btnAbrirDrawerCarrinho");
+    if (!fab || this._cartFabMobileCheckInitialized) return;
+    this._cartFabMobileCheckInitialized = true;
+
+    const media = window.matchMedia("(max-width: 480px)");
+    const controles = [
+      "#mainSystem button",
+      "#mainSystem a[href]",
+      "#mainSystem input:not([type='hidden'])",
+      "#mainSystem select",
+      "#mainSystem textarea",
+      "#mainSystem [role='button']",
+      "#mainSystem [data-action]",
+      "#mainSystem [tabindex]:not([tabindex='-1'])",
+    ].join(",");
+    let frame = 0;
+
+    const verificar = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        if (!media.matches) {
+          fab.classList.remove("fab-oculto-mobile");
+          return;
+        }
+
+        const ativo = document.activeElement;
+        const campoAtivo =
+          ativo instanceof Element &&
+          ativo !== fab &&
+          ativo.closest("#mainSystem") &&
+          ativo.matches(
+            "input, select, textarea, button, a[href], [role='button'], [data-action]",
+          );
+        const fabRect = fab.getBoundingClientRect();
+        let sobrepoeControle = Boolean(campoAtivo);
+
+        if (!sobrepoeControle && fabRect.width > 0 && fabRect.height > 0) {
+          sobrepoeControle = [...document.querySelectorAll(controles)].some(
+            (elemento) => {
+              if (elemento === fab || elemento.contains(fab) || elemento.disabled) {
+                return false;
+              }
+              const estilo = window.getComputedStyle(elemento);
+              if (
+                estilo.display === "none" ||
+                estilo.visibility === "hidden" ||
+                Number(estilo.opacity) === 0
+              ) {
+                return false;
+              }
+              const rect = elemento.getBoundingClientRect();
+              return (
+                rect.width > 0 &&
+                rect.height > 0 &&
+                fabRect.left < rect.right &&
+                fabRect.right > rect.left &&
+                fabRect.top < rect.bottom &&
+                fabRect.bottom > rect.top
+              );
+            },
+          );
+        }
+
+        fab.classList.toggle("fab-oculto-mobile", sobrepoeControle);
+      });
+    };
+
+    window.addEventListener("scroll", verificar, { passive: true });
+    document.addEventListener("scroll", verificar, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("resize", verificar, { passive: true });
+    document.addEventListener("focusin", verificar);
+    document.addEventListener("focusout", verificar);
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", verificar);
+    } else {
+      media.addListener?.(verificar);
+    }
+
+    const raiz = document.getElementById("mainSystem");
+    if (raiz && "MutationObserver" in window) {
+      const contêineresRoláveis = new WeakSet();
+      const observarSeRolável = (elemento) => {
+        if (!(elemento instanceof Element) || contêineresRoláveis.has(elemento)) {
+          return;
+        }
+        const estilo = window.getComputedStyle(elemento);
+        const permiteRolagem = /auto|scroll|overlay/.test(
+          `${estilo.overflowY} ${estilo.overflow}`,
+        );
+        if (
+          permiteRolagem &&
+          elemento.scrollHeight > elemento.clientHeight + 1
+        ) {
+          elemento.addEventListener("scroll", verificar, { passive: true });
+          contêineresRoláveis.add(elemento);
+        }
+      };
+      const observarSubárvore = (nó) => {
+        if (!(nó instanceof Element)) return;
+        observarSeRolável(nó);
+        nó.querySelectorAll("*").forEach(observarSeRolável);
+      };
+
+      observarSubárvore(raiz);
+      this._cartFabObserver = new MutationObserver((alterações) => {
+        alterações.forEach((alteração) => {
+          let ancestral =
+            alteração.target instanceof Element
+              ? alteração.target
+              : alteração.target.parentElement;
+          while (ancestral && raiz.contains(ancestral)) {
+            observarSeRolável(ancestral);
+            if (ancestral === raiz) break;
+            ancestral = ancestral.parentElement;
+          }
+          alteração.addedNodes.forEach(observarSubárvore);
+        });
+        verificar();
+      });
+      this._cartFabObserver.observe(raiz, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["class", "style", "hidden", "aria-hidden"],
+      });
+    }
+
+    verificar();
+  }
+
   // ============================================
   // CONFIGURAR EVENTOS GLOBAIS
   // ============================================
@@ -364,6 +499,7 @@ class SistemaGestaoAtas {
       ?.addEventListener("click", () => {
         this.abrirDrawerCarrinho();
       });
+    this.configurarCarrinhoFlutuanteMobile();
 
     // Botão fechar drawer
     document
@@ -541,7 +677,7 @@ class SistemaGestaoAtas {
         this.aditivos.carregarConteudo();
         break;
       case "faq":
-        this.faq.carregarConteudo();
+        this.centralAjuda.carregarConteudo();
         break;
       default:
         console.warn(`View "${tabName}" não reconhecida para recarregar.`);
@@ -970,7 +1106,7 @@ class SistemaGestaoAtas {
         this.aditivos.carregarConteudo();
         break;
       case "faq":
-        this.faq.carregarConteudo();
+        this.centralAjuda.carregarConteudo();
         break;
       default:
         console.warn(`View "${tab}" não reconhecida.`);

@@ -13,7 +13,7 @@ const state = {
 const manager = () => ["tenant_admin", "compras_manager"].includes(state.role);
 const canRequestDemand = () => manager() || state.role === "solicitante";
 let processDetailRequestToken = 0;
-const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const dateFmt = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeZone: "UTC" });
 const human = (value = "") => String(value).replaceAll("_", " ").replace(/\b\p{L}/gu, (c) => c.toUpperCase());
 const esc = (value = "") => String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

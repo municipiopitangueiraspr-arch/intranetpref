@@ -89,6 +89,11 @@ export class Pedidos {
 
   gerarHTMLPedidos() {
     return `
+      <nav class="atas-breadcrumb pedidos-breadcrumb" aria-label="Trilha de navegação">
+        <a href="#dashboard"><i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span></a>
+        <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
+        <span aria-current="page">Pedidos e aprovações</span>
+      </nav>
       <div class="pedido-container">
         <div class="pedidos-acoes-rapidas" id="pedidosAcoesRapidas">
           <button type="button" class="btn-acao-principal" id="btnNovoPedido" title="Ir para a Consulta em modo compra">
@@ -100,13 +105,31 @@ export class Pedidos {
             <span>Carrinho</span>
             <span class="badge-acao badge-vazio" id="badgeCarrinhoAcoes">0</span>
           </button>
-          <button type="button" class="btn-acao-secundaria btn-acao-fila" id="btnIrParaFila" title="Ver pedidos aguardando sua aprovação" data-intranet-style="2d281201779c">
+          <button type="button" class="btn-acao-secundaria btn-acao-fila" id="btnIrParaFila" style="display:none" title="Ver pedidos aguardando sua aprovação" data-intranet-style="2d281201779c">
             <i class="fas fa-clipboard-check"></i>
             <span>Fila de Aprovação</span>
             <span class="badge-acao badge-acao-alerta" id="badgeFilaAcoes">0</span>
           </button>
         </div>
 
+        <div class="pedidos-indicadores">
+          <div class="indicador-card indicador-clicavel" data-status="todos" title="Ver todos os pedidos">
+            <span class="indicador-icone"><i class="fas fa-layer-group"></i></span>
+            <span class="indicador-copy"><span class="indicador-numero" id="totalPedidos">0</span><span class="indicador-label">Total de pedidos</span></span>
+          </div>
+          <div class="indicador-card indicador-pendente indicador-clicavel" data-status="AGUARDANDO_APROVACAO" title="Ver pedidos aguardando aprovação">
+            <span class="indicador-icone"><i class="fas fa-hourglass-half"></i></span>
+            <span class="indicador-copy"><span class="indicador-numero" id="pendentesPedidos">0</span><span class="indicador-label">Aguardando aprovação</span></span>
+          </div>
+          <div class="indicador-card indicador-aprovado indicador-clicavel" data-status="APROVADO" title="Ver pedidos aprovados">
+            <span class="indicador-icone"><i class="fas fa-check-circle"></i></span>
+            <span class="indicador-copy"><span class="indicador-numero" id="aprovadosPedidos">0</span><span class="indicador-label">Aprovados</span></span>
+          </div>
+          <div class="indicador-card indicador-rejeitado indicador-clicavel" data-status="REPROVADO" title="Ver pedidos rejeitados">
+            <span class="indicador-icone"><i class="fas fa-circle-xmark"></i></span>
+            <span class="indicador-copy"><span class="indicador-numero" id="rejeitadosPedidos">0</span><span class="indicador-label">Rejeitados</span></span>
+          </div>
+        </div>
         <div class="fila-aprovacao" id="filaAprovacao" data-intranet-style="2d281201779c"></div>
 
         <div class="compra-rapida" id="compraRapida">
@@ -140,25 +163,6 @@ export class Pedidos {
             </div>
           </div>
           <div class="compra-rapida-preview" id="compraRapidaPreview" data-intranet-style="2d281201779c"></div>
-        </div>
-
-        <div class="pedidos-indicadores">
-          <div class="indicador-card indicador-clicavel" data-status="todos" title="Ver todos os pedidos">
-            <span class="indicador-numero" id="totalPedidos">0</span>
-            <span class="indicador-label">Total</span>
-          </div>
-          <div class="indicador-card indicador-pendente indicador-clicavel" data-status="AGUARDANDO_APROVACAO" title="Ver apenas os pedidos aguardando aprovação">
-            <span class="indicador-numero" id="pendentesPedidos">0</span>
-            <span class="indicador-label">Pendentes</span>
-          </div>
-          <div class="indicador-card indicador-aprovado indicador-clicavel" data-status="APROVADO" title="Ver apenas os pedidos aprovados">
-            <span class="indicador-numero" id="aprovadosPedidos">0</span>
-            <span class="indicador-label">Aprovados</span>
-          </div>
-          <div class="indicador-card indicador-rejeitado indicador-clicavel" data-status="REPROVADO" title="Ver apenas os pedidos rejeitados">
-            <span class="indicador-numero" id="rejeitadosPedidos">0</span>
-            <span class="indicador-label">Rejeitados</span>
-          </div>
         </div>
 
         <div class="pedidos-filtros">
@@ -749,10 +753,39 @@ export class Pedidos {
     await this._carregarCronogramasDosPedidos(idsPedidos);
     await this._carregarCronogramasPedidoInteiro(idsPedidos);
 
+    const { data: entregasPedidos } = await supabase
+      .from("pedidos_entregas")
+      .select("pedido_id")
+      .in("pedido_id", idsPedidos);
+    const pedidosComEntrega = new Set((entregasPedidos || []).map((e) => e.pedido_id));
+    pedidosCompletos = pedidosCompletos.map((p) => ({
+      ...p,
+      possui_entrega: pedidosComEntrega.has(p.id),
+    }));
+    this.pedidosCache = this.pedidosCache.map((original) => {
+      const completo = pedidosCompletos.find((pc) => pc.id === original.id);
+      return completo ? { ...original, ...completo } : original;
+    });
+
     if (this.offset === 0) {
       container.innerHTML = `
+        <div class="pedidos-modo-barra">
+          <div>
+            <h3 class="pedidos-modo-titulo">Pedidos e aprovações</h3>
+            <p class="pedidos-kanban-nota">Use o quadro para acompanhar as fases ou a lista para conferir os detalhes.</p>
+          </div>
+          <div class="pedidos-modo-toggle" role="group" aria-label="Modo de visualização">
+            <button type="button" class="ativo" data-pedidos-modo="quadro"><i class="fas fa-table-columns"></i> Quadro</button>
+            <button type="button" data-pedidos-modo="lista"><i class="fas fa-list"></i> Lista</button>
+          </div>
+        </div>
+        <div id="pedidosKanban"></div>
         <div class="pedidos-lista-container">
-          <div class="pedidos-lista-header">
+            <div class="pedidos-lista-orientacao" role="note">
+              <i class="fas fa-hand-pointer" aria-hidden="true"></i>
+              <span>Clique em um pedido para ver seus itens e ações disponíveis.</span>
+            </div>
+            <div class="pedidos-lista-header">
             <span>Pedido</span>
             <span>Ata</span>
             <span>Fornecedor</span>
@@ -760,10 +793,12 @@ export class Pedidos {
             <span data-intranet-style="47b2ad8f5a47">Valor</span>
             <span data-intranet-style="021b566d98d0">Status</span>
             <span data-intranet-style="021b566d98d0">Data</span>
+            <span aria-label="Ações"></span>
           </div>
           ${pedidosCompletos.map((p) => this.renderPedido(p)).join("")}
         </div>
       `;
+      this._configurarModoPedidos();
     } else {
       const listaContainer = container.querySelector(
         ".pedidos-lista-container",
@@ -780,6 +815,8 @@ export class Pedidos {
         }
       }
     }
+
+    this.renderizarKanban(this.pedidosCache);
 
     this.atualizarContador();
   }
@@ -873,19 +910,19 @@ export class Pedidos {
           this.sistema.usuarioAtual.orgao_id === p.orgao_solicitante_id)) &&
       statusAprovacao === "AGUARDANDO_APROVACAO";
 
-    const statusClass =
-      statusAprovacao === "APROVADO"
-        ? "status-aprovado"
-        : statusAprovacao === "REPROVADO"
-          ? "status-rejeitado"
-          : "status-aguardando";
-
-    const statusLabel =
-      statusAprovacao === "APROVADO"
-        ? "Aprovado"
-        : statusAprovacao === "REPROVADO"
-          ? "Rejeitado"
-          : "Aguardando Aprovação";
+    const statusInfoMap = {
+      AGUARDANDO_APROVACAO: { classe: "status-aguardando", label: "Aguardando aprovação" },
+      APROVADO: { classe: "status-aprovado", label: "Aprovado" },
+      REPROVADO: { classe: "status-rejeitado", label: "Rejeitado" },
+      CANCELADO: { classe: "status-cancelado", label: "Cancelado" },
+      ENCERRADO: { classe: "status-encerrado", label: "Encerrado" },
+      DEVOLVIDO_AJUSTE: { classe: "status-devolvido", label: "Devolvido para ajuste" },
+      RASCUNHO: { classe: "status-rascunho", label: "Rascunho" },
+      PEDIDO_REALIZADO: { classe: "status-realizado", label: "Pedido realizado" },
+    };
+    const statusInfo = statusInfoMap[statusAprovacao] || statusInfoMap.PEDIDO_REALIZADO;
+    const statusClass = statusInfo.classe;
+    const statusLabel = statusInfo.label;
 
     const localEntrega = p.local_entrega || "";
     const podeFracionar = statusAprovacao === "APROVADO";
@@ -932,14 +969,15 @@ export class Pedidos {
       '<tr><td colspan="5" data-intranet-style="6dfc87758082">Nenhum item encontrado</td></tr>';
 
     return `
-      <div class="pedidos-lista-item" data-pedido-id="${p.id}" onclick="sistema.pedidos.toggleExpandPedido(${p.id})">
-        <div class="numero-pedido"><i class="fas fa-file-invoice"></i> ${p.numero_pedido || "N/I"}</div>
+      <div class="pedidos-lista-item ${statusClass}" data-pedido-id="${p.id}" role="button" tabindex="0" aria-expanded="false" aria-controls="detalhes-${p.id}" aria-label="Pedido ${p.numero_pedido || "N/I"}, ${p.itens_pedido?.length || 0} itens, ${statusLabel}. Pressione Enter para ver os itens." onclick="sistema.pedidos.toggleExpandPedido(${p.id})" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); sistema.pedidos.toggleExpandPedido(${p.id}); }">
+        <div class="numero-pedido"><i class="fas fa-file-invoice"></i> ${p.numero_pedido || "N/I"}<span class="itens-count">${p.itens_pedido?.length || 0} ${p.itens_pedido?.length === 1 ? "item" : "itens"}</span></div>
         <div class="ata-info">
           <strong>Ata ${p.ata?.numero_ata || "N/I"}</strong>
           <span data-intranet-style="b1f458d6e386">${p.ata?.processo_administrativo || ""}</span>
         </div>
         <div class="fornecedor-info" title="${p.fornecedor?.razao_social || "N/I"}">
-          ${p.fornecedor?.razao_social || "N/I"}
+          <strong>${p.fornecedor?.razao_social || "N/I"}</strong>
+          ${p.fornecedor?.cnpj ? `<small>CNPJ ${this.formatarCnpj(p.fornecedor.cnpj)}</small>` : ""}
         </div>
         <div class="local-info" title="${localEntrega || "Não informado"}">
           ${localEntrega ? `<i class="fas fa-map-marker-alt"></i> ${localEntrega.length > 22 ? localEntrega.slice(0, 20) + "…" : localEntrega}` : '<span data-intranet-style="867a9857b833">—</span>'}
@@ -953,8 +991,9 @@ export class Pedidos {
           }
         </div>
         <div class="data-info"><i class="far fa-calendar-alt"></i> ${this.sistema.ui.formatarData(p.data_solicitacao)}</div>
+        <div class="expand-cell" aria-hidden="true"><i class="fas fa-chevron-down expand-indicator"></i></div>
 
-        <div class="pedidos-detalhes" id="detalhes-${p.id}">
+        <div class="pedidos-detalhes" id="detalhes-${p.id}" role="region" aria-label="Itens e ações do pedido ${p.numero_pedido || "N/I"}" hidden>
           <div class="detalhes-header">
             <h4><i class="fas fa-boxes"></i> Itens do Pedido (${p.itens_pedido?.length || 0} itens)</h4>
             <div class="detalhes-actions">
@@ -971,6 +1010,13 @@ export class Pedidos {
                   <i class="fas fa-times"></i> Rejeitar
                 </button>
               `
+                  : ""
+              }
+              ${
+                statusAprovacao === "DEVOLVIDO_AJUSTE" && Number(this.sistema.usuarioAtual?.id) === Number(p.usuario_id)
+                  ? `<button class="btn-visualizar-pedido" onclick="event.stopPropagation(); sistema.pedidos.abrirModalRespostaDevolucao(${p.id})">
+                       <i class="fas fa-comments"></i> Responder ao ajuste
+                     </button>`
                   : ""
               }
               ${
@@ -1383,6 +1429,138 @@ export class Pedidos {
     }
   }
 
+  _configurarModoPedidos() {
+    const container = document.getElementById("pedidosLista");
+    if (!container || container.dataset.modoConfigurado === "true") return;
+    container.dataset.modoConfigurado = "true";
+    const lista = container.querySelector(".pedidos-lista-container");
+    const quadro = container.querySelector("#pedidosKanban");
+    container.querySelectorAll("[data-pedidos-modo]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const modo = button.dataset.pedidosModo;
+        container.querySelectorAll("[data-pedidos-modo]").forEach((b) => b.classList.toggle("ativo", b === button));
+        if (lista) lista.hidden = modo !== "lista";
+        if (quadro) quadro.hidden = modo !== "quadro";
+      });
+    });
+    if (lista) lista.hidden = true;
+  }
+
+  renderizarKanban(pedidos) {
+    const container = document.getElementById("pedidosKanban");
+    if (!container) return;
+    const colunas = [
+      { id: "AGUARDANDO_APROVACAO", label: "Aguardando aprovação", classe: "aguardando" },
+      { id: "APROVADO", label: "Aprovado", classe: "aprovado" },
+      { id: "EM_ENTREGA", label: "Em entrega", classe: "entrega" },
+      { id: "DEVOLVIDO_AJUSTE", label: "Devolvido para ajuste", classe: "devolvido" },
+      { id: "FINALIZADO", label: "Encerrado / recusado", classe: "finalizado" },
+    ];
+    const porColuna = (p) => {
+      const status = p.status_aprovacao || "AGUARDANDO_APROVACAO";
+      if (status === "APROVADO" && p.possui_entrega) return "EM_ENTREGA";
+      if (status === "ENCERRADO" || status === "REPROVADO" || status === "CANCELADO") return "FINALIZADO";
+      return status;
+    };
+    const moeda = (valor) => this.sistema.ui.formatarMoeda(valor || 0);
+    const destinos = (coluna) => colunas.filter((destino) => destino.id !== coluna.id).map((destino) => `
+      <button type="button" class="kanban-menu-item" data-kanban-avancar="${destino.id}"><i class="fas fa-arrow-right"></i> ${destino.label}</button>
+    `).join("");
+    const cards = (coluna) => (pedidos || []).filter((p) => porColuna(p) === coluna.id).map((p) => `
+      <article class="pedido-kanban-card" draggable="true" tabindex="0" data-kanban-id="${p.id}" data-kanban-coluna="${coluna.id}" aria-label="Pedido ${p.numero_pedido || "N/I"}, ${coluna.label}">
+        <div class="kanban-acoes">
+          <button type="button" class="kanban-menu" data-kanban-menu="${p.id}" aria-label="Ações do pedido" aria-expanded="false"><i class="fas fa-ellipsis-vertical"></i></button>
+          <div class="kanban-menu-popover" data-kanban-popover hidden>
+            <button type="button" class="kanban-menu-item kanban-menu-item-principal" data-kanban-acao="ver"><i class="fas fa-list-check"></i> Ver itens</button>
+            <div class="kanban-menu-separador"></div>
+            <span class="kanban-menu-titulo">Avançar para</span>
+            ${destinos(coluna)}
+          </div>
+        </div>
+        <span class="kanban-numero"><i class="fas fa-file-invoice"></i> ${p.numero_pedido || "N/I"}</span>
+        <span class="kanban-linha"><i class="fas fa-file-contract"></i> Ata ${p.ata?.numero_ata || "N/I"}</span>
+        <span class="kanban-linha"><i class="fas fa-building"></i> ${p.fornecedor?.razao_social || "Fornecedor não informado"}</span>
+        <span class="kanban-linha"><i class="fas fa-map-marker-alt"></i> ${p.local_entrega || "Local não informado"}</span>
+        <span class="kanban-valor"><span>${moeda(p.valor_total || p.itens_pedido?.reduce((s, i) => s + (i.valor_total || 0), 0))}</span><span>${p.itens_pedido?.length || 0} ${(p.itens_pedido?.length || 0) === 1 ? "item" : "itens"}</span></span>
+      </article>`).join("");
+    container.innerHTML = `<div class="pedidos-kanban">${colunas.map((coluna) => {
+      const total = (pedidos || []).filter((p) => porColuna(p) === coluna.id).length;
+      return `<section class="pedidos-kanban-coluna" data-kanban-destino="${coluna.id}">
+        <header class="pedidos-kanban-coluna-cab"><i class="fas fa-circle kanban-ponto-${coluna.classe}"></i><span>${coluna.label}</span><small>${total}</small></header>
+        <div class="pedidos-kanban-coluna-corpo">${cards(coluna) || '<div class="pedidos-kanban-vazio">Nenhum pedido nesta fase.</div>'}</div>
+      </section>`;
+    }).join("")}</div>`;
+    this._configurarEventosKanban(porColuna);
+  }
+
+  _configurarEventosKanban(porColuna) {
+    const container = document.getElementById("pedidosKanban");
+    if (!container) return;
+    container.querySelectorAll(".pedido-kanban-card").forEach((card) => {
+      card.addEventListener("click", (event) => {
+        if (event.target.closest(".kanban-acoes")) return;
+        this.visualizarPedidoCompleto(Number(card.dataset.kanbanId));
+      });
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); this.visualizarPedidoCompleto(Number(card.dataset.kanbanId)); }
+        if (event.key.toLowerCase() === "m") { event.preventDefault(); this.sistema.ui.mostrarToast("aviso", "Use a lista para ações detalhadas", "Abra o pedido para aprovar, rejeitar ou registrar entregas."); }
+      });
+      card.addEventListener("dragstart", (event) => { event.dataTransfer.setData("text/plain", card.dataset.kanbanId); card.classList.add("arrastando"); });
+      card.addEventListener("dragend", () => card.classList.remove("arrastando"));
+      const menu = card.querySelector("[data-kanban-menu]");
+      const popover = card.querySelector("[data-kanban-popover]");
+      menu?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const aberto = !popover.hidden;
+        container.querySelectorAll("[data-kanban-popover]").forEach((item) => { item.hidden = true; });
+        container.querySelectorAll("[data-kanban-menu]").forEach((item) => { item.setAttribute("aria-expanded", "false"); });
+        container.querySelectorAll(".pedido-kanban-card.menu-aberto").forEach((item) => item.classList.remove("menu-aberto"));
+        popover.hidden = aberto;
+        menu.setAttribute("aria-expanded", String(!aberto));
+        card.classList.toggle("menu-aberto", !aberto);
+      });
+      card.querySelector('[data-kanban-acao="ver"]')?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        popover.hidden = true;
+        menu.setAttribute("aria-expanded", "false");
+        card.classList.remove("menu-aberto");
+        this.visualizarPedidoCompleto(Number(card.dataset.kanbanId));
+      });
+      card.querySelectorAll("[data-kanban-avancar]").forEach((action) => action.addEventListener("click", async (event) => {
+        event.stopPropagation();
+        popover.hidden = true;
+        menu.setAttribute("aria-expanded", "false");
+        card.classList.remove("menu-aberto");
+        await this._moverKanban(Number(card.dataset.kanbanId), action.dataset.kanbanAvancar);
+      }));
+    });
+    container.querySelectorAll("[data-kanban-destino]").forEach((coluna) => {
+      coluna.addEventListener("dragover", (event) => { event.preventDefault(); coluna.classList.add("excedente"); });
+      coluna.addEventListener("dragleave", () => coluna.classList.remove("excedente"));
+      coluna.addEventListener("drop", async (event) => {
+        event.preventDefault(); coluna.classList.remove("excedente");
+        await this._moverKanban(Number(event.dataTransfer.getData("text/plain")), coluna.dataset.kanbanDestino);
+      });
+    });
+  }
+
+  async _moverKanban(pedidoId, destino) {
+    const pedido = this.pedidosCache.find((p) => Number(p.id) === Number(pedidoId));
+    if (!pedido) return;
+    if (destino === "APROVADO") return this.aprovarPedido(pedidoId);
+    if (destino === "FINALIZADO") return this.rejeitarPedido(pedidoId);
+    if (destino === "ENCERRADO") return this.encerrarPedido(pedidoId);
+    if (destino === "EM_ENTREGA") {
+      this.sistema.ui.mostrarToast("aviso", "Entrega deve ser registrada", "Abra o pedido e use Registrar Recebimento para mover o acompanhamento.");
+      return;
+    }
+    if (destino === "DEVOLVIDO_AJUSTE") {
+      this.pedidoRejeicaoId = pedidoId;
+      window._pedidoRejeicaoId = pedidoId;
+      this.abrirModalDevolucaoAjuste();
+    }
+  }
+
   toggleExpandPedido(pedidoId) {
     const detalhes = document.getElementById(`detalhes-${pedidoId}`);
     if (!detalhes) return;
@@ -1393,16 +1571,22 @@ export class Pedidos {
     document.querySelectorAll(".pedidos-detalhes.ativo").forEach((el) => {
       if (el.id !== `detalhes-${pedidoId}`) {
         el.classList.remove("ativo");
+        el.hidden = true;
         el.closest(".pedidos-lista-item")?.classList.remove("expandido");
+        el.closest(".pedidos-lista-item")?.setAttribute("aria-expanded", "false");
       }
     });
 
     if (isExpanded) {
       detalhes.classList.remove("ativo");
+      detalhes.hidden = true;
       item?.classList.remove("expandido");
+      item?.setAttribute("aria-expanded", "false");
     } else {
       detalhes.classList.add("ativo");
+      detalhes.hidden = false;
       item?.classList.add("expandido");
+      item?.setAttribute("aria-expanded", "true");
       item?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }
@@ -4186,6 +4370,7 @@ export class Pedidos {
         this.sistema.ui.mostrarToast("erro", "Pedido não encontrado");
         return;
       }
+      this._pedidoModalAtual = pedidoCompleto;
 
       const total = pedidoCompleto.itens_pedido.reduce(
         (s, i) => s + (i.valor_total || 0),
@@ -4193,19 +4378,27 @@ export class Pedidos {
       );
       const statusAprovacao =
         pedidoCompleto.status_aprovacao || "AGUARDANDO_APROVACAO";
+      const statusInfo = {
+        AGUARDANDO_APROVACAO: { classe: "status-aguardando", label: "Aguardando aprovação" },
+        APROVADO: { classe: "status-aprovado", label: "Aprovado" },
+        REPROVADO: { classe: "status-rejeitado", label: "Rejeitado" },
+        CANCELADO: { classe: "status-cancelado", label: "Cancelado" },
+        ENCERRADO: { classe: "status-encerrado", label: "Encerrado" },
+        DEVOLVIDO_AJUSTE: { classe: "status-devolvido", label: "Devolvido para ajuste" },
+      }[statusAprovacao] || { classe: "status-realizado", label: "Pedido realizado" };
 
       const cronogramaInteiro =
         this._cronogramaPedidoInteiroCache[pedidoCompleto.id];
       const temCronogramaInteiro = !!cronogramaInteiro;
 
       let html = `
-        <div class="pedido-container">
+        <div class="pedido-container pedido-detalhes-layout">
           <div class="pedido-header">
             <div>
               <h2 class="pedido-titulo">PEDIDO Nº ${pedidoCompleto.numero_pedido}</h2>
               <p class="pedido-subtitulo" data-intranet-style="0d1587ea37c8">${this.sistema.ui.formatarData(pedidoCompleto.data_solicitacao)}</p>
             </div>
-            <span class="status-badge" style="background:${statusAprovacao === "APROVADO" ? "var(--success-100)" : statusAprovacao === "REPROVADO" ? "var(--error-100)" : "var(--warning-100)"};color:${statusAprovacao === "APROVADO" ? "var(--success-800)" : statusAprovacao === "REPROVADO" ? "var(--error-800)" : "var(--warning-800)"};">${statusAprovacao}</span>
+            <span class="status-badge ${statusInfo.classe}">${statusInfo.label}</span>
           </div>
       `;
 
@@ -4263,14 +4456,15 @@ export class Pedidos {
       }
 
       html += `
-        <h4 data-intranet-style="97d6b65c53ef">ITENS DO PEDIDO</h4>
-        <div class="tabela-container">
-          <table data-intranet-style="e4fb724d2b82">
+        <section class="pedido-itens-section" aria-labelledby="tituloItensPedido">
+        <div class="pedido-section-heading"><div><span class="pedido-section-kicker">CONFERÊNCIA</span><h4 id="tituloItensPedido">ITENS DO PEDIDO</h4></div><span class="pedido-itens-count">${pedidoCompleto.itens_pedido?.length || 0} ${(pedidoCompleto.itens_pedido?.length || 0) === 1 ? "item" : "itens"}</span></div>
+        <div class="tabela-container pedido-itens-table-wrap" data-pedido-itens="${pedidoCompleto.id}">
+          <table class="pedido-itens-tabela" data-intranet-style="e4fb724d2b82">
             <thead>
               <tr data-intranet-style="b6a2c8685e3a">
                 <th data-intranet-style="670826d11b39">Item</th>
                 <th data-intranet-style="670826d11b39">Descrição</th>
-                <th data-intranet-style="9e0234044f46">Qtd</th>
+                <th data-intranet-style="9e0234044f46">Quantidade</th>
                 <th data-intranet-style="9e0234044f46">Valor Unit.</th>
                 <th data-intranet-style="9e0234044f46">Total</th>
               </tr>
@@ -4280,11 +4474,11 @@ export class Pedidos {
                 .map(
                   (i) => `
                 <tr>
-                  <td data-intranet-style="c8ca61e36d80">${i.item_numero || i.item_ata_id}</td>
-                  <td data-intranet-style="c8ca61e36d80">${i.descricao || "Descrição não disponível"}</td>
-                  <td data-intranet-style="08e06aaaf5b2">${i.quantidade_solicitada || 0}</td>
-                  <td data-intranet-style="08e06aaaf5b2">${this.sistema.ui.formatarMoeda(i.valor_unitario)}</td>
-                  <td data-intranet-style="08e06aaaf5b2">${this.sistema.ui.formatarMoeda(i.valor_total)}</td>
+                  <td class="pedido-item-numero" data-intranet-style="c8ca61e36d80">${i.item_numero || i.item_ata_id}</td>
+                  <td class="pedido-item-descricao" data-intranet-style="c8ca61e36d80">${i.descricao || "Descrição não disponível"}</td>
+                  <td class="pedido-item-quantidade" data-intranet-style="08e06aaaf5b2">${i.quantidade_solicitada || 0} <small>${i.unidade_medida || "UN"}</small></td>
+                  <td class="pedido-item-moeda" data-intranet-style="08e06aaaf5b2">${this.sistema.ui.formatarMoeda(i.valor_unitario)}</td>
+                  <td class="pedido-item-moeda pedido-item-total" data-intranet-style="08e06aaaf5b2">${this.sistema.ui.formatarMoeda(i.valor_total)}</td>
                 </tr>
               `,
                 )
@@ -4297,11 +4491,12 @@ export class Pedidos {
               </tr>
             </tfoot>
           </table>
-        </div>
-        <div data-intranet-style="f19d560c1f98">
+        </div></section>
+        <div class="pedido-documento-nota" data-intranet-style="f19d560c1f98">
           <p>Documento gerado eletronicamente em ${new Date().toLocaleString("pt-BR")}.</p>
         </div>
-        <div data-intranet-style="38f7a5d33212">
+        <div data-intranet-style="38f7a5d33212" data-pedido-acoes="${pedidoCompleto.id}">
+          ${this._podeEditarItensPedido(pedidoCompleto) ? `<button class="btn-ajustar-itens" type="button" onclick="sistema.pedidos.ativarAjusteItensPedido(${pedidoCompleto.id})"><i class="fas fa-sliders"></i> Fazer ajustes</button>` : ""}
           <button class="btn" data-intranet-style="b9ccf0a14858" onclick="sistema.fecharModalVisualizarPedido()">Fechar</button>
           ${
             statusAprovacao === "APROVADO"
@@ -4327,6 +4522,69 @@ export class Pedidos {
       document.getElementById("modalVisualizarPedido").classList.add("active");
     } catch (error) {
       this.sistema.ui.mostrarToast("erro", error.message);
+    }
+  }
+
+  _podeEditarItensPedido(pedido) {
+    const perfil = this.sistema.usuarioAtual?.perfil;
+    return ["SECRETARIO", "ADMIN"].includes(perfil) && ["AGUARDANDO_APROVACAO", "DEVOLVIDO_AJUSTE"].includes(pedido?.status_aprovacao);
+  }
+
+  ativarAjusteItensPedido(pedidoId) {
+    const pedido = this._pedidoModalAtual;
+    if (!pedido || Number(pedido.id) !== Number(pedidoId) || !this._podeEditarItensPedido(pedido)) {
+      this.sistema.ui.mostrarToast("aviso", "Ajuste não disponível", "Somente secretários e administradores podem editar pedidos ainda não aprovados.");
+      return;
+    }
+    const tabela = document.querySelector(`#modalVisualizarPedidoConteudo [data-pedido-itens="${pedidoId}"] table`);
+    const tbody = tabela?.querySelector("tbody");
+    const header = tabela?.querySelector("thead tr");
+    if (!tabela || !tbody || !header) return;
+    header.insertAdjacentHTML("beforeend", '<th class="ajuste-coluna">Nova quantidade</th>');
+    tbody.querySelectorAll("tr").forEach((row, index) => {
+      const item = pedido.itens_pedido[index];
+      if (!item) return;
+      row.insertAdjacentHTML("beforeend", `<td class="ajuste-coluna"><div class="ajuste-item-controles"><label class="sr-only" for="ajuste-qtd-${item.id}">Nova quantidade do item ${item.item_numero || item.id}</label><input id="ajuste-qtd-${item.id}" class="ajuste-qtd-pedido" type="number" min="0" step="1" inputmode="numeric" value="${Number(item.quantidade_solicitada) || 0}" data-item-pedido-id="${item.id}" aria-label="Nova quantidade do item ${item.item_numero || item.id}"><span class="ajuste-unidade">${item.unidade_medida || "UN"}</span><button type="button" class="btn-remover-item-ajuste" data-item-pedido-id="${item.id}" title="Remover item"><i class="fas fa-trash"></i></button></div></td>`);
+    });
+    tabela.classList.add("tabela-em-ajuste");
+    const acoes = document.querySelector(`#modalVisualizarPedidoConteudo [data-pedido-acoes="${pedidoId}"]`);
+    if (acoes) {
+      acoes.querySelectorAll("button").forEach((button) => { if (!button.classList.contains("btn-ajuste-salvar") && !button.classList.contains("btn-ajuste-cancelar")) button.hidden = true; });
+      acoes.insertAdjacentHTML("afterbegin", `<span class="ajuste-mensagem"><i class="fas fa-circle-info"></i> Informe 0 para remover um item.</span><button class="btn-ajuste-cancelar" type="button" onclick="sistema.pedidos.cancelarAjusteItensPedido()">Cancelar</button><button class="btn-ajuste-salvar" type="button" onclick="sistema.pedidos.salvarAjusteItensPedido(${pedidoId})"><i class="fas fa-check"></i> Salvar ajustes</button>`);
+    }
+    tbody.querySelectorAll(".btn-remover-item-ajuste").forEach((button) => button.addEventListener("click", () => {
+      const input = tbody.querySelector(`.ajuste-qtd-pedido[data-item-pedido-id="${button.dataset.itemPedidoId}"]`);
+      if (input) input.value = "0";
+    }));
+  }
+
+  cancelarAjusteItensPedido() {
+    if (this._pedidoModalAtual?.id) this.visualizarPedidoCompleto(this._pedidoModalAtual.id);
+  }
+
+  async salvarAjusteItensPedido(pedidoId) {
+    const pedido = this._pedidoModalAtual;
+    if (!pedido || !this._podeEditarItensPedido(pedido)) return;
+    const itens = [...document.querySelectorAll(`#modalVisualizarPedidoConteudo [data-pedido-itens="${pedidoId}"] .ajuste-qtd-pedido`)].map((input) => ({ item_pedido_id: Number(input.dataset.itemPedidoId), quantidade: Number(input.value) }));
+    if (itens.some((item) => !Number.isFinite(item.quantidade) || item.quantidade < 0)) {
+      this.sistema.ui.mostrarToast("aviso", "Quantidade inválida", "Informe quantidades iguais ou maiores que zero.");
+      return;
+    }
+    if (itens.every((item) => item.quantidade === 0)) {
+      this.sistema.ui.mostrarToast("aviso", "Pedido sem itens", "Mantenha pelo menos um item no pedido.");
+      return;
+    }
+    const salvar = document.querySelector(`#modalVisualizarPedidoConteudo .btn-ajuste-salvar`);
+    if (salvar) salvar.disabled = true;
+    try {
+      const { error } = await supabase.rpc("compras_ajustar_itens_pedido", { p_pedido_id: Number(pedidoId), p_itens: itens, p_justificativa: "Itens ajustados por secretário ou administrador." });
+      if (error) throw error;
+      this.sistema.ui.mostrarToast("sucesso", "Ajustes salvos", "As quantidades e reservas do pedido foram atualizadas.");
+      await this.carregarPedidos();
+      await this.visualizarPedidoCompleto(Number(pedidoId));
+    } catch (error) {
+      if (salvar) salvar.disabled = false;
+      this.sistema.ui.mostrarToast("erro", "Não foi possível salvar os ajustes", error.message);
     }
   }
 
@@ -5816,6 +6074,88 @@ export class Pedidos {
     if (modal) modal.classList.add("active");
   }
 
+  abrirModalDevolucaoAjuste() {
+    const pedidoId = this.pedidoRejeicaoId || window._pedidoRejeicaoId;
+    const pedido = this.pedidosCache.find((p) => Number(p.id) === Number(pedidoId));
+    if (!pedido) return;
+    const itens = pedido.itens_pedido || [];
+    const container = document.getElementById("devolucaoAjusteItens");
+    if (!container) return;
+    container.innerHTML = `<div class="tabela-container"><table class="tabela-itens-pedido"><thead><tr><th>Item</th><th>Solicitado</th><th>Sugerido</th></tr></thead><tbody>${itens.map((item) => `<tr><td><strong>${this._escaparRecebimento(item.item_numero || item.item_ata_id)}</strong><br><small>${this._escaparRecebimento(item.descricao || "Item")}</small></td><td>${item.quantidade_solicitada} ${this._escaparRecebimento(item.unidade_medida || "UN")}</td><td><input class="devolucao-qtd filtro-input" data-item-pedido-id="${item.id}" type="number" min="0" step="0.01" value="${item.quantidade_solicitada}"></td></tr>`).join("")}</tbody></table></div>`;
+    document.getElementById("devolucaoAjusteJustificativa").value = "";
+    document.getElementById("modalMotivoRejeicao")?.classList.remove("active");
+    document.getElementById("modalDevolucaoAjuste")?.classList.add("active");
+    setTimeout(() => document.getElementById("devolucaoAjusteJustificativa")?.focus(), 50);
+  }
+
+  fecharModalDevolucaoAjuste() {
+    document.getElementById("modalDevolucaoAjuste")?.classList.remove("active");
+  }
+
+  async confirmarDevolucaoAjuste() {
+    const pedidoId = this.pedidoRejeicaoId || window._pedidoRejeicaoId;
+    const justificativa = document.getElementById("devolucaoAjusteJustificativa")?.value.trim() || "";
+    const itens = [...document.querySelectorAll("#devolucaoAjusteItens .devolucao-qtd")].map((input) => ({ item_pedido_id: Number(input.dataset.itemPedidoId), quantidade_sugerida: Number(input.value) })).filter((item) => Number.isFinite(item.quantidade_sugerida) && item.quantidade_sugerida >= 0);
+    if (justificativa.length < 10) { this.sistema.ui.mostrarToast("aviso", "Justificativa insuficiente", "Informe pelo menos 10 caracteres."); return; }
+    if (!itens.length) { this.sistema.ui.mostrarToast("aviso", "Nenhum item informado", "Informe ao menos uma sugestão."); return; }
+    const button = document.getElementById("btnConfirmarDevolucaoAjuste");
+    if (button) { button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...'; }
+    try {
+      const { error } = await supabase.rpc("compras_devolver_pedido", { p_pedido_id: pedidoId, p_itens: itens, p_justificativa: justificativa });
+      if (error) throw error;
+      this.fecharModalDevolucaoAjuste();
+      this.sistema.ui.mostrarToast("sucesso", "Pedido devolvido para ajuste", "O solicitante foi notificado e poderá aceitar ou contestar a sugestão.");
+      await this.carregarPedidos();
+    } catch (error) {
+      this.sistema.ui.mostrarToast("erro", "Falha ao devolver pedido", error.message || "Não foi possível registrar a sugestão.");
+    } finally {
+      if (button) { button.disabled = false; button.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar sugestão'; }
+    }
+  }
+
+  async abrirModalRespostaDevolucao(pedidoId) {
+    this.pedidoRespostaDevolucaoId = pedidoId;
+    const modal = document.getElementById("modalRespostaDevolucao");
+    const resumo = document.getElementById("respostaDevolucaoResumo");
+    const justificativa = document.getElementById("respostaDevolucaoJustificativa");
+    if (!modal || !resumo) return;
+    resumo.textContent = "Carregando a sugestão…";
+    if (justificativa) justificativa.value = "";
+    modal.classList.add("active");
+    try {
+      const { data: devolucao, error } = await supabase.from("pedidos_devolucoes").select("id,justificativa,criado_em").eq("pedido_id", pedidoId).eq("status", "AGUARDANDO_SOLICITANTE").order("criado_em", { ascending: false }).limit(1).maybeSingle();
+      if (error) throw error;
+      if (!devolucao) throw new Error("Nenhuma sugestão pendente encontrada.");
+      this.devolucaoRespostaAtual = devolucao;
+      resumo.innerHTML = `<strong>Sugestão do aprovador:</strong> ${this._escaparRecebimento(devolucao.justificativa)}<br><small>Ao aceitar, as quantidades serão atualizadas e o pedido voltará para a fila de aprovação.</small>`;
+    } catch (error) {
+      resumo.textContent = error.message || "Não foi possível carregar a sugestão.";
+    }
+    setTimeout(() => justificativa?.focus(), 50);
+  }
+
+  fecharModalRespostaDevolucao() {
+    document.getElementById("modalRespostaDevolucao")?.classList.remove("active");
+    this.pedidoRespostaDevolucaoId = null;
+    this.devolucaoRespostaAtual = null;
+  }
+
+  async responderDevolucao(aceitar) {
+    const pedidoId = this.pedidoRespostaDevolucaoId;
+    if (!pedidoId) return;
+    const justificativa = document.getElementById("respostaDevolucaoJustificativa")?.value.trim() || null;
+    if (!aceitar && (!justificativa || justificativa.length < 10)) { this.sistema.ui.mostrarToast("aviso", "Explique a contestação", "Informe pelo menos 10 caracteres."); return; }
+    try {
+      const { error } = await supabase.rpc("compras_responder_devolucao", { p_pedido_id: pedidoId, p_aceitar: aceitar, p_justificativa: justificativa });
+      if (error) throw error;
+      this.fecharModalRespostaDevolucao();
+      this.sistema.ui.mostrarToast("sucesso", aceitar ? "Sugestão aceita" : "Sugestão contestada", aceitar ? "O pedido voltou para a fila de aprovação com as quantidades ajustadas." : "O pedido voltou para a fila com sua contestação registrada.");
+      await this.carregarPedidos();
+    } catch (error) {
+      this.sistema.ui.mostrarToast("erro", "Não foi possível responder", error.message || "Tente novamente.");
+    }
+  }
+
   _handleCharCount(e) {
     const textarea = e.target;
     const count = textarea.value.length;
@@ -5979,22 +6319,37 @@ export class Pedidos {
   }
 
   async encerrarPedido(pedidoId) {
+    this.pedidoEncerramentoId = pedidoId;
+    const modal = document.getElementById("modalEncerrarPedido");
+    const observacao = document.getElementById("observacaoEncerramento");
+    if (!modal) return;
+    if (observacao) observacao.value = "";
+    modal.classList.add("active");
+    setTimeout(() => observacao?.focus(), 50);
+  }
+
+  fecharModalEncerrarPedido() {
+    document.getElementById("modalEncerrarPedido")?.classList.remove("active");
+    this.pedidoEncerramentoId = null;
+  }
+
+  async confirmarEncerramento() {
+    const pedidoId = this.pedidoEncerramentoId;
+    if (!pedidoId) return;
+    const button = document.getElementById("btnConfirmarEncerramento");
+    const observacao = document.getElementById("observacaoEncerramento")?.value.trim() || null;
+    if (button) { button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando...'; }
     try {
-      const confirmado = await this.sistema.confirmar(
-        "Encerrar este pedido? O sistema validará se todos os itens foram entregues e registrará a decisão na timeline.",
-      );
-      if (!confirmado) return;
-      const observacao = window.prompt("Observação de encerramento (opcional):", "") || null;
-      const { error } = await supabase.rpc("compras_encerrar_pedido", {
-        p_pedido_id: pedidoId,
-        p_observacao: observacao,
-      });
+      const { error } = await supabase.rpc("compras_encerrar_pedido", { p_pedido_id: pedidoId, p_observacao: observacao });
       if (error) throw error;
+      this.fecharModalEncerrarPedido();
       this.sistema.ui.mostrarToast("sucesso", "Pedido encerrado e auditado com sucesso.");
       await this.carregarPedidos();
     } catch (error) {
       console.error("Erro ao encerrar pedido:", error);
-      this.sistema.ui.mostrarToast("erro", error.message || "Não foi possível encerrar o pedido.");
+      this.sistema.ui.mostrarToast("erro", "Não foi possível encerrar o pedido", error.message || "Valide se todos os itens foram entregues.");
+    } finally {
+      if (button) { button.disabled = false; button.innerHTML = '<i class="fas fa-flag-checkered"></i> Encerrar pedido'; }
     }
   }
 

@@ -7,7 +7,7 @@ const esc = (value = "") => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&
 const human = (value = "") => String(value || "").replaceAll("_", " ").replace(/\b\p{L}/gu, (c) => c.toUpperCase());
 const dateFmt = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeZone: "UTC" });
 const date = (value) => value ? dateFmt.format(new Date(`${String(value).slice(0, 10)}T00:00:00Z`)) : "—";
-const money = (value) => value == null || value === "" ? "—" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value));
+const money = (value) => value == null || value === "" ? "—" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value));
 const safeUrl = (value) => { try { const u = new URL(String(value)); return ["https:", "http:"].includes(u.protocol) ? u.href : ""; } catch { return ""; } };
 const manager = (s) => ["tenant_admin", "compras_manager"].includes(s.membership?.role);
 const admin = (s) => s.membership?.role === "tenant_admin";

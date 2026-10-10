@@ -1,0 +1,390 @@
+/*
+ * Identidade visual unificada da Intranet · Atos Oficiais
+ * Aplicada somente ao frontend do módulo. Não altera dados, eventos ou regras de negócio.
+ * Versão: 2026-10-07
+ */
+:root {
+  --atos-navy: #102a43;
+  --atos-navy-2: #163f63;
+  --atos-blue: #1476d4;
+  --atos-blue-strong: #0f64bd;
+  --atos-cyan: #14a9d8;
+  --atos-ink: #172b4d;
+  --atos-muted: #627d98;
+  --atos-line: #d9e2ec;
+  --atos-bg: #f4f7fb;
+  --atos-surface: #fff;
+  --atos-radius: 14px;
+  --atos-shadow: 0 8px 24px rgba(16, 42, 67, .08);
+  --atos-shadow-soft: 0 2px 10px rgba(16, 42, 67, .06);
+}
+
+body[data-intranet-module="atos-oficiais"] {
+  background: var(--atos-bg) !important;
+  color: var(--atos-ink) !important;
+  font-family: Manrope, "Segoe UI", Roboto, system-ui, sans-serif !important;
+  line-height: 1.5;
+}
+
+body[data-intranet-module="atos-oficiais"] *,
+body[data-intranet-module="atos-oficiais"] *::before,
+body[data-intranet-module="atos-oficiais"] *::after {
+  font-family: inherit;
+}
+
+/* Tokens de compatibilidade: neutralizam o verde antigo sem alterar semântica. */
+body[data-intranet-module="atos-oficiais"] {
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: var(--atos-blue-strong);
+  --primary-700: var(--atos-navy-2);
+  --primary-800: var(--atos-navy);
+  --success-600: #0f9f79;
+}
+
+/* Portal público do módulo: mesmo cabeçalho e mesma linguagem de superfícies. */
+body[data-intranet-page*="portal-atos-oficiais"] .portal-header {
+  background: var(--atos-surface) !important;
+  box-shadow: 0 3px 18px rgba(16, 42, 67, .12) !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .header-top {
+  background: linear-gradient(135deg, var(--atos-navy), var(--atos-navy-2)) !important;
+  padding: 16px 0 !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .header-top-content {
+  min-height: 68px;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .brasao-wrapper {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .18) !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .brasao-img {
+  border-radius: 12px !important;
+  padding: 4px !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .header-title {
+  font-size: 1.18rem !important;
+  letter-spacing: -.02em;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .header-subtitle {
+  color: #dbeafe !important;
+  font-size: .76rem !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .header-bottom {
+  background: #fff !important;
+  border-bottom: 1px solid var(--atos-line) !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .portal-nav {
+  gap: 6px !important;
+  padding: 7px 0 !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .nav-link {
+  border-radius: 10px !important;
+  color: var(--atos-muted) !important;
+  font-size: .76rem !important;
+  font-weight: 750 !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .nav-link:hover,
+body[data-intranet-page*="portal-atos-oficiais"] .nav-link.active {
+  background: #eaf3ff !important;
+  color: var(--atos-blue-strong) !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .portal-main {
+  background: var(--atos-bg) !important;
+  padding: 22px 0 42px !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .hero-search,
+body[data-intranet-page*="portal-atos-oficiais"] .portal-section > .card,
+body[data-intranet-page*="portal-atos-oficiais"] .section-card,
+body[data-intranet-page*="portal-atos-oficiais"] .stat-card,
+body[data-intranet-page*="portal-atos-oficiais"] .table-container {
+  border: 1px solid var(--atos-line) !important;
+  border-radius: var(--atos-radius) !important;
+  box-shadow: var(--atos-shadow-soft) !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .hero-search {
+  background: linear-gradient(135deg, #eef6ff, #fff) !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .hero-title,
+body[data-intranet-page*="portal-atos-oficiais"] .section-title,
+body[data-intranet-page*="portal-atos-oficiais"] .section-header h2 {
+  color: var(--atos-navy) !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .btn-primary,
+body[data-intranet-page*="portal-atos-oficiais"] .btn-search-hero {
+  background: linear-gradient(135deg, var(--atos-blue), var(--atos-blue-strong)) !important;
+  border-color: transparent !important;
+  box-shadow: 0 8px 18px rgba(20, 118, 212, .22) !important;
+}
+body[data-intranet-page*="portal-atos-oficiais"] .breadcrumb,
+body[data-intranet-page*="painel-adm-atos-oficiais"] .painel-breadcrumb,
+body[data-intranet-page*="faq-atos-oficiais"] .atos-breadcrumb {
+  color: var(--atos-muted) !important;
+  font-size: .72rem !important;
+  font-weight: 700 !important;
+}
+
+/* Painel administrativo: topo limpo, conteúdo amplo e navegação em cartões consistentes. */
+body[data-intranet-page*="painel-adm-atos-oficiais"] .admin-layout {
+  background: var(--atos-bg) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .topbar {
+  height: 68px !important;
+  padding: 0 24px !important;
+  background: rgba(255,255,255,.96) !important;
+  border-bottom: 1px solid var(--atos-line) !important;
+  box-shadow: 0 3px 18px rgba(16,42,67,.10) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .topbar-left h2 {
+  color: var(--atos-navy) !important;
+  font-size: 1rem !important;
+  letter-spacing: -.02em;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .topbar-left .brasao-img {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 12px !important;
+  padding: 4px !important;
+  background: #fff !important;
+  box-shadow: var(--atos-shadow-soft) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .topbar-user {
+  background: #eef5fc !important;
+  color: var(--atos-navy) !important;
+  border: 1px solid #d8e7f5 !important;
+  border-radius: 12px !important;
+  padding: 7px 12px !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .badge-perfil {
+  background: #dbeafe !important;
+  color: var(--atos-blue-strong) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .cards-nav {
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  padding: 18px 24px 4px !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .card-nav {
+  flex: 0 1 210px !important;
+  min-height: 76px !important;
+  max-width: none !important;
+  display: grid !important;
+  grid-template-columns: 42px 1fr !important;
+  grid-template-rows: auto auto !important;
+  column-gap: 11px !important;
+  align-items: center !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--atos-line) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: var(--atos-shadow-soft) !important;
+  text-align: left !important;
+  transition: .2s ease !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .card-nav:hover,
+body[data-intranet-page*="painel-adm-atos-oficiais"] .card-nav.active {
+  border-color: #8fc3f3 !important;
+  background: #f5faff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(20,118,212,.12) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .card-nav-icon {
+  grid-row: 1 / span 2 !important;
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 12px !important;
+  background: #e7f1ff !important;
+  color: var(--atos-blue-strong) !important;
+  font-size: 1rem !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .card-nav-title {
+  color: var(--atos-navy) !important;
+  font-size: .8rem !important;
+  font-weight: 800 !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .card-nav-desc {
+  color: var(--atos-muted) !important;
+  font-size: .66rem !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .content-area {
+  max-width: none !important;
+  padding: 16px 24px 34px !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .page > .card,
+body[data-intranet-page*="painel-adm-atos-oficiais"] .page .card,
+body[data-intranet-page*="painel-adm-atos-oficiais"] .stat-card,
+body[data-intranet-page*="painel-adm-atos-oficiais"] .busca-reversa-container {
+  border: 1px solid var(--atos-line) !important;
+  border-radius: var(--atos-radius) !important;
+  box-shadow: var(--atos-shadow-soft) !important;
+  background: #fff !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .card-header,
+body[data-intranet-page*="painel-adm-atos-oficiais"] .toolbar {
+  border-color: var(--atos-line) !important;
+  background: #fff !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .card-header h3,
+body[data-intranet-page*="painel-adm-atos-oficiais"] .toolbar h3 {
+  color: var(--atos-navy) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .stat-card {
+  min-height: 112px !important;
+  padding: 16px !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .stat-card > div:first-child {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .stat-icon-wrapper {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 12px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #e7f1ff !important;
+  color: var(--atos-blue-strong) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .stat-number {
+  color: var(--atos-navy) !important;
+  font-size: 1.5rem !important;
+  font-weight: 850 !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .stat-label {
+  color: var(--atos-muted) !important;
+  font-weight: 750 !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .btn-primary {
+  background: linear-gradient(135deg, var(--atos-blue), var(--atos-blue-strong)) !important;
+  border-color: transparent !important;
+  box-shadow: 0 7px 16px rgba(20,118,212,.18) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .btn-outline,
+body[data-intranet-page*="painel-adm-atos-oficiais"] .btn-secondary {
+  border-color: #cbdceb !important;
+  background: #fff !important;
+  color: var(--atos-navy-2) !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .table thead th {
+  background: #eef5fc !important;
+  color: var(--atos-navy-2) !important;
+  border-color: var(--atos-line) !important;
+  font-size: .68rem !important;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .table tbody td {
+  border-color: #e8eef5 !important;
+}
+
+/* FAQ: mesma superfície, mesma tipografia e mesmo tratamento de busca/accordion. */
+body[data-intranet-page*="faq-atos-oficiais"] {
+  padding: 0 !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] > header {
+  background: linear-gradient(135deg, var(--atos-navy), var(--atos-navy-2)) !important;
+  padding: 26px clamp(20px, 5vw, 72px) !important;
+  text-align: left !important;
+  box-shadow: 0 3px 18px rgba(16,42,67,.14) !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] > header h1 {
+  color: #fff !important;
+  font-size: clamp(1.1rem, 2vw, 1.45rem) !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] > header p {
+  color: #dbeafe !important;
+  margin-top: 6px !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] .faq-container {
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: 24px clamp(16px, 3vw, 30px) 44px !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] .faq-search,
+body[data-intranet-page*="faq-atos-oficiais"] .faq-list {
+  border: 1px solid var(--atos-line) !important;
+  border-radius: var(--atos-radius) !important;
+  background: #fff !important;
+  box-shadow: var(--atos-shadow-soft) !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] .faq-search {
+  padding: 7px 12px !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] .faq-categoria {
+  border: 1px solid #cbdceb !important;
+  border-radius: 999px !important;
+  color: var(--atos-navy-2) !important;
+  background: #fff !important;
+  font-weight: 700 !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] .faq-categoria.active,
+body[data-intranet-page*="faq-atos-oficiais"] .faq-categoria:hover {
+  border-color: var(--atos-blue) !important;
+  color: var(--atos-blue-strong) !important;
+  background: #eaf3ff !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] .faq-question {
+  color: var(--atos-navy) !important;
+  background: #fff !important;
+  border-color: var(--atos-line) !important;
+  font-weight: 800 !important;
+}
+body[data-intranet-page*="faq-atos-oficiais"] .faq-question:hover,
+body[data-intranet-page*="faq-atos-oficiais"] .faq-question[aria-expanded="true"] {
+  color: var(--atos-blue-strong) !important;
+  background: #f5faff !important;
+}
+
+@media (max-width: 760px) {
+  body[data-intranet-page*="painel-adm-atos-oficiais"] .topbar {
+    height: auto !important;
+    min-height: 64px !important;
+    padding: 10px 14px !important;
+  }
+  body[data-intranet-page*="painel-adm-atos-oficiais"] .topbar-right .badge-perfil {
+    display: none !important;
+  }
+  body[data-intranet-page*="painel-adm-atos-oficiais"] .cards-nav {
+    padding: 12px 14px 2px !important;
+  }
+  body[data-intranet-page*="painel-adm-atos-oficiais"] .card-nav {
+    flex: 1 1 150px !important;
+  }
+  body[data-intranet-page*="painel-adm-atos-oficiais"] .content-area {
+    padding: 12px 14px 26px !important;
+  }
+  body[data-intranet-page*="portal-atos-oficiais"] .header-top-content {
+    align-items: flex-start !important;
+  }
+  body[data-intranet-page*="portal-atos-oficiais"] .header-accessibility {
+    display: none !important;
+  }
+}
+
+/* Integração com o shell compartilhado da Intranet — painel administrativo. */
+body[data-intranet-page*="painel-adm-atos-oficiais"] .admin-layout {
+  min-height: auto !important;
+  width: 100%;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .main-area > .topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .conteudo-full {
+  padding: 0 !important;
+}
+body[data-intranet-page*="painel-adm-atos-oficiais"] .sidebar-nav a[data-modulo="atos-oficiais"] {
+  background: rgba(20, 118, 212, .14) !important;
+  color: #0f64bd !important;
+}

@@ -1,524 +1,749 @@
-/* ============================================ */
-/* controle-de-saldos/css/carrinho-page.css     */
-/* VIEW de Carrinho — SPA integrada ao layout.  */
-/*                                               */
-/* Herdado do design system (NÃO duplicar):      */
-/*   · shared/css/intranet-base.css              */
-/*     → .page-header, .topbar, .sidebar,       */
-/*       .main-area, .conteudo,                 */
-/*       .loading-container, .loading-spinner,  */
-/*       .btn-voltar, .user-info, .user-avatar, */
-/*       .btn-logout, variáveis CSS             */
-/*   · shared/css/componentes.css                */
-/*     → .btn, .toast, .notification-center,    */
-/*       .modal, .empty-state, .badge, etc.     */
-/*                                               */
-/* Este arquivo cobre APENAS o que é EXCLUSIVO   */
-/* da view de carrinho.                          */
-/*                                               */
-/* ✅ ATUALIZADO · O modal de finalização        */
-/* (`#modalFinalizacao`) foi MOVIDO para         */
-/* `gestao-atas.css` / `gestao-atas.html` — agora  */
-/* vive no HTML principal desde o boot.          */
-/* Aqui ficam só:                                */
-/*   · Wrapper da view                           */
-/*   · Breadcrumb                                */
-/*   · Estado vazio                              */
-/*   · Grupos por ATA                            */
-/*   · Tabela de itens                           */
-/*   · Resumo (subtotal + total + ações)         */
-/*   · Responsividade                            */
-/* ============================================ */
+/*
+ * View SPA — Meu Carrinho
+ * Identidade visual alinhada às abas Consulta, Relatórios e Pedidos.
+ * Regras isoladas ao #carrinhoContent para não interferir nas demais telas.
+ */
 
-/* ============================================ */
-/* WRAPPER DA VIEW                              */
-/* ============================================ */
-.carrinho-view {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px;
-  animation: fadeInCarrinho 0.3s ease-out;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-@keyframes fadeInCarrinho {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-view {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: 10px 0 34px;
+  box-sizing: border-box;
+  color: #243b53;
+  animation: carrinhoViewEnter 0.24s ease-out both;
 }
 
-/* ============================================ */
-/* BREADCRUMB                                   */
-/* ============================================ */
-.breadcrumb-carrinho {
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent #carrinhoViewContent,
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent #carrinhoItems,
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent #itensCarrinhoLista,
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-ata,
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-container {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@keyframes carrinhoViewEnter {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Trilha de navegação — usa a mesma família visual do restante do módulo. */
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: var(--neutral-500);
-  margin-bottom: 24px;
   flex-wrap: wrap;
+  gap: 9px;
+  width: 100%;
+  max-width: none;
+  margin: 0 0 14px;
+  color: #718096;
+  font-size: 0.76rem;
 }
 
-.breadcrumb-carrinho a {
-  color: var(--primary-600);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #47627b;
   text-decoration: none;
-  font-weight: 500;
-  transition: var(--transition-base);
-  cursor: pointer;
+  transition: color 0.16s ease;
 }
 
-.breadcrumb-carrinho a:hover {
-  text-decoration: underline;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-breadcrumb a:hover {
+  color: #0b63ce;
 }
 
-.breadcrumb-carrinho .separator {
-  color: var(--neutral-300);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-breadcrumb a:focus-visible {
+  outline: 3px solid rgba(11, 99, 206, 0.24);
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
-.breadcrumb-carrinho .current {
-  color: var(--neutral-700);
-  font-weight: 600;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-breadcrumb [aria-current="page"] {
+  color: #334e68;
+  font-weight: 700;
 }
 
-/* ============================================ */
-/* CARRINHO VAZIO                               */
-/* ============================================ */
-.carrinho-empty {
+/* Cabeçalho no padrão usado por Consulta e Relatórios. */
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading {
   display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: none;
+  margin: 0 0 22px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid #e3edf5;
+  color: #102a43;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border: 1px solid #d8e9f8;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #eff7ff, #e5f1fc);
+  color: #0b63ce;
+  font-size: 1.35rem;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-heading-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-heading-kicker {
+  display: block;
+  margin-bottom: 3px;
+  color: #0b63ce;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading h2 {
+  margin: 0;
+  color: #102a43;
+  font-size: clamp(1.15rem, 1.55vw, 1.42rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 0.79rem;
+  line-height: 1.5;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-itens-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 1px solid #dbe8f3;
+  border-radius: 12px;
+  background: #f7fbff;
+  color: #0b63ce;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-itens-badge > i {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 9px;
+  background: #e7f2fd;
+  font-size: 0.9rem;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-itens-badge > span {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.2;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-itens-badge strong {
+  color: #174d83;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-itens-badge small {
+  color: #64748b;
+  font-size: 0.66rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Estado vazio. */
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty {
+  display: flex;
+  min-height: 300px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 20px;
+  padding: 42px 24px;
+  border: 1px solid #dce8f2;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #ffffff 0%, #f7fbff 100%);
+  box-shadow: 0 6px 22px rgba(25, 63, 88, 0.055);
   text-align: center;
-  background: white;
-  border-radius: var(--border-radius-2xl);
-  border: 1px solid var(--neutral-200);
-  box-shadow: var(--shadow-sm);
 }
 
-.carrinho-empty .empty-icon {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: var(--neutral-50);
-  color: var(--neutral-300);
-  font-size: 4.5rem;
-  margin-bottom: 20px;
-  display: flex;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty .empty-icon {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  margin: 0 0 18px;
+  place-items: center;
+  border: 1px solid #d8e9f8;
+  border-radius: 22px;
+  background: #eaf3fc;
+  color: #0b63ce;
+  font-size: 2rem;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty h2 {
+  margin: 0 0 7px;
+  color: #17324d;
+  font-size: 1.18rem;
+  font-weight: 800;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty p {
+  max-width: 470px;
+  margin: 0 0 22px;
+  color: #64748b;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+/* Botão de retorno às consultas. */
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .btn-continuar-comprando {
+  display: inline-flex;
+  min-height: 42px;
   align-items: center;
   justify-content: center;
-}
-
-.carrinho-empty h2 {
-  font-size: 1.5rem;
-  color: var(--neutral-700);
-  margin-bottom: 8px;
-}
-
-.carrinho-empty p {
-  color: var(--neutral-500);
-  margin-bottom: 24px;
-  max-width: 400px;
-}
-
-/* ============================================ */
-/* BOTÃO CONTINUAR COMPRANDO                    */
-/* ============================================ */
-.btn-continuar-comprando {
-  padding: 12px 32px;
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-lg);
-  font-weight: 600;
-  font-size: 0.95rem;
+  gap: 9px;
+  padding: 0 18px;
+  border: 1px solid #0b63ce;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #1478dc, #0758b8);
+  box-shadow: 0 4px 12px rgba(11, 99, 206, 0.15);
+  color: #fff;
   cursor: pointer;
-  transition: var(--transition-base);
-  font-family: inherit;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .btn-continuar-comprando:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 16px rgba(11, 99, 206, 0.21);
+  filter: brightness(1.04);
+}
+
+/* Blocos por ata e tabela de itens. */
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-ata {
+  overflow: hidden;
+  margin: 0 0 16px;
+  border: 1px solid #dce7f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(25, 63, 88, 0.055);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-ata:hover {
+  border-color: #c7ddef;
+  box-shadow: 0 8px 24px rgba(25, 63, 88, 0.09);
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e4edf5;
+  background: #f7fbff;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-titulo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-}
-
-.btn-continuar-comprando:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-}
-
-/* ============================================ */
-/* GRUPO DE ITENS POR ATA                       */
-/* ============================================ */
-.carrinho-grupo-ata {
-  background: white;
-  border-radius: var(--border-radius-2xl);
-  border: 1px solid var(--neutral-200);
-  overflow: hidden;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition-base);
-}
-
-.carrinho-grupo-ata:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.carrinho-grupo-header {
-  padding: 16px 24px;
-  background: linear-gradient(135deg, var(--neutral-50), white);
-  border-bottom: 1px solid var(--neutral-200);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
   gap: 8px;
+  color: #17324d;
+  font-size: 0.86rem;
+  font-weight: 800;
 }
 
-.carrinho-grupo-titulo {
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--neutral-800);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-titulo i {
+  color: #0b63ce;
 }
 
-.carrinho-grupo-titulo i {
-  color: var(--primary-600);
-}
-
-.carrinho-grupo-fornecedor {
-  font-size: 0.85rem;
-  color: var(--neutral-500);
-  display: flex;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-fornecedor {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
+  color: #60748a;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
-.carrinho-grupo-fornecedor i {
-  color: var(--neutral-400);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-fornecedor i {
+  color: #8297aa;
 }
 
-/* ============================================ */
-/* TABELA DE ITENS                              */
-/* ============================================ */
-.tabela-container {
-  overflow-x: auto;
-}
-
-.tabela-carrinho {
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-container {
+  display: block;
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-color: #b7cfe4 #f0f5f9;
+  scrollbar-width: thin;
 }
 
-.tabela-carrinho th {
-  background: var(--neutral-50);
-  padding: 14px 20px;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-container::-webkit-scrollbar {
+  height: 7px;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-container::-webkit-scrollbar-track {
+  background: #f0f5f9;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-container::-webkit-scrollbar-thumb {
+  border: 1px solid #f0f5f9;
+  border-radius: 99px;
+  background: #b7cfe4;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: #334e68;
+  font-size: 0.81rem;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho th {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e1eaf2;
+  background: #fbfdff;
+  color: #60748a;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.045em;
   text-align: left;
-  font-weight: 600;
-  color: var(--neutral-500);
   text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid var(--neutral-200);
+  white-space: nowrap;
 }
 
-.tabela-carrinho td {
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--neutral-100);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #edf2f6;
+  color: #334e68;
   vertical-align: middle;
-  color: var(--neutral-700);
 }
 
-.tabela-carrinho tbody tr {
-  transition: background 0.2s;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho tbody tr:last-child td {
+  border-bottom: 0;
 }
 
-.tabela-carrinho tbody tr:hover td {
-  background: var(--neutral-50);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho tbody tr:hover td {
+  background: #f8fbfe;
 }
 
-.tabela-carrinho tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.tabela-carrinho .numeric {
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .numeric {
   text-align: right;
+  white-space: nowrap;
 }
 
-.tabela-carrinho .item-numero {
-  color: var(--neutral-500);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-numero {
+  color: #60748a;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-descricao {
+  min-width: 260px;
+  color: #243b53;
   font-weight: 600;
 }
 
-.tabela-carrinho .item-descricao {
-  font-weight: 500;
-  color: var(--neutral-800);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-total,
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho tfoot td.numeric {
+  color: #0b63ce;
+  font-weight: 800;
 }
 
-.tabela-carrinho .item-total {
-  font-weight: 700;
-  color: var(--primary-700);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho tfoot td {
+  border-top: 1px solid #dce7f0;
+  border-bottom: 0;
+  background: #f7fbff;
+  color: #47627b;
+  font-weight: 800;
 }
 
-.tabela-carrinho .item-remover {
-  background: none;
-  border: none;
-  color: var(--neutral-400);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-remover {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #8597a8;
   cursor: pointer;
-  padding: 8px;
-  border-radius: var(--border-radius-sm);
-  transition: var(--transition-base);
-  font-size: 0.9rem;
+  transition: color 0.16s ease, background 0.16s ease, border-color 0.16s ease;
 }
 
-.tabela-carrinho .item-remover:hover {
-  color: var(--error-600);
-  background: var(--error-50);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-remover:hover {
+  border-color: #f5d3d3;
+  background: #fff2f2;
+  color: #bd3535;
 }
 
-/* ---------- Subtotal (tfoot) ---------- */
-.tabela-carrinho tfoot td {
-  padding: 14px 20px;
-  border-top: 2px solid var(--neutral-200);
-  background: var(--neutral-50);
-  font-weight: 600;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-remover:focus-visible,
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-actions button:focus-visible {
+  outline: 3px solid rgba(11, 99, 206, 0.25);
+  outline-offset: 2px;
 }
 
-.tabela-carrinho tfoot .subtotal-valor {
-  color: var(--primary-700);
-  font-size: 1.05rem;
-}
-
-/* ============================================ */
-/* RESUMO DO CARRINHO (sticky no rodapé)        */
-/* ============================================ */
-.carrinho-resumo {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: var(--border-radius-2xl);
-  border: 1px solid var(--neutral-200);
-  padding: 28px 32px;
-  box-shadow: var(--shadow-md);
-  margin-top: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
+/* Barra de resumo e ações, fixa no fluxo do conteúdo. */
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-resumo {
   position: sticky;
-  bottom: 0;
-}
-
-.carrinho-resumo-left {
+  z-index: 4;
+  bottom: 10px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 14px 22px;
+  margin: 10px 0 0;
+  padding: 14px 18px;
+  border: 1px solid #d7e4ef;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 26px rgba(25, 63, 88, 0.12);
+  backdrop-filter: blur(10px);
 }
 
-.carrinho-resumo-left .total-itens {
-  font-size: 0.85rem;
-  color: var(--neutral-500);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-resumo-left .total-itens {
+  color: #60748a;
+  font-size: 0.76rem;
 }
 
-.carrinho-resumo-left .total-itens strong {
-  color: var(--neutral-700);
-  font-weight: 700;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-resumo-left .total-itens strong {
+  color: #17324d;
+  font-weight: 800;
 }
 
-.carrinho-total {
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-total {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 9px;
+  white-space: nowrap;
 }
 
-.carrinho-total .total-label {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--neutral-600);
-}
-
-.carrinho-total-value {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--primary-700);
-}
-
-.carrinho-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-/* ============================================ */
-/* BOTÕES DE AÇÃO (Limpar / Finalizar)          */
-/* ============================================ */
-.btn-limpar-carrinho {
-  padding: 10px 20px;
-  background: var(--neutral-100);
-  color: var(--neutral-700);
-  border: 1px solid var(--neutral-200);
-  border-radius: var(--border-radius-lg);
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: var(--transition-base);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: inherit;
-}
-
-.btn-limpar-carrinho:hover {
-  background: var(--neutral-200);
-}
-
-.btn-finalizar-pedido {
-  padding: 12px 28px;
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-lg);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-total .total-label {
+  color: #60748a;
+  font-size: 0.82rem;
   font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: var(--transition-base);
-  display: inline-flex;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-total-value {
+  color: #0b63ce;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-actions {
+  display: flex;
   align-items: center;
-  gap: 10px;
-  font-family: inherit;
-  box-shadow: var(--shadow-sm);
+  gap: 9px;
 }
 
-.btn-finalizar-pedido:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-actions button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.73rem;
+  font-weight: 800;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
 }
 
-.btn-finalizar-pedido:disabled {
-  opacity: 0.6;
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .btn-limpar-carrinho {
+  border: 1px solid #d8e2eb;
+  background: #f6f9fc;
+  color: #52677b;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .btn-limpar-carrinho:hover {
+  border-color: #c7d5e2;
+  background: #edf3f8;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .btn-finalizar-pedido {
+  border: 1px solid #0b63ce;
+  background: linear-gradient(135deg, #1478dc, #0758b8);
+  box-shadow: 0 3px 9px rgba(11, 99, 206, 0.16);
+  color: #fff;
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .btn-finalizar-pedido:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(11, 99, 206, 0.23);
+}
+
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .btn-finalizar-pedido:disabled {
   cursor: not-allowed;
-  transform: none !important;
+  opacity: 0.58;
 }
 
-/* ============================================ */
-/* ✅ NOVO · ESTILOS DO MODAL DE FINALIZAÇÃO    */
-/* ------------------------------------------------------------ */
-/* O modal `#modalFinalizacao` foi MOVIDO para gestao-atas.html  */
-/* e ganhou seus estilos em gestao-atas.css para reuso global.   */
-/* Este arquivo NÃO redefine mais o modal — apenas complementa  */
-/* com ajustes específicos da view SPA (ex: quando aberto       */
-/* a partir da própria tela do carrinho).                       */
-/*                                                              */
-/* Nada aqui para o modal — tudo em gestao-atas.css.             */
-/* ============================================ */
-
-/* ============================================ */
-/* RESPONSIVIDADE                               */
-/* ============================================ */
-@media (max-width: 768px) {
-  .carrinho-view {
-    padding: 16px;
+/* Responsividade: a área útil permanece integral, sem uma coluna central estreita. */
+@media (max-width: 820px) {
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-view {
+    padding: 8px 0 26px;
   }
 
-  .carrinho-grupo-header {
-    flex-direction: column;
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading {
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    padding-bottom: 15px;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-heading-copy {
+    flex: 1 1 calc(100% - 66px);
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-itens-badge {
+    margin-left: 62px;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-header {
     align-items: flex-start;
-    padding: 14px 16px;
-  }
-
-  .tabela-carrinho {
-    font-size: 0.8rem;
-  }
-
-  .tabela-carrinho th,
-  .tabela-carrinho td {
-    padding: 10px 12px;
-  }
-
-  .carrinho-resumo {
     flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-resumo {
+    position: static;
     align-items: stretch;
-    padding: 20px;
-    gap: 12px;
-  }
-
-  .carrinho-resumo-left {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+    gap: 12px;
+    padding: 14px;
   }
 
-  .carrinho-total {
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-resumo-left {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
   }
 
-  .carrinho-total-value {
-    font-size: 1.4rem;
-  }
-
-  .carrinho-actions {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .carrinho-actions button {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .carrinho-empty .empty-icon {
-    width: 80px;
-    height: 80px;
-    font-size: 3rem;
-  }
-
-  .carrinho-empty h2 {
-    font-size: 1.2rem;
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-total {
+    justify-content: space-between;
   }
 }
 
-@media (max-width: 480px) {
-  .carrinho-view {
-    padding: 12px;
-  }
-
-  .tabela-carrinho th,
-  .tabela-carrinho td {
-    padding: 8px 10px;
+@media (max-width: 520px) {
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-breadcrumb {
+    gap: 6px;
     font-size: 0.7rem;
   }
 
-  .tabela-carrinho .item-remover {
-    padding: 4px;
-    font-size: 0.8rem;
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading {
+    gap: 10px;
   }
 
-  .carrinho-total-value {
-    font-size: 1.2rem;
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-icon {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+    font-size: 1.15rem;
   }
 
-  .btn-finalizar-pedido {
-    font-size: 0.85rem;
-    padding: 10px 20px;
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-heading-copy {
+    flex-basis: calc(100% - 54px);
   }
 
-  .carrinho-resumo {
-    padding: 16px;
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading p {
+    font-size: 0.73rem;
   }
 
-  .carrinho-empty .empty-icon {
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-itens-badge {
+    min-height: 40px;
+    margin-left: 52px;
+    padding: 6px 10px;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-itens-badge > i {
+    width: 27px;
+    height: 27px;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty {
+    min-height: 250px;
+    padding: 32px 18px;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty .empty-icon {
     width: 64px;
     height: 64px;
-    font-size: 2.5rem;
+    border-radius: 18px;
+    font-size: 1.7rem;
   }
 
-  .carrinho-empty h2 {
-    font-size: 1.05rem;
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty h2 {
+    font-size: 1.04rem;
   }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty p {
+    font-size: 0.78rem;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-actions button {
+    width: 100%;
+  }
+
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho th,
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho td {
+    padding: 10px 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-view,
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-ata,
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-actions button,
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .btn-continuar-comprando {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading,
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading h2,
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty h2,
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-titulo {
+  color: #ffff00 !important;
+}
+
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty,
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-ata,
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-resumo {
+  border-color: #ffff00 !important;
+  background: #111 !important;
+  color: #fff !important;
+}
+
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-icon,
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty .empty-icon {
+  border-color: #ffff00 !important;
+  background: #000 !important;
+  color: #ffff00 !important;
+}
+
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-page-heading p,
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-empty p,
+body.high-contrast[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-fornecedor {
+  color: #fff !important;
+}
+
+/* Hierarquia visual: o grupo da ata se diferencia do cabeçalho da tabela. */
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-header {
+  background: linear-gradient(135deg, #174d83, #123b63);
+  border-bottom-color: #0e3153;
+  color: #fff;
+}
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-titulo {
+  color: #fff;
+  font-size: .9rem;
+}
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-titulo i {
+  color: #d9ecff;
+}
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-fornecedor {
+  color: rgba(255,255,255,.86);
+}
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .carrinho-grupo-fornecedor i {
+  color: #b8d9f4;
+}
+/* Campo numérico: edição direta e setas nativas para aumentar/reduzir. */
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-quantidade {
+  width: 76px;
+  min-height: 34px;
+  padding: 5px 8px;
+  border: 1px solid #c7d8e7;
+  border-radius: 8px;
+  background: #fff;
+  color: #17324d;
+  font: inherit;
+  font-weight: 750;
+  text-align: right;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-quantidade:hover {
+  border-color: #7da8ca;
+}
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-quantidade:focus {
+  border-color: #0b63ce;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(11,99,206,.16);
+}
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-quantidade::-webkit-inner-spin-button,
+body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-quantidade::-webkit-outer-spin-button {
+  opacity: 1;
+}
+@media (max-width: 520px) {
+  body[data-intranet-module="atas"] #mainSystem #carrinhoContent .tabela-carrinho .item-quantidade { width: 68px; }
+}
+
+/* Contraste final do título da ata: prevalece sobre o fundo azul-claro herdado. */
+#carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header {
+  background: #123f69 !important;
+  background-color: #123f69 !important;
+  border-bottom: 1px solid #0b2f50 !important;
+  color: #ffffff !important;
+}
+#carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header .carrinho-grupo-titulo,
+#carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header .carrinho-grupo-fornecedor {
+  color: #ffffff !important;
+}
+#carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header .carrinho-grupo-titulo i,
+#carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header .carrinho-grupo-fornecedor i {
+  color: #d9ecff !important;
+}
+
+/* Contraste final recomendado: identificação da ata em azul-marinho sólido. */
+#mainSystem #carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header {
+  background: #0b3558 !important;
+  background-color: #0b3558 !important;
+  border-bottom: 1px solid #06243c !important;
+  color: #ffffff !important;
+}
+#mainSystem #carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header .carrinho-grupo-titulo,
+#mainSystem #carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header .carrinho-grupo-fornecedor {
+  color: #ffffff !important;
+}
+#mainSystem #carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header .carrinho-grupo-titulo i,
+#mainSystem #carrinhoContent .carrinho-grupo-ata > .carrinho-grupo-header .carrinho-grupo-fornecedor i {
+  color: #d9ecff !important;
 }

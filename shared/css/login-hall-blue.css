@@ -1,0 +1,707 @@
+/*
+ * Tema azul municipal — aplicado somente ao login e ao hall.
+ * A família Font Awesome é autocontida em /vendor e recebe prioridade
+ * sobre a regra tipográfica global destas duas páginas.
+ */
+
+body[data-intranet-page="index"],
+body[data-intranet-page="intranet"] {
+  --blue-950: #10263f;
+  --blue-900: #14324f;
+  --blue-800: #19466f;
+  --blue-700: #205c91;
+  --blue-600: #2a70aa;
+  --blue-100: #eaf2fa;
+  --blue-050: #f5f8fc;
+  --ink-900: #1b3550;
+  --ink-700: #45617d;
+  --ink-500: #6d8297;
+  --line-blue: #d6e2ef;
+}
+
+/* Font Awesome 6 is bundled locally; keep the page's display font off icon glyphs. */
+body[data-intranet-page="index"] :is(.fa, .fa-classic, .fa-solid, .fas, .fa-regular, .far) {
+  font-family: "Font Awesome 6 Free" !important;
+  font-style: normal !important;
+}
+body[data-intranet-page="index"] :is(.fa-solid, .fas) {
+  font-weight: 900 !important;
+}
+body[data-intranet-page="index"] :is(.fa-regular, .far) {
+  font-weight: 400 !important;
+}
+body[data-intranet-page="index"] :is(.fa-brands, .fab) {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+}
+body[data-intranet-page="intranet"] :is(.fa, .fa-classic, .fa-solid, .fas, .fa-regular, .far) {
+  font-family: "Font Awesome 6 Free" !important;
+  font-style: normal !important;
+}
+body[data-intranet-page="intranet"] :is(.fa-solid, .fas) {
+  font-weight: 900 !important;
+}
+body[data-intranet-page="intranet"] :is(.fa-regular, .far) {
+  font-weight: 400 !important;
+}
+body[data-intranet-page="intranet"] :is(.fa-brands, .fab) {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+}
+
+/* Login */
+body[data-intranet-page="index"] {
+  min-height: 100vh;
+  background: #102b49;
+  color: var(--ink-900);
+}
+body[data-intranet-page="index"] #loginModalOverlay {
+  background:
+    radial-gradient(ellipse at 18% 12%, rgba(76, 137, 192, 0.38), transparent 42%),
+    radial-gradient(ellipse at 88% 88%, rgba(42, 112, 170, 0.28), transparent 38%),
+    linear-gradient(135deg, #10263f 0%, #153c63 55%, #1d5687 100%) !important;
+  padding: 20px;
+}
+body[data-intranet-page="index"] .modal-login {
+  box-sizing: border-box;
+  width: min(100%, 460px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 28px 72px rgba(5, 22, 42, 0.34);
+}
+body[data-intranet-page="index"] .modal-login::before,
+body[data-intranet-page="index"] .modal-login-header::before {
+  background: linear-gradient(90deg, #17466f 0%, #2a70aa 100%) !important;
+}
+body[data-intranet-page="index"] .modal-login-header {
+  background: #fff;
+}
+body[data-intranet-page="index"] .modal-login-header .brasao-mini {
+  border: 1px solid #d6e3f0;
+  border-radius: 16px;
+  background: #eef4fa !important;
+  box-shadow: 0 8px 20px rgba(21, 62, 99, 0.09);
+}
+body[data-intranet-page="index"] .modal-login-header h2 {
+  background: none !important;
+  background-image: none !important;
+  color: #173c61 !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: #173c61 !important;
+}
+body[data-intranet-page="index"] .modal-login-header p {
+  color: #657b91;
+}
+body[data-intranet-page="index"] #loginForm .form-label {
+  color: #314e6c;
+}
+body[data-intranet-page="index"] #loginForm .form-input {
+  border-color: #d2deeb;
+  background: #fbfcfe;
+  color: #183651;
+  box-shadow: none;
+}
+body[data-intranet-page="index"] #loginForm .form-input:focus {
+  border-color: #2a70aa !important;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(42, 112, 170, 0.16) !important;
+}
+body[data-intranet-page="index"] #loginForm .input-icon {
+  color: #2b679d !important;
+}
+body[data-intranet-page="index"] #btnEntrar {
+  border-color: #1b5689 !important;
+  background: #1b5689 !important;
+  color: #fff !important;
+  box-shadow: 0 8px 18px rgba(27, 86, 137, 0.2);
+}
+body[data-intranet-page="index"] #btnEntrar:hover {
+  border-color: #123f68 !important;
+  background: #123f68 !important;
+  transform: translateY(-1px);
+}
+body[data-intranet-page="index"] #btnGoogle {
+  border: 1px solid #d4e0ec !important;
+  background: #fff !important;
+  color: #284966 !important;
+  box-shadow: 0 4px 12px rgba(16, 43, 73, 0.07) !important;
+}
+body[data-intranet-page="index"] #btnGoogle:hover {
+  border-color: #abc4dc !important;
+  background: #f4f8fc !important;
+}
+body[data-intranet-page="index"] #btnGoogle .fab {
+  color: #28639a !important;
+}
+body[data-intranet-page="index"] #btnSolicitarAcesso {
+  border: 1px solid #c9d9e9 !important;
+  background: #edf4fb !important;
+  color: #1b4c78 !important;
+}
+body[data-intranet-page="index"] #btnSolicitarAcesso:hover {
+  border-color: #a9c3dc !important;
+  background: #e3eef8 !important;
+}
+body[data-intranet-page="index"] .modal-footer-link a {
+  color: #245f94 !important;
+}
+body[data-intranet-page="index"] :is(#btnEntrar, #btnGoogle, #btnSolicitarAcesso, .modal-footer-link a):focus-visible {
+  outline: 3px solid rgba(42, 112, 170, 0.35);
+  outline-offset: 3px;
+}
+
+/* Hall da intranet */
+body[data-intranet-page="intranet"] {
+  background: #eaf1f8;
+  color: var(--ink-900);
+}
+body[data-intranet-page="intranet"] .portal-prefeitura {
+  border: 1px solid #d5e1ed;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(21, 53, 83, 0.09);
+}
+body[data-intranet-page="intranet"] .portal-prefeitura::before,
+body[data-intranet-page="intranet"] .portal-prefeitura::after {
+  background: #5e94c4 !important;
+  opacity: 0.08 !important;
+}
+body[data-intranet-page="intranet"] .barra-usuario {
+  border: 1px solid #dbe5ef;
+  border-radius: 12px;
+  background: #f4f8fc;
+  color: #36536f;
+}
+body[data-intranet-page="intranet"] .saudacao-mini span {
+  color: #6b8095;
+}
+body[data-intranet-page="intranet"] .avatar-btn {
+  border-color: #fff;
+  background: #1b5689;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(27, 86, 137, 0.2);
+}
+body[data-intranet-page="intranet"] .avatar-menu {
+  border: 1px solid #d8e3ef;
+  box-shadow: 0 16px 36px rgba(16, 43, 73, 0.16);
+}
+body[data-intranet-page="intranet"] .avatar-menu-item:hover {
+  background: #edf4fb;
+  color: #194d7b;
+}
+body[data-intranet-page="intranet"] .brasao-header {
+  padding: clamp(24px, 3.2vw, 38px) clamp(18px, 3vw, 36px);
+  border: 1px solid #1b4d79;
+  border-radius: 22px;
+  background: linear-gradient(130deg, #14324f 0%, #194a76 58%, #22669c 100%) !important;
+  box-shadow: 0 14px 30px rgba(20, 50, 79, 0.17);
+  color: #fff !important;
+}
+body[data-intranet-page="intranet"] .brasao-img-container {
+  border: 4px solid rgba(255, 255, 255, 0.78);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(5, 25, 45, 0.18);
+}
+body[data-intranet-page="intranet"] .boas-vindas h1 {
+  color: #fff !important;
+}
+body[data-intranet-page="intranet"] .boas-vindas h1 .fas {
+  color: #dcecff;
+}
+body[data-intranet-page="intranet"] .departamento-tag {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.11);
+  color: #e8f2fc;
+}
+body[data-intranet-page="intranet"] .badge-intranet {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.13) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+body[data-intranet-page="intranet"] .module-discovery-copy .discovery-kicker {
+  color: #2a70aa;
+}
+body[data-intranet-page="intranet"] .module-discovery-copy h2 {
+  color: #173b5e;
+}
+body[data-intranet-page="intranet"] .module-discovery-copy p {
+  color: #627a91;
+}
+body[data-intranet-page="intranet"] .module-search-shell {
+  border: 1px solid #c8d8e8 !important;
+  background: #fff !important;
+  box-shadow: 0 8px 20px rgba(30, 76, 116, 0.08);
+}
+body[data-intranet-page="intranet"] .module-search-shell > .fas {
+  color: #2a679e;
+}
+body[data-intranet-page="intranet"] .module-search-shell input {
+  color: #183651;
+}
+body[data-intranet-page="intranet"] .module-search-shell input:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(42, 112, 170, 0.13);
+}
+body[data-intranet-page="intranet"] .module-search-shell kbd {
+  border-color: #d5e1ed;
+  background: #f3f7fb;
+  color: #5c7690;
+}
+body[data-intranet-page="intranet"] .module-search-shell button {
+  background: #edf4fb;
+  color: #275d8d;
+}
+body[data-intranet-page="intranet"] .module-search-shell button:hover {
+  background: #dfeaf5;
+  color: #163e64;
+}
+body[data-intranet-page="intranet"] .module-search-meta {
+  color: #6e8398;
+}
+body[data-intranet-page="intranet"] .module-search-meta span:first-child {
+  color: #2a679e;
+}
+body[data-intranet-page="intranet"] .sistema-card,
+body[data-intranet-page="intranet"] .sistema-card.card-perfil {
+  border: 1px solid #d8e3ee !important;
+  border-radius: 18px;
+  background: #fff !important;
+  box-shadow: 0 8px 22px rgba(22, 55, 87, 0.07);
+}
+body[data-intranet-page="intranet"] .sistema-card::before {
+  background: #2a70aa !important;
+}
+body[data-intranet-page="intranet"] .sistema-card:hover {
+  transform: translateY(-3px);
+  border-color: #9dbbd7 !important;
+  box-shadow: 0 15px 30px rgba(22, 55, 87, 0.12);
+}
+body[data-intranet-page="intranet"] .sistema-card .card-icon {
+  border: 1px solid #d8e6f3;
+  border-radius: 16px;
+  background: #eaf2fa !important;
+  box-shadow: none !important;
+  color: #1d5688 !important;
+}
+body[data-intranet-page="intranet"] .sistema-card h3 {
+  color: #1a3d60 !important;
+}
+body[data-intranet-page="intranet"] .sistema-card p {
+  color: #617990 !important;
+}
+body[data-intranet-page="intranet"] .sistema-card .acesso-badge {
+  border: 1px solid #1b5689 !important;
+  background: #1b5689 !important;
+  color: #fff !important;
+}
+body[data-intranet-page="intranet"] .sistema-card .acesso-badge:hover {
+  background: #123f68 !important;
+}
+body[data-intranet-page="intranet"] .lista-vazia-placeholder {
+  border-color: #cbd9e7;
+  background: #f7fafd;
+  color: #71869b;
+}
+body[data-intranet-page="intranet"] .info-municipal {
+  border-top: 1px solid #dce6f0;
+  color: #637a91;
+}
+body[data-intranet-page="intranet"] .selo-seguranca span .fas {
+  color: #2a679e !important;
+}
+body[data-intranet-page="intranet"] .links-rapidos a {
+  color: #245f94;
+}
+body[data-intranet-page="intranet"] .links-rapidos a:hover {
+  color: #123f68 !important;
+}
+body[data-intranet-page="intranet"] .intranet-style-940f94e3a4 {
+  border-color: #dce6f0;
+  color: #788da1;
+}
+body[data-intranet-page="intranet"] :is(a, button, input):focus-visible {
+  outline: 3px solid rgba(42, 112, 170, 0.34);
+  outline-offset: 3px;
+}
+
+/* Cards são renderizados dinamicamente e o CSS legado usa seletores :has() com !important. */
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card,
+body[data-intranet-page="intranet"] #adminSection .sistema-card {
+  border: 1px solid #d8e3ee !important;
+  border-color: #d8e3ee !important;
+  background: #fff !important;
+  background-image: none !important;
+  box-shadow: 0 8px 22px rgba(22, 55, 87, 0.07) !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card::before,
+body[data-intranet-page="intranet"] #adminSection .sistema-card::before {
+  background: #2a70aa !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card:hover,
+body[data-intranet-page="intranet"] #adminSection .sistema-card:hover {
+  transform: translateY(-3px) !important;
+  border-color: #9dbbd7 !important;
+  box-shadow: 0 15px 30px rgba(22, 55, 87, 0.12) !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card .card-icon,
+body[data-intranet-page="intranet"] #adminSection .sistema-card .card-icon {
+  border: 1px solid #d8e6f3 !important;
+  background: #eaf2fa !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #1d5688 !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card h3,
+body[data-intranet-page="intranet"] #adminSection .sistema-card h3 {
+  color: #1a3d60 !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card p,
+body[data-intranet-page="intranet"] #adminSection .sistema-card p {
+  color: #617990 !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card .acesso-badge,
+body[data-intranet-page="intranet"] #adminSection .sistema-card .acesso-badge {
+  border: 1px solid #1b5689 !important;
+  background: #1b5689 !important;
+  background-image: none !important;
+  color: #fff !important;
+}
+
+@media (max-width: 640px) {
+  body[data-intranet-page="index"] #loginModalOverlay {
+    padding: 14px;
+  }
+  body[data-intranet-page="index"] .modal-login {
+    border-radius: 18px;
+  }
+  body[data-intranet-page="intranet"] .portal-prefeitura {
+    border-radius: 18px;
+  }
+  body[data-intranet-page="intranet"] .brasao-header {
+    padding: 22px 16px;
+    border-radius: 18px;
+  }
+}
+
+
+/* Ajustes cirúrgicos solicitados — login e hall, 2026-10-06 */
+body[data-intranet-page="index"] {
+  background: #f1f3f5 !important;
+  color: #263746 !important;
+}
+body[data-intranet-page="index"] #loginModalOverlay {
+  background: #f1f3f5 !important;
+  background-image: none !important;
+}
+body[data-intranet-page="index"] .modal-login-header .brasao-mini {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+body[data-intranet-page="index"] .modal-login-header .brasao-mini img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 7px rgba(28, 48, 66, .16));
+}
+body[data-intranet-page="index"] #btnGoogle .fab.fa-google {
+  color: transparent !important;
+  background: conic-gradient(from -35deg, #4285f4 0 24%, #34a853 24% 46%, #fbbc05 46% 68%, #ea4335 68% 84%, #4285f4 84% 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body[data-intranet-page="index"] #btnSolicitarAcesso {
+  border-color: #d5dbe1 !important;
+  background: #f3f5f7 !important;
+  color: #40566b !important;
+  box-shadow: none !important;
+}
+body[data-intranet-page="index"] #btnSolicitarAcesso:hover {
+  border-color: #b8c6d2 !important;
+  background: #e9eef2 !important;
+}
+body[data-intranet-page="index"] .login-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 11px;
+  padding: 10px 12px;
+  border: 1px solid #d7e2eb;
+  border-radius: 10px;
+  background: #f4f7f9;
+  color: #38536b;
+  font-size: .84rem;
+  line-height: 1.4;
+}
+body[data-intranet-page="index"] .login-status[hidden] { display: none !important; }
+body[data-intranet-page="index"] .login-status[data-estado="carregando"] {
+  border-color: #cbdced;
+  background: #edf4fa;
+  color: #285477;
+}
+body[data-intranet-page="index"] .login-status[data-estado="erro"] {
+  border-color: #f0c7c7;
+  background: #fff5f4;
+  color: #9b3434;
+}
+body[data-intranet-page="index"] .login-status[data-estado="sucesso"] {
+  border-color: #bfdfd0;
+  background: #f0f8f3;
+  color: #28634b;
+}
+body[data-intranet-page="index"] #btnEntrar:disabled {
+  cursor: progress;
+  opacity: .82;
+  transform: none !important;
+}
+
+body[data-intranet-page="intranet"] .avatar-btn {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+}
+body[data-intranet-page="intranet"] .avatar-btn > span {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border-radius: 50%;
+}
+body[data-intranet-page="intranet"] .avatar-btn > span > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card .card-icon,
+body[data-intranet-page="intranet"] #adminSection .sistema-card .card-icon {
+  border: 1px solid var(--module-icon-border-color, #d8e6f3) !important;
+  border-radius: 16px !important;
+  background: var(--module-icon-background, #eaf2fa) !important;
+  color: var(--module-icon-color, #1d5688) !important;
+  box-shadow: 0 4px 12px rgba(22, 55, 87, .06) !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card.card-perfil .card-icon {
+  --module-icon-color: #7652a8 !important;
+  --module-icon-background: linear-gradient(135deg, #f0eafd 0%, #f8f5ff 100%) !important;
+  --module-icon-border-color: #e1d4f3 !important;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 1) .card-icon {
+  --module-icon-color: #2868c7; --module-icon-background: #edf3ff; --module-icon-border-color: #d4e2ff;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 2) .card-icon {
+  --module-icon-color: #16836b; --module-icon-background: #e9f7f1; --module-icon-border-color: #cceade;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 3) .card-icon {
+  --module-icon-color: #c27a19; --module-icon-background: #fff4e4; --module-icon-border-color: #f2dfbf;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 4) .card-icon {
+  --module-icon-color: #7652a8; --module-icon-background: #f2ecfa; --module-icon-border-color: #e1d4f3;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 5) .card-icon {
+  --module-icon-color: #157f8c; --module-icon-background: #e8f6f7; --module-icon-border-color: #c9e8ea;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 6) .card-icon {
+  --module-icon-color: #b54f62; --module-icon-background: #fff0f1; --module-icon-border-color: #f2d4d9;
+}
+
+
+/* O PNG institucional já contém o brasão; não adicionar molduras via estilos legados. */
+html body[data-intranet-page="index"] #loginModalOverlay .modal-login .modal-login-header .brasao-mini {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+html body[data-intranet-page="index"] #loginModalOverlay .modal-login .modal-login-header .brasao-mini img {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 4px 7px rgba(28, 48, 66, .16)) !important;
+}
+
+
+/* Ajustes visuais solicitados · header do hall · 2026-10-06 */
+body[data-intranet-page="intranet"] .barra-usuario {
+  padding: 14px 20px !important;
+  background: #edf5fc !important;
+  border-color: #c4d8ea !important;
+  box-shadow: 0 8px 20px rgba(20, 76, 124, .10) !important;
+}
+body[data-intranet-page="intranet"] .brasao-header {
+  padding: clamp(34px, 4.5vw, 54px) clamp(26px, 4vw, 52px) !important;
+  min-height: 188px;
+}
+body[data-intranet-page="intranet"] .brasao-img-container {
+  background: rgba(255, 255, 255, .96) !important;
+  border-color: rgba(255, 255, 255, .98) !important;
+  box-shadow: 0 10px 28px rgba(3, 25, 48, .28) !important;
+}
+body[data-intranet-page="intranet"] .brasao-oficial {
+  display: block;
+  padding: 5px;
+  filter: drop-shadow(0 2px 3px rgba(18, 48, 78, .16));
+}
+body[data-intranet-page="intranet"] .avatar-btn > img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+body[data-intranet-page="intranet"] .boas-vindas h1 .fas,
+body[data-intranet-page="intranet"] .brasao-header :is(.fas, .far, .fab),
+body[data-intranet-page="intranet"] .selo-seguranca span .fas {
+  color: #58d8ff !important;
+  text-shadow: 0 0 14px rgba(88, 216, 255, .28);
+}
+body[data-intranet-page="intranet"] .module-search-shell > .fas,
+body[data-intranet-page="intranet"] .module-search-meta span:first-child {
+  color: #0877db !important;
+}
+body[data-intranet-page="intranet"] #sistemasGrid .sistema-card .card-icon,
+body[data-intranet-page="intranet"] #adminSection .sistema-card .card-icon {
+  color: #0877db !important;
+  background: #e3f2ff !important;
+  border-color: #9dccf2 !important;
+  box-shadow: 0 6px 14px rgba(8, 119, 219, .16) !important;
+}
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 2) .card-icon { color: #079b78 !important; background: #e1f8f1 !important; border-color: #91dec9 !important; }
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 3) .card-icon { color: #d87800 !important; background: #fff0cf !important; border-color: #f0c873 !important; }
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 4) .card-icon { color: #8a51d1 !important; background: #f0e7ff !important; border-color: #c9a9f1 !important; }
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 5) .card-icon { color: #078d9f !important; background: #def7fa !important; border-color: #8bd7df !important; }
+body[data-intranet-page="intranet"] #adminSection .sistema-card:nth-child(6n + 6) .card-icon { color: #ca405b !important; background: #ffe6eb !important; border-color: #f1a9b9 !important; }
+
+
+/* Acessos rápidos do menu do avatar — somente módulos autorizados pelo hall. */
+body[data-intranet-page="intranet"] .avatar-menu {
+  width: min(340px, calc(100vw - 24px));
+  max-height: min(78vh, 620px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #b6cbd9 #f4f8fb;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick {
+  margin: 8px 0 5px;
+  padding: 11px 10px 7px;
+  border-top: 1px solid #e2ebf2;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 4px 8px;
+  color: #668095;
+  font-size: .65rem;
+  font-weight: 900;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-title i {
+  color: #0b72b5;
+  font-size: .72rem;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-list {
+  display: grid;
+  gap: 4px;
+}
+body[data-intranet-page="intranet"] .avatar-menu-item.avatar-menu-quick-link {
+  display: flex;
+  width: 100%;
+  min-height: 40px;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #31566d;
+  background: transparent;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 750;
+  text-align: left;
+  cursor: pointer;
+  transition: color .16s ease, background .16s ease, border-color .16s ease, transform .16s ease;
+}
+body[data-intranet-page="intranet"] .avatar-menu-item.avatar-menu-quick-link:hover,
+body[data-intranet-page="intranet"] .avatar-menu-item.avatar-menu-quick-link:focus-visible {
+  transform: translateX(2px);
+  border-color: #d4e5ef;
+  color: #075e98;
+  background: #edf6fb;
+  outline: none;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-icon {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  place-items: center;
+  border: 1px solid #d6e9f3;
+  border-radius: 8px;
+  color: #0b72b5;
+  background: #f0f8fc;
+  font-size: .72rem;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-arrow {
+  flex: 0 0 auto;
+  color: #9aafbc;
+  font-size: .62rem;
+  transition: color .16s ease, transform .16s ease;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-link:hover .avatar-menu-quick-arrow,
+body[data-intranet-page="intranet"] .avatar-menu-quick-link:focus-visible .avatar-menu-quick-arrow {
+  transform: translate(1px, -1px);
+  color: #0b72b5;
+}
+body[data-intranet-page="intranet"] .avatar-menu-quick-empty {
+  margin: 2px 4px 6px;
+  padding: 9px 10px;
+  border: 1px dashed #c8d9e3;
+  border-radius: 9px;
+  color: #708797;
+  background: #f8fbfd;
+  font-size: .68rem;
+  line-height: 1.45;
+}
+@media (max-width: 480px) {
+  body[data-intranet-page="intranet"] .avatar-menu {
+    width: min(320px, calc(100vw - 18px));
+    max-height: 76vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-intranet-page="intranet"] .avatar-menu-item.avatar-menu-quick-link,
+  body[data-intranet-page="intranet"] .avatar-menu-quick-arrow {
+    transition: none;
+  }
+}

@@ -7,8 +7,9 @@
   })();
   const root = (path) => `${appRoot}${path}`;
   // CSS is consolidated in shared/css/intranet-global.css.
-const links = [
+  const links = [
     [root("core/index.html"), "fa-gauge-high", "Visão geral"],
+    [root("core/auditoria/index.html"), "fa-clock-rotate-left", "Auditoria e logs"],
     [root("core/usuarios/index.html"), "fa-users", "Usuários", "navUsers"],
     [root("core/orgaos/index.html"), "fa-building", "Órgãos e unidades"],
     [root("core/modulos/index.html"), "fa-cubes", "Módulos"],

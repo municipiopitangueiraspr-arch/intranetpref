@@ -64,12 +64,13 @@ export class UI {
   // FORMATAR MOEDA
   // ============================================================
   formatarMoeda(valor) {
-    if (valor === null || valor === undefined || isNaN(valor)) {
-      return "R$ 0,00";
-    }
-    return (valor || 0).toLocaleString("pt-BR", {
+    const numero = Number(valor);
+    if (!Number.isFinite(numero)) return "R$ 0,00";
+    return numero.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
   }
 
