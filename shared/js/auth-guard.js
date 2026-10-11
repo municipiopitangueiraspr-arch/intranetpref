@@ -20,7 +20,6 @@
 
 import { supabase } from "./supabase.js";
 import { OnboardingService } from "./services/onboarding-service.js";
-import { conectarPresencaOnline } from "./online-presence.js";
 
 // ------------------------------------------------------------
 // Caminhos (relativos à raiz do projeto)
@@ -165,20 +164,6 @@ export const AuthGuard = {
         // Não bloqueia o fluxo — fire and forget
         OnboardingService.registrarUltimoAcesso().catch((err) => {
           console.warn("[AuthGuard] Não foi possível registrar acesso:", err);
-        });
-      }
-
-      // O hall inicializa seu próprio canal para exibir a contagem; evita
-      // duplicá-lo aqui, mas mantém presença em outras rotas protegidas.
-      if (
-        !precisaOnboarding &&
-        !estamosEm(ROTAS.LOGIN) &&
-        !estamosEm(ROTAS.INTRANET)
-      ) {
-        void conectarPresencaOnline(supabase, session, undefined, (error) => {
-          if (error) {
-            console.warn("[AuthGuard] Presença online indisponível:", error);
-          }
         });
       }
 

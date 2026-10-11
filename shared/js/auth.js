@@ -3,7 +3,7 @@
 // Gerenciamento de autenticação - Centralizado
 // ============================================
 
-import { supabase, SUPABASE_CONFIG } from "./supabase.js";
+import { supabase } from "./supabase.js";
 
 // ============================================
 // CLASSE DE AUTENTICAÇÃO
@@ -84,18 +84,12 @@ class AuthManager {
    */
   async login(email, password) {
     try {
-      const response = await fetch(`${SUPABASE_CONFIG.url}/functions/v1/security-login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", apikey: SUPABASE_CONFIG.anonKey },
-        body: JSON.stringify({ action: "password_login", email, password }),
-        cache: "no-store",
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok || !payload.session?.access_token || !payload.session?.refresh_token) {
-        throw new Error(payload.message || "Não foi possível validar o acesso com segurança.");
-      }
-      const { data, error } = await supabase.auth.setSession(payload.session);
-      if (error || !data?.user) throw error || new Error("Não foi possível estabelecer a sessão segura.");
+
+      if (error) throw error;
 
       // Atualizar sessão
       this.session = data.session;
@@ -107,11 +101,9 @@ class AuthManager {
         .eq("uuid", data.user.id)
         .single();
 
-      if (userError || !usuario || usuario.ativo !== true) {
-        await supabase.auth.signOut();
-        this.session = null;
-        this.usuarioAtual = null;
-        throw new Error("Conta indisponível ou sem perfil ativo no sistema.");
+      if (userError) {
+        console.warn("Usuário não encontrado na tabela:", userError);
+        return data;
       }
 
       this.usuarioAtual = usuario;
@@ -157,7 +149,6 @@ class AuthManager {
       await supabase
         .from("usuarios")
         .update({
-          ultimo_acesso: new Date().toISOString(),
           ultimo_login: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })

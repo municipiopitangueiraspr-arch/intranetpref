@@ -61,8 +61,7 @@
 
    Configuração aceita (todas opcionais, exceto supabase):
      supabase         cliente Supabase já inicializado
-     brand            { nome, subtitulo, icone, imagem } — cabeçalho da sidebar;
-                      imagem aceita caminho relativo e usa ../brasao-pref.png por padrão
+     brand            { nome, subtitulo, icone }  — cabeçalho da sidebar
      iconeTitulo      ícone Font Awesome do título da topbar
      titulo           título principal da página (topbar)
      subtitulo        subtítulo da página (topbar)
@@ -89,8 +88,6 @@
 /* =====================================================================
    CONSTANTES PADRÃO
    ===================================================================== */
-import { conectarPresencaOnline } from "./online-presence.js?v=20261009-presence-auth-2";
-
 const DEFAULTS = {
   rotaIntranet: "../intranet.html",
   textoVoltar: "Voltar à intranet",
@@ -186,24 +183,6 @@ export async function initLayout(config = {}) {
   // ---------- 9. Expõe o usuário globalmente (atalho de conveniência) ----------
   window.usuarioLogado = usuario;
 
-  // Mantém a presença enquanto o servidor estiver em qualquer módulo do sistema.
-  void supabase.auth.getSession().then(({ data, error }) => {
-    if (error) {
-      console.warn("[layout] Não foi possível obter a sessão para presença:", error);
-      return;
-    }
-    const session = data?.session;
-    if (session && session.user.id === usuario.uuid) {
-      void conectarPresencaOnline(supabase, session, undefined, (presenceError) => {
-        if (presenceError) {
-          console.warn("[layout] Presença online indisponível:", presenceError);
-        }
-      });
-    }
-  }).catch((error) => {
-    console.warn("[layout] Não foi possível iniciar presença online:", error);
-  });
-
   // ---------- 10. Callback opcional para a página ----------
   if (typeof cfg.onUsuario === "function") {
     try {
@@ -260,11 +239,10 @@ function renderSidebar(cfg, usuario) {
   const adminOnlyIds = Array.isArray(cfg.adminOnly) ? cfg.adminOnly : [];
 
   // ---------- Cabeçalho (marca) ----------
-  const brasaoSrc = cfg.brand.imagem || "../brasao-pref.png";
   const brandHtml = `
     <div class="sidebar-brand">
       <div class="brand-icon" aria-label="Brasão do Município">
-        <img class="brasao-municipio" src="${escaparAtributo(brasaoSrc)}" alt="Brasão do Município" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <img class="brasao-municipio" src="../brasao-pref.png" alt="Brasão do Município" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <i class="fas ${escaparHtml(cfg.brand.icone)}" aria-hidden="true" data-intranet-style="304557ef7fda"></i>
       </div>
       <div class="brand-text">
@@ -605,10 +583,6 @@ function marcarItemAtivo(moduloAtivo) {
 function configurarToggleMobile(sidebar) {
   const btn = document.getElementById("btnToggleSidebar");
   if (!btn) return;
-  // O system-shell também conhece o hamburger. Um único controlador evita
-  // que um listener abra o menu e o outro o feche no mesmo clique.
-  if (btn.dataset.sidebarToggleBound === "true") return;
-  btn.dataset.sidebarToggleBound = "true";
   btn.dataset.layoutBound = "true";
 
   // ---------- Backdrop (cria se não existir) ----------

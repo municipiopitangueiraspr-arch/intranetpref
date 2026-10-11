@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <title>Intranet · Gestão Pitangueiras</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,7 +20,8 @@
 
 
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
+  <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
+  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261007-avatar-data-url-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="intranet">
     <!-- ============================================================ -->
@@ -59,6 +61,19 @@
             >
               <i class="fas fa-user-circle"></i> Meu Perfil
             </button>
+            <section class="avatar-menu-quick" aria-labelledby="avatarQuickTitle">
+              <h2 class="avatar-menu-quick-title" id="avatarQuickTitle">
+                <i class="fas fa-bolt" aria-hidden="true"></i> Acessos rápidos
+              </h2>
+              <div
+                class="avatar-menu-quick-list"
+                id="avatarQuickModules"
+                role="group"
+                aria-label="Módulos disponíveis para esta conta"
+              >
+                <p class="avatar-menu-quick-empty">Carregando módulos autorizados...</p>
+              </div>
+            </section>
             <button
               class="avatar-menu-item sair"
               id="menuSair"
@@ -87,7 +102,7 @@
         </div>
         <div class="boas-vindas">
           <h1>
-            <i class="fas fa-hand"></i>
+            <i class="fas fa-hand-wave"></i>
             Bem-vindo, <span id="servidorNome">servidor</span>
           </h1>
           <span class="departamento-tag">
@@ -96,7 +111,7 @@
           </span>
           <div class="intranet-style-1f7b8ab338">
             <span class="badge-intranet">
-              <i class="fas fa-shield-halved"></i> INTRANET MUNICIPAL · ACESSO
+              <i class="fas fa-shield-haltered"></i> INTRANET MUNICIPAL · ACESSO
               RESTRITO
             </span>
           </div>
@@ -699,9 +714,56 @@ import { supabase } from "./shared/js/supabase.js";
             return { titulo: m.descricao || m.nome, resumo: "Acessar recursos, informações e serviços deste módulo da Intranet Municipal." };
           };
 
+          // Os atalhos reaproveitam a mesma lista filtrada que gera os cards do hall.
+          // Assim, módulos sem permissão ou sem rota funcional não aparecem no avatar.
+          const quickAccessHost = document.getElementById("avatarQuickModules");
+          if (quickAccessHost) {
+            const itensAtalho = visiveis
+              .filter((m) => m.rota && m.rota !== "#")
+              .map((m) => ({
+                modulo: m.nome,
+                titulo: copyModulo(m).titulo || m.nome,
+                icone: m.icone || "fa-cube",
+              }));
+
+            if (usuarioLogado.perfil === "ADMIN") {
+              const modulosAdmin = [
+                { modulo: "core", titulo: "Painel Admin", icone: "fa-cogs" },
+                { modulo: "orgaos", titulo: "Órgãos", icone: "fa-building" },
+                { modulo: "usuarios", titulo: "Usuários", icone: "fa-users" },
+                { modulo: "modulos", titulo: "Módulos", icone: "fa-cubes" },
+                { modulo: "permissoes", titulo: "Permissões", icone: "fa-key" },
+              ];
+              const jaIncluidos = new Set(itensAtalho.map((item) => item.modulo));
+              modulosAdmin.forEach((item) => {
+                if (!jaIncluidos.has(item.modulo)) itensAtalho.push(item);
+              });
+            }
+
+            quickAccessHost.innerHTML = itensAtalho.length
+              ? itensAtalho.map((item) => `
+                  <button
+                    class="avatar-menu-item avatar-menu-quick-link"
+                    type="button"
+                    role="menuitem"
+                    data-atalho-modulo="${escaparHtml(item.modulo)}"
+                    aria-label="Acessar ${escaparHtml(item.titulo)}"
+                    title="Acessar ${escaparHtml(item.titulo)}"
+                  >
+                    <span class="avatar-menu-quick-icon"><i class="fas ${escaparHtml(item.icone)}" aria-hidden="true"></i></span>
+                    <span class="avatar-menu-quick-label">${escaparHtml(item.titulo)}</span>
+                    <i class="fas fa-arrow-up-right-from-square avatar-menu-quick-arrow" aria-hidden="true"></i>
+                  </button>
+                `).join("")
+              : '<p class="avatar-menu-quick-empty">Nenhum módulo com acesso direto está disponível.</p>';
+          }
+
+          const paletaCoresModulos = ["#2868c7", "#16836b", "#c27a19", "#7652a8", "#157f8c", "#b54f62"];
           const cardsModulos = visiveis
-            .map((m) => {
-              const cor = corValida(m.cor) ? m.cor : "#0d5e3a";
+            .map((m, indice) => {
+              const cor = corValida(m.cor)
+                ? m.cor
+                : paletaCoresModulos[indice % paletaCoresModulos.length];
               const icone = m.icone || "fa-cube";
               const temRota = m.rota && m.rota !== "#";
               const identidade = `${m.nome || ""} ${m.descricao || ""}`.toLocaleLowerCase("pt-BR");
@@ -718,7 +780,7 @@ import { supabase } from "./shared/js/supabase.js";
                      data-modulo="${escaparHtml(m.nome)}"
                      onclick="window.acessarModulo('${escaparHtml(m.nome)}')">
                   <div class="card-icon"
-                       style="background: linear-gradient(135deg, ${cor}22 0%, ${cor}11 100%); color: ${cor};">
+                       style="--module-icon-color: ${cor}; --module-icon-background: linear-gradient(135deg, ${cor}22 0%, ${cor}11 100%); --module-icon-border-color: ${cor}33;">
                     <i class="fas ${escaparHtml(icone)}"></i>
                   </div>
                   <h3>${escaparHtml(copy.titulo)}</h3>
@@ -780,8 +842,45 @@ import { supabase } from "./shared/js/supabase.js";
 
         const avatar = document.getElementById("avatarIniciais");
         if (avatar) {
-          if (usuarioLogado.foto_url) avatar.innerHTML = `<img src="${escaparHtml(usuarioLogado.foto_url)}" alt="Foto de ${escaparHtml(usuarioLogado.nome)}">`;
-          else avatar.textContent = iniciais;
+          const valorFoto = String(usuarioLogado.foto_url || "").trim();
+          let urlFoto = "";
+          if (valorFoto) {
+            // O perfil salva a foto compactada como data:image/jpeg;base64,...
+            // e também pode receber uma URL HTTPS de Storage. O código antigo
+            // passava tudo pelo construtor URL, que rejeita data URLs e fazia
+            // o hall cair silenciosamente nas iniciais.
+            const fotoDataUrl = /^data:image\/(?:jpeg|jpg|png|webp|gif);base64,[a-z0-9+/=\s]+$/i.test(valorFoto);
+            if (fotoDataUrl) {
+              urlFoto = valorFoto;
+            } else {
+              try {
+                const url = new URL(valorFoto, window.location.href);
+                if (url.protocol === "https:" || url.origin === window.location.origin) {
+                  urlFoto = url.href;
+                }
+              } catch {
+                urlFoto = "";
+              }
+            }
+          }
+
+          if (urlFoto) {
+            const imagem = document.createElement("img");
+            imagem.src = urlFoto;
+            imagem.alt = `Foto de ${usuarioLogado.nome || "usuário"}`;
+            imagem.loading = "eager";
+            imagem.decoding = "async";
+            imagem.referrerPolicy = "no-referrer";
+            imagem.addEventListener("error", () => {
+              avatar.textContent = iniciais;
+            }, { once: true });
+            imagem.addEventListener("load", () => {
+              avatar.classList.add("has-avatar-photo");
+            }, { once: true });
+            avatar.replaceChildren(imagem);
+          } else {
+            avatar.textContent = iniciais;
+          }
         }
         setTxt("menuNome", usuarioLogado.nome);
         setTxt("menuEmail", usuarioLogado.email);
@@ -801,7 +900,7 @@ import { supabase } from "./shared/js/supabase.js";
         const { data: perfil, error } = await supabase
           .from("usuarios")
           .select(
-            "id, nome, cargo, orgao_id, perfil, ativo, primeiro_acesso, perfil_completo",
+            "id, nome, cargo, orgao_id, perfil, ativo, primeiro_acesso, perfil_completo, foto_url",
           )
           .eq("uuid", user.id)
           .maybeSingle();
@@ -831,7 +930,7 @@ import { supabase } from "./shared/js/supabase.js";
         // Atualizar saudação principal
         const saudacao = document.querySelector("#hallContent .boas-vindas h1");
         if (saudacao) {
-          saudacao.innerHTML = `<i class="fas fa-hand"></i> Bem-vindo, ${escaparHtml(
+          saudacao.innerHTML = `<i class="fas fa-hand-wave"></i> Bem-vindo, ${escaparHtml(
             usuarioLogado.nome,
           )}`;
         }
@@ -979,6 +1078,16 @@ import { supabase } from "./shared/js/supabase.js";
             menu.classList.remove("aberto");
             btn.setAttribute("aria-expanded", "false");
           }
+        });
+
+        // Os módulos exibidos aqui são montados a partir da lista autorizada do usuário.
+        menu.addEventListener("click", (e) => {
+          const atalho = e.target.closest("[data-atalho-modulo]");
+          if (!atalho) return;
+          const modulo = atalho.dataset.atalhoModulo;
+          menu.classList.remove("aberto");
+          btn.setAttribute("aria-expanded", "false");
+          if (modulo) window.acessarModulo(modulo);
         });
 
         // Item "Meu Perfil"
