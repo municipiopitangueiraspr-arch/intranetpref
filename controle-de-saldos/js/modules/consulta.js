@@ -1411,7 +1411,60 @@ export class Consulta {
       this.atualizarControleFavoritas();
       return;
     }
-    (data || []).forEach((row) => this._favoritasIds.add(String(row.ata_id)));
+    const favoritas = data || [];
+    const idsFavoritos = favoritas
+      .map((row) => String(row.ata_id))
+      .filter(Boolean);
+
+    // Favoritas vencidas deixam de ser favoritas de forma persistente.
+    // A limpeza acontece somente depois de consultar as atas; em caso de
+    // falha nessa segunda consulta, preservamos a lista para não apagar
+    // preferências sem confirmação do estado da ata.
+    if (idsFavoritos.length > 0) {
+      const hoje = new Date();
+      const hojeIso = [
+        hoje.getFullYear(),
+        String(hoje.getMonth() + 1).padStart(2, "0"),
+        String(hoje.getDate()).padStart(2, "0"),
+      ].join("-");
+      const { data: atasFavoritas, error: atasError } = await supabase
+        .from("atas")
+        .select("id, data_fim_vigencia, situacao")
+        .in("id", idsFavoritos);
+
+      if (atasError) {
+        console.warn("Não foi possível validar o vencimento das favoritas:", atasError.message);
+        idsFavoritos.forEach((id) => this._favoritasIds.add(id));
+      } else {
+        const vencidasIds = (atasFavoritas || [])
+          .filter((ata) => {
+            const fim = ata.data_fim_vigencia
+              ? String(ata.data_fim_vigencia).slice(0, 10)
+              : null;
+            return ata.situacao === "VENCIDA" || (fim && fim < hojeIso);
+          })
+          .map((ata) => String(ata.id));
+
+        if (vencidasIds.length > 0) {
+          const { error: limpezaError } = await supabase
+            .from("atas_favoritas")
+            .delete()
+            .eq("usuario_id", usuarioId)
+            .in("ata_id", vencidasIds);
+          if (limpezaError) {
+            console.warn("Não foi possível remover favoritas vencidas:", limpezaError.message);
+            idsFavoritos.forEach((id) => this._favoritasIds.add(id));
+          } else {
+            const vencidasSet = new Set(vencidasIds);
+            idsFavoritos
+              .filter((id) => !vencidasSet.has(id))
+              .forEach((id) => this._favoritasIds.add(id));
+          }
+        } else {
+          idsFavoritos.forEach((id) => this._favoritasIds.add(id));
+        }
+      }
+    }
     this.atualizarControleFavoritas();
   }
   atualizarControleFavoritas() {

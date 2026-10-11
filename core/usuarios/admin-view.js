@@ -1,0 +1,1546 @@
+/* Controlador extraído da página administrativa original; montado por core/admin-panel.js. */
+
+      // ============================================
+      // core/usuarios/index.html - Script Principal
+      // ============================================
+
+      import { supabase } from "../../shared/js/supabase.js";
+      import { UsuariosService } from "../../shared/js/services/usuarios-service.js";
+      import { OrgaosService } from "../../shared/js/services/orgaos-service.js";
+      import { auth } from "../../shared/js/auth.js";
+
+      // ============================================
+      // VARIÁVEIS GLOBAIS
+      // ============================================
+      let usuarioAtual = null;
+      let usuarios = [];
+      let orgaos = [];
+      let filtros = {
+        status: "todos",
+        perfil: "todos",
+        orgao: "todos",
+        busca: "",
+      };
+      let paginaAtual = 1;
+      const itensPorPagina = 10;
+
+      // ============================================
+      // UTILITÁRIOS
+      // ============================================
+
+      // Sistema de notificação no padrão Biblioteca (centro inferior)
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      // Mapeia o tipo português (usado no JS atual) para o padrão inglês
+      function mostrarToast(tipo, titulo, mensagem, duracao = 4000) {
+        const mapa = {
+          sucesso: "success",
+          erro: "error",
+          aviso: "warning",
+          info: "info",
+        };
+        return window.showNotification(
+          mapa[tipo] || "info",
+          titulo,
+          mensagem,
+          duracao,
+        );
+      }
+
+      function formatarData(data) {
+        if (!data) return "-";
+        try {
+          const d = new Date(data);
+          return d.toLocaleDateString("pt-BR");
+        } catch {
+          return data;
+        }
+      }
+
+      function formatarDataHora(data) {
+        if (!data) return "-";
+        try {
+          const d = new Date(data);
+          return d.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        } catch {
+          return data;
+        }
+      }
+
+      function mostrarLoading(show) {
+        const container = document.getElementById("loadingContainer");
+        if (container) {
+          container.style.display = show ? "flex" : "none";
+        }
+        const content = document.querySelector(".usuarios-content");
+        if (content) {
+          content.style.display = show ? "none" : "block";
+        }
+      }
+
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
+
+      /**
+       * Gera uma senha temporária forte e legível.
+       * Formato: "Prefeitura@XXXX" onde XXXX são 4 dígitos aleatórios.
+       * Ex: Prefeitura@4821
+       * Fácil de ditar por telefone, mas difícil de adivinhar.
+       */
+      function gerarSenhaTemporaria() {
+        const numeros = Math.floor(1000 + Math.random() * 9000);
+        return `Prefeitura@${numeros}`;
+      }
+
+      // ============================================
+      // SIDEBAR TOGGLE (mobile)
+      // ============================================
+      window.toggleSidebar = function () {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) sidebar.classList.toggle("aberta");
+      };
+
+      // Fecha a sidebar ao clicar em um link (mobile)
+      (function bindSidebarLinks() {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) {
+          sidebar.querySelectorAll("a").forEach((a) => {
+            a.addEventListener("click", () =>
+              sidebar.classList.remove("aberta"),
+            );
+          });
+        }
+      })();
+
+      // ============================================
+      // AUTENTICAÇÃO
+      // ============================================
+      async function verificarAutenticacao() {
+        try {
+          const session = await auth.verificarSessao();
+          if (!session) {
+            window.location.href = "../index.html";
+            return false;
+          }
+
+          const usuario = await auth.obterUsuarioAtual();
+          if (!usuario) {
+            window.location.href = "../index.html";
+            return false;
+          }
+
+          // Verificar se é ADMIN
+          if (usuario.perfil !== "ADMIN") {
+            mostrarToast(
+              "erro",
+              "Acesso negado",
+              "Apenas administradores podem acessar esta área.",
+            );
+            setTimeout(() => {
+              window.location.href = "../intranet.html";
+            }, 2000);
+            return false;
+          }
+
+          usuarioAtual = usuario;
+          return true;
+        } catch (error) {
+          console.error("Erro ao verificar autenticação:", error);
+          window.location.href = "../index.html";
+          return false;
+        }
+      }
+
+      // ============================================
+      // ATUALIZAR INTERFACE DO USUÁRIO
+      // ============================================
+      function atualizarInterfaceUsuario() {
+        if (!usuarioAtual) return;
+
+        setTexto("topbarNome", usuarioAtual.nome || "Usuário");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+        );
+
+        const avatar = document.getElementById("avatarIniciais");
+        if (avatar && usuarioAtual.nome) {
+          avatar.textContent = iniciais(usuarioAtual.nome);
+        }
+      }
+
+      // ============================================
+      // CARREGAR DADOS
+      // ============================================
+      async function carregarOrgaos() {
+        try {
+          orgaos = await OrgaosService.listarAtivos();
+        } catch (error) {
+          console.error("Erro ao carregar órgãos:", error);
+          orgaos = [];
+        }
+      }
+
+      // ============================================
+      // CARREGAR USUÁRIOS
+      // ============================================
+      async function carregarUsuarios() {
+        try {
+          mostrarLoading(true);
+
+          const options = {};
+
+          // Filtro de status (agora o service suporta os 3)
+          if (filtros.status === "ativo") {
+            options.onlyActive = true;
+          } else if (filtros.status === "inativo") {
+            options.onlyInactive = true;
+          }
+
+          if (filtros.busca) {
+            options.search = filtros.busca;
+          }
+
+          if (filtros.orgao && filtros.orgao !== "todos") {
+            options.orgaoId = parseInt(filtros.orgao);
+          }
+
+          if (filtros.perfil && filtros.perfil !== "todos") {
+            options.perfil = filtros.perfil;
+          }
+
+          usuarios = await UsuariosService.listar(options);
+
+          // Ordenação segura por nome
+          usuarios.sort((a, b) => {
+            const nomeA = a.nome || "";
+            const nomeB = b.nome || "";
+            return nomeA.localeCompare(nomeB);
+          });
+
+          renderizarUsuarios();
+        } catch (error) {
+          console.error("Erro ao carregar usuários:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            "Não foi possível carregar os usuários.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      }
+
+      // ============================================
+      // RENDERIZAR
+      // ============================================
+      function renderizarUsuarios() {
+        const container = document.getElementById("pageContent");
+        if (!container) return;
+
+        const totalPaginas = Math.ceil(usuarios.length / itensPorPagina) || 1;
+        if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+
+        const inicio = (paginaAtual - 1) * itensPorPagina;
+        const paginaUsuarios = usuarios.slice(inicio, inicio + itensPorPagina);
+
+        // Opções para filtros
+        const perfis = [
+          { value: "todos", label: "Todos os perfis" },
+          { value: "ADMIN", label: "Administrador" },
+          { value: "SECRETARIO", label: "Secretário" },
+          { value: "SOLICITANTE", label: "Solicitante" },
+          { value: "ESTAGIARIO", label: "Estagiário" },
+        ];
+
+        const orgaoOptions = [
+          { value: "todos", label: "Todos os órgãos" },
+          ...orgaos.map((o) => ({ value: o.id, label: o.nome })),
+        ];
+
+        // Contadores (sobre o total, não sobre a página)
+        const totalAtivos = usuarios.filter((u) => u.ativo).length;
+        const totalInativos = usuarios.length - totalAtivos;
+        const totalPrimeiroAcesso = usuarios.filter(
+          (u) => u.primeiro_acesso === true,
+        ).length;
+
+        container.innerHTML = `
+                <div class="usuarios-content">
+                    <div class="page-header">
+                        <h1><i class="fas fa-users"></i> Usuários</h1>
+                        <button class="btn btn-primary" id="btnNovoUsuario" type="button">
+                            <i class="fas fa-user-plus"></i> Novo Usuário
+                        </button>
+                    </div>
+
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label><i class="fas fa-filter"></i> Status</label>
+                            <select id="filtroStatus" aria-label="filtroStatus">
+                                <option value="todos" ${filtros.status === "todos" ? "selected" : ""}>Todos</option>
+                                <option value="ativo" ${filtros.status === "ativo" ? "selected" : ""}>Ativos</option>
+                                <option value="inativo" ${filtros.status === "inativo" ? "selected" : ""}>Inativos</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-user-tag"></i> Perfil</label>
+                            <select id="filtroPerfil" aria-label="filtroPerfil">
+                                ${perfis
+                                  .map(
+                                    (p) => `
+                                    <option value="${p.value}" ${filtros.perfil === p.value ? "selected" : ""}>${p.label}</option>
+                                `,
+                                  )
+                                  .join("")}
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-building"></i> Órgão</label>
+                            <select id="filtroOrgao" aria-label="filtroOrgao">
+                                ${orgaoOptions
+                                  .map(
+                                    (o) => `
+                                    <option value="${o.value}" ${filtros.orgao == o.value ? "selected" : ""}>${o.label}</option>
+                                `,
+                                  )
+                                  .join("")}
+                            </select>
+                        </div>
+                        <div class="filter-group" data-intranet-inline-style="is649f9eeb607a">
+                            <label><i class="fas fa-search"></i> Buscar</label>
+                            <input type="text" id="filtroBusca" placeholder="Nome ou e-mail..." value="${filtros.busca || ""}" / aria-label="Nome ou e mail...">
+                        </div>
+                        <button class="btn btn-secondary" id="btnLimparFiltros" type="button">
+                            <i class="fas fa-undo-alt"></i> Limpar
+                        </button>
+                        <button class="btn btn-primary" id="btnAplicarFiltros" type="button">
+                            <i class="fas fa-search"></i> Aplicar
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-container">
+                            ${renderizarTabela(paginaUsuarios)}
+                        </div>
+                        ${
+                          usuarios.length > itensPorPagina
+                            ? `
+                            <div class="pagination">
+                                <button class="btn-page" id="btnPagAnterior" ${paginaAtual <= 1 ? "disabled" : ""} type="button">
+                                    <i class="fas fa-chevron-left"></i> Anterior
+                                </button>
+                                <span class="page-info">Página ${paginaAtual} de ${totalPaginas}</span>
+                                <button class="btn-page" id="btnPagProximo" ${paginaAtual >= totalPaginas ? "disabled" : ""} type="button">
+                                    Próximo <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        `
+                            : ""
+                        }
+                    </div>
+
+                    <div class="stats-footer">
+                        <span><i class="fas fa-users"></i> Total: <strong>${usuarios.length}</strong> usuários</span>
+                        <span><i class="fas fa-check-circle" data-intranet-inline-style="is93b3439596cc"></i> Ativos: <strong>${totalAtivos}</strong></span>
+                        <span><i class="fas fa-times-circle" data-intranet-inline-style="isbb26fd03409a"></i> Inativos: <strong>${totalInativos}</strong></span>
+                        <span><i class="fas fa-key" data-intranet-inline-style="is064f5ef2b035"></i> 1º acesso pendente: <strong>${totalPrimeiroAcesso}</strong></span>
+                        <span><i class="fas fa-building"></i> Órgãos: <strong>${orgaos.length}</strong></span>
+                    </div>
+                </div>
+            `;
+
+        // Configurar eventos da página
+        configurarEventosPagina();
+      }
+
+      // ============================================
+      // RENDERIZAR TABELA
+      // ============================================
+      function renderizarTabela(usuariosList) {
+        if (!usuariosList || usuariosList.length === 0) {
+          return `
+                    <div class="lista-vazia">
+                        <i class="fas fa-users"></i>
+                        <p data-intranet-inline-style="isb1c1f0f4acfb">Nenhum usuário cadastrado.</p>
+                        <button class="btn btn-primary btn-sm" onclick="document.getElementById('btnNovoUsuario').click()" type="button">
+                            <i class="fas fa-user-plus"></i> Cadastrar primeiro usuário
+                        </button>
+                    </div>
+                `;
+        }
+
+        const orgaosMap = {};
+        orgaos.forEach((o) => {
+          orgaosMap[o.id] = o;
+        });
+
+        return `
+                <table class="table" id="tabelaUsuarios" aria-label="Tabela de dados">
+                    <thead>
+                        <tr>
+                            <th data-intranet-inline-style="is9c8d62ee3de4">#</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Perfil</th>
+                            <th>Órgão</th>
+                            <th>Status</th>
+                            <th>Criado em</th>
+                            <th>Último Login</th>
+                            <th data-intranet-inline-style="is36ba2a0903d9">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${usuariosList
+                          .map((u, index) => {
+                            const num =
+                              (paginaAtual - 1) * itensPorPagina + index + 1;
+                            const perfilClass = u.perfil
+                              ? u.perfil.toLowerCase()
+                              : "solicitante";
+                            const orgao = orgaosMap[u.orgao_id];
+
+                            // Tooltip com informações de auditoria
+                            let tooltipStatus = "";
+                            if (u.ativo && u.reativado_em) {
+                              tooltipStatus = ` title="Reativado em ${formatarDataHora(u.reativado_em)}"`;
+                            } else if (!u.ativo && u.desativado_em) {
+                              tooltipStatus = ` title="Desativado em ${formatarDataHora(u.desativado_em)}"`;
+                            }
+
+                            // Linha recebe classe se inativo
+                            const linhaClass = u.ativo
+                              ? ""
+                              : "usuario-inativo-linha";
+
+                            // Data formatada de criação
+                            const criadoEm = u.created_at
+                              ? formatarData(u.created_at)
+                              : u.criado_em
+                                ? formatarData(u.criado_em)
+                                : "-";
+
+                            // Badge de primeiro acesso pendente
+                            const badgePrimeiroAcesso =
+                              u.primeiro_acesso === true
+                                ? `<div class="badge-primeiro-acesso" title="Usuário ainda não trocou a senha temporária">
+                                     <i class="fas fa-key"></i> 1º acesso
+                                   </div>`
+                                : "";
+
+                            return `
+                                <tr class="${linhaClass}">
+                                    <td data-intranet-inline-style="is9023c351aa82">${num}</td>
+                                    <td>
+                                      <strong>${u.nome || "-"}</strong>
+                                      ${badgePrimeiroAcesso}
+                                    </td>
+                                    <td>${u.email || "-"}</td>
+                                    <td><span class="badge-perfil-sistema ${perfilClass}">${u.perfil || "SOLICITANTE"}</span></td>
+                                    <td>${orgao ? orgao.nome : "-"}</td>
+                                    <td>
+                                        <span class="status-badge ${u.ativo ? "status-ativo" : "status-inativo"}"${tooltipStatus}>
+                                            <i class="fas fa-circle"></i>
+                                            ${u.ativo ? "Ativo" : "Inativo"}
+                                        </span>
+                                    </td>
+                                    <td>${criadoEm}</td>
+                                    <td>${u.ultimo_login ? formatarData(u.ultimo_login) : "-"}</td>
+                                    <td class="acoes-cell">
+                                        <button class="btn btn-sm btn-outline" onclick="editarUsuario(${u.id})" title="Editar" type="button">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline" onclick="gerenciarPermissoes(${u.id})" title="Permissões" type="button">
+                                            <i class="fas fa-lock"></i>
+                                        </button>
+                                        ${
+                                          u.ativo
+                                            ? `<button class="btn btn-sm btn-danger" onclick="desativarUsuario(${u.id})" title="Desativar usuário" type="button">
+                                                <i class="fas fa-user-slash"></i>
+                                               </button>`
+                                            : `<button class="btn btn-sm btn-success" onclick="reativarUsuario(${u.id})" title="Reativar usuário" type="button">
+                                                <i class="fas fa-user-check"></i>
+                                               </button>`
+                                        }
+                                        <button class="btn btn-sm btn-danger" onclick="excluirUsuario(${u.id})" title="Excluir permanentemente" type="button">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline" onclick="redefinirSenha(${u.id})" title="Enviar e-mail de redefinição" type="button">
+                                            <i class="fas fa-key"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                          })
+                          .join("")}
+                    </tbody>
+                </table>
+            `;
+      }
+
+      // ============================================
+      // CONFIGURAR EVENTOS DA PÁGINA
+      // ============================================
+      function configurarEventosPagina() {
+        // Botão novo usuário
+        document
+          .getElementById("btnNovoUsuario")
+          ?.addEventListener("click", () => {
+            abrirModalUsuario();
+          });
+
+        // Botão aplicar filtros
+        document
+          .getElementById("btnAplicarFiltros")
+          ?.addEventListener("click", () => {
+            aplicarFiltros();
+          });
+
+        // Botão limpar filtros
+        document
+          .getElementById("btnLimparFiltros")
+          ?.addEventListener("click", () => {
+            limparFiltros();
+          });
+
+        // Filtros com change
+        document
+          .getElementById("filtroStatus")
+          ?.addEventListener("change", () => aplicarFiltros());
+        document
+          .getElementById("filtroPerfil")
+          ?.addEventListener("change", () => aplicarFiltros());
+        document
+          .getElementById("filtroOrgao")
+          ?.addEventListener("change", () => aplicarFiltros());
+
+        // Filtro busca com Enter
+        document
+          .getElementById("filtroBusca")
+          ?.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") aplicarFiltros();
+          });
+
+        // Paginação
+        document
+          .getElementById("btnPagAnterior")
+          ?.addEventListener("click", () => {
+            if (paginaAtual > 1) {
+              paginaAtual--;
+              renderizarUsuarios();
+            }
+          });
+
+        document
+          .getElementById("btnPagProximo")
+          ?.addEventListener("click", () => {
+            const totalPaginas = Math.ceil(usuarios.length / itensPorPagina);
+            if (paginaAtual < totalPaginas) {
+              paginaAtual++;
+              renderizarUsuarios();
+            }
+          });
+      }
+
+      // ============================================
+      // FILTROS
+      // ============================================
+      function aplicarFiltros() {
+        filtros.status =
+          document.getElementById("filtroStatus")?.value || "todos";
+        filtros.perfil =
+          document.getElementById("filtroPerfil")?.value || "todos";
+        filtros.orgao =
+          document.getElementById("filtroOrgao")?.value || "todos";
+        filtros.busca = document.getElementById("filtroBusca")?.value || "";
+        paginaAtual = 1;
+        carregarUsuarios();
+      }
+
+      function limparFiltros() {
+        const statusSelect = document.getElementById("filtroStatus");
+        const perfilSelect = document.getElementById("filtroPerfil");
+        const orgaoSelect = document.getElementById("filtroOrgao");
+        const buscaInput = document.getElementById("filtroBusca");
+
+        if (statusSelect) statusSelect.value = "todos";
+        if (perfilSelect) perfilSelect.value = "todos";
+        if (orgaoSelect) orgaoSelect.value = "todos";
+        if (buscaInput) buscaInput.value = "";
+
+        filtros = {
+          status: "todos",
+          perfil: "todos",
+          orgao: "todos",
+          busca: "",
+        };
+        paginaAtual = 1;
+        carregarUsuarios();
+      }
+
+      // ============================================
+      // MODAL DE USUÁRIO
+      // ============================================
+      function abrirModalUsuario(id = null) {
+        const isEdit = !!id;
+        const usuario = isEdit ? usuarios.find((u) => u.id === id) : null;
+
+        // Carregar órgãos para o select
+        const orgaoOptions = [
+          { value: "", label: "Selecione um órgão" },
+          ...orgaos.map((o) => ({ value: o.id, label: o.nome })),
+        ];
+
+        const perfis = [
+          { value: "ADMIN", label: "Administrador" },
+          { value: "SECRETARIO", label: "Secretário" },
+          { value: "SOLICITANTE", label: "Solicitante" },
+          { value: "ESTAGIARIO", label: "Estagiário" },
+        ];
+
+        // Sugere uma senha temporária ao abrir o modal de criação
+        const senhaSugerida = !isEdit ? gerarSenhaTemporaria() : "";
+
+        const modal = document.createElement("div");
+        modal.className = "modal-overlay";
+        modal.id = "modalUsuario";
+        modal.innerHTML = `
+                <div class="modal-container modal-md">
+                    <div class="modal-header">
+                        <h2><i class="fas ${isEdit ? "fa-edit" : "fa-user-plus"}"></i> ${isEdit ? "Editar" : "Novo"} Usuário</h2>
+                        <button class="modal-close" onclick="fecharModal('modalUsuario')" title="Fechar" type="button">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formUsuario" novalidate>
+                            <input type="hidden" id="usuarioId" value="${id || ""}">
+
+                            <div class="form-group">
+                                <label class="required">Nome Completo</label>
+                                <input type="text" id="usuarioNome" class="form-input"
+                                    value="${usuario?.nome || ""}" placeholder="Nome completo do usuário" required aria-label="Nome completo do usuário">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="required">E-mail</label>
+                                <input type="email" id="usuarioEmail" class="form-input"
+                                    value="${usuario?.email || ""}" placeholder="usuario@prefeitura.gov.br" required aria-label="usuario@prefeitura.gov.br">
+                                <span class="form-text">O e-mail será usado para login no sistema.</span>
+                            </div>
+
+                            ${
+                              !isEdit
+                                ? `
+                                <!-- ============ SENHA TEMPORÁRIA ============ -->
+                                <div class="form-group" id="senhaGroup">
+                                    <label class="required">Senha temporária</label>
+                                    <div class="input-senha-row">
+                                      <div class="input-wrapper">
+                                        <input type="text" id="usuarioSenha" class="form-input com-toggle"
+                                            value="${senhaSugerida}"
+                                            placeholder="Senha temporária"
+                                            autocomplete="new-password"
+                                            required aria-label="Senha temporária">
+                                        <i class="fas fa-eye input-toggle" id="toggleSenha" title="Mostrar/ocultar"></i>
+                                      </div>
+                                      <button type="button" class="btn-gerar" id="btnGerarSenha" title="Gerar nova senha aleatória">
+                                        <i class="fas fa-dice"></i> Gerar
+                                      </button>
+                                    </div>
+                                    <span class="form-text">
+                                      Mínimo 6 caracteres. O usuário será obrigado a trocar
+                                      esta senha no primeiro acesso.
+                                    </span>
+                                </div>
+
+                                <!-- ============ CHECKBOX FORÇAR TROCA ============ -->
+                                <div class="checkbox-destaque">
+                                    <input type="checkbox" id="usuarioPrimeiroAcesso" checked / aria-label="usuarioPrimeiroAcesso">
+                                    <label for="usuarioPrimeiroAcesso">
+                                        <strong><i class="fas fa-key"></i> Forçar troca de senha no primeiro acesso</strong>
+                                        Recomendado. O usuário será redirecionado para
+                                        uma tela de troca de senha + complemento de cadastro
+                                        ao fazer o primeiro login.
+                                    </label>
+                                </div>
+                                `
+                                : `
+                                <div class="form-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div>
+                                        Para redefinir a senha do usuário, clique no ícone <i class="fas fa-key"></i> na lista.
+                                        A troca forçada de senha só é aplicada a novos usuários.
+                                    </div>
+                                </div>
+                                `
+                            }
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label class="required">Perfil</label>
+                                    <select id="usuarioPerfil" class="form-input" required aria-label="usuarioPerfil">
+                                        ${perfis
+                                          .map(
+                                            (p) => `
+                                            <option value="${p.value}" ${usuario?.perfil === p.value ? "selected" : ""}>${p.label}</option>
+                                        `,
+                                          )
+                                          .join("")}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Órgão</label>
+                                    <select id="usuarioOrgao" class="form-input" aria-label="usuarioOrgao">
+                                        ${orgaoOptions
+                                          .map(
+                                            (o) => `
+                                            <option value="${o.value}" ${usuario?.orgao_id == o.value ? "selected" : ""}>${o.label}</option>
+                                        `,
+                                          )
+                                          .join("")}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="usuarioStatus" class="form-input" aria-label="usuarioStatus">
+                                    <option value="true" ${usuario?.ativo !== false ? "selected" : ""}>Ativo</option>
+                                    <option value="false" ${usuario?.ativo === false ? "selected" : ""}>Inativo</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="fecharModal('modalUsuario')" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button class="btn btn-primary" id="btnSalvarUsuario" type="button">
+                            <i class="fas fa-save"></i> ${isEdit ? "Atualizar" : "Salvar"}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+        document.body.appendChild(modal);
+
+        // ========== Eventos específicos da criação ==========
+        if (!isEdit) {
+          // Toggle de mostrar/ocultar senha
+          const toggleSenha = document.getElementById("toggleSenha");
+          const inputSenha = document.getElementById("usuarioSenha");
+          if (toggleSenha && inputSenha) {
+            toggleSenha.addEventListener("click", () => {
+              const tipo = inputSenha.type === "password" ? "text" : "password";
+              inputSenha.type = tipo;
+              toggleSenha.classList.toggle("fa-eye", tipo === "password");
+              toggleSenha.classList.toggle("fa-eye-slash", tipo === "text");
+            });
+          }
+
+          // Botão "Gerar" — sorteia uma nova senha
+          document
+            .getElementById("btnGerarSenha")
+            ?.addEventListener("click", () => {
+              const nova = gerarSenhaTemporaria();
+              const inp = document.getElementById("usuarioSenha");
+              if (inp) inp.value = nova;
+            });
+        }
+
+        // ========== Evento salvar ==========
+        document
+          .getElementById("btnSalvarUsuario")
+          .addEventListener("click", () => {
+            salvarUsuario(id);
+          });
+
+        // Fechar modal ao clicar fora
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            fecharModal("modalUsuario");
+          }
+        });
+
+        // Focar no primeiro campo
+        setTimeout(() => {
+          document.getElementById("usuarioNome")?.focus();
+        }, 100);
+      }
+
+      // ============================================
+      // SALVAR USUÁRIO
+      // ============================================
+      async function salvarUsuario(id) {
+        const nomeInput = document.getElementById("usuarioNome");
+        const nome = nomeInput?.value?.trim();
+        const email = document.getElementById("usuarioEmail")?.value?.trim();
+        const senha = document.getElementById("usuarioSenha")?.value;
+        const perfil = document.getElementById("usuarioPerfil")?.value;
+        const orgaoId = document.getElementById("usuarioOrgao")?.value;
+        const ativo =
+          document.getElementById("usuarioStatus")?.value === "true";
+        const primeiroAcesso = id
+          ? undefined
+          : document.getElementById("usuarioPrimeiroAcesso")?.checked === true;
+
+        // ========== Validações ==========
+        if (!nome) {
+          mostrarToast(
+            "aviso",
+            "Campo obrigatório",
+            "Informe o nome do usuário.",
+          );
+          if (nomeInput) {
+            nomeInput.focus();
+            nomeInput.classList.add("error");
+            setTimeout(() => nomeInput.classList.remove("error"), 3000);
+          }
+          return;
+        }
+
+        if (!email) {
+          mostrarToast(
+            "aviso",
+            "Campo obrigatório",
+            "Informe o e-mail do usuário.",
+          );
+          document.getElementById("usuarioEmail")?.focus();
+          return;
+        }
+
+        if (!id && (!senha || senha.length < 6)) {
+          mostrarToast(
+            "aviso",
+            "Senha inválida",
+            "A senha deve ter no mínimo 6 caracteres.",
+          );
+          document.getElementById("usuarioSenha")?.focus();
+          return;
+        }
+
+        const dados = {
+          nome: nome,
+          email: email,
+          perfil: perfil || "SOLICITANTE",
+          orgao_id: orgaoId ? parseInt(orgaoId) : null,
+          ativo: ativo,
+        };
+
+        // Se for criação, inclui senha + primeiro_acesso
+        if (!id) {
+          dados.senha = senha;
+          dados.primeiro_acesso = primeiroAcesso === true;
+        }
+
+        try {
+          mostrarLoading(true);
+
+          let resultado;
+          if (id) {
+            resultado = await UsuariosService.atualizar(id, dados);
+            mostrarToast(
+              "sucesso",
+              "Atualizado",
+              `Usuário "${dados.nome}" atualizado com sucesso!`,
+            );
+            fecharModal("modalUsuario");
+            await carregarUsuarios();
+          } else {
+            resultado = await UsuariosService.criar(dados);
+
+            // Se foi reativado ao invés de criado
+            if (resultado._reativado) {
+              mostrarToast(
+                "sucesso",
+                "Usuário reativado",
+                `O usuário "${dados.nome}" já existia (inativo) e foi reativado com sucesso!`,
+              );
+              fecharModal("modalUsuario");
+              await carregarUsuarios();
+            } else {
+              // Criação bem-sucedida → mostra modal de credenciais
+              fecharModal("modalUsuario");
+              await carregarUsuarios();
+              exibirModalCredenciais({
+                nome: dados.nome,
+                email: dados.email,
+                senha: senha,
+                primeiroAcesso: primeiroAcesso,
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao salvar usuário:", error);
+
+          // Mensagem especial para usuário órfão
+          const msg = error.message || "";
+          const isOrfao = msg.includes("órfão") || msg.includes("autenticação");
+
+          mostrarToast(
+            "erro",
+            isOrfao ? "Usuário órfão detectado" : "Erro",
+            msg || "Não foi possível salvar o usuário.",
+            isOrfao ? 8000 : 4000,
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      }
+
+      // ============================================
+      // MODAL DE CREDENCIAIS (após criar usuário)
+      // ============================================
+      function exibirModalCredenciais({ nome, email, senha, primeiroAcesso }) {
+        const modal = document.createElement("div");
+        modal.className = "modal-overlay";
+        modal.id = "modalCredenciais";
+        modal.innerHTML = `
+          <div class="modal-container modal-sm">
+            <div class="modal-header">
+              <h2><i class="fas fa-check-circle" data-intranet-inline-style="isd866e7656459"></i> Usuário criado!</h2>
+              <button class="modal-close" onclick="fecharModal('modalCredenciais')" title="Fechar" type="button">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p data-intranet-inline-style="is2802b9a03bee">
+                O usuário <strong>${escaparHtml(nome)}</strong> foi criado com sucesso.
+                Copie as credenciais abaixo e envie para o usuário por um canal seguro (WhatsApp, e-mail institucional, etc).
+              </p>
+
+              <div class="credenciais-box">
+                <div class="linha">
+                  <span class="label">E-mail</span>
+                  <span class="valor" id="credEmail">${escaparHtml(email)}</span>
+                  <button class="btn-copiar" data-copiar="credEmail" title="Copiar e-mail" type="button">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+                <div class="linha">
+                  <span class="label">Senha temporária</span>
+                  <span class="valor" id="credSenha">${escaparHtml(senha)}</span>
+                  <button class="btn-copiar" data-copiar="credSenha" title="Copiar senha" type="button">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+
+              ${
+                primeiroAcesso
+                  ? `
+                <div class="form-hint" data-intranet-inline-style="isbfd576e416ed">
+                  <i class="fas fa-info-circle"></i>
+                  <div>
+                    <strong>Primeiro acesso ativo.</strong><br>
+                    Ao fazer login, o usuário será automaticamente redirecionado
+                    para definir uma nova senha e completar o cadastro.
+                  </div>
+                </div>
+              `
+                  : ""
+              }
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" onclick="fecharModal('modalCredenciais')" type="button">
+                <i class="fas fa-check"></i> Entendi
+              </button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Eventos de copiar
+        modal.querySelectorAll("[data-copiar]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const id = btn.dataset.copiar;
+            const el = document.getElementById(id);
+            if (!el) return;
+            const texto = el.textContent;
+            try {
+              await navigator.clipboard.writeText(texto);
+              const icone = btn.querySelector("i");
+              icone.className = "fas fa-check";
+              setTimeout(() => {
+                icone.className = "fas fa-copy";
+              }, 1500);
+            } catch (err) {
+              console.warn("Falha ao copiar:", err);
+              // Fallback: seleciona o texto
+              const range = document.createRange();
+              range.selectNode(el);
+              window.getSelection().removeAllRanges();
+              window.getSelection().addRange(range);
+            }
+          });
+        });
+
+        // Fechar ao clicar fora
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) fecharModal("modalCredenciais");
+        });
+      }
+
+      // ============================================
+      // AÇÕES DO USUÁRIO
+      // ============================================
+      window.editarUsuario = function (id) {
+        abrirModalUsuario(id);
+      };
+
+      // ============================================
+      // DESATIVAR USUÁRIO (SOFT DELETE)
+      // ============================================
+      window.desativarUsuario = async function (id) {
+        const usuario = usuarios.find((u) => u.id === id);
+        if (!usuario) return;
+
+        // Bloqueia auto-desativação
+        if (usuarioAtual && usuario.id === usuarioAtual.id) {
+          mostrarToast(
+            "aviso",
+            "Ação bloqueada",
+            "Você não pode desativar sua própria conta.",
+          );
+          return;
+        }
+
+        const confirmado = await showConfirm(
+          "Desativar usuário",
+          `Tem certeza que deseja desativar o usuário "${usuario.nome}"?\n\n` +
+            `O usuário perderá o acesso ao sistema, mas todos os dados ` +
+            `(histórico, pedidos, atas) serão preservados. ` +
+            `Pode ser reativado depois.`,
+          "🔒",
+          "inativo",
+        );
+        if (!confirmado) return;
+
+        try {
+          mostrarLoading(true);
+          await UsuariosService.desativar(id);
+          mostrarToast(
+            "sucesso",
+            "Desativado",
+            `Usuário "${usuario.nome}" desativado com sucesso.`,
+          );
+          await carregarUsuarios();
+        } catch (error) {
+          console.error("Erro ao desativar usuário:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível desativar o usuário.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      // ============================================
+      // REATIVAR USUÁRIO
+      // ============================================
+      window.reativarUsuario = async function (id) {
+        const usuario = usuarios.find((u) => u.id === id);
+        if (!usuario) return;
+
+        // Info extra se foi desativado há tempo
+        let infoExtra = "";
+        if (usuario.desativado_em) {
+          infoExtra = `\n\nDesativado em: ${formatarDataHora(usuario.desativado_em)}`;
+        }
+
+        const confirmado = await showConfirm(
+          "Reativar usuário",
+          `Deseja reativar "${usuario.nome}"?${infoExtra}\n\n` +
+            `O usuário voltará a ter acesso ao sistema com o mesmo login e senha.`,
+          "🔓",
+          "ativo",
+        );
+        if (!confirmado) return;
+
+        try {
+          mostrarLoading(true);
+          await UsuariosService.reativar(id);
+          mostrarToast(
+            "sucesso",
+            "Reativado",
+            `Usuário "${usuario.nome}" reativado com sucesso!`,
+          );
+          await carregarUsuarios();
+        } catch (error) {
+          console.error("Erro ao reativar usuário:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível reativar o usuário.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      // ============================================
+      // EXCLUIR USUÁRIO (PERMANENTE)
+      // ============================================
+      window.excluirUsuario = async function (id) {
+        const usuario = usuarios.find((u) => u.id === id);
+        if (!usuario) return;
+
+        // Bloqueia auto-exclusão
+        if (usuarioAtual && usuario.id === usuarioAtual.id) {
+          mostrarToast(
+            "aviso",
+            "Ação bloqueada",
+            "Você não pode excluir sua própria conta.",
+          );
+          return;
+        }
+
+        try {
+          const dependencias = await UsuariosService.verificarDependencias(id);
+          let mensagem = `Tem certeza que deseja excluir PERMANENTEMENTE o usuário "${usuario.nome}"?\n\n`;
+          mensagem +=
+            `⚠️ ATENÇÃO: Esta ação NÃO pode ser desfeita. ` +
+            `Recomendamos usar "Desativar" para preservar o histórico.`;
+
+          if (dependencias.temPedidos) {
+            mensagem += "\n\n⚠️ Este usuário possui pedidos vinculados.";
+          }
+          if (dependencias.temProcessos) {
+            mensagem += "\n\n⚠️ Este usuário possui processos vinculados.";
+          }
+          if (dependencias.temAtos) {
+            mensagem += "\n\n⚠️ Este usuário possui atos oficiais vinculados.";
+          }
+
+          const confirmado = await showConfirm(
+            "Excluir permanentemente",
+            mensagem,
+            "🗑️",
+            "danger",
+          );
+          if (!confirmado) return;
+
+          mostrarLoading(true);
+          await UsuariosService.excluir(id);
+          mostrarToast(
+            "sucesso",
+            "Excluído",
+            `Usuário "${usuario.nome}" excluído permanentemente.`,
+          );
+          await carregarUsuarios();
+        } catch (error) {
+          console.error("Erro ao excluir usuário:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível excluir o usuário.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      // ============================================
+      // REDEFINIR SENHA (via e-mail)
+      // ============================================
+      window.redefinirSenha = async function (id) {
+        const usuario = usuarios.find((u) => u.id === id);
+        if (!usuario) return;
+
+        const confirmado = await showConfirm(
+          "Enviar e-mail de redefinição",
+          `Deseja enviar um e-mail para "${usuario.email}" com as instruções para redefinir a senha?`,
+          "📧",
+        );
+        if (!confirmado) return;
+
+        try {
+          mostrarLoading(true);
+          await UsuariosService.enviarRedefinicaoSenha(usuario.email);
+          mostrarToast(
+            "sucesso",
+            "E-mail enviado",
+            `Instruções para redefinir a senha enviadas para ${usuario.email}.`,
+          );
+        } catch (error) {
+          console.error("Erro ao enviar e-mail de redefinição:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível enviar o e-mail.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      // ============================================
+      // PERMISSÕES
+      // ============================================
+      window.gerenciarPermissoes = async function (usuarioId) {
+        try {
+          const usuario = usuarios.find((u) => u.id === usuarioId);
+          if (!usuario) return;
+
+          const permissoes = await UsuariosService.obterPermissoes(usuarioId);
+          const modulos = UsuariosService.getModulos();
+
+          const permissoesMap = {};
+          permissoes.forEach((p) => {
+            permissoesMap[p.modulo] = p.permissao;
+          });
+
+          const modal = document.createElement("div");
+          modal.className = "modal-overlay";
+          modal.id = "modalPermissoes";
+          modal.innerHTML = `
+                    <div class="modal-container modal-md">
+                        <div class="modal-header">
+                            <h2><i class="fas fa-lock"></i> Permissões - ${usuario.nome}</h2>
+                            <button class="modal-close" onclick="fecharModal('modalPermissoes')" title="Fechar" type="button">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>
+                                <div>
+                                    Defina quais módulos este usuário pode acessar.
+                                    <br><strong>Admin:</strong> Acesso total ao módulo.
+                                    <br><strong>Permitido:</strong> Acesso apenas leitura.
+                                </div>
+                            </div>
+                            <form id="formPermissoes">
+                                <input type="hidden" id="permissoesUsuarioId" value="${usuarioId}">
+                                <div class="permissoes-grid">
+                                    ${modulos
+                                      .map((m) => {
+                                        const permissao =
+                                          permissoesMap[m.value] || "negado";
+                                        return `
+                                            <div class="permissao-item">
+                                                <input type="checkbox" id="perm_${m.value}"
+                                                    ${permissao !== "negado" ? "checked" : ""}
+                                                    onchange="togglePermissao('${m.value}')" aria-label="perm ${m.value}">
+                                                <label for="perm_${m.value}">${m.label}</label>
+                                                <select id="perm_tipo_${m.value}" class="permissao-tipo"
+                                                    ${permissao === "negado" ? "disabled" : ""} aria-label="perm tipo ${m.value}">
+                                                    <option value="permitido" ${permissao === "permitido" ? "selected" : ""}>Leitura</option>
+                                                    <option value="admin" ${permissao === "admin" ? "selected" : ""}>Admin</option>
+                                                </select>
+                                            </div>
+                                        `;
+                                      })
+                                      .join("")}
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="fecharModal('modalPermissoes')" type="button">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                            <button class="btn btn-primary" id="btnSalvarPermissoes" type="button">
+                                <i class="fas fa-save"></i> Salvar Permissões
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+          document.body.appendChild(modal);
+
+          window.togglePermissao = function (modulo) {
+            const checkbox = document.getElementById(`perm_${modulo}`);
+            const select = document.getElementById(`perm_tipo_${modulo}`);
+            if (select) {
+              select.disabled = !checkbox.checked;
+              if (!checkbox.checked) {
+                select.value = "permitido";
+              }
+            }
+          };
+
+          document
+            .getElementById("btnSalvarPermissoes")
+            .addEventListener("click", async () => {
+              await salvarPermissoes(usuarioId);
+            });
+
+          modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+              fecharModal("modalPermissoes");
+            }
+          });
+        } catch (error) {
+          console.error("Erro ao gerenciar permissões:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível carregar as permissões.",
+          );
+        }
+      };
+
+      async function salvarPermissoes(usuarioId) {
+        try {
+          const modulos = UsuariosService.getModulos();
+          const permissoes = [];
+
+          modulos.forEach((m) => {
+            const checkbox = document.getElementById(`perm_${m.value}`);
+            if (checkbox && checkbox.checked) {
+              const select = document.getElementById(`perm_tipo_${m.value}`);
+              const permissao = select ? select.value : "permitido";
+              permissoes.push({
+                modulo: m.value,
+                permissao: permissao,
+              });
+            }
+          });
+
+          mostrarLoading(true);
+          await UsuariosService.atualizarPermissoes(usuarioId, permissoes);
+          mostrarToast(
+            "sucesso",
+            "Salvo",
+            "Permissões atualizadas com sucesso!",
+          );
+          fecharModal("modalPermissoes");
+        } catch (error) {
+          console.error("Erro ao salvar permissões:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível salvar as permissões.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      }
+
+      // ============================================
+      // FECHAR MODAL
+      // ============================================
+      window.fecharModal = function (id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+          modal.remove();
+        }
+      };
+
+      // ============================================
+      // HELPERS DE ESCAPE
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // ============================================
+      // MODAL DE CONFIRMAÇÃO
+      // ============================================
+      function showConfirm(title, message, icon = "⚠️", tipo = "warning") {
+        return new Promise((resolve) => {
+          const modal = document.getElementById("confirmModal");
+          const confirmIcon = document.getElementById("confirmIcon");
+          const confirmTitle = document.getElementById("confirmTitle");
+          const confirmMessage = document.getElementById("confirmMessage");
+          const confirmOkBtn = document.getElementById("confirmOkBtn");
+          const confirmCancelBtn = document.getElementById("confirmCancelBtn");
+
+          if (!modal) {
+            resolve(confirm(`${icon} ${title}\n\n${message}`));
+            return;
+          }
+
+          confirmIcon.textContent = icon;
+          confirmTitle.textContent = title;
+          confirmMessage.textContent = message;
+
+          // Aplica classe de cor ao ícone
+          confirmIcon.className = "modal-confirm-icon";
+          if (tipo === "ativo") confirmIcon.classList.add("confirm-ativo");
+          else if (tipo === "inativo")
+            confirmIcon.classList.add("confirm-inativo");
+          else if (tipo === "danger")
+            confirmIcon.classList.add("confirm-danger");
+
+          // Ajusta cor do botão de confirmar
+          confirmOkBtn.className = "btn";
+          if (tipo === "danger") {
+            confirmOkBtn.classList.add("btn-danger");
+            confirmOkBtn.innerHTML = '<i class="fas fa-trash"></i> Excluir';
+          } else if (tipo === "ativo") {
+            confirmOkBtn.classList.add("btn-success");
+            confirmOkBtn.innerHTML = '<i class="fas fa-check"></i> Reativar';
+          } else if (tipo === "inativo") {
+            confirmOkBtn.classList.add("btn-danger");
+            confirmOkBtn.innerHTML = '<i class="fas fa-lock"></i> Desativar';
+          } else {
+            confirmOkBtn.classList.add("btn-primary");
+            confirmOkBtn.innerHTML = '<i class="fas fa-check"></i> Confirmar';
+          }
+
+          modal.style.display = "flex";
+
+          function cleanup() {
+            modal.style.display = "none";
+            confirmOkBtn.removeEventListener("click", handleConfirm);
+            confirmCancelBtn.removeEventListener("click", handleCancel);
+            modal.removeEventListener("click", handleClickOutside);
+          }
+
+          function handleConfirm() {
+            cleanup();
+            resolve(true);
+          }
+
+          function handleCancel() {
+            cleanup();
+            resolve(false);
+          }
+
+          function handleClickOutside(e) {
+            if (e.target === modal) {
+              cleanup();
+              resolve(false);
+            }
+          }
+
+          confirmOkBtn.addEventListener("click", handleConfirm);
+          confirmCancelBtn.addEventListener("click", handleCancel);
+          modal.addEventListener("click", handleClickOutside);
+        });
+      }
+
+      // ============================================
+      // LOGOUT
+      // ============================================
+      document.getElementById("btnSair").addEventListener("click", async () => {
+        const confirmado = await showConfirm(
+          "Sair do sistema",
+          "Tem certeza que deseja sair?",
+          "🔓",
+        );
+        if (confirmado) {
+          await auth.logout();
+          window.location.href = "../index.html";
+        }
+      });
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        const autenticado = await verificarAutenticacao();
+        if (!autenticado) return;
+
+        atualizarInterfaceUsuario();
+        await carregarOrgaos();
+        await carregarUsuarios();
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            const modals = document.querySelectorAll(".modal-overlay");
+            modals.forEach((modal) => {
+              if (modal.style.display !== "none") {
+                // Se for modal dinâmico (não o confirmModal), remove
+                if (modal.id !== "confirmModal") {
+                  modal.remove();
+                } else {
+                  modal.style.display = "none";
+                }
+              }
+            });
+          }
+        });
+      }
+
+      // ============================================
+      // EXPOR FUNÇÕES GLOBAIS
+      // ============================================
+      window.mostrarToast = mostrarToast;
+      window.formatarData = formatarData;
+      window.formatarDataHora = formatarDataHora;
+      window.showConfirm = showConfirm;
+      window.fecharModal = fecharModal;
+      window.editarUsuario = editarUsuario;
+      window.desativarUsuario = desativarUsuario;
+      window.reativarUsuario = reativarUsuario;
+      window.excluirUsuario = excluirUsuario;
+      window.gerenciarPermissoes = gerenciarPermissoes;
+      window.redefinirSenha = redefinirSenha;
+      window.togglePermissao = function (modulo) {
+        const checkbox = document.getElementById(`perm_${modulo}`);
+        const select = document.getElementById(`perm_tipo_${modulo}`);
+        if (select) {
+          select.disabled = !checkbox.checked;
+          if (!checkbox.checked) {
+            select.value = "permitido";
+          }
+        }
+      };
+
+export async function initializeAdminView() { return await init(); }

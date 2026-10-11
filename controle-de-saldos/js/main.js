@@ -31,14 +31,14 @@ import { Carrinho } from "./modules/carrinho.js?v=20261007-cart-fullwidth-1";
 // ============================================================
 import { Relatorios } from "./modules/relatorios.js";
 // ============================================================
-// NOVO: Módulo FAQ — manual interativo para secretários
+// Central de Ajuda integrada ao shell do módulo
 // ============================================================
-import { FAQ } from "./modules/faq.js";
+import { CentralAjudaAtas } from "./modules/central-ajuda-atas.js";
 import { SaaSExperience } from "./modules/saas-experience.js";
 // ============================================================
 // Layout compartilhado da intranet (sidebar + topbar)
 // ============================================================
-import { initLayout } from "../../shared/js/layout.js?v=20261006-avatar-app-drawer-2";
+import { initLayout } from "../../shared/js/layout.js?v=20261010-shared-shell-1";
 // ============================================================
 // REMOVIDAS: Importações de Orgaos e Usuarios
 // Agora gerenciados pelo módulo Core (core/orgaos/ e core/usuarios/)
@@ -106,7 +106,7 @@ class SistemaGestaoAtas {
     // NOVO: Instanciar módulo Relatórios
     // ============================================================
     this.relatorios = new Relatorios(this);
-    this.faq = new FAQ(this);
+    this.centralAjuda = new CentralAjudaAtas(this);
     this.saasExperience = new SaaSExperience(this);
     // ============================================================
     // REMOVIDOS: Módulos Orgaos e Usuarios
@@ -677,7 +677,7 @@ class SistemaGestaoAtas {
         this.aditivos.carregarConteudo();
         break;
       case "faq":
-        this.faq.carregarConteudo();
+        this.centralAjuda.carregarConteudo();
         break;
       default:
         console.warn(`View "${tabName}" não reconhecida para recarregar.`);
@@ -1106,7 +1106,7 @@ class SistemaGestaoAtas {
         this.aditivos.carregarConteudo();
         break;
       case "faq":
-        this.faq.carregarConteudo();
+        this.centralAjuda.carregarConteudo();
         break;
       default:
         console.warn(`View "${tab}" não reconhecida.`);

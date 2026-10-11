@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20261009-brasao-2">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261009-brasao-2">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=20261009-brasao-2">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=20261009-brasao-2">
+
+
     <title>Intranet · Gestão Pitangueiras</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,8 +27,10 @@
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
   <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
   <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261007-avatar-data-url-1">
+  <script src="shared/js/pwa-device.js?v=20261009-mobile-only-1" data-manifest-href="./manifest.webmanifest?v=20261009-brasao-2"></script>
+  <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261008-pwa-1">
 </head>
-  <body data-intranet-module="plataforma" data-intranet-page="intranet">
+  <body data-intranet-module="plataforma" data-intranet-page="intranet" data-pwa-worker="./service-worker.js">
     <!-- ============================================================ -->
     <!-- HALL DE ACESSO (sempre visível, protegido por sessão)         -->
     <!-- A autenticação é feita em index.html                          -->
@@ -141,144 +148,25 @@
         </div>
       </div>
 
-      <!-- ===== MÓDULOS DE ADMINISTRAÇÃO (CORE) · visível só para ADMIN ===== -->
-      <div
-        id="adminSection"
-
-       class="intranet-style-067b223240">
-        <div
-
-         class="intranet-style-882bca5b70">
-          <i class="fas fa-cog intranet-style-3e2a423be1"></i>
-          <h3
-
-           class="intranet-style-49ec2a94e6">
-            Administração do Sistema
-          </h3>
-          <span
-
-             class="intranet-style-1ebf4b6de3">Admin</span
-          >
+      <!-- ===== ENTRADA ÚNICA DO PAINEL ADMIN (visível só para ADMIN) ===== -->
+      <div id="adminSection" class="intranet-style-067b223240">
+        <div class="intranet-style-882bca5b70">
+          <i class="fas fa-shield-halved intranet-style-3e2a423be1" aria-hidden="true"></i>
+          <h3 class="intranet-style-49ec2a94e6">Administração do Sistema</h3>
+          <span class="intranet-style-1ebf4b6de3">Admin</span>
         </div>
-        <div
-          class="sistemas-grid intranet-style-19399a0b26"
-
-        >
-          <!-- Painel Administrativo (Core) -->
-          <div
-            class="sistema-card intranet-style-6119208092"
-            onclick="window.acessarModulo('core')"
-
-          >
-            <div
-              class="card-icon intranet-style-90d02688be"
-
-            >
+        <div class="sistemas-grid intranet-style-19399a0b26">
+          <div class="sistema-card intranet-style-6119208092"
+               role="link" tabindex="0"
+               aria-label="Abrir Painel Admin com todas as áreas de administração"
+               onclick="window.acessarModulo('core')"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.acessarModulo('core')}">
+            <div class="card-icon intranet-style-90d02688be" aria-hidden="true">
               <i class="fas fa-cogs"></i>
             </div>
             <h3>Painel Admin</h3>
-            <p>
-              Dashboard centralizado com gestão de órgãos, usuários e
-              permissões.
-            </p>
-            <span
-              class="acesso-badge intranet-style-b627f1c602"
-
-              ><i class="fas fa-arrow-right-to-bracket"></i> Acessar</span
-            >
-          </div>
-
-          <!-- Gestão de Órgãos -->
-          <div
-            class="sistema-card intranet-style-6119208092"
-            onclick="window.acessarModulo('orgaos')"
-
-          >
-            <div
-              class="card-icon intranet-style-90d02688be"
-
-            >
-              <i class="fas fa-building"></i>
-            </div>
-            <h3>Órgãos</h3>
-            <p>
-              Cadastro e gerenciamento de órgãos, autarquias e seus gestores.
-            </p>
-            <span
-              class="acesso-badge intranet-style-b627f1c602"
-
-              ><i class="fas fa-arrow-right-to-bracket"></i> Acessar</span
-            >
-          </div>
-
-          <!-- Gestão de Usuários -->
-          <div
-            class="sistema-card intranet-style-6119208092"
-            onclick="window.location.href='admin-acessos.html'"
-
-          >
-            <div
-              class="card-icon intranet-style-90d02688be"
-
-            >
-              <i class="fas fa-users"></i>
-            </div>
-            <h3>Usuários</h3>
-            <p>
-              Gerenciamento de usuários, perfis de acesso e permissões por
-              módulo.
-            </p>
-            <span
-              class="acesso-badge intranet-style-b627f1c602"
-
-              ><i class="fas fa-arrow-right-to-bracket"></i> Acessar</span
-            >
-          </div>
-
-          <!-- Módulos do Sistema -->
-          <div
-            class="sistema-card intranet-style-6119208092"
-            onclick="window.acessarModulo('modulos')"
-
-          >
-            <div
-              class="card-icon intranet-style-90d02688be"
-
-            >
-              <i class="fas fa-cubes"></i>
-            </div>
-            <h3>Módulos</h3>
-            <p>
-              Cadastro dos módulos disponíveis na intranet (cards dinâmicos).
-            </p>
-            <span
-              class="acesso-badge intranet-style-b627f1c602"
-
-              ><i class="fas fa-arrow-right-to-bracket"></i> Acessar</span
-            >
-          </div>
-
-          <!-- Permissões de Usuários -->
-          <div
-            class="sistema-card intranet-style-6119208092"
-            onclick="window.acessarModulo('permissoes')"
-
-          >
-            <div
-              class="card-icon intranet-style-90d02688be"
-
-            >
-              <i class="fas fa-key"></i>
-            </div>
-            <h3>Permissões</h3>
-            <p>
-              Conceda ou revogue acesso de cada usuário aos módulos do sistema.
-            </p>
-            <span
-              class="acesso-badge intranet-style-b627f1c602"
-
-              ><i class="fas fa-arrow-right-to-bracket"></i> Acessar</span
-            >
+            <p>Visão geral, auditoria e logs, usuários, órgãos e unidades, módulos, perfis, permissões e governança de acesso.</p>
+            <span class="acesso-badge intranet-style-b627f1c602"><i class="fas fa-arrow-right-to-bracket"></i> Abrir painel</span>
           </div>
         </div>
       </div>
@@ -293,7 +181,7 @@
           >
           <span
             ><i class="fas fa-user-shield"></i>
-            <span id="onlineCount">7</span> servidores online</span
+            <span id="onlineCount" aria-live="polite" aria-label="Conectando à contagem de servidores online">—</span> servidores online</span
           >
         </div>
         <div class="links-rapidos">
@@ -394,6 +282,7 @@
 
     <script type="module">
 import { supabase } from "./shared/js/supabase.js";
+import { conectarPresencaOnline } from "./shared/js/online-presence.js";
       // ============================================
       // CONFIGURAÇÃO SUPABASE
       // ============================================
@@ -421,6 +310,7 @@ import { supabase } from "./shared/js/supabase.js";
       // VARIÁVEIS DE ESTADO
       // ============================================
       let usuarioLogado = null; // { id, uuid, email, nome, perfil, cargo, orgao_id }
+      let canalPresencaServidores = null;
       let orgaosList = []; // armazenar órgãos para o select
 
       // Rotas dos módulos carregadas do banco (nome -> rota)
@@ -729,10 +619,6 @@ import { supabase } from "./shared/js/supabase.js";
             if (usuarioLogado.perfil === "ADMIN") {
               const modulosAdmin = [
                 { modulo: "core", titulo: "Painel Admin", icone: "fa-cogs" },
-                { modulo: "orgaos", titulo: "Órgãos", icone: "fa-building" },
-                { modulo: "usuarios", titulo: "Usuários", icone: "fa-users" },
-                { modulo: "modulos", titulo: "Módulos", icone: "fa-cubes" },
-                { modulo: "permissoes", titulo: "Permissões", icone: "fa-key" },
               ];
               const jaIncluidos = new Set(itensAtalho.map((item) => item.modulo));
               modulosAdmin.forEach((item) => {
@@ -948,6 +834,7 @@ import { supabase } from "./shared/js/supabase.js";
         // Renderizar os cards de módulos + card "Meu Perfil"
         await carregarModulosParaUsuario();
 
+        await iniciarPresencaServidores(session);
         document.getElementById("hallContent").style.display = "";
         atualizarDataRodape();
         return true;
@@ -961,6 +848,15 @@ import { supabase } from "./shared/js/supabase.js";
           "Encerrar sessão",
           "Tem certeza que deseja sair da intranet?",
           async () => {
+            if (canalPresencaServidores) {
+              const canal = canalPresencaServidores;
+              canalPresencaServidores = null;
+              try {
+                await supabase.removeChannel(canal);
+              } catch (error) {
+                console.warn("[Intranet] Não foi possível encerrar a presença:", error);
+              }
+            }
             await supabase.auth.signOut();
             usuarioLogado = null;
             window.location.href = "index.html";
@@ -979,29 +875,44 @@ import { supabase } from "./shared/js/supabase.js";
         }
 
         // --- Módulos internos do Core ---
-        if (modulo === "core") {
-          window.location.href = "core/index.html";
+        if (modulo === "core" || modulo === "admin" || modulo === "painel-admin") {
+          window.location.href = "core/index.html?view=dashboard";
           return;
         }
         if (modulo === "orgaos") {
-          window.location.href = "core/orgaos/index.html";
+          window.location.href = "core/index.html?view=orgaos";
           return;
         }
         if (modulo === "usuarios") {
-          window.location.href = "core/usuarios/index.html";
+          window.location.href = "core/index.html?view=usuarios";
           return;
         }
         if (modulo === "modulos") {
-          window.location.href = "core/modulos/index.html";
+          window.location.href = "core/index.html?view=modulos";
           return;
         }
         if (modulo === "permissoes") {
-          window.location.href = "core/permissoes/index.html";
+          window.location.href = "core/index.html?view=permissoes";
+          return;
+        }
+        if (modulo === "auditoria" || modulo === "logs") {
+          window.location.href = "core/index.html?view=auditoria";
+          return;
+        }
+        if (modulo === "governanca" || modulo === "admin-acessos" || modulo === "solicitacoes") {
+          window.location.href = "core/index.html?view=governanca";
           return;
         }
 
         // --- Módulos dinâmicos (rota vem do banco) ---
-        const rota = window.__rotasModulos?.[modulo];
+        let rota = window.__rotasModulos?.[modulo];
+        if (rota) {
+          const caminho = String(rota).toLowerCase().replace(/\\/g, "/");
+          const legado = caminho.match(/(?:^|\/)(?:core\/)?(auditoria|usuarios|orgaos|modulos|modules|permissoes)\/index\.html/);
+          let viewAdmin = legado ? ({ auditoria:"auditoria", usuarios:"usuarios", orgaos:"orgaos", modulos:"modulos", modules:"modulos", permissoes:"permissoes" })[legado[1]] : null;
+          if (/admin-acessos\.html/.test(caminho)) viewAdmin = "governanca";
+          if (viewAdmin) rota = `core/index.html?view=${viewAdmin}`;
+        }
 
         if (!rota || rota === "#") {
           window.showNotification(
@@ -1044,9 +955,41 @@ import { supabase } from "./shared/js/supabase.js";
         const dataStr = `${hoje.getDate()} de ${meses[hoje.getMonth()]} de ${hoje.getFullYear()}`;
         const elData = document.getElementById("dataAtual");
         if (elData) elData.innerText = dataStr;
-        const onlineCount = document.getElementById("onlineCount");
-        if (onlineCount)
-          onlineCount.innerText = Math.floor(Math.random() * 15) + 3;
+      }
+
+      async function iniciarPresencaServidores(session) {
+        const elContagem = document.getElementById("onlineCount");
+        if (!elContagem) return;
+
+        elContagem.textContent = "—";
+        elContagem.setAttribute(
+          "aria-label",
+          "Conectando à contagem de servidores online",
+        );
+
+        canalPresencaServidores = await conectarPresencaOnline(
+          supabase,
+          session,
+          (count) => {
+            elContagem.textContent = new Intl.NumberFormat("pt-BR").format(count);
+            elContagem.setAttribute("aria-label", `${count} servidores online`);
+            elContagem.title = "Contagem atualizada em tempo real";
+          },
+          (error) => {
+            elContagem.textContent = "—";
+            elContagem.setAttribute(
+              "aria-label",
+              "Contagem de servidores online indisponível",
+            );
+            elContagem.title = "Contagem temporariamente indisponível";
+            if (error) {
+              console.warn(
+                "[Intranet] Contagem de presença indisponível:",
+                error,
+              );
+            }
+          },
+        );
       }
 
       // ============================================
@@ -1205,5 +1148,6 @@ import { supabase } from "./shared/js/supabase.js";
       const _carregarModulosComPesquisa = carregarModulosParaUsuario;
       carregarModulosParaUsuario = async function () { await _carregarModulosComPesquisa(); configurarPesquisaModulos(); };
     </script>
-  </body>
+    <script src="shared/js/pwa-install.js?v=20261009-mobile-only-1" defer></script>
+</body>
 </html>

@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png?v=20261009-brasao-2">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg?v=20261009-brasao-2">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png?v=20261009-brasao-2">
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico?v=20261009-brasao-2">
+
+
+
+
+
     <title>Biblioteca Municipal · Livros</title>
 
     <!-- Font Awesome 6 -->
@@ -15,138 +24,28 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
+  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261010-shared-shell-theme-4">
+  <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261010-shared-shell-theme-5">
 </head>
-  <body data-intranet-module="biblioteca" data-intranet-page="biblioteca-livros">
+  <body data-intranet-module="biblioteca" data-intranet-theme="atas" data-intranet-page="biblioteca-livros">
     <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
       <div class="spinner"></div>
     </div>
 
     <!-- LAYOUT -->
-    <div class="app-layout">
+    <div class="app-layout" id="mainSystem">
       <!-- SIDEBAR -->
-      <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-          <div class="brand-icon"><i class="fas fa-book-open-reader"></i></div>
-          <div class="brand-text">
-            <h2>Biblioteca</h2>
-            <span>Municipal</span>
-          </div>
-        </div>
-
-        <nav class="sidebar-nav">
-          <div class="nav-section">Principal</div>
-          <a href="dashboard.html"><i class="fas fa-gauge-high"></i> Painel</a>
-
-          <div class="nav-section">Acervo</div>
-          <a href="livros.html" class="active"
-            ><i class="fas fa-book"></i> Livros</a
-          >
-          <a href="exemplares.html"
-            ><i class="fas fa-bookmark"></i> Exemplares</a
-          >
-          <a href="prateleiras.html"
-            ><i class="fas fa-layer-group"></i> Prateleiras</a
-          >
-          <a href="autores.html"><i class="fas fa-feather"></i> Autores</a>
-          <a href="categorias.html"><i class="fas fa-tags"></i> Categorias</a>
-
-          <div class="nav-section">Circulação</div>
-          <a href="editoras.html"><i class="fas fa-building-columns"></i> Editoras</a>
-          <a href="emprestimos.html"
-            ><i class="fas fa-hand-holding-heart"></i> Empréstimos</a
-          >
-          <a href="devolucoes.html"
-            ><i class="fas fa-rotate-left"></i> Devoluções</a
-          >
-
-          <div class="nav-section">Pessoas</div>
-          <a href="leitores.html"><i class="fas fa-users"></i> Leitores</a>
-
-          <div class="nav-section">Gestão</div>
-          <a href="relatorios.html"
-            ><i class="fas fa-chart-column"></i> Relatórios</a
-          >
-          <a href="config.html"><i class="fas fa-gear"></i> Configurações</a>
-          <a href="ajuda.html">
-            <i class="fas fa-circle-question"></i> Ajuda
-          </a>
-        </nav>
-
-        <div class="sidebar-voltar">
-          <a href="../intranet.html"
-            ><i class="fas fa-arrow-left"></i> Voltar à intranet</a
-          >
-        </div>
-      </aside>
+      <aside class="sidebar" id="sidebar"></aside>
 
       <!-- MAIN -->
       <div class="main-area">
         <!-- TOPBAR -->
-        <header class="topbar">
-          <div class="intranet-style-8e413f4289">
-            <button
-              class="btn-toggle-sidebar"
-              id="btnToggleSidebar"
-              title="Abrir menu"
-             type="button">
-              <i class="fas fa-bars"></i>
-            </button>
-            <div class="topbar-titulo">
-              <h1><i class="fas fa-book"></i> Livros</h1>
-              <p>Acervo bibliográfico da Biblioteca Municipal</p>
-            </div>
-          </div>
-
-          <div class="topbar-direita">
-            <div class="topbar-info">
-              <strong id="topbarNome">—</strong>
-              <span id="topbarData">—</span>
-            </div>
-
-            <!-- DROPDOWN DO AVATAR -->
-            <div class="avatar-wrapper">
-              <button
-                class="avatar-btn"
-                id="avatarBtn"
-                title="Menu do usuário"
-                aria-haspopup="menu"
-                aria-expanded="false"
-               type="button">
-                <span id="avatarIniciais">?</span>
-              </button>
-              <div class="avatar-menu" id="avatarMenu" role="menu">
-                <div class="avatar-menu-header">
-                  <strong id="menuNome">—</strong>
-                  <span id="menuEmail">—</span>
-                </div>
-                <a
-                  href="../perfil.html"
-                  class="avatar-menu-item"
-                  role="menuitem"
-                >
-                  <i class="fas fa-user-circle"></i> Meu Perfil
-                </a>
-                <a href="ajuda.html" class="avatar-menu-item" role="menuitem">
-                  <i class="fas fa-circle-question"></i> Ajuda
-                </a>
-                <div class="avatar-menu-divisor"></div>
-                <button
-                  class="avatar-menu-item sair"
-                  id="menuSair"
-                  type="button"
-                  role="menuitem"
-                >
-                  <i class="fas fa-right-from-bracket"></i> Sair
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        <header class="topbar" id="topbar"></header>
 
         <!-- CONTEÚDO -->
-        <main class="conteudo">
+        <main class="conteudo conteudo-full">
           <!-- BARRA DE AÇÕES -->
           <div class="barra-acoes">
             <div class="campo-busca">
@@ -443,6 +342,8 @@
 
     <script type="module">
 import { supabase } from "../shared/js/supabase.js";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261010-biblioteca-shared-shell-2";
+      await initBibliotecaLayout(supabase);
       // ============================================
       // CONFIGURAÇÃO SUPABASE
       // ============================================
@@ -624,47 +525,7 @@ import { supabase } from "../shared/js/supabase.js";
       // ============================================
       // MENU DO AVATAR (dropdown)
       // ============================================
-      function configurarMenuAvatar() {
-        const btn = document.getElementById("avatarBtn");
-        const menu = document.getElementById("avatarMenu");
-        if (!btn || !menu) return;
-
-        // Abre/fecha ao clicar no avatar
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const aberto = menu.classList.toggle("aberto");
-          btn.setAttribute("aria-expanded", aberto ? "true" : "false");
-        });
-
-        // Fecha ao clicar fora
-        document.addEventListener("click", (e) => {
-          if (!menu.contains(e.target) && !btn.contains(e.target)) {
-            menu.classList.remove("aberto");
-            btn.setAttribute("aria-expanded", "false");
-          }
-        });
-
-        // Fecha com ESC
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") {
-            menu.classList.remove("aberto");
-            btn.setAttribute("aria-expanded", "false");
-          }
-        });
-
-        // Item "Sair" dentro do dropdown
-        const menuSair = document.getElementById("menuSair");
-        if (menuSair) {
-          menuSair.addEventListener("click", async () => {
-            const confirmar = window.confirm(
-              "Deseja realmente sair do módulo?",
-            );
-            if (!confirmar) return;
-            await supabase.auth.signOut();
-            window.location.href = "../intranet.html";
-          });
-        }
-      }
+      
 
       // ============================================
       // CARREGAR AUXILIARES (autores, categorias, editoras)
@@ -1389,16 +1250,6 @@ import { supabase } from "../shared/js/supabase.js";
         });
 
       // Toggle sidebar mobile
-      const btnToggle = document.getElementById("btnToggleSidebar");
-      const sidebar = document.getElementById("sidebar");
-      if (btnToggle && sidebar) {
-        btnToggle.addEventListener("click", () =>
-          sidebar.classList.toggle("aberta"),
-        );
-        sidebar.querySelectorAll("a").forEach((a) => {
-          a.addEventListener("click", () => sidebar.classList.remove("aberta"));
-        });
-      }
 
       // ESC fecha modal
       document.addEventListener("keydown", (e) => {
@@ -1414,9 +1265,7 @@ import { supabase } from "../shared/js/supabase.js";
           if (!usuario) return;
 
           renderizarUsuario();
-          configurarMenuAvatar();
-
-          // Carrega auxiliares em paralelo
+// Carrega auxiliares em paralelo
           await Promise.all([
             carregarAutores(),
             carregarCategorias(),
@@ -1444,6 +1293,6 @@ import { supabase } from "../shared/js/supabase.js";
 
       init();
     </script>
-      <script type="module" src="./biblioteca-saas.js"></script>
+      
   </body>
 </html>

@@ -1,5 +1,5 @@
 import { supabase } from "../shared/js/supabase.js";
-import { initLayout } from "../shared/js/layout.js?v=20261009-audit-shell-3";
+import { initLayout } from "../shared/js/layout.js?v=20261009-admin-shell-2";
 
 const $ = (selector) => document.querySelector(selector);
 const PAGE_SIZE = 25;
@@ -267,10 +267,10 @@ function handleQueryFailure(activityError, alertsError) {
     ? "A sessão ou autorização ADMIN foi encerrada. Entre novamente para consultar a auditoria."
     : timedOut
       ? "A consulta excedeu 15 segundos. Os resultados anteriores foram ocultados; tente novamente."
-      : "Não foi possível revalidar a consulta. Os resultados anteriores foram ocultados; tente atualizar.";
+      : "Não foi possível concluir a consulta. Os resultados anteriores foram ocultados; tente atualizar.";
   clearSensitiveData(message);
   setStatus(revoked
-    ? "Autorização administrativa não confirmada; os dados foram ocultados."
+    ? "Os dados de auditoria foram ocultados. Entre novamente na Intranet para continuar."
     : timedOut
       ? "Tempo limite de consulta atingido; os controles foram liberados para nova tentativa."
       : "Falha temporária ao carregar dados; os resultados anteriores foram removidos.", "error");
@@ -339,7 +339,7 @@ async function refresh() {
     setStatus(`Consulta atualizada às ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}.`, "ok");
   } catch (error) {
     console.error("[admin-audit-console] unexpected error", error);
-    clearSensitiveData("Não foi possível revalidar a consulta. Os resultados anteriores foram ocultados; tente atualizar.");
+    clearSensitiveData("Não foi possível concluir a consulta. Os resultados anteriores foram ocultados; tente atualizar.");
     setStatus("Falha temporária ao carregar a auditoria.", "error");
   } finally {
     state.refreshing = false;
@@ -350,8 +350,9 @@ async function refresh() {
 async function boot() {
   const gate = $("#auditGate");
   try {
-    const user = await initLayout({
+    const user = window.ADMIN_SINGLE_PAGE ? window.adminCurrentUser : await initLayout({
       supabase,
+      presencaOnline: false,
       brand: {
         nome: "Prefeitura Municipal de Pitangueiras",
         subtitulo: "Intranet Municipal",
@@ -369,46 +370,42 @@ async function boot() {
         rotaPerfil: "../../perfil.html",
         rotaAjuda: "../../controle-de-saldos/gestao-atas.html#faq",
       },
-      adminOnly: ["painel", "auditoria", "usuarios", "orgaos", "modulos", "permissoes", "atas"],
+      adminOnly: ["painel", "auditoria", "usuarios", "orgaos", "modulos", "permissoes"],
       menu: [
         {
-          section: "Visão central",
+          section: "Painel administrativo",
           itens: [
-            { id: "painel", rota: "../../core/index.html", icone: "fa-gauge-high", label: "Painel executivo" },
-            { id: "auditoria", rota: "index.html", icone: "fa-shield-halved", label: "Segurança e auditoria" },
-          ],
-        },
-        {
-          section: "Identidades e acesso",
-          itens: [
-            { id: "usuarios", rota: "../../core/usuarios/index.html", icone: "fa-users", label: "Usuários" },
-            { id: "orgaos", rota: "../../core/orgaos/index.html", icone: "fa-building", label: "Órgãos e unidades" },
-            { id: "permissoes", rota: "../../core/permissoes/index.html", icone: "fa-key", label: "Perfis e permissões" },
-          ],
-        },
-        {
-          section: "Módulos",
-          itens: [
-            { id: "modulos", rota: "../../core/modulos/index.html", icone: "fa-cubes", label: "Catálogo de módulos" },
-            { id: "atas", rota: "../../controle-de-saldos/gestao-atas.html", icone: "fa-file-contract", label: "Atas, saldos e pedidos" },
+            { id: "painel", rota: "../../core/index.html?view=dashboard", icone: "fa-gauge-high", label: "Visão geral" },
+            { id: "auditoria", rota: "../../core/index.html?view=auditoria", icone: "fa-clock-rotate-left", label: "Auditoria e logs" },
+            { id: "usuarios", rota: "../../core/index.html?view=usuarios", icone: "fa-users", label: "Usuários" },
+            { id: "orgaos", rota: "../../core/index.html?view=orgaos", icone: "fa-building", label: "Órgãos e unidades" },
+            { id: "modulos", rota: "../../core/index.html?view=modulos", icone: "fa-cubes", label: "Módulos" },
+            { id: "permissoes", rota: "../../core/index.html?view=permissoes", icone: "fa-key", label: "Perfis e permissões" },
+            { id: "governanca", rota: "../../core/index.html?view=governanca", icone: "fa-user-shield", label: "Solicitações e governança" },
           ],
         },
       ],
     });
 
     if (!user) return;
+    if (window.ADMIN_SINGLE_PAGE) {
+      $("#btnSair")?.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "../intranet.html";
+      });
+    }
     if (user.ativo !== true || user.perfil !== "ADMIN") {
       if (gate) {
         gate.classList.add("is-denied");
         gate.textContent = "Acesso restrito a administradores ativos. Redirecionando…";
       }
-      window.location.replace("../../intranet.html");
+      window.location.replace(window.ADMIN_SINGLE_PAGE ? "../intranet.html" : "../../intranet.html");
       return;
     }
 
     const consoleRoot = $("#auditConsole");
     if (consoleRoot) consoleRoot.hidden = false;
-    if (gate) gate.hidden = true;
+    gate?.remove();
 
     const authState = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT" || !session) {
@@ -454,9 +451,10 @@ async function boot() {
     console.error("[admin-audit-console] access check failed", error);
     if (gate) {
       gate.classList.add("is-denied");
-      gate.textContent = "Não foi possível validar a autorização administrativa. Os dados permanecem ocultos.";
+      gate.textContent = "Não foi possível abrir a auditoria. Os dados permanecem ocultos.";
     }
   }
 }
 
-void boot();
+export async function initializeAdminView() { return boot(); }
+if (!window.ADMIN_SINGLE_PAGE) void boot();

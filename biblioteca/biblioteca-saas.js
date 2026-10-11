@@ -8,7 +8,7 @@ export async function initBibliotecaSaaS() {
   const { data: usuario } = await supabase.from("usuarios").select("id,nome,email,perfil,ativo").eq("uuid", session.user.id).maybeSingle();
   if (!usuario || usuario.ativo === false) return;
   window.bibliotecaSaaS = { supabase, usuario, uploadDocumento };
-  await Promise.all([renderNotificationCenter(), renderProductBar(usuario)]);
+  await renderNotificationCenter();
 }
 
 async function renderNotificationCenter() {
@@ -30,18 +30,6 @@ async function loadNotifications() {
   const out = document.getElementById("bibSaasNotifications"); if (!out) return;
   out.innerHTML = list.length ? list.map(n => `<button type="button" class="bib-saas-notification ${n.lida_em ? "" : "unread"}" data-id="${esc(n.id)}"><i class="fas ${n.prioridade === "critica" || n.prioridade === "alta" ? "fa-triangle-exclamation" : "fa-circle-info"}"></i><span><strong>${esc(n.titulo)}</strong><small>${esc(n.mensagem)}</small><em>${n.created_at ? new Date(n.created_at).toLocaleString("pt-BR") : ""}</em></span></button>`).join("") : '<div class="bib-saas-empty"><i class="fas fa-check-circle"></i><br>Nenhuma pendência no momento.</div>';
   out.querySelectorAll("[data-id]").forEach(btn => btn.onclick = async () => { await supabase.rpc("bib_marcar_notificacao_lida", { p_id: btn.dataset.id }); await loadNotifications(); });
-}
-
-async function renderProductBar(usuario) {
-  if (document.getElementById("bibSaasProductBar")) return;
-  const main = document.querySelector("main") || document.querySelector(".conteudo") || document.body;
-  const bar = document.createElement("section"); bar.id = "bibSaasProductBar"; bar.className = "bib-saas-product-bar";
-  bar.innerHTML = `<div><span class="bib-saas-eyebrow">Biblioteca Municipal · SaaS</span><strong>Operação rastreável e protegida por Município</strong><small>Circulação, acervo, inventário e atendimento em um só lugar.</small></div><div class="bib-saas-chips"><span><i class="fas fa-shield-halved"></i> Multi-tenant</span><span><i class="fas fa-clock-rotate-left"></i> Auditoria</span><span><i class="fas fa-lock"></i> LGPD</span></div>`;
-  main.prepend(bar);
-  const { data: config } = await supabase.rpc("bib_obter_configuracao");
-  if (usuario.perfil === "ADMIN" && (!config || config.nome_biblioteca === "Biblioteca Municipal")) {
-    bar.insertAdjacentHTML("beforeend", `<button type="button" class="bib-saas-setup" onclick="location.href='config.html'"><i class="fas fa-sliders"></i> Revisar configuração</button>`);
-  }
 }
 
 export async function uploadDocumento({ entidade, entidadeId, arquivo }) {

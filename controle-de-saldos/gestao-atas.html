@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png?v=20261009-brasao-2">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg?v=20261009-brasao-2">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png?v=20261009-brasao-2">
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico?v=20261009-brasao-2">
+
     <title>Gestão de Atas, Saldos e Pedidos | Intranet Municipal</title>
 
     <!-- ============================================================ -->
@@ -68,15 +73,18 @@
 
 
 <script src="./shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="./shared/css/all.min.css?v=20261006-fontawesome-local-1">
-  <link rel="stylesheet" href="./shared/css/intranet-global.css?v=20261004-unified-5">
+  <link rel="stylesheet" href="./shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
+  <link rel="stylesheet" href="./shared/css/intranet-global.css?v=20261010-shared-shell-theme-4">
   <link rel="stylesheet" href="./css/gestao-atas-fab.css?v=20261006-drive-fixes-1">
-  <link rel="stylesheet" href="./css/atas-saldos-pedidos-redesign.css?v=20261006-avatar-app-drawer-2">
+  <link rel="stylesheet" href="./css/atas-saldos-pedidos-redesign.css?v=20261010-shared-shell-theme-5">
+  <link rel="stylesheet" href="./css/central-ajuda-atas.css?v=20261008-central-ajuda-5">
   <link rel="stylesheet" href="./css/relatorios.css?v=20261006-relatorios-redesign-1">
   <link rel="stylesheet" href="./css/pedidos.css?v=20261006-pedidos-microinteracoes-1">
   <link rel="stylesheet" href="./css/carrinho-page.css?v=20261007-cart-quantity-4">
+  <script src="../shared/js/pwa-device.js?v=20261009-mobile-only-1" data-manifest-href="../manifest.webmanifest?v=20261009-brasao-2"></script>
+  <link rel="stylesheet" href="../shared/css/pwa-responsive.css?v=20261008-pwa-1">
 </head>
-  <body data-intranet-module="atas" data-intranet-page="controle-de-saldos-gestao-atas">
+  <body data-intranet-module="atas" data-intranet-page="controle-de-saldos-gestao-atas" data-pwa-worker="../service-worker.js">
     <!-- ============================================================ -->
     <!-- SISTEMA · LAYOUT PRINCIPAL (Sidebar + Topbar + Conteúdo)     -->
     <!-- O id "mainSystem" é mantido para compatibilidade             -->
@@ -120,10 +128,10 @@
           <div id="aditivosContent" class="intranet-style-3ca3a5f3da"></div>
 
           <!-- ====================================================== -->
-          <!-- FAQ · manual interativo para secretários               -->
-          <!-- Carregado pelo módulo FAQ via templates/faq.html        -->
+          <!-- CENTRAL DE AJUDA · view integrada ao shell de Consulta      -->
+          <!-- Renderizada pelo módulo central-ajuda-atas.js             -->
           <!-- ====================================================== -->
-          <div id="faqContent" class="intranet-style-3ca3a5f3da"></div>
+          <div id="faqContent"></div>
 
           <!-- ====================================================== -->
           <!-- CARRINHO (SPA) · nova view integrada ao layout         -->
@@ -741,7 +749,8 @@
     <!-- ============================================================ -->
     <!-- SCRIPT PRINCIPAL DO MÓDULO                                   -->
     <!-- ============================================================ -->
-    <script type="module" src="js/main.js?v=20261007-cart-quantity-4"></script>
-    <script src="./shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
+    <script type="module" src="js/main.js?v=20261008-guia-pdf-1"></script>
+    <script src="../shared/js/system-shell.js?v=20261010-shared-shell-1"></script>
+    <script src="../shared/js/pwa-install.js?v=20261009-mobile-only-1" defer></script>
 </body>
 </html>
