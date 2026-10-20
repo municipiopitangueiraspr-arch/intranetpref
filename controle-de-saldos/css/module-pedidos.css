@@ -1,0 +1,463 @@
+/* Gestão de Atas, Saldos e Pedidos · camada modular
+ * Extraído de consulta-modern.css na refatoração de 2026-10-15.
+ * A identidade global permanece em ../shared/css/intranet-identidade.css.
+ * Não remover o escopo body[data-intranet-module="atas"] sem validar o JS.
+ */
+
+/* Base de Pedidos e Aprovações migrada do arquivo de Carrinho. */
+/* ================================================================
+   Pedidos e Aprovações · camada específica sobre a identidade central
+   Base global: ../shared/css/intranet-identidade.css
+   ================================================================ */
+body[data-intranet-module="atas"] #pedidosContent {
+  width: 100%;
+  color: var(--text-primary);
+}
+body[data-intranet-module="atas"] #pedidosContent .pedidos-breadcrumb { margin-bottom: 0; }
+body[data-intranet-module="atas"] #pedidosContent .pedido-container { display: grid; gap: var(--space-5); width: 100%; }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-acoes-rapidas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem;
+}
+body[data-intranet-module="atas"] #pedidosContent .btn-acao-principal,
+body[data-intranet-module="atas"] #pedidosContent .btn-acao-secundaria,
+body[data-intranet-module="atas"] #pedidosContent .btn-adicionar-rapido,
+body[data-intranet-module="atas"] #pedidosContent .btn-aplicar,
+body[data-intranet-module="atas"] #pedidosContent .btn-carregar-mais,
+body[data-intranet-module="atas"] #pedidosContent .btn-aprovar,
+body[data-intranet-module="atas"] #pedidosContent .btn-receber-pedido,
+body[data-intranet-module="atas"] #pedidosContent .btn-encerrar-pedido,
+body[data-intranet-module="atas"] #pedidosContent .btn-confirmar-exclusao-frac {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.4rem;
+  padding: .55rem .85rem;
+  border: 1px solid var(--brand-primary);
+  border-radius: var(--radius-md);
+  background: var(--brand-primary);
+  color: var(--text-on-brand);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+body[data-intranet-module="atas"] #pedidosContent .btn-acao-principal:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-aplicar:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-adicionar-rapido:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-aprovar:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-receber-pedido:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-encerrar-pedido:hover { background: var(--brand-primary-dark); transform: translateY(-1px); }
+body[data-intranet-module="atas"] #pedidosContent .btn-acao-secundaria,
+body[data-intranet-module="atas"] #pedidosContent .btn-carregar-mais {
+  border-color: var(--border-default);
+  background: var(--surface-card);
+  color: var(--brand-primary);
+}
+body[data-intranet-module="atas"] #pedidosContent .btn-acao-secundaria:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-carregar-mais:hover { border-color: var(--border-focus); background: var(--surface-hover); }
+body[data-intranet-module="atas"] #pedidosContent .badge-acao {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 .25rem;
+  border-radius: var(--radius-pill);
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  font-size: .7rem;
+  font-weight: var(--font-weight-bold);
+}
+body[data-intranet-module="atas"] #pedidosContent .badge-acao-alerta { background: var(--state-warning-bg); color: var(--state-warning); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+body[data-intranet-module="atas"] #pedidosContent .indicador-card {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border-default);
+  border-left: 4px solid var(--brand-primary);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+body[data-intranet-module="atas"] #pedidosContent .indicador-clicavel { cursor: pointer; transition: transform .16s ease, box-shadow .16s ease; }
+body[data-intranet-module="atas"] #pedidosContent .indicador-clicavel:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+body[data-intranet-module="atas"] #pedidosContent .indicador-pendente { border-left-color: var(--state-warning); }
+body[data-intranet-module="atas"] #pedidosContent .indicador-aprovado { border-left-color: var(--state-success); }
+body[data-intranet-module="atas"] #pedidosContent .indicador-rejeitado { border-left-color: var(--state-danger); }
+body[data-intranet-module="atas"] #pedidosContent .indicador-icone {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: .7rem;
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+}
+body[data-intranet-module="atas"] #pedidosContent .indicador-pendente .indicador-icone { background: var(--state-warning-bg); color: var(--state-warning); }
+body[data-intranet-module="atas"] #pedidosContent .indicador-aprovado .indicador-icone { background: var(--state-success-bg); color: var(--state-success); }
+body[data-intranet-module="atas"] #pedidosContent .indicador-rejeitado .indicador-icone { background: var(--state-danger-bg); color: var(--state-danger); }
+body[data-intranet-module="atas"] #pedidosContent .indicador-copy { display: grid; gap: .1rem; min-width: 0; }
+body[data-intranet-module="atas"] #pedidosContent .indicador-numero { color: var(--text-primary); font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); }
+body[data-intranet-module="atas"] #pedidosContent .indicador-label { color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao,
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida,
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida,
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros { padding: 1rem 1.15rem; }
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida-header,
+body[data-intranet-module="atas"] #pedidosContent .pedidos-modo-barra,
+body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida-header { margin-bottom: .9rem; }
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida-titulo,
+body[data-intranet-module="atas"] #pedidosContent .pedidos-modo-titulo { margin: 0; color: var(--text-primary); font-size: var(--font-size-md); }
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida-titulo i { color: var(--state-warning); }
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida-dica,
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-nota { color: var(--text-secondary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida-grid,
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .85rem; }
+body[data-intranet-module="atas"] #pedidosContent .compra-rapida-grid { grid-template-columns: 1.4fr 1.4fr .7fr auto; align-items: end; }
+body[data-intranet-module="atas"] #pedidosContent .filtro-grupo { display: grid; gap: .3rem; min-width: 0; }
+body[data-intranet-module="atas"] #pedidosContent .filtro-label { color: var(--text-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+body[data-intranet-module="atas"] #pedidosContent .filtro-label i { margin-right: .25rem; color: var(--brand-primary); }
+body[data-intranet-module="atas"] #pedidosContent .filtro-input,
+body[data-intranet-module="atas"] #pedidosContent .filtro-select {
+  width: 100%;
+  min-height: 2.55rem;
+  padding: .55rem .7rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-primary);
+}
+body[data-intranet-module="atas"] #pedidosContent .filtro-input:focus,
+body[data-intranet-module="atas"] #pedidosContent .filtro-select:focus { border-color: var(--border-focus); outline: 0; box-shadow: var(--focus-ring); }
+body[data-intranet-module="atas"] #pedidosContent .filtro-data-inputs { display: flex; align-items: center; gap: .45rem; }
+body[data-intranet-module="atas"] #pedidosContent .filtro-data-separador { color: var(--text-muted); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros { display: grid; gap: .9rem; }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .55rem; }
+body[data-intranet-module="atas"] #pedidosContent .btn-limpar,
+body[data-intranet-module="atas"] #pedidosContent .btn-exportar,
+body[data-intranet-module="atas"] #pedidosContent .btn-rejeitar,
+body[data-intranet-module="atas"] #pedidosContent .btn-visualizar-pedido,
+body[data-intranet-module="atas"] #pedidosContent .btn-timeline-pedido,
+body[data-intranet-module="atas"] #pedidosContent .btn-ocorrencia-pedido,
+body[data-intranet-module="atas"] #pedidosContent .btn-fracionar-pedido-inteiro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  min-height: 2.35rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--brand-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+body[data-intranet-module="atas"] #pedidosContent .btn-limpar:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-exportar:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-visualizar-pedido:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-timeline-pedido:hover,
+body[data-intranet-module="atas"] #pedidosContent .btn-ocorrencia-pedido:hover { border-color: var(--border-focus); background: var(--surface-hover); }
+body[data-intranet-module="atas"] #pedidosContent .btn-rejeitar { border-color: var(--state-danger); color: var(--state-danger); }
+body[data-intranet-module="atas"] #pedidosContent .btn-rejeitar:hover { background: var(--state-danger-bg); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-contador { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--text-secondary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-wrapper { display: grid; gap: .75rem; }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1.25fr) minmax(9rem, 1fr) minmax(9rem, 1fr) minmax(8rem, .8fr) auto auto auto;
+  align-items: center;
+  gap: .85rem;
+  padding: 1rem;
+  border: 1px solid var(--border-default);
+  border-left: 4px solid var(--brand-primary);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-1px); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item.status-aprovado { border-left-color: var(--state-success); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item.status-rejeitado { border-left-color: var(--state-danger); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item.status-aguardando { border-left-color: var(--state-warning); }
+body[data-intranet-module="atas"] #pedidosContent .numero-pedido,
+body[data-intranet-module="atas"] #pedidosContent .ata-info,
+body[data-intranet-module="atas"] #pedidosContent .fornecedor-info,
+body[data-intranet-module="atas"] #pedidosContent .local-info,
+body[data-intranet-module="atas"] #pedidosContent .valor-info,
+body[data-intranet-module="atas"] #pedidosContent .data-info { min-width: 0; color: var(--text-secondary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .numero-pedido { color: var(--text-primary); font-weight: var(--font-weight-bold); }
+body[data-intranet-module="atas"] #pedidosContent .numero-pedido i,
+body[data-intranet-module="atas"] #pedidosContent .ata-info i,
+body[data-intranet-module="atas"] #pedidosContent .local-info i { margin-right: .3rem; color: var(--brand-primary); }
+body[data-intranet-module="atas"] #pedidosContent .itens-count { display: block; margin-top: .15rem; color: var(--text-muted); font-size: var(--font-size-xs); font-weight: var(--font-weight-normal); }
+body[data-intranet-module="atas"] #pedidosContent .valor-info { color: var(--brand-primary); font-weight: var(--font-weight-bold); text-align: right; }
+body[data-intranet-module="atas"] #pedidosContent .status-badge { display: inline-flex; align-items: center; gap: .3rem; width: fit-content; padding: .3rem .55rem; border-radius: var(--radius-pill); background: var(--surface-muted); color: var(--text-secondary); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); white-space: nowrap; }
+body[data-intranet-module="atas"] #pedidosContent .status-aguardando { background: var(--state-warning-bg); color: var(--state-warning); }
+body[data-intranet-module="atas"] #pedidosContent .status-aprovado { background: var(--state-success-bg); color: var(--state-success); }
+body[data-intranet-module="atas"] #pedidosContent .status-rejeitado { background: var(--state-danger-bg); color: var(--state-danger); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-detalhes { grid-column: 1 / -1; padding-top: 1rem; border-top: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] #pedidosContent .detalhes-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .8rem; }
+body[data-intranet-module="atas"] #pedidosContent .detalhes-header h4 { margin: 0; color: var(--text-primary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .detalhes-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .45rem; }
+body[data-intranet-module="atas"] #pedidosContent .tabela-itens-pedido { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .tabela-itens-pedido th { padding: .65rem .75rem; background: var(--surface-muted); color: var(--text-secondary); font-size: var(--font-size-xs); text-align: left; }
+body[data-intranet-module="atas"] #pedidosContent .tabela-itens-pedido td { padding: .65rem .75rem; border-bottom: 1px solid var(--border-soft); color: var(--text-secondary); }
+body[data-intranet-module="atas"] #pedidosContent .pedido-local-entrega { margin: .8rem 0; padding: .7rem .8rem; border-radius: var(--radius-md); background: var(--surface-soft-blue); color: var(--text-secondary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .pedido-local-entrega i { margin-right: .3rem; color: var(--brand-primary); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna { min-width: 0; border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: var(--surface-muted); overflow: hidden; }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna-cab { display: flex; align-items: center; gap: .5rem; padding: .8rem .9rem; border-bottom: 1px solid var(--border-soft); background: var(--surface-card); color: var(--text-primary); font-weight: var(--font-weight-semibold); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna-cab small { margin-left: auto; color: var(--text-muted); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna-corpo { display: grid; gap: .65rem; min-height: 8rem; padding: .7rem; }
+body[data-intranet-module="atas"] #pedidosContent .pedido-kanban-card { display: grid; gap: .4rem; padding: .8rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); box-shadow: var(--shadow-card); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-numero { color: var(--text-primary); font-weight: var(--font-weight-bold); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-linha { color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-valor { display: flex; justify-content: space-between; gap: .5rem; padding-top: .45rem; border-top: 1px solid var(--border-soft); color: var(--brand-primary); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-vazio { padding: 1rem .6rem; color: var(--text-muted); font-size: var(--font-size-sm); text-align: center; }
+body[data-intranet-module="atas"] .modal-content-fracionar,
+body[data-intranet-module="atas"] .modal-content-fracionar-pedido,
+body[data-intranet-module="atas"] .modal-content-recebimento-pedido,
+body[data-intranet-module="atas"] .modal-content-timeline-pedido,
+body[data-intranet-module="atas"] .modal-content-estorno-pedido,
+body[data-intranet-module="atas"] .modal-content-ocorrencia-pedido,
+body[data-intranet-module="atas"] .modal-content-confirmar-exclusao-frac { width: min(100%, 62rem); }
+body[data-intranet-module="atas"] .modal-header-danger { background: var(--state-danger-bg); color: var(--state-danger); }
+body[data-intranet-module="atas"] .modal-body-fracionar,
+body[data-intranet-module="atas"] .modal-body-exclusao-frac { padding: 1.25rem; }
+body[data-intranet-module="atas"] .modal-footer-fracionar { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .55rem; padding: 1rem 1.25rem; border-top: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] .btn-cancelar-fracionar,
+body[data-intranet-module="atas"] .btn-cancelar { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-height: 2.4rem; padding: .5rem .8rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); color: var(--text-secondary); font-weight: var(--font-weight-semibold); cursor: pointer; }
+body[data-intranet-module="atas"] .btn-cancelar-fracionar:hover,
+body[data-intranet-module="atas"] .btn-cancelar:hover { background: var(--surface-hover); border-color: var(--border-focus); color: var(--brand-primary); }
+@media (max-width: 1050px) {
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item .expand-cell { display: none; }
+}
+@media (max-width: 760px) {
+  body[data-intranet-module="atas"] #pedidosContent .compra-rapida-grid,
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros-grid,
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban { grid-template-columns: 1fr; }
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item { grid-template-columns: 1fr 1fr; }
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-item .valor-info { text-align: left; }
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-modo-barra,
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-lista-header,
+  body[data-intranet-module="atas"] #pedidosContent .detalhes-header { align-items: flex-start; flex-direction: column; }
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-contador { align-items: flex-start; flex-direction: column; }
+  body[data-intranet-module="atas"] #pedidosContent .filtro-data-inputs { align-items: stretch; flex-direction: column; }
+  body[data-intranet-module="atas"] #pedidosContent .filtro-data-separador { display: none; }
+}
+
+/* ================================================================
+   Pedidos · refinamento de hierarquia, alertas e densidade
+   ================================================================ */
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao {
+  position: relative;
+  display: grid;
+  gap: .75rem;
+  padding: 1rem 1.1rem .9rem;
+  border: 1px solid color-mix(in srgb, var(--state-warning) 42%, var(--border-default));
+  border-left: 4px solid var(--state-warning);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--state-warning-bg), var(--surface-card) 48%);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--state-warning) 12%, transparent);
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao::before {
+  position: absolute;
+  top: .85rem;
+  right: 1rem;
+  width: .5rem;
+  height: .5rem;
+  border-radius: 50%;
+  background: var(--state-warning);
+  box-shadow: 0 0 0 .25rem var(--state-warning-bg);
+  content: "";
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: .65rem;
+  padding-bottom: .65rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--state-warning) 24%, var(--border-soft));
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-header > i {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--state-warning);
+  color: var(--text-on-brand);
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-titulo {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .3rem;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-titulo strong { color: var(--state-warning); font-size: var(--font-size-xl); }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-subtitulo {
+  grid-column: 2;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-lista {
+  display: grid;
+  gap: .4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1fr) minmax(12rem, 1.4fr) auto;
+  align-items: center;
+  gap: .75rem;
+  padding: .55rem .65rem;
+  border: 1px solid color-mix(in srgb, var(--state-warning) 20%, var(--border-soft));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-card) 88%, var(--state-warning-bg));
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item:first-child { border-color: color-mix(in srgb, var(--state-warning) 48%, var(--border-default)); }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-numero,
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-fornecedor { display: grid; gap: .1rem; min-width: 0; }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-numero strong { color: var(--text-primary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-numero small,
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-fornecedor small { color: var(--text-muted); font-size: .7rem; }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-fornecedor > span { overflow: hidden; color: var(--text-secondary); font-size: var(--font-size-sm); text-overflow: ellipsis; white-space: nowrap; }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-fornecedor i { margin-right: .2rem; color: var(--state-warning); }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-valor { color: var(--text-primary); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); text-align: right; white-space: nowrap; }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-mais { padding: .3rem; color: var(--text-secondary); font-size: var(--font-size-xs); text-align: center; }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-acoes {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: .5rem;
+  padding-top: .15rem;
+}
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-total { margin-right: auto; color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-total strong { color: var(--text-primary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .btn-aprovar-todos,
+body[data-intranet-module="atas"] #pedidosContent .btn-ver-fila-completa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  min-height: 2.25rem;
+  padding: .45rem .7rem;
+  border: 1px solid var(--state-warning);
+  border-radius: var(--radius-md);
+  background: var(--state-warning);
+  color: #fff;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+body[data-intranet-module="atas"] #pedidosContent .btn-aprovar-todos:hover { filter: brightness(.94); transform: translateY(-1px); }
+body[data-intranet-module="atas"] #pedidosContent .btn-ver-fila-completa { border-color: var(--border-default); background: var(--surface-card); color: var(--brand-primary); }
+body[data-intranet-module="atas"] #pedidosContent .btn-ver-fila-completa:hover { border-color: var(--border-focus); background: var(--surface-hover); }
+
+/* Filtros mais densos: mesma informação, menos altura e maior agrupamento visual. */
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros {
+  gap: .65rem;
+  padding: .8rem .9rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros-grid { gap: .6rem .75rem; }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros .filtro-grupo { gap: .2rem; }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros .filtro-label { font-size: .7rem; }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros .filtro-input,
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros .filtro-select { min-height: 2.25rem; padding: .42rem .6rem; font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros-actions { padding-top: .15rem; border-top: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-filtros-actions button { min-height: 2.2rem; padding: .42rem .7rem; }
+
+/* Kanban: cinco etapas na mesma linha em telas amplas, com rolagem horizontal controlada. */
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(13.5rem, 1fr));
+  min-width: 70rem;
+  gap: .75rem;
+  align-items: start;
+  overflow-x: auto;
+  padding-bottom: .35rem;
+}
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 18rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-muted);
+}
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna-cab {
+  min-height: 3rem;
+  padding: .7rem .8rem;
+  border-top: 3px solid var(--brand-primary);
+  font-size: var(--font-size-sm);
+}
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna:nth-child(1) .pedidos-kanban-coluna-cab { border-top-color: var(--state-warning); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna:nth-child(2) .pedidos-kanban-coluna-cab { border-top-color: var(--state-success); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna:nth-child(4) .pedidos-kanban-coluna-cab { border-top-color: var(--state-info); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna:nth-child(5) .pedidos-kanban-coluna-cab { border-top-color: var(--text-muted); }
+body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban-coluna-corpo { align-content: start; min-height: 14rem; padding: .55rem; }
+body[data-intranet-module="atas"] #pedidosContent .pedido-kanban-card {
+  position: relative;
+  gap: .32rem;
+  padding: .7rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 7px rgb(15 23 42 / 7%);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+body[data-intranet-module="atas"] #pedidosContent .pedido-kanban-card:hover,
+body[data-intranet-module="atas"] #pedidosContent .pedido-kanban-card:focus-visible { border-color: var(--brand-primary); box-shadow: var(--shadow-card-hover); transform: translateY(-2px); outline: 0; }
+body[data-intranet-module="atas"] #pedidosContent .pedido-kanban-card.arrastando { opacity: .62; border-style: dashed; transform: rotate(1deg); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-acoes { position: absolute; top: .45rem; right: .45rem; }
+body[data-intranet-module="atas"] #pedidosContent .kanban-menu { display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border: 0; border-radius: 50%; background: transparent; color: var(--text-muted); cursor: pointer; }
+body[data-intranet-module="atas"] #pedidosContent .kanban-menu:hover { background: var(--surface-hover); color: var(--brand-primary); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-numero { display: block; padding-right: 1.8rem; color: var(--text-primary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-numero i { margin-right: .25rem; color: var(--brand-primary); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-linha { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body[data-intranet-module="atas"] #pedidosContent .kanban-linha i { width: 1rem; color: var(--text-muted); text-align: center; }
+body[data-intranet-module="atas"] #pedidosContent .kanban-valor { margin-top: .25rem; font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-menu-popover { z-index: 5; min-width: 12rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); box-shadow: var(--shadow-modal); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-menu-item { display: flex; width: 100%; align-items: center; gap: .45rem; padding: .5rem .65rem; border: 0; background: transparent; color: var(--text-secondary); font-size: var(--font-size-xs); text-align: left; cursor: pointer; }
+body[data-intranet-module="atas"] #pedidosContent .kanban-menu-item:hover { background: var(--surface-hover); color: var(--brand-primary); }
+body[data-intranet-module="atas"] #pedidosContent .kanban-menu-titulo { display: block; padding: .45rem .65rem .25rem; color: var(--text-muted); font-size: .68rem; font-weight: var(--font-weight-semibold); text-transform: uppercase; }
+body[data-intranet-module="atas"] #pedidosContent .kanban-menu-separador { height: 1px; margin: .2rem 0; background: var(--border-soft); }
+@media (max-width: 760px) {
+  body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item { grid-template-columns: 1fr auto; }
+  body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-item-fornecedor { grid-column: 1 / -1; }
+  body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-total { width: 100%; margin-right: 0; }
+  body[data-intranet-module="atas"] #pedidosContent .fila-aprovacao-acoes > button { flex: 1; }
+  body[data-intranet-module="atas"] #pedidosContent .pedidos-kanban { grid-template-columns: repeat(5, minmax(13.5rem, 1fr)); }
+}

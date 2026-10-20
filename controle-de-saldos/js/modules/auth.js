@@ -119,7 +119,9 @@ export class Auth {
     }
     if (tabGestao) {
       tabGestao.style.display =
-        perfil === "ADMIN" || perfil === "ESTAGIARIO" ? "block" : "none";
+        ["ADMIN", "ESTAGIARIO", "SECRETARIO", "PREFEITO"].includes(perfil)
+          ? "block"
+          : "none";
     }
     if (tabCadastro) {
       tabCadastro.style.display =

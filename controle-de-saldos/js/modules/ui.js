@@ -28,9 +28,9 @@ export class UI {
 
     toast.innerHTML = `
       <i class="fas ${icon}"></i>
-      <div data-intranet-style="7d1d709f91c7">
-        <span data-intranet-style="bd02e89ba2e4">${mensagem}</span>
-        ${subtitulo ? `<span data-intranet-style="73f56c95b5d1">${subtitulo}</span>` : ""}
+      <div>
+        <span>${mensagem}</span>
+        ${subtitulo ? `<span>${subtitulo}</span>` : ""}
       </div>
       <button class="btn-fechar" onclick="this.parentElement.remove()">
         <i class="fas fa-times"></i>

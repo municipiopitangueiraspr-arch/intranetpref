@@ -17,10 +17,13 @@
 
 
 
-<script src="shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
+  <link rel="stylesheet" href="shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
+  <link rel="stylesheet" href="shared/css/intranet-identidade.css?v=20261015-design-system-entry-1">
+    <link rel="stylesheet" href="shared/identity-profile.css?v=20261015-profile-layer-2">
+    <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261014-pwa-2">
+    <style>.perfil-back-link{margin:0 0 1rem}.perfil-back-link a{display:inline-flex;align-items:center;gap:.45rem;color:var(--brand-primary);font-weight:700;text-decoration:none}.perfil-back-link a:hover{text-decoration:underline}</style>
 </head>
-  <body data-intranet-module="perfil" data-intranet-page="perfil">
+  <body data-intranet-module="perfil" data-intranet-page="perfil" data-shell-root="./" data-shell-supabase="./shared/js/supabase.js">
     <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
       <div class="spinner"></div>
@@ -30,32 +33,9 @@
          CONTAINER
          ===================================================================== -->
     <div class="app-layout profile-shell" id="profileShell">
-      <aside class="sidebar" id="profileSidebar" aria-label="Navegação da intranet">
-        <div class="sidebar-brand">
-          <div class="brand-icon" aria-label="Brasão do Município">
-            <img class="brasao-municipio" src="brasao-pref.png" alt="Brasão do Município" />
-          </div>
-          <div class="brand-text"><h2>Intranet Municipal</h2><span>Prefeitura de Pitangueiras</span></div>
-        </div>
-        <nav class="sidebar-nav" aria-label="Módulos da intranet">
-          <div class="nav-section" role="heading" aria-level="2">Principal</div>
-          <a class="active" aria-current="page" href="perfil.html"><i class="fas fa-user-circle"></i><span class="menu-label">Meu Perfil</span></a>
-          <a href="painel-estrategico-do-prefeito/painel-prefeito.html"><i class="fas fa-chart-line"></i><span class="menu-label">Visão Executiva</span></a>
-          <div class="nav-section" role="heading" aria-level="2">Gestão</div>
-          <a href="controle-de-saldos/gestao-atas.html"><i class="fas fa-file-contract"></i><span class="menu-label">Gestão de Atas</span></a>
-          <a href="gestao-de-trabalho/index.html"><i class="fas fa-list-check"></i><span class="menu-label">Gestão de Trabalho</span></a>
-          <a href="gestao-de-atos-oficiais/portal-atos-oficiais.html"><i class="fas fa-scale-balanced"></i><span class="menu-label">Atos Oficiais</span></a>
-          <a href="biblioteca/dashboard.html"><i class="fas fa-book-open"></i><span class="menu-label">Biblioteca Municipal</span></a>
-          <a href="compras/index.html"><i class="fas fa-cart-shopping"></i><span class="menu-label">Compras Públicas</span></a>
-        </nav>
-        <div class="sidebar-voltar"><a href="intranet.html"><i class="fas fa-arrow-left"></i><span class="menu-label">Voltar à intranet</span></a></div>
-      </aside>
       <div class="main-area">
-        <header class="topbar" id="profileTopbar">
-          <div class="topbar-esquerda"><button type="button" class="btn-toggle-sidebar" id="btnToggleSidebar" aria-label="Abrir menu"><i class="fas fa-bars"></i></button><div class="topbar-titulo"><h1><i class="fas fa-user-circle"></i> Meu Perfil</h1><p>Dados pessoais e segurança da conta</p></div></div>
-          <div class="topbar-direita"><div class="topbar-info"><strong id="profileTopbarName">Renan Ricardo</strong><span>Intranet Municipal</span></div><div class="avatar-usuario" aria-label="Usuário Renan Ricardo">RR</div></div>
-        </header>
     <div class="perfil-container">
+      <p class="perfil-back-link"><a id="btnVoltarIntranet" href="intranet.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar ao hall</a></p>
       <!-- =====================================================================
            HEADER DA PÁGINA
            ===================================================================== -->
@@ -69,7 +49,7 @@
         <div class="perfil-header-info">
           <h1 id="perfilHeaderNome">
             Carregando...
-            <i class="fas fa-circle-check intranet-style-902a8700f8"></i>
+            <i class="fas fa-circle-check"></i>
           </h1>
           <div class="linha-meta">
             <span id="perfilHeaderEmail">
@@ -83,16 +63,6 @@
               <span class="badge-perfil-acesso" id="perfilHeaderPerfil">—</span>
             </span>
           </div>
-        </div>
-
-        <div class="perfil-header-acoes">
-          <button
-            class="btn btn-outline"
-            id="btnVoltarIntranet"
-            title="Voltar à intranet"
-           type="button">
-            <i class="fas fa-arrow-left"></i> Voltar
-          </button>
         </div>
       </div>
 
@@ -141,7 +111,7 @@
                   placeholder="Seu nome completo"
                   maxlength="200"
                   required
-                / aria-label="Seu nome completo">
+                  aria-label="Seu nome completo">
               </div>
 
               <!-- Cargo -->
@@ -155,7 +125,7 @@
                   class="form-input"
                   placeholder="Ex: Assessor, Secretário"
                   maxlength="100"
-                / aria-label="Ex: Assessor, Secretário">
+                  aria-label="Ex: Assessor, Secretário">
               </div>
 
               <!-- Telefone -->
@@ -167,12 +137,12 @@
                   class="form-input"
                   placeholder="(43) 99999-9999"
                   maxlength="20"
-                / aria-label="(43) 99999 9999">
+                  aria-label="(43) 99999 9999">
               </div>
             </div>
 
             <!-- ============ DADOS SOMENTE LEITURA ============ -->
-            <div class="secao-titulo intranet-style-4764446619">
+            <div class="secao-titulo">
               <i class="fas fa-lock"></i> Informações gerenciadas pelo
               administrador
             </div>
@@ -198,7 +168,7 @@
                   id="inputEmail"
                   class="form-input somente-leitura"
                   disabled
-                / aria-label="inputEmail">
+                  aria-label="inputEmail">
               </div>
 
               <!-- Órgão -->
@@ -212,7 +182,7 @@
                   id="inputOrgao"
                   class="form-input somente-leitura"
                   disabled
-                / aria-label="inputOrgao">
+                  aria-label="inputOrgao">
               </div>
 
               <!-- Perfil de acesso -->
@@ -226,7 +196,7 @@
                   id="inputPerfilAcesso"
                   class="form-input somente-leitura"
                   disabled
-                / aria-label="inputPerfilAcesso">
+                  aria-label="inputPerfilAcesso">
                 <span class="form-hint">
                   O perfil de acesso define quais módulos você pode acessar e é
                   definido pelo administrador do sistema.
@@ -280,7 +250,7 @@
                     placeholder="Digite sua senha atual"
                     autocomplete="current-password"
                     required
-                  / aria-label="Digite sua senha atual">
+                  aria-label="Digite sua senha atual">
                   <i
                     class="fas fa-eye input-icon"
                     data-toggle="inputSenhaAtual"
@@ -302,7 +272,7 @@
                     placeholder="Mínimo 8 caracteres"
                     autocomplete="new-password"
                     required
-                  / aria-label="Mínimo 8 caracteres">
+                  aria-label="Mínimo 8 caracteres">
                   <i
                     class="fas fa-eye input-icon"
                     data-toggle="inputNovaSenha"
@@ -337,7 +307,7 @@
                     placeholder="Repita a nova senha"
                     autocomplete="new-password"
                     required
-                  / aria-label="Repita a nova senha">
+                  aria-label="Repita a nova senha">
                   <i
                     class="fas fa-eye input-icon"
                     data-toggle="inputConfirmaSenha"
@@ -367,7 +337,7 @@
           </form>
 
           <!-- ============ AUDITORIA ============ -->
-          <div class="secao-titulo intranet-style-6e3fe8ef07">
+          <div class="secao-titulo">
             <i class="fas fa-clock-rotate-left"></i> Histórico de segurança
           </div>
 
@@ -425,7 +395,7 @@
     </script>
 
     <script type="module">
-import { supabase } from "./shared/js/supabase.js";
+import { supabase } from "/shared/js/supabase.js";
       // ============================================
       // CONFIGURAÇÃO SUPABASE
       // ============================================
@@ -437,13 +407,13 @@ import { supabase } from "./shared/js/supabase.js";
 
       async function carregarServicos() {
         try {
-          const g = await import("./shared/js/auth-guard.js");
+          const g = await import("/shared/js/auth-guard.js");
           AuthGuard = g.AuthGuard || g.default;
         } catch (err) {
           console.error("[Perfil] Falha ao carregar AuthGuard:", err);
         }
         try {
-          const s = await import("./shared/js/services/onboarding-service.js");
+          const s = await import("/shared/js/services/onboarding-service.js");
           OnboardingService = s.OnboardingService || s.default;
         } catch (err) {
           console.error("[Perfil] Falha ao carregar OnboardingService:", err);
@@ -593,10 +563,85 @@ import { supabase } from "./shared/js/supabase.js";
         canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
         return canvas.toDataURL("image/jpeg", 0.78);
       }
+      function normalizarUrlFoto(valor) {
+        const foto = String(valor || "").trim();
+        if (!foto) return "";
+        const fotoDataUrl = /^data:image\/(?:jpeg|jpg|png|webp|gif);base64,[a-z0-9+/=\s]+$/i.test(foto);
+        if (fotoDataUrl) return foto;
+        try {
+          const url = new URL(foto, window.location.href);
+          return url.protocol === "https:" || url.origin === window.location.origin ? url.href : "";
+        } catch {
+          return "";
+        }
+      }
+
+      function renderizarAvatar(elemento, url, nome) {
+        if (!elemento) return;
+        const fallback = iniciais(nome);
+        const urlFoto = normalizarUrlFoto(url);
+        elemento.classList.remove("has-avatar-photo");
+        if (!urlFoto) {
+          elemento.textContent = fallback;
+          return;
+        }
+        const imagem = document.createElement("img");
+        imagem.src = urlFoto;
+        imagem.alt = `Foto de ${nome || "usuário"}`;
+        imagem.loading = "eager";
+        imagem.decoding = "async";
+        imagem.referrerPolicy = "no-referrer";
+        imagem.addEventListener("error", () => {
+          elemento.classList.remove("has-avatar-photo");
+          elemento.textContent = fallback;
+        }, { once: true });
+        imagem.addEventListener("load", () => elemento.classList.add("has-avatar-photo"), { once: true });
+        elemento.replaceChildren(imagem);
+      }
+
       function aplicarFotoAvatar(url, nome) {
-        const el = document.getElementById("perfilAvatar");
-        if (!el) return;
-        el.innerHTML = url ? `<img src="${escaparHtml(url)}" alt="Foto de ${escaparHtml(nome || "usuário")}">` : escaparHtml(iniciais(nome));
+        renderizarAvatar(document.getElementById("perfilAvatar"), url, nome);
+        renderizarAvatar(document.getElementById("avatarIniciais"), url, nome);
+      }
+
+      function atualizarDadosAvatar(nome, email, fotoUrl) {
+        const nomeExibicao = nome || "Usuário";
+        const nomeEl = document.getElementById("saudacaoMiniNome");
+        const menuNome = document.getElementById("menuNome");
+        const menuEmail = document.getElementById("menuEmail");
+        if (nomeEl) nomeEl.textContent = nomeExibicao;
+        if (menuNome) menuNome.textContent = nomeExibicao;
+        if (menuEmail) menuEmail.textContent = email || "—";
+        renderizarAvatar(document.getElementById("avatarIniciais"), fotoUrl, nomeExibicao);
+      }
+
+      function configurarMenuAvatar() {
+        const btn = document.getElementById("avatarBtn");
+        const menu = document.getElementById("avatarMenu");
+        if (!btn || !menu) return;
+        const fechar = () => {
+          menu.classList.remove("aberto");
+          btn.setAttribute("aria-expanded", "false");
+          menu.setAttribute("aria-hidden", "true");
+        };
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const aberto = !menu.classList.contains("aberto");
+          menu.classList.toggle("aberto", aberto);
+          btn.setAttribute("aria-expanded", aberto ? "true" : "false");
+          menu.setAttribute("aria-hidden", aberto ? "false" : "true");
+        });
+        document.addEventListener("click", (event) => {
+          if (!menu.contains(event.target) && !btn.contains(event.target)) fechar();
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") fechar();
+        });
+        document.getElementById("menuMeuPerfil")?.addEventListener("click", fechar);
+        document.getElementById("menuSair")?.addEventListener("click", async () => {
+          fechar();
+          try { await supabase.auth.signOut(); } finally { window.location.href = "index.html"; }
+        });
       }
 
       // ============================================
@@ -624,9 +669,10 @@ import { supabase } from "./shared/js/supabase.js";
 
           // ============ HEADER ============
           aplicarFotoAvatar(perfil.foto_url, perfil.nome);
+          atualizarDadosAvatar(perfil.nome, perfil.email, perfil.foto_url);
           document.getElementById("perfilHeaderNome").innerHTML = `
             ${escaparHtml(perfil.nome || "—")}
-            ${perfil.perfil_completo ? '<i class="fas fa-circle-check" title="Cadastro completo" data-intranet-inline-style="is6b8b63d565c4"></i>' : ""}
+            ${perfil.perfil_completo ? '<i class="fas fa-circle-check" title="Cadastro completo"></i>' : ""}
           `;
           document.getElementById("perfilHeaderEmail").innerHTML =
             `<i class="fas fa-envelope"></i> ${escaparHtml(perfil.email || "—")}`;
@@ -926,7 +972,8 @@ import { supabase } from "./shared/js/supabase.js";
       // ============================================
       document
         .getElementById("btnVoltarIntranet")
-        .addEventListener("click", () => {
+        ?.addEventListener("click", (event) => {
+          event.preventDefault();
           if (dadosAlterados()) {
             if (
               !confirm(
@@ -947,6 +994,7 @@ import { supabase } from "./shared/js/supabase.js";
         try {
           // 1. Carrega serviços
           await carregarServicos();
+          configurarMenuAvatar();
 
           // 2. Guard: exige sessão + perfil completo
           if (AuthGuard) {
@@ -998,5 +1046,6 @@ import { supabase } from "./shared/js/supabase.js";
       // ============================================
       window.showNotification = window.showNotification;
     </script>
-  </body>
+    <script src="shared/js/system-shell.js?v=20261017-hall-header-1"></script>
+</body>
 </html>

@@ -1,0 +1,10 @@
+/*
+ * INTRANET · DESIGN SYSTEM OFICIAL
+ * Entrada compartilhada por login, hall, Meu perfil e módulos.
+ * Estilos específicos de tela devem ser carregados separadamente.
+ */
+@import url("./identity-tokens.css?v=20261017-typography-contract-1");
+@import url("./identity-base.css?v=20261017-typography-contract-1");
+@import url("./identity-components.css?v=20261017-typography-contract-1");
+@import url("./identity-shell.css?v=20261018-library-cachefix-1");
+@import url("./identity-header.css?v=20261017-avatar-circle-1");

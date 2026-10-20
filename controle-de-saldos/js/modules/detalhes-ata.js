@@ -1,6 +1,22 @@
 // ============================================
 // controle-de-saldos/js/modules/detalhes-ata.js
 // Página de detalhes da ata - Estilo E-commerce
+// v20261012-ata-page-v8
+//
+// O que este arquivo entrega:
+//  · Autenticação (Supabase) e carregamento do usuário atual.
+//  · Carrinho persistido em localStorage, com badge e feedback.
+//  · Carregamento da ata + fornecedor + itens + categoria.
+//  · Carregamento de consumos (com valor, data e órgão) para calcular
+//    saldo real e alimentar os painéis de análise.
+//  · Carregamento de pedidos recentes (com órgão) para o painel
+//    "Últimos registros".
+//  · Renderização de: hero, summary, painel de acompanhamento (health),
+//    gráficos (Chart.js), bloco B (análise, resumo, distribuição,
+//    evolução, movimentações, relatório) e tabela de itens.
+//  · Busca por descrição/número na tabela de itens.
+//  · Impressão (window.print) e exportação em PDF (html2pdf) com
+//    classe `.ata-printing` aplicada no <body> durante a operação.
 // ============================================
 
 import { supabase } from "../supabase.js";
@@ -78,9 +94,38 @@ function mostrarLoading(show) {
 }
 
 function mostrarNaoEncontrado() {
-  document.getElementById("loadingContainer").style.display = "none";
-  document.getElementById("ataContent").style.display = "none";
-  document.getElementById("notFound").style.display = "block";
+  const loading = document.getElementById("loadingContainer");
+  const content = document.getElementById("ataContent");
+  const notFound = document.getElementById("notFound");
+  if (loading) loading.style.display = "none";
+  if (content) content.style.display = "none";
+  if (notFound) notFound.style.display = "block";
+}
+
+// ============================================
+// MODO IMPRESSÃO / PDF
+// --------------------------------------------
+// Aplica a classe `.ata-printing` no <body> e garante que a classe
+// `ata-page` permaneça presente (o CSS está escopado em
+// `.ata-page.ata-printing`). Retorna uma função de cleanup que
+// restaura exatamente o estado anterior.
+//
+// Uso:
+//   const restaurar = _comModoImpressao();
+//   try { ... } finally { restaurar(); }
+// ============================================
+function _comModoImpressao() {
+  const body = document.body;
+  const jaTinhaPrinting = body.classList.contains("ata-printing");
+  const jaTinhaAtaPage = body.classList.contains("ata-page");
+
+  if (!jaTinhaAtaPage) body.classList.add("ata-page");
+  if (!jaTinhaPrinting) body.classList.add("ata-printing");
+
+  return function restaurar() {
+    if (!jaTinhaPrinting) body.classList.remove("ata-printing");
+    if (!jaTinhaAtaPage) body.classList.remove("ata-page");
+  };
 }
 
 // ============================================
@@ -117,7 +162,7 @@ function atualizarBadgeCarrinho() {
 }
 
 // ============================================
-// ADICIONAR AO CARRINHO - CORRIGIDO
+// ADICIONAR AO CARRINHO
 // ============================================
 window.adicionarAoCarrinho = function (ataId, itemId) {
   console.log("🔍 adicionarAoCarrinho chamado com:", { ataId, itemId });
@@ -249,7 +294,7 @@ window.abrirDrawerCarrinho = function () {
     // Usar o drawer do sistema principal
     window.parent.sistema.abrirDrawerCarrinho();
   } else {
-    // Fallback: mostrar o carrinho em um alerta (ou redirecionar)
+    // Fallback: mostrar o carrinho em um toast informativo
     mostrarToast(
       "info",
       "Carrinho",
@@ -273,22 +318,28 @@ async function carregarDetalhesAta() {
 
     mostrarLoading(true);
 
-    // Buscar dados da ata com fornecedor e itens
+    // Buscar dados da ata com fornecedor, itens e categoria
     const { data: ata, error } = await supabase
       .from("atas")
       .select(
         `
                 *,
-                fornecedor:fornecedores(*),
-                itens:itens_ata(*),
-                categoria:categorias(id, nome)
+                fornecedor:fornecedores!fk_ata_fornecedor(razao_social,cnpj),
+                itens:itens_ata!fk_item_ata(*),
+                categoria:categorias!atas_categoria_id_fkey(id, nome)
             `,
       )
       .eq("id", parseInt(ataId))
       .single();
 
     if (error || !ata) {
-      console.error("Erro ao buscar ata:", error);
+      console.error("Erro ao buscar ata:", {
+        message: error?.message,
+        code: error?.code,
+        details: error?.details,
+        hint: error?.hint,
+        ataId,
+      });
       mostrarNaoEncontrado();
       return;
     }
@@ -301,11 +352,26 @@ async function carregarDetalhesAta() {
     });
     console.log("📦 Itens cacheados:", Object.keys(itensCache));
 
-    // Buscar consumos para calcular saldo real
-    const { data: consumos } = await supabase
+    // ------------------------------------------------------------
+    // Buscar consumos para calcular saldo real e alimentar os
+    // painéis de análise (financeiro, por departamento, evolução).
+    // ------------------------------------------------------------
+    let consumosQuery = supabase
       .from("consumos")
-      .select("item_ata_id, quantidade")
+      .select(
+        "item_ata_id, quantidade, valor_total, data_consumo, created_at, orgao_solicitante_id, orgao:orgaos!fk_consumo_orgao(nome, sigla)",
+      )
       .eq("ata_id", ata.id);
+
+    const { data: consumos, error: consumosError } = await consumosQuery;
+
+    if (consumosError) {
+      console.warn(
+        "Não foi possível carregar o histórico de consumos:",
+        consumosError,
+      );
+    }
+    ata.consumos = consumos || [];
 
     // Calcular consumo por item
     const consumoPorItem = {};
@@ -327,6 +393,31 @@ async function carregarDetalhesAta() {
       }
     });
 
+    // ------------------------------------------------------------
+    // Buscar pedidos recentes para o painel "Últimos registros".
+    // ------------------------------------------------------------
+    let pedidos = [];
+    try {
+      let pedidosQuery = supabase
+        .from("pedidos")
+        .select(
+          "id, numero_pedido, valor_total, data_solicitacao, status_aprovacao, created_at, orgao_solicitante_id, orgao:orgaos!pedidos_orgao_solicitante_id_fkey(nome, sigla), itens_pedido!inner(item_ata_id)",
+        )
+        .eq("ata_id", ata.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      const result = await pedidosQuery;
+      if (result.error) throw result.error;
+      pedidos = result.data || [];
+    } catch (pedidoError) {
+      console.warn(
+        "Não foi possível carregar os últimos pedidos da ata:",
+        pedidoError,
+      );
+    }
+    ata.pedidos = pedidos;
+
     renderizarAta(ata);
     mostrarLoading(false);
   } catch (error) {
@@ -341,11 +432,13 @@ async function carregarDetalhesAta() {
 function renderizarAta(ata) {
   // Atualizar título da página
   document.title = `Ata ${ata.numero_ata} · Gestão de Atas`;
-  document.getElementById("ataTitulo").textContent = `Ata ${ata.numero_ata}`;
+  const tituloEl = document.getElementById("ataTitulo");
+  if (tituloEl) tituloEl.textContent = `Ata ${ata.numero_ata}`;
 
   // Atualizar informações do usuário
-  document.getElementById("userName").textContent =
-    usuarioAtual?.nome || "Usuário";
+  const userNameEl = document.getElementById("userName");
+  if (userNameEl) userNameEl.textContent = usuarioAtual?.nome || "Usuário";
+
   const avatar = document.getElementById("userAvatar");
   if (avatar && usuarioAtual?.nome) {
     const iniciais = usuarioAtual.nome
@@ -358,36 +451,77 @@ function renderizarAta(ata) {
   }
 
   // ============================================================
-  // CORREÇÃO: Info da ata com Nº Pregão
+  // Info da ata com Nº Pregão
   // ============================================================
-  document.getElementById("ataNumero").textContent = ata.numero_ata || "—";
+  const numeroEl = document.getElementById("ataNumero");
+  if (numeroEl) numeroEl.textContent = ata.numero_ata || "—";
 
   // Buscar número do pregão (pode estar em numero_pregao ou pregao_numero)
   const numeroPregao = ata.numero_pregao || ata.pregao_numero || "";
-  document.getElementById("ataPregao").textContent = numeroPregao || "—";
+  const pregaoEl = document.getElementById("ataPregao");
+  if (pregaoEl) pregaoEl.textContent = numeroPregao || "—";
+
   const modalidadeEl = document.getElementById("ataModalidade");
   if (modalidadeEl) modalidadeEl.textContent = ata.modalidade || "—";
 
-  document.getElementById("ataFornecedor").textContent =
-    ata.fornecedor?.razao_social || "—";
-  document.getElementById("ataCnpj").textContent = ata.fornecedor?.cnpj || "—";
+  const fornecedorEl = document.getElementById("ataFornecedor");
+  if (fornecedorEl) {
+    fornecedorEl.textContent = ata.fornecedor?.razao_social || "—";
+  }
 
+  const cnpjEl = document.getElementById("ataCnpj");
+  if (cnpjEl) cnpjEl.textContent = ata.fornecedor?.cnpj || "—";
+
+  // Status badge
   const statusMap = {
     ATIVA: { class: "status-ativa", label: "Ativa" },
     PROXIMA: { class: "status-proxima", label: "Próxima" },
     VENCIDA: { class: "status-vencida", label: "Vencida" },
   };
   const statusInfo = statusMap[ata.situacao] || statusMap["ATIVA"];
-  document.getElementById("ataStatus").innerHTML = `
-        <span class="status-badge ${statusInfo.class}">${statusInfo.label}</span>
-    `;
+  const statusEl = document.getElementById("ataStatus");
+  if (statusEl) {
+    statusEl.innerHTML = `<span class="status-badge ${statusInfo.class}">${statusInfo.label}</span>`;
+  }
 
-  document.getElementById("ataProcesso").textContent =
-    ata.processo_administrativo || "—";
-  document.getElementById("ataCategoria").textContent =
-    ata.categoria?.nome || "—";
-  document.getElementById("ataVigencia").textContent =
-    `${formatarData(ata.data_inicio_vigencia)} até ${formatarData(ata.data_fim_vigencia)}`;
+  // Dias restantes
+  const diasEl = document.getElementById("ataDiasRestantes");
+  if (diasEl) {
+    const fim = ata.data_fim_vigencia
+      ? new Date(`${String(ata.data_fim_vigencia).slice(0, 10)}T23:59:59`)
+      : null;
+    const hoje = new Date();
+    const dias = fim ? Math.ceil((fim - hoje) / 86400000) : null;
+    diasEl.className = `ata-page__days ${
+      dias === null
+        ? ""
+        : dias < 0
+          ? "ata-page__days--danger"
+          : dias <= 30
+            ? "ata-page__days--warning"
+            : "ata-page__days--safe"
+    }`;
+    diasEl.textContent =
+      dias === null
+        ? "Prazo não informado"
+        : dias < 0
+          ? `Vencida há ${Math.abs(dias)} dias`
+          : `${dias} dias restantes`;
+  }
+
+  // Processo / categoria / vigência
+  const processoEl = document.getElementById("ataProcesso");
+  if (processoEl) processoEl.textContent = ata.processo_administrativo || "—";
+
+  const categoriaEl = document.getElementById("ataCategoria");
+  if (categoriaEl) categoriaEl.textContent = ata.categoria?.nome || "—";
+
+  const vigenciaEl = document.getElementById("ataVigencia");
+  if (vigenciaEl) {
+    vigenciaEl.textContent = `${formatarData(ata.data_inicio_vigencia)} até ${formatarData(
+      ata.data_fim_vigencia,
+    )}`;
+  }
 
   // Calcular valor consumido
   const valorTotal = ata.itens.reduce((s, i) => s + (i.valor_total || 0), 0);
@@ -398,28 +532,555 @@ function renderizarAta(ata) {
   }, 0);
   const saldoAta = valorTotal - valorConsumido;
 
-  document.getElementById("ataValorGlobal").textContent =
-    formatarMoeda(valorTotal);
-  document.getElementById("ataConsumido").textContent =
-    formatarMoeda(valorConsumido);
-  document.getElementById("ataSaldo").textContent = formatarMoeda(saldoAta);
+  const valorGlobalEl = document.getElementById("ataValorGlobal");
+  if (valorGlobalEl) valorGlobalEl.textContent = formatarMoeda(valorTotal);
+
+  const consumidoEl = document.getElementById("ataConsumido");
+  if (consumidoEl) consumidoEl.textContent = formatarMoeda(valorConsumido);
+
+  const saldoEl = document.getElementById("ataSaldo");
+  if (saldoEl) saldoEl.textContent = formatarMoeda(saldoAta);
+
+  const totalItensEl = document.getElementById("ataTotalItensResumo");
+  if (totalItensEl) totalItensEl.textContent = ata.itens.length;
 
   // Renderizar itens
   renderizarItens(ata.itens);
+
+  // Renderizar painéis de análise
+  renderizarPainelAta(ata);
+  renderizarBlocoB(ata);
 }
+
+// ============================================
+// RENDERIZAR PAINEL DE ACOMPANHAMENTO (HEALTH)
+// ============================================
+function renderizarPainelAta(ata) {
+  const itens = ata.itens || [];
+  const dados = itens.map((item) => {
+    const contratado = Number(item.quantidade_contratada) || 0;
+    const saldo = Math.max(0, Number(item.saldo_quantidade) || 0);
+    const consumido = Math.max(0, contratado - saldo);
+    const percentual = contratado > 0 ? (consumido / contratado) * 100 : 0;
+    return { item, contratado, saldo, consumido, percentual };
+  });
+
+  const totalContratado = dados.reduce(
+    (sum, d) => sum + d.contratado * (Number(d.item.valor_unitario) || 0),
+    0,
+  );
+  const totalConsumido = dados.reduce(
+    (sum, d) => sum + d.consumido * (Number(d.item.valor_unitario) || 0),
+    0,
+  );
+  const utilizacao =
+    totalContratado > 0
+      ? Math.min(100, (totalConsumido / totalContratado) * 100)
+      : 0;
+
+  const confortaveis = dados.filter(
+    (d) => d.saldo > 0 && d.percentual < 80,
+  ).length;
+  const criticos = dados.filter(
+    (d) => d.saldo > 0 && d.percentual >= 80,
+  ).length;
+  const esgotados = dados.filter((d) => d.saldo <= 0).length;
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText("ataTotalItens", itens.length);
+  setText("ataItensConfortaveis", confortaveis);
+  setText("ataItensCriticos", criticos);
+  setText("ataItensEsgotados", esgotados);
+  setText("ataUtilizacaoLabel", `${utilizacao.toFixed(0)}% utilizado`);
+
+  const bar = document.getElementById("ataUtilizacaoBar");
+  if (bar) {
+    bar.style.width = `${utilizacao}%`;
+    bar.dataset.level =
+      utilizacao >= 95 ? "danger" : utilizacao >= 80 ? "warning" : "safe";
+  }
+
+  // Ranking dos itens mais utilizados
+  const ranking = document.getElementById("ataRankingItens");
+  if (ranking) {
+    const linhas = dados
+      .slice()
+      .sort((a, b) => b.percentual - a.percentual)
+      .slice(0, 5)
+      .map((d) => {
+        const descricao =
+          String(d.item.descricao || "Item").slice(0, 42) || "Item";
+        const numero = d.item.item_numero || "—";
+        return `
+          <div class="ata-ranking__row">
+            <span title="${d.item.descricao || "Item"}">${numero} · ${descricao}</span>
+            <b>${d.percentual.toFixed(0)}%</b>
+            <i><em style="width:${Math.min(100, d.percentual)}%"></em></i>
+          </div>
+        `;
+      })
+      .join("");
+    ranking.innerHTML =
+      linhas ||
+      '<span class="ata-ranking__empty">Nenhum item cadastrado.</span>';
+  }
+
+  // Gráficos
+  if (!window.Chart) return;
+
+  // Destrói gráficos anteriores para evitar duplicação em re-renders
+  window.__ataCharts?.forEach((chart) => chart.destroy());
+  window.__ataCharts = [];
+
+  const doughnut = document.getElementById("ataGraficoConsumo");
+  const barras = document.getElementById("ataGraficoItens");
+
+  if (doughnut) {
+    window.__ataCharts.push(
+      new window.Chart(doughnut, {
+        type: "doughnut",
+        data: {
+          labels: ["Consumido", "Disponível"],
+          datasets: [
+            {
+              data: [
+                totalConsumido,
+                Math.max(0, totalContratado - totalConsumido),
+              ],
+              backgroundColor: ["#1769dc", "#dce7f3"],
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "70%",
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } },
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.label}: ${formatarMoeda(ctx.raw)}`,
+              },
+            },
+          },
+        },
+      }),
+    );
+  }
+
+  if (barras) {
+    window.__ataCharts.push(
+      new window.Chart(barras, {
+        type: "bar",
+        data: {
+          labels: ["Confortável", "Crítico", "Esgotado"],
+          datasets: [
+            {
+              data: [confortaveis, criticos, esgotados],
+              backgroundColor: ["#2aa66f", "#e79a2f", "#c64c4c"],
+              borderRadius: 5,
+              barThickness: 24,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 },
+              grid: { color: "#edf1f5" },
+            },
+            x: { grid: { display: false } },
+          },
+          plugins: { legend: { display: false } },
+        },
+      }),
+    );
+  }
+}
+
+// ============================================
+// RENDERIZAR BLOCO B (ANÁLISE + RESUMO + GRÁFICOS + MOVIMENTAÇÕES)
+// ============================================
+function renderizarBlocoB(ata) {
+  const esc = (value) =>
+    String(value ?? "—").replace(
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        })[c],
+    );
+
+  const itens = ata.itens || [];
+  const consumos = ata.consumos || [];
+  const pedidos = ata.pedidos || [];
+
+  const financeiro = (item) =>
+    Number(item.valor_total) ||
+    (Number(item.quantidade_contratada) || 0) *
+      (Number(item.valor_unitario) || 0);
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  // ------------------------------------------------------------
+  // Itens mais consumidos (top 5 por percentual)
+  // ------------------------------------------------------------
+  const top = itens
+    .map((item) => {
+      const contratado = Number(item.quantidade_contratada) || 0;
+      const saldo = Math.max(0, Number(item.saldo_quantidade) || 0);
+      return {
+        item,
+        percentual: contratado
+          ? Math.min(100, ((contratado - saldo) / contratado) * 100)
+          : 0,
+      };
+    })
+    .sort((a, b) => b.percentual - a.percentual)
+    .slice(0, 5);
+
+  const topEl = document.getElementById("ataItensMaisConsumidos");
+  if (topEl) {
+    const linhas = top
+      .map((d) => {
+        const descricao = esc((d.item.descricao || "Item").slice(0, 45));
+        const numero = esc(d.item.item_numero || "—");
+        return `
+          <div class="ata-ranking__row">
+            <span title="${esc(d.item.descricao)}"><b>${numero}</b> · ${descricao}</span>
+            <b>${d.percentual.toFixed(0)}%</b>
+            <i><em style="width:${d.percentual}%"></em></i>
+          </div>
+        `;
+      })
+      .join("");
+    topEl.innerHTML =
+      linhas ||
+      '<span class="ata-ranking__empty">Nenhum item cadastrado.</span>';
+  }
+
+  // ------------------------------------------------------------
+  // Resumo da ata (identificação)
+  // ------------------------------------------------------------
+  setText("ataResumoFornecedor", ata.fornecedor?.razao_social || "—");
+  setText("ataResumoCnpj", ata.fornecedor?.cnpj || "—");
+  setText(
+    "ataResumoVigencia",
+    `${formatarData(ata.data_inicio_vigencia)} até ${formatarData(ata.data_fim_vigencia)}`,
+  );
+  setText(
+    "ataResumoValor",
+    formatarMoeda(itens.reduce((s, i) => s + financeiro(i), 0)),
+  );
+  setText(
+    "ataResumoSaldo",
+    formatarMoeda(
+      itens.reduce(
+        (s, i) =>
+          s +
+          (Number(i.saldo_quantidade) || 0) * (Number(i.valor_unitario) || 0),
+        0,
+      ),
+    ),
+  );
+
+  // ------------------------------------------------------------
+  // Consumo por departamento
+  // ------------------------------------------------------------
+  const porOrgao = {};
+  consumos.forEach((c) => {
+    const nome = c.orgao?.sigla || c.orgao?.nome || "Não informado";
+    porOrgao[nome] = (porOrgao[nome] || 0) + (Number(c.valor_total) || 0);
+  });
+
+  const escopo = document.getElementById("ataEscopoConsumo");
+  const solicitante =
+    String(usuarioAtual?.perfil || "").toUpperCase() === "SOLICITANTE";
+  if (escopo) {
+    escopo.textContent = solicitante
+      ? "Exibindo apenas o consumo do seu departamento."
+      : "Exibindo os registros disponíveis para o seu perfil.";
+  }
+
+  setText(
+    "ataReportEscopo",
+    solicitante
+      ? "Escopo: departamento do solicitante"
+      : "Escopo: registros autorizados para o perfil",
+  );
+  setText(
+    "ataReportGeradoEm",
+    `Gerado em: ${new Date().toLocaleString("pt-BR")}`,
+  );
+
+  // ------------------------------------------------------------
+  // Últimos registros (pedidos)
+  // ------------------------------------------------------------
+  const registros = document.getElementById("ataUltimosRegistros");
+  if (registros) {
+    const linhas = pedidos
+      .slice(0, 5)
+      .map((p) => {
+        const numero = esc(p.numero_pedido || "Pedido");
+        const orgao = esc(
+          p.orgao?.sigla || p.orgao?.nome || "Departamento não informado",
+        );
+        const valor = formatarMoeda(p.valor_total);
+        const data = formatarData(p.data_solicitacao || p.created_at);
+        return `
+          <div class="ata-record">
+            <div>
+              <strong>${numero}</strong>
+              <span>${orgao}</span>
+            </div>
+            <div>
+              <b>${valor}</b>
+              <small>${data}</small>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+    registros.innerHTML =
+      linhas ||
+      '<span class="ata-ranking__empty">Nenhum pedido encontrado para esta ata.</span>';
+  }
+
+  // ------------------------------------------------------------
+  // Evolução por mês
+  // ------------------------------------------------------------
+  const porMes = {};
+  consumos.forEach((c) => {
+    const data = c.data_consumo || c.created_at;
+    if (!data) return;
+    const d = new Date(data);
+    if (Number.isNaN(d.getTime())) return;
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    porMes[key] = (porMes[key] || 0) + (Number(c.valor_total) || 0);
+  });
+  const meses = Object.keys(porMes).sort();
+
+  const vazio = document.getElementById("ataEvolucaoVazia");
+  if (vazio) vazio.hidden = meses.length > 0;
+
+  // ------------------------------------------------------------
+  // Gráficos do bloco B
+  // ------------------------------------------------------------
+  if (!window.Chart) return;
+
+  window.__ataBlocoBCharts?.forEach((chart) => chart.destroy());
+  window.__ataBlocoBCharts = [];
+
+  const deptCanvas = document.getElementById("ataGraficoDepartamentos");
+  const evolCanvas = document.getElementById("ataGraficoEvolucao");
+
+  if (deptCanvas) {
+    window.__ataBlocoBCharts.push(
+      new window.Chart(deptCanvas, {
+        type: "bar",
+        data: {
+          labels: Object.keys(porOrgao).slice(0, 8),
+          datasets: [
+            {
+              data: Object.values(porOrgao).slice(0, 8),
+              backgroundColor: "#2b78d4",
+              borderRadius: 5,
+              barThickness: 18,
+            },
+          ],
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { callback: (v) => formatarMoeda(v) },
+              grid: { color: "#edf1f5" },
+            },
+            y: { grid: { display: false } },
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: (ctx) => formatarMoeda(ctx.raw) } },
+          },
+        },
+      }),
+    );
+  }
+
+  if (evolCanvas && meses.length) {
+    window.__ataBlocoBCharts.push(
+      new window.Chart(evolCanvas, {
+        type: "line",
+        data: {
+          labels: meses.map((m) => {
+            const [y, mo] = m.split("-");
+            return `${mo}/${y}`;
+          }),
+          datasets: [
+            {
+              label: "Consumo",
+              data: meses.map((m) => porMes[m]),
+              borderColor: "#1769dc",
+              backgroundColor: "rgba(23,105,220,.12)",
+              fill: true,
+              tension: 0.35,
+              pointRadius: 3,
+              pointBackgroundColor: "#1769dc",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { callback: (v) => formatarMoeda(v) },
+              grid: { color: "#edf1f5" },
+            },
+            x: { grid: { display: false } },
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: (ctx) => formatarMoeda(ctx.raw) } },
+          },
+        },
+      }),
+    );
+  }
+}
+
+// ============================================
+// IMPRIMIR RELATÓRIO (window.print)
+// --------------------------------------------
+// Aplica `.ata-printing` no <body>, chama window.print() e restaura
+// o estado original depois. O CSS escopado em `.ata-page.ata-printing`
+// cuida de todo o layout de impressão; aqui só garantimos a classe
+// durante o ciclo de impressão.
+// ============================================
+window.imprimirRelatorioAta = function () {
+  const restaurar = _comModoImpressao();
+
+  const finalizar = () => {
+    restaurar();
+    window.removeEventListener("afterprint", finalizar);
+  };
+
+  window.addEventListener("afterprint", finalizar, { once: true });
+
+  // Alguns navegadores não disparam `afterprint` de forma confiável
+  // (ex.: Safari em iOS). O timeout é uma rede de segurança.
+  window.setTimeout(() => {
+    window.print();
+    // Se afterprint não disparar, limpamos após um tempo razoável.
+    window.setTimeout(() => {
+      if (document.body.classList.contains("ata-printing")) {
+        finalizar();
+      }
+    }, 1200);
+  }, 60);
+};
+
+// ============================================
+// EXPORTAR RELATÓRIO (html2pdf)
+// --------------------------------------------
+// Aplica `.ata-printing` no <body> antes de gerar o PDF, porque o
+// html2pdf não dispara @media print. A classe é removida em qualquer
+// cenário (sucesso, erro ou ausência do html2pdf).
+// ============================================
+window.exportarRelatorioAta = async function () {
+  const content = document.getElementById("ataContent");
+
+  if (!content || !window.html2pdf) {
+    // Fallback: se html2pdf não estiver disponível, cai para impressão
+    // nativa (que já tem seu próprio controle de classe).
+    window.imprimirRelatorioAta();
+    return;
+  }
+
+  const restaurar = _comModoImpressao();
+
+  try {
+    await window
+      .html2pdf()
+      .set({
+        margin: [12, 12, 12, 12],
+        filename: `relatorio-ata-${ataAtual?.numero_ata || "consulta"}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 1.7,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          windowWidth: 1200,
+        },
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait",
+        },
+        pagebreak: { mode: ["css", "legacy"] },
+      })
+      .from(content)
+      .save();
+  } catch (error) {
+    console.error("Erro ao exportar PDF:", error);
+    mostrarToast(
+      "erro",
+      "Falha ao gerar PDF",
+      "Não foi possível gerar o relatório. Tente novamente ou use Imprimir.",
+    );
+  } finally {
+    restaurar();
+  }
+};
 
 // ============================================
 // RENDERIZAR ITENS
 // ============================================
 function renderizarItens(itens) {
   const tbody = document.getElementById("itensTableBody");
-  document.getElementById("qtdItens").textContent = `${itens.length} itens`;
+  const qtdItensEl = document.getElementById("qtdItens");
+  if (qtdItensEl) {
+    qtdItensEl.textContent = `${itens.length} ${
+      itens.length === 1 ? "item" : "itens"
+    }`;
+  }
+
+  const contador = document.getElementById("contadorItens");
+  if (contador) {
+    contador.textContent = `${itens.length} ${
+      itens.length === 1 ? "item" : "itens"
+    }`;
+  }
+
+  if (!tbody) return;
 
   if (!itens || itens.length === 0) {
     tbody.innerHTML = `
             <tr>
-                <td colspan="8" data-intranet-style="5e3471a5123b">
-                    <i class="fas fa-box-open" data-intranet-style="f7979fc62435"></i>
+                <td colspan="8">
+                    <i class="fas fa-box-open"></i>
                     Nenhum item cadastrado nesta ata.
                 </td>
             </tr>
@@ -477,13 +1138,13 @@ function renderizarItens(itens) {
                                    min="1" max="${saldo}" placeholder="Qtd"
                                    onchange="atualizarMaxQtd(${item.id})">
                             <button class="btn-add-carrinho" data-item-id="${item.id}"
-                                    onclick="adicionarAoCarrinho(${ataAtual.id}, ${item.id})">
+                                    onclick="adicionarAoCarrinho(${ataAtual?.id}, ${item.id})">
                                 <i class="fas fa-cart-plus"></i> Adicionar
                             </button>
                         </div>
                     `
                           : `
-                        <span data-intranet-style="557e4ab8f73b">
+                        <span>
                             <i class="fas fa-lock"></i> Sem permissão
                         </span>
                     `
@@ -508,6 +1169,33 @@ function renderizarItens(itens) {
         );
       }
     });
+  });
+}
+
+// ============================================
+// BUSCA DE ITENS
+// ============================================
+function configurarBuscaItens() {
+  const input = document.getElementById("buscaItens");
+  const tbody = document.getElementById("itensTableBody");
+  const contador = document.getElementById("contadorItens");
+  if (!input || !tbody) return;
+
+  input.addEventListener("input", () => {
+    const termo = input.value.trim().toLocaleLowerCase("pt-BR");
+    const linhas = [...tbody.querySelectorAll("tr")];
+    let visiveis = 0;
+    linhas.forEach((linha) => {
+      const encontrado =
+        !termo || linha.textContent.toLocaleLowerCase("pt-BR").includes(termo);
+      linha.hidden = !encontrado;
+      if (encontrado) visiveis += 1;
+    });
+    if (contador) {
+      contador.textContent = `${visiveis} de ${linhas.length} ${
+        linhas.length === 1 ? "item" : "itens"
+      }`;
+    }
   });
 }
 
@@ -554,16 +1242,24 @@ async function init() {
     }
 
     usuarioAtual = usuario;
-    document.getElementById("userName").textContent = usuario.nome || "Usuário";
+
+    const userNameEl = document.getElementById("userName");
+    if (userNameEl) userNameEl.textContent = usuario.nome || "Usuário";
 
     // Carregar carrinho
     carregarCarrinhoStorage();
 
     // Configurar logout
-    document.getElementById("btnLogout").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.href = "../../index.html";
-    });
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "../../index.html";
+      });
+    }
+
+    // Configurar busca
+    configurarBuscaItens();
 
     // Carregar detalhes da ata
     await carregarDetalhesAta();

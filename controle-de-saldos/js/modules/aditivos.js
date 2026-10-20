@@ -18,14 +18,14 @@ export class Aditivos {
     return `
             <div class="aditivos-container">
                 <div class="aditivos-header">
-                    <h3 data-intranet-style="fc77e4ce3990">
+                    <h3>
                         <i class="fas fa-file-contract"></i> Gestão de Aditivos de Atas
                     </h3>
                     <button class="btn-novo-aditivo" id="btnNovoAditivo">
                         <i class="fas fa-plus-circle"></i> Novo Aditivo
                     </button>
                 </div>
-                <div class="filtros-container" data-intranet-style="368f5a60c090">
+                <div class="filtros-container">
                     <div class="filtros-grid">
                         <div class="filtro-grupo">
                             <label class="filtro-label">Buscar</label>
@@ -128,7 +128,7 @@ export class Aditivos {
                 <select id="aditivoAtaOriginal" class="filtro-select" required>
                     <option value="">Selecione...</option>
                 </select>
-                <small data-intranet-style="58c6f64d4860">Apenas atas ativas ou próximas podem receber aditivos</small>
+                <small>Apenas atas ativas ou próximas podem receber aditivos</small>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -156,8 +156,8 @@ export class Aditivos {
                 </div>
             </div>
 
-            <div id="camposPrazo" data-intranet-style="2e968d9de1d7">
-                <h4 data-intranet-style="dde2afb0400d">📅 Novas Datas de Vigência</h4>
+            <div id="camposPrazo">
+                <h4>📅 Novas Datas de Vigência</h4>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Nova Data Início</label>
@@ -170,23 +170,23 @@ export class Aditivos {
                 </div>
             </div>
 
-            <div id="camposValor" data-intranet-style="2e968d9de1d7">
-                <h4 data-intranet-style="dde2afb0400d">💰 Novo Valor</h4>
+            <div id="camposValor">
+                <h4>💰 Novo Valor</h4>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Novo Valor Global</label>
                         <input type="number" id="aditivoNovoValor" class="filtro-input" step="0.01" min="0">
                     </div>
                 </div>
-                <div data-intranet-style="6c29b1b9934c">
-                    <label data-intranet-style="b6fa5ff465f2">
+                <div>
+                    <label>
                         <input type="checkbox" id="aditivoAlterarItens">
                         <span>Alterar quantidades/valores de itens específicos</span>
                     </label>
                 </div>
-                <div id="itensAditivoContainer" data-intranet-style="064be3644c73">
-                    <h5 data-intranet-style="b4c133ce62d5">Itens da Ata</h5>
-                    <div id="itensAditivoLista" class="tabela-container" data-intranet-style="57f22735e9a2"></div>
+                <div id="itensAditivoContainer">
+                    <h5>Itens da Ata</h5>
+                    <div id="itensAditivoLista" class="tabela-container"></div>
                 </div>
             </div>
 
@@ -199,9 +199,9 @@ export class Aditivos {
                 <textarea id="aditivoObservacoes" class="filtro-input" rows="2" placeholder="Informações adicionais..."></textarea>
             </div>
 
-            <div data-intranet-style="bfa353b688d6">
-                <button type="button" id="btnCancelarAditivo" data-intranet-style="e04c073cea5c">Cancelar</button>
-                <button type="submit" data-intranet-style="33a27e7e748b"><i class="fas fa-save"></i> Salvar Aditivo</button>
+            <div>
+                <button type="button" id="btnCancelarAditivo">Cancelar</button>
+                <button type="submit"><i class="fas fa-save"></i> Salvar Aditivo</button>
             </div>
         `;
   }
@@ -482,13 +482,13 @@ export class Aditivos {
       if (error) throw error;
       if (!aditivos?.length) {
         container.innerHTML =
-          '<div data-intranet-style="b59c96af38c6"><i class="fas fa-file-contract" data-intranet-style="effc4ebccc11"></i><h3 data-intranet-style="5ca286a24cc2">Nenhum aditivo cadastrado</h3></div>';
+          '<div><i class="fas fa-file-contract"></i><h3>Nenhum aditivo cadastrado</h3></div>';
         return;
       }
       this.aditivosFiltrados = aditivos;
       this.filtrarAditivos();
     } catch (error) {
-      container.innerHTML = `<div data-intranet-style="bbf20ebf721e"><i class="fas fa-exclamation-triangle" data-intranet-style="566f135b8448"></i><p>Erro: ${error.message}</p></div>`;
+      container.innerHTML = `<div><i class="fas fa-exclamation-triangle"></i><p>Erro: ${error.message}</p></div>`;
     }
   }
 
@@ -565,7 +565,7 @@ export class Aditivos {
                             ? `
                             <button class="btn-aplicar-aditivo" onclick="sistema.aditivos.aplicarAditivo(${a.id})"><i class="fas fa-check-circle"></i> Aplicar</button>
                         `
-                            : `<span data-intranet-style="1f2cfdf8e959"><i class="fas fa-check-circle"></i> Aplicado em ${this.sistema.ui.formatarData(a.data_aplicacao)}</span>`
+                            : `<span><i class="fas fa-check-circle"></i> Aplicado em ${this.sistema.ui.formatarData(a.data_aplicacao)}</span>`
                         }
                     </div>
                 </div>
@@ -584,14 +584,14 @@ export class Aditivos {
       .single();
     if (!aditivo) return;
     let html = `
-            <div class="modal-content" data-intranet-style="af233707eacd">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-titulo">Detalhes do Aditivo</h2>
                     <button class="modal-close" onclick="this.closest('.modal').remove()">×</button>
                 </div>
-                <div data-intranet-style="d77b571484e5">
-                    <h3 data-intranet-style="44a6f8261ee8">${aditivo.numero_aditivo}</h3>
-                    <div data-intranet-style="d9d047c61019">
+                <div>
+                    <h3>${aditivo.numero_aditivo}</h3>
+                    <div>
                         <div>
                             <p><strong>Tipo:</strong> ${aditivo.tipo_aditivo}</p>
                             <p><strong>Data Assinatura:</strong> ${this.sistema.ui.formatarData(aditivo.data_assinatura)}</p>
@@ -603,17 +603,17 @@ export class Aditivos {
                             <p><strong>Data Aplicação:</strong> ${aditivo.data_aplicacao ? this.sistema.ui.formatarData(aditivo.data_aplicacao) : "Pendente"}</p>
                         </div>
                     </div>
-                    <div data-intranet-style="e1c7fe004235">
-                        <h4 data-intranet-style="09792f78b6dd">Justificativa</h4>
+                    <div>
+                        <h4>Justificativa</h4>
                         <p>${aditivo.justificativa}</p>
-                        ${aditivo.observacoes ? `<p data-intranet-style="7606e579d21f"><strong>Obs:</strong> ${aditivo.observacoes}</p>` : ""}
+                        ${aditivo.observacoes ? `<p><strong>Obs:</strong> ${aditivo.observacoes}</p>` : ""}
                     </div>
-                    <h4 data-intranet-style="bbfef44a91b1">Alterações Realizadas</h4>
+                    <h4>Alterações Realizadas</h4>
                     ${
                       aditivo.tipo_aditivo === "PRAZO" ||
                       aditivo.tipo_aditivo === "AMBOS"
                         ? `
-                        <div data-intranet-style="5134eb9c9e39">
+                        <div>
                             <p><strong>📅 Vigência Original:</strong> ${this.sistema.ui.formatarData(aditivo.ata_original?.data_inicio_vigencia)} até ${this.sistema.ui.formatarData(aditivo.ata_original?.data_fim_vigencia)}</p>
                             <p><strong>📅 Nova Vigência:</strong> ${this.sistema.ui.formatarData(aditivo.nova_data_inicio_vigencia)} até ${this.sistema.ui.formatarData(aditivo.nova_data_fim_vigencia)}</p>
                         </div>
@@ -624,7 +624,7 @@ export class Aditivos {
                       aditivo.tipo_aditivo === "VALOR" ||
                       aditivo.tipo_aditivo === "AMBOS"
                         ? `
-                        <div data-intranet-style="0fb9f962ca15">
+                        <div>
                             <p><strong>💰 Valor Original:</strong> ${this.sistema.ui.formatarMoeda(aditivo.ata_original?.valor_global)}</p>
                             <p><strong>💰 Novo Valor:</strong> ${this.sistema.ui.formatarMoeda(aditivo.novo_valor_global)}</p>
                         </div>
@@ -634,7 +634,7 @@ export class Aditivos {
                     ${
                       aditivo.itens_historico?.length > 0
                         ? `
-                        <h5 data-intranet-style="6fc2271b4b9f">Itens Modificados</h5>
+                        <h5>Itens Modificados</h5>
                         <div class="tabela-container">
                             <table class="tabela-itens">
                                 <thead>
@@ -672,8 +672,8 @@ export class Aditivos {
                     `
                         : ""
                     }
-                    <div data-intranet-style="9064ac754939">
-                        <button class="btn" onclick="this.closest('.modal').remove()" data-intranet-style="e8980b161aba">Fechar</button>
+                    <div>
+                        <button class="btn" onclick="this.closest('.modal').remove()">Fechar</button>
                         ${
                           !aditivo.data_aplicacao
                             ? `

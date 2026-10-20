@@ -101,7 +101,7 @@ export class Cadastro {
               <i class="fas fa-file-code"></i> Carregar JSON
             </button>
           </div>
-          <input type="file" id="fileJsonInput" accept=".json,application/json" data-intranet-style="2d281201779c">
+          <input type="file" id="fileJsonInput" accept=".json,application/json">
           <form id="formCadastroAta">
             <div class="cadastro-secao">
               <div class="secao-titulo"><i class="fas fa-gavel"></i> Processo</div>
@@ -203,8 +203,8 @@ export class Cadastro {
                   <tbody id="itensCadastroBody"></tbody>
                   <tfoot>
                     <tr>
-                      <td colspan="4" data-intranet-style="4764267ddc80">VALOR TOTAL:</td>
-                      <td id="valorTotalAta" data-intranet-style="9625382520ed">R$ 0,00</td>
+                      <td colspan="4">VALOR TOTAL:</td>
+                      <td id="valorTotalAta">R$ 0,00</td>
                       <td></td>
                     </tr>
                   </tfoot>
@@ -371,8 +371,8 @@ export class Cadastro {
 
     if (atas.length === 0) {
       container.innerHTML = `
-        <div data-intranet-style="97856deabe09">
-          <i class="fas fa-inbox" data-intranet-style="e4936772c3d8"></i>
+        <div>
+          <i class="fas fa-inbox"></i>
           Nenhuma ata encontrada
         </div>
       `;
@@ -408,7 +408,7 @@ export class Cadastro {
           <div class="ata-header">
             <div class="ata-status">
               <span class="status-badge ${statusClass}">${statusLabel}</span>
-              <span data-intranet-style="69e13dbf3557">
+              <span>
                 <i class="fas fa-box"></i> ${ata.itens?.length || 0}
               </span>
             </div>
@@ -419,20 +419,20 @@ export class Cadastro {
             </div>
             <div class="ata-fornecedor">
               <i class="fas fa-building"></i> ${fornecedorNome}
-              ${cnpjFormatado ? ` <span data-intranet-style="03ed1694ecb2">(${cnpjFormatado})</span>` : ""}
+              ${cnpjFormatado ? ` <span>(${cnpjFormatado})</span>` : ""}
             </div>
-            <div data-intranet-style="2e4030ebf549">
+            <div>
               <i class="fas fa-calendar"></i> ${inicioVigencia}
               ${fimVigencia ? `até ${fimVigencia}` : ""}
             </div>
           </div>
           <div class="ata-footer">
-            <span data-intranet-style="bd02e89ba2e4">${valorFormatado}</span>
-            <div data-intranet-style="3f5ca708649a">
-              <button class="btn-visualizar" onclick="event.stopPropagation(); sistema.cadastro.verDetalhes(${ata.id})" data-intranet-style="43c9e05efbdf">
+            <span>${valorFormatado}</span>
+            <div>
+              <button class="btn-visualizar" onclick="event.stopPropagation(); sistema.cadastro.verDetalhes(${ata.id})">
                 <i class="fas fa-eye"></i>
               </button>
-              <button class="btn-editar" onclick="event.stopPropagation(); sistema.cadastro.editarAta(${ata.id})" data-intranet-style="b93d316f0b78">
+              <button class="btn-editar" onclick="event.stopPropagation(); sistema.cadastro.editarAta(${ata.id})">
                 <i class="fas fa-pen"></i> Editar
               </button>
             </div>
@@ -564,12 +564,12 @@ export class Cadastro {
       .map(
         (item) => `
           <tr>
-            <td><input type="text" value="${item.numero}" onchange="sistema.cadastro.atualizarItemCadastro(${item.id}, 'numero', this.value)" data-intranet-style="8d0831460ff2"></td>
-            <td><input type="text" value="${item.descricao}" onchange="sistema.cadastro.atualizarItemCadastro(${item.id}, 'descricao', this.value)" placeholder="Descrição" data-intranet-style="47b319904078" required></td>
-            <td><input type="number" value="${item.quantidade}" onchange="sistema.cadastro.atualizarItemCadastro(${item.id}, 'quantidade', parseInt(this.value)||0); sistema.cadastro.calcularTotaisItem();" min="0" data-intranet-style="77c67d2cb26b" required></td>
-            <td><input type="number" value="${item.valor_unitario}" onchange="sistema.cadastro.atualizarItemCadastro(${item.id}, 'valor_unitario', parseFloat(this.value)||0); sistema.cadastro.calcularTotaisItem();" min="0" step="0.01" data-intranet-style="6eb0ab89214f" required></td>
-            <td data-intranet-style="a5f9e7b252e1">${this.sistema.ui.formatarMoeda(item.valor_total)}</td>
-            <td><button type="button" class="btn-remover-item" onclick="sistema.cadastro.removerItemCadastro(${item.id})" data-intranet-style="978de8a122c3"><i class="fas fa-trash"></i></button></td>
+            <td><input type="text" value="${item.numero}" onchange="sistema.cadastro.atualizarItemCadastro(${item.id}, 'numero', this.value)"></td>
+            <td><input type="text" value="${item.descricao}" onchange="sistema.cadastro.atualizarItemCadastro(${item.id}, 'descricao', this.value)" placeholder="Descrição" required></td>
+            <td><input type="number" value="${item.quantidade}" onchange="sistema.cadastro.atualizarItemCadastro(${item.id}, 'quantidade', parseInt(this.value)||0); sistema.cadastro.calcularTotaisItem();" min="0" required></td>
+            <td><input type="number" value="${item.valor_unitario}" onchange="sistema.cadastro.atualizarItemCadastro(${item.id}, 'valor_unitario', parseFloat(this.value)||0); sistema.cadastro.calcularTotaisItem();" min="0" step="0.01" required></td>
+            <td>${this.sistema.ui.formatarMoeda(item.valor_total)}</td>
+            <td><button type="button" class="btn-remover-item" onclick="sistema.cadastro.removerItemCadastro(${item.id})"><i class="fas fa-trash"></i></button></td>
           </tr>
         `,
       )

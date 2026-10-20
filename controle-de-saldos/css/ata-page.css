@@ -1,0 +1,2245 @@
+/* ============================================================================
+   ata-page.css — Consulta detalhada da Ata de Registro de Preços
+   ----------------------------------------------------------------------------
+   Camada única e canônica de estilo para `ata.html`.
+   Escopada em `.ata-page` (classe adicionada ao <body>) para evitar vazamento
+   de regras para o SPA `gestao-atas.html` e demais telas do módulo "atas".
+
+   Estrutura do arquivo:
+     1. Tokens locais e reset escopado
+     2. Topbar e breadcrumb
+     3. Layout principal (content, hero, summary)
+     4. Painel de acompanhamento (health) + gráficos
+     5. Bloco B — análise, painéis, alertas e relatório
+     6. Tabela de itens e busca
+     7. Estados (loading, notFound, footer)
+     8. Responsividade
+     9. Regras de impressão / geração de PDF (html2pdf e window.print)
+    10. Layout consolidado e responsividade
+   ============================================================================ */
+
+/* ============================================================================
+   1. TOKENS LOCAIS E RESET ESCOPADO
+   ----------------------------------------------------------------------------
+   Definimos variáveis locais (fallback) para o caso do ata.html ser aberto
+   fora do contexto que carrega o intranet-global.css. Se as variáveis do
+   global já existirem, estas não sobrescrevem nada porque usamos apenas
+   fallback dentro de var().
+   ============================================================================ */
+.ata-page {
+  --ata-ink: var(--text-primary, #123e73);
+  --ata-text: var(--text-secondary, #617a99);
+  --ata-muted: var(--text-muted, #8295aa);
+  --ata-line: var(--border-default, #dce7f2);
+  --ata-line-soft: #e8eef5;
+  --ata-bg: var(--surface-page, #f5f9fd);
+  --ata-surface: #ffffff;
+  --ata-surface-2: #f8fafc;
+  --ata-soft: var(--surface-soft-blue, #eaf5ff);
+
+  --ata-navy: var(--brand-primary-dark, #123f78);
+  --ata-navy-2: #0d315f;
+  --ata-blue: var(--brand-blue, #1677e8);
+  --ata-blue-2: var(--brand-primary, #1557a6);
+  --ata-sky: #20a9e8;
+  --ata-teal: var(--brand-cyan, #27b9d4);
+  --ata-green: var(--brand-green, #2db875);
+  --ata-amber: var(--brand-orange, #f59a16);
+  --ata-red: var(--state-danger, #c63d4d);
+
+  --ata-radius-sm: 8px;
+  --ata-radius: 12px;
+  --ata-radius-lg: 16px;
+  --ata-radius-xl: 20px;
+
+  --ata-shadow-sm: 0 2px 6px rgba(16, 42, 67, 0.05);
+  --ata-shadow: 0 6px 18px rgba(16, 42, 67, 0.07);
+  --ata-shadow-lg: 0 12px 28px rgba(16, 42, 67, 0.1);
+
+  --ata-gutter: clamp(18px, 2.4vw, 32px);
+  --ata-gap: 14px;
+  --ata-gap-sm: 10px;
+  --ata-gap-lg: 22px;
+
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
+  overflow-x: hidden;
+  background: var(--ata-bg);
+  color: var(--ata-text);
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ata-page *,
+.ata-page *::before,
+.ata-page *::after {
+  box-sizing: border-box;
+}
+
+.ata-page :where(h1, h2, h3, h4) {
+  color: var(--ata-ink);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.ata-page :where(p) {
+  margin: 0;
+}
+
+.ata-page :where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ata-page :where(button) {
+  font: inherit;
+  cursor: pointer;
+}
+
+.ata-page :where(img, canvas) {
+  max-width: 100%;
+  display: block;
+}
+
+/* ============================================================================
+   3. LAYOUT PRINCIPAL · CONTENT · HERO · SUMMARY
+   ============================================================================ */
+.ata-page .app-layout {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.ata-page .main-area {
+  min-width: 0;
+}
+
+.ata-page__main {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  min-height: calc(100vh - 58px);
+  padding: clamp(20px, 2.6vw, 36px) clamp(16px, 2.8vw, 42px) 64px;
+  background: var(--ata-bg);
+}
+
+.ata-page__content {
+  display: grid;
+  gap: clamp(20px, 2.4vw, 32px);
+  width: min(100%, 1560px);
+  max-width: 1560px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: clamp(18px, 2.2vw, 32px);
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius-xl);
+  background: var(--ata-surface);
+  box-shadow: var(--ata-shadow);
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+/* Breadcrumb e retorno: mesma linguagem de ação do botão Voltar do Meu Perfil. */
+.ata-page__breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  min-height: 42px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--ata-line-soft);
+}
+
+.ata-page__breadcrumb-current {
+  color: var(--ata-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.ata-page__breadcrumb .ata-page__back-button {
+  min-height: 2.45rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--radius-md, 10px);
+  background: var(--ata-surface);
+  color: var(--ata-blue-2);
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-shadow: var(--ata-shadow-sm);
+}
+
+.ata-page__breadcrumb .ata-page__back-button:hover,
+.ata-page__breadcrumb .ata-page__back-button:focus-visible {
+  border-color: var(--ata-blue);
+  background: var(--ata-soft);
+  color: var(--ata-blue-2);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(22 119 232 / 14%);
+}
+
+.ata-page__breadcrumb .ata-page__back-button i {
+  font-size: 0.78rem;
+}
+
+/* ---------- HERO -------------------------------------------------------- */
+.ata-page__hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(18px, 2.2vw, 26px) clamp(18px, 2.4vw, 30px);
+  margin: 0;
+  border-radius: var(--ata-radius-lg);
+  background: linear-gradient(115deg, #0b3b66 0%, #0e4f82 55%, #1475d5 100%);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(11, 59, 102, 0.22);
+  position: relative;
+  overflow: hidden;
+}
+
+.ata-page__hero::after {
+  content: "";
+  position: absolute;
+  right: -60px;
+  top: -80px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.12) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.ata-page__hero-icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 1.35rem;
+  color: #d7ecff;
+}
+
+.ata-page__hero-copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.ata-page__eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #cbe3fb;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ata-page__eyebrow--dark {
+  color: var(--ata-blue);
+}
+
+.ata-page__hero h1 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+  letter-spacing: -0.02em;
+}
+
+.ata-page__hero h1 span {
+  color: #fff;
+}
+
+.ata-page__hero p {
+  margin: 4px 0 0;
+  color: #dcebfa;
+  font-size: 0.92rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.ata-page__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  margin-top: 12px;
+  color: #cfe4f7;
+  font-size: 0.82rem;
+}
+
+.ata-page__meta strong {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.ata-page__meta i {
+  color: #9dcaf0;
+  margin-right: 4px;
+}
+
+.ata-page__days {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+
+.ata-page__days--safe {
+  background: rgba(21, 155, 107, 0.28);
+  border-color: rgba(21, 155, 107, 0.55);
+}
+.ata-page__days--warning {
+  background: rgba(242, 169, 0, 0.28);
+  border-color: rgba(242, 169, 0, 0.55);
+  color: #fff6df;
+}
+.ata-page__days--danger {
+  background: rgba(220, 53, 69, 0.32);
+  border-color: rgba(220, 53, 69, 0.6);
+  color: #ffe7ea;
+}
+
+/* ---------- SUMMARY ---------------------------------------------------- */
+.ata-page__summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius-lg);
+  background: var(--ata-surface);
+  overflow: hidden;
+  box-shadow: var(--ata-shadow-sm);
+}
+
+.ata-page__summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 18px clamp(14px, 1.8vw, 24px);
+  border-right: 1px solid var(--ata-line-soft);
+}
+
+.ata-page__summary > div:last-child {
+  border-right: 0;
+}
+
+.ata-page__summary span {
+  color: var(--ata-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ata-page__summary strong {
+  color: var(--ata-ink);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.ata-page__summary .ata-page__balance {
+  background: linear-gradient(135deg, #eaf7f1 0%, #f3fbf7 100%);
+}
+
+.ata-page__summary .ata-page__balance strong {
+  color: #0f6c47;
+}
+
+/* ============================================================================
+   4. HEALTH · ACOMPANHAMENTO + GRÁFICOS
+   ============================================================================ */
+.ata-health {
+  padding: clamp(18px, 2vw, 28px);
+  margin: 0;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius-lg);
+  background: var(--ata-surface);
+  box-shadow: var(--ata-shadow-sm);
+}
+
+.ata-health__heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.ata-health__heading h2 {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.ata-health__usage {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--ata-soft);
+  color: var(--ata-blue);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+/* Barra de utilização -------------------------------------------------- */
+.ata-health__progress {
+  position: relative;
+  height: 8px;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  background: var(--ata-line-soft);
+  overflow: hidden;
+}
+
+.ata-health__progress > div {
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ata-blue), var(--ata-sky));
+  transition: width 0.35s ease;
+}
+
+.ata-health__progress > div[data-level="warning"] {
+  background: linear-gradient(90deg, #e99405, #f2a900);
+}
+
+.ata-health__progress > div[data-level="danger"] {
+  background: linear-gradient(90deg, #cb3441, #dc3545);
+}
+
+/* Cards de contagem ---------------------------------------------------- */
+.ata-health__cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ata-gap-sm);
+  margin-bottom: 20px;
+}
+
+.ata-health__cards article {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  min-width: 0;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius);
+  background: var(--ata-surface);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.ata-health__cards article:hover {
+  border-color: #b8d1e6;
+  box-shadow: var(--ata-shadow-sm);
+}
+
+.ata-health__card-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.ata-health__card-icon--blue {
+  background: linear-gradient(135deg, #1475d5, #20a9e8);
+}
+.ata-health__card-icon--green {
+  background: linear-gradient(135deg, #159b6b, #34b885);
+}
+.ata-health__card-icon--orange {
+  background: linear-gradient(135deg, #e99405, #f2a900);
+}
+.ata-health__card-icon--red {
+  background: linear-gradient(135deg, #cb3441, #dc3545);
+}
+
+.ata-health__cards small {
+  display: block;
+  color: var(--ata-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.ata-health__cards strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--ata-ink);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Grid de gráficos ----------------------------------------------------- */
+.ata-health__charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: clamp(12px, 1.2vw, 18px);
+  align-items: stretch;
+}
+.ata-chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius);
+  background: var(--ata-surface);
+  min-width: 0;
+  min-height: 292px;
+  overflow: hidden;
+}
+
+.ata-chart-card h3 {
+  margin: 0;
+  color: var(--ata-ink);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.ata-chart-card p {
+  margin: 2px 0 0;
+  color: var(--ata-muted);
+  font-size: 0.74rem;
+}
+
+.ata-chart-card__canvas {
+  position: relative;
+  height: 218px;
+  min-width: 0;
+  min-height: 218px;
+}
+
+.ata-chart-card__canvas--wide,
+.ata-chart-card__canvas--department,
+.ata-chart-card__canvas--evolution {
+  height: 218px;
+}
+
+.ata-chart-card__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Ranking -------------------------------------------------------------- */
+.ata-ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.ata-ranking__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 2px 10px;
+  font-size: 0.78rem;
+}
+
+.ata-ranking__row > span {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ata-text);
+  font-weight: 600;
+}
+
+.ata-ranking__row > b {
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--ata-blue);
+  font-weight: 800;
+}
+
+.ata-ranking__row > i {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  position: relative;
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ata-line-soft);
+  overflow: hidden;
+}
+
+.ata-ranking__row > i > em {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ata-blue), var(--ata-sky));
+  transition: width 0.35s ease;
+}
+
+.ata-ranking--large .ata-ranking__row {
+  font-size: 0.82rem;
+}
+
+.ata-ranking__empty {
+  padding: 20px 0;
+  text-align: center;
+  color: var(--ata-muted);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+/* ============================================================================
+   5. BLOCO B · ANÁLISE, PAINÉIS, ALERTAS E RELATÓRIO
+   ============================================================================ */
+.ata-bloco-b {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ata-gap);
+  margin: 0;
+}
+
+.ata-bloco-b__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ata-gap);
+  min-width: 0;
+}
+
+.ata-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius);
+  background: var(--ata-surface);
+  box-shadow: var(--ata-shadow-sm);
+  min-width: 0;
+}
+
+.ata-panel__title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ata-line-soft);
+}
+
+.ata-panel__title > div {
+  min-width: 0;
+}
+
+.ata-panel__title h2 {
+  margin: 2px 0 0;
+  font-size: 0.98rem;
+  letter-spacing: -0.01em;
+}
+
+.ata-panel__title i {
+  color: var(--ata-blue);
+  font-size: 1rem;
+  margin-top: 4px;
+}
+
+.ata-panel__scope {
+  color: var(--ata-muted);
+  font-size: 0.74rem;
+  font-style: italic;
+}
+
+/* Resumo da ata (dl) --------------------------------------------------- */
+.ata-resumo-panel dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.ata-resumo-panel dl > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--ata-radius-sm);
+  background: var(--ata-surface-2);
+}
+
+.ata-resumo-panel dt {
+  color: var(--ata-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  align-self: center;
+}
+
+.ata-resumo-panel dd {
+  margin: 0;
+  color: var(--ata-ink);
+  font-size: 0.84rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* Alertas e relatório -------------------------------------------------- */
+.ata-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--ata-radius);
+  background: #eef6fd;
+  border-left: 4px solid var(--ata-blue);
+  color: #1e4b78;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.ata-alert i {
+  color: var(--ata-blue);
+  font-size: 1.05rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.ata-alert strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--ata-blue);
+  font-weight: 800;
+}
+
+.ata-report-panel p {
+  color: var(--ata-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.ata-report-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  color: var(--ata-muted);
+  font-size: 0.72rem;
+}
+
+.ata-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ata-report-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius-sm);
+  background: var(--ata-surface);
+  color: var(--ata-text);
+  font-weight: 700;
+  font-size: 0.82rem;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.ata-report-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ata-shadow-sm);
+}
+
+.ata-report-actions button.primary {
+  background: linear-gradient(135deg, var(--ata-blue), var(--ata-blue-2));
+  border-color: transparent;
+  color: #fff;
+}
+
+.ata-report-actions button.primary:hover {
+  filter: brightness(1.05);
+}
+
+.ata-report-actions button i {
+  font-size: 0.88rem;
+}
+
+/* Registros (movimentações) ------------------------------------------- */
+.ata-records {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ata-record {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--ata-line-soft);
+  border-radius: var(--ata-radius-sm);
+  background: var(--ata-surface-2);
+}
+
+.ata-record > div {
+  min-width: 0;
+}
+
+.ata-record strong {
+  display: block;
+  color: var(--ata-ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ata-record span {
+  display: block;
+  margin-top: 2px;
+  color: var(--ata-muted);
+  font-size: 0.72rem;
+}
+
+.ata-record b {
+  display: block;
+  color: #0f6c47;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.ata-record small {
+  display: block;
+  margin-top: 2px;
+  color: var(--ata-muted);
+  font-size: 0.68rem;
+  text-align: right;
+}
+
+/* ============================================================================
+   6. TABELA DE ITENS E BUSCA
+   ============================================================================ */
+.ata-page__items {
+  padding-top: 6px;
+}
+
+.ata-page__section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 18px 0 14px;
+  border-bottom: 1px solid var(--ata-line);
+  margin-bottom: 16px;
+}
+
+.ata-page__section-head h2 {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ata-page__section-head h2 i {
+  color: var(--ata-blue);
+}
+
+.ata-page__section-head h2 small {
+  margin-left: 6px;
+  color: var(--ata-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.ata-page__search {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 260px;
+  max-width: 100%;
+  padding: 0 12px;
+  min-height: 40px;
+  border: 1px solid var(--ata-line);
+  border-radius: 999px;
+  background: var(--ata-surface);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.ata-page__search:focus-within {
+  border-color: var(--ata-blue);
+  box-shadow: 0 0 0 3px rgba(11, 99, 206, 0.12);
+}
+
+.ata-page__search i {
+  color: var(--ata-muted);
+  font-size: 0.84rem;
+  margin-right: 8px;
+}
+
+.ata-page__search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: var(--ata-ink);
+  font: inherit;
+  font-size: 0.84rem;
+  padding: 8px 0;
+}
+
+.ata-page__search input::placeholder {
+  color: #9cafc2;
+}
+
+.ata-page__search #contadorItens {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ata-soft);
+  color: var(--ata-blue);
+  font-size: 0.68rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Tabela --------------------------------------------------------------- */
+.ata-page__table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius);
+  background: var(--ata-surface);
+  box-shadow: var(--ata-shadow-sm);
+}
+
+.ata-page__table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.ata-page__table thead th {
+  padding: 13px 16px;
+  text-align: left;
+  background: #0b3d6b;
+  color: #e9f3fc;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 2px solid #072f54;
+  white-space: nowrap;
+}
+
+.ata-page__table tbody td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--ata-line-soft);
+  color: var(--ata-text);
+  vertical-align: middle;
+}
+
+.ata-page__table tbody tr:nth-child(even) td {
+  background: #f6f9fc;
+}
+
+.ata-page__table tbody tr:hover td {
+  background: #eef6fd;
+}
+
+.ata-page__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ata-page__table td.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ata-page__table td.saldo-alto {
+  color: #0f6c47;
+  font-weight: 800;
+}
+.ata-page__table td.saldo-baixo {
+  color: #b06e00;
+  font-weight: 800;
+}
+.ata-page__table td.saldo-zerado {
+  color: #a82331;
+  font-weight: 800;
+}
+
+.ata-page__table th:nth-child(1),
+.ata-page__table td:nth-child(1) {
+  width: 7rem;
+  text-align: center;
+}
+
+.ata-page__table th:nth-child(2),
+.ata-page__table td:nth-child(2) {
+  min-width: 18rem;
+  text-align: left;
+}
+
+.ata-page__table th:nth-child(3),
+.ata-page__table td:nth-child(3),
+.ata-page__table th:nth-child(4),
+.ata-page__table td:nth-child(4),
+.ata-page__table th:nth-child(6),
+.ata-page__table td:nth-child(6),
+.ata-page__table th:nth-child(7),
+.ata-page__table td:nth-child(7) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ata-page__table th:nth-child(5),
+.ata-page__table td:nth-child(5) {
+  min-width: 11rem;
+  text-align: left;
+}
+
+.ata-page__table th:nth-child(8),
+.ata-page__table td:nth-child(8) {
+  width: 9rem;
+  text-align: center;
+}
+
+.ata-page__table .ata-item-progress {
+  display: grid;
+  gap: 5px;
+  min-width: 9.5rem;
+}
+
+.ata-page__table .ata-item-progress-bar {
+  width: 100%;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--ata-line-soft);
+  box-shadow: inset 0 0 0 1px rgb(14 63 107 / 7%);
+}
+
+.ata-page__table .ata-item-progress-bar span {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ata-blue), var(--ata-sky));
+  transition: width 0.35s ease;
+}
+
+.ata-page__table .ata-item-progress-bar span.warning {
+  background: linear-gradient(90deg, #e49b00, #f4bd31);
+}
+
+.ata-page__table .ata-item-progress-bar span.danger,
+.ata-page__table .ata-item-progress-bar span.esgotado {
+  background: linear-gradient(90deg, #c92d45, #e45b6d);
+}
+
+.ata-page__table .ata-item-progress small {
+  color: var(--ata-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.ata-page__table .ata-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 6.5rem;
+  min-height: 2.25rem;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--ata-blue);
+  border-radius: var(--ata-radius-sm);
+  background: linear-gradient(135deg, var(--ata-blue), var(--ata-blue-2));
+  color: #fff;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.ata-page__table .ata-add-button::before {
+  margin-right: 0.4rem;
+  content: "\f217";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+}
+
+.ata-page__table .ata-add-button:hover:not(:disabled),
+.ata-page__table .ata-add-button:focus-visible:not(:disabled) {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgb(11 99 206 / 20%);
+  outline: none;
+}
+
+.ata-page__table .ata-add-button:focus-visible {
+  box-shadow: 0 0 0 3px rgb(11 99 206 / 18%);
+}
+
+.ata-page__table .ata-add-button:disabled {
+  border-color: var(--ata-line);
+  background: var(--ata-line-soft);
+  color: var(--ata-muted);
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.ata-page__table .status-esgotado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fde8ea;
+  color: #a82331;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.ata-page__table .status-esgotado i {
+  font-size: 0.72rem;
+}
+
+/* ============================================================================
+   7. ESTADOS · LOADING · NOT FOUND · FOOTER
+   ============================================================================ */
+.ata-page__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 20px;
+  color: var(--ata-muted);
+}
+
+.ata-page__loading .loading-spinner {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--ata-line);
+  border-top-color: var(--ata-blue);
+  border-radius: 50%;
+  animation: ata-spin 0.9s linear infinite;
+}
+
+.ata-page__loading p {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+@keyframes ata-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ata-page__notfound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 20px;
+  text-align: center;
+  color: var(--ata-muted);
+}
+
+.ata-page__notfound i {
+  font-size: 3rem;
+  color: #b8c7d6;
+}
+
+.ata-page__notfound h2 {
+  color: var(--ata-ink);
+  font-size: 1.2rem;
+}
+
+.ata-page__notfound p {
+  max-width: 480px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.ata-page__notfound a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--ata-radius-sm);
+  background: var(--ata-blue);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.84rem;
+  transition: background 0.18s ease;
+}
+
+.ata-page__notfound a:hover {
+  background: var(--ata-blue-2);
+}
+
+.ata-page__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: var(--ata-gap-lg);
+  padding: 16px 20px;
+  border: 1px solid var(--ata-line);
+  border-radius: var(--ata-radius);
+  background: var(--ata-surface);
+  color: var(--ata-muted);
+  font-size: 0.78rem;
+  box-shadow: var(--ata-shadow-sm);
+}
+
+.ata-page__footer i {
+  color: var(--ata-blue);
+  margin-right: 6px;
+}
+
+.ata-page__back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--ata-radius-sm);
+  background: var(--ata-soft);
+  color: var(--ata-blue);
+  font-weight: 800;
+  font-size: 0.8rem;
+  transition: background 0.18s ease;
+}
+
+.ata-page__back-button:hover {
+  background: #daeafd;
+}
+
+/* Toasts -------------------------------------------------------------- */
+.ata-page .toast-container {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(380px, calc(100vw - 36px));
+}
+
+.ata-page .toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--ata-radius);
+  background: var(--ata-surface);
+  border-left: 4px solid var(--ata-blue);
+  box-shadow: var(--ata-shadow-lg);
+  color: var(--ata-text);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.ata-page .toast.sucesso {
+  border-left-color: var(--ata-green);
+  background: #eefaf3;
+}
+.ata-page .toast.erro {
+  border-left-color: var(--ata-red);
+  background: #fdecee;
+}
+.ata-page .toast.aviso {
+  border-left-color: var(--ata-amber);
+  background: #fff7e6;
+}
+.ata-page .toast.info {
+  border-left-color: var(--ata-blue);
+  background: #eef6fd;
+}
+
+.ata-page .toast strong {
+  display: block;
+  color: var(--ata-ink);
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+
+.ata-page .toast .btn-fechar {
+  background: transparent;
+  border: 0;
+  color: var(--ata-muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+/* ============================================================================
+   8. RESPONSIVIDADE
+   ============================================================================ */
+@media (max-width: 1180px) {
+  .ata-health__charts {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ata-chart-card--ranking {
+    grid-column: 1 / -1;
+  }
+
+  .ata-bloco-b {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ata-bloco-b__column:nth-child(3) {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ata-gap);
+  }
+}
+
+@media (max-width: 900px) {
+  .ata-page__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ata-page__summary > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .ata-page__summary > div:nth-child(1),
+  .ata-page__summary > div:nth-child(2) {
+    border-bottom: 1px solid var(--ata-line-soft);
+  }
+
+  .ata-health__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ata-health__charts {
+    grid-template-columns: 1fr;
+  }
+
+  .ata-bloco-b {
+    grid-template-columns: 1fr;
+  }
+
+  .ata-bloco-b__column:nth-child(3) {
+    grid-template-columns: 1fr;
+  }
+
+  .ata-page__section-head {
+    align-items: stretch;
+  }
+
+  .ata-page__search {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .ata-page__main {
+    padding: 14px 12px 40px;
+  }
+
+  .ata-page__content {
+    gap: 18px;
+    padding: 14px;
+    border-radius: var(--ata-radius);
+  }
+
+  .ata-page__breadcrumb {
+    align-items: flex-start;
+    gap: 8px 10px;
+    padding-bottom: 12px;
+  }
+
+  .ata-page__breadcrumb-current {
+    width: 100%;
+    font-size: 0.72rem;
+  }
+
+  .ata-page__hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px;
+    gap: 12px;
+  }
+
+  .ata-page__hero-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    font-size: 1.1rem;
+  }
+
+  .ata-page__hero h1 {
+    font-size: 1.15rem;
+  }
+
+  .ata-page__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .ata-page__summary > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--ata-line-soft);
+  }
+
+  .ata-page__summary > div:last-child {
+    border-bottom: 0;
+  }
+
+  .ata-health {
+    padding: 16px;
+  }
+
+  .ata-health__heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ata-health__cards {
+    grid-template-columns: 1fr;
+  }
+
+  .ata-panel,
+  .ata-chart-card {
+    padding: 14px;
+  }
+
+  .ata-resumo-panel dl > div {
+    grid-template-columns: 1fr;
+  }
+
+  .ata-page__footer {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .ata-page__back-button {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .ata-page__breadcrumb {
+    font-size: 0.74rem;
+  }
+
+  .ata-page__hero p {
+    font-size: 0.84rem;
+  }
+
+  .ata-report-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+/* ============================================================================
+   9. IMPRESSÃO / GERAÇÃO DE PDF
+   ----------------------------------------------------------------------------
+   Duas estratégias convivem aqui:
+
+   · `@media print`  → cobre o fluxo de "Imprimir" pelo navegador
+                      (window.print()), que respeita este bloco.
+   · `.ata-printing` → classe aplicada via JS para o html2pdf (que NÃO
+                      aciona @media print). É aplicada no <body> durante a
+                      geração e removida em seguida.
+
+   Ambas foram reescritas para produzir o mesmo resultado visual limpo:
+     - Sem topbar, breadcrumb, busca, botões de ação, footer.
+     - Layout em página A4 retrato, sem sombras, sem bordas decorativas.
+     - Tabela de itens com quebra de página controlada.
+     - Gráficos redimensionados para caber em uma página.
+   ============================================================================ */
+
+/* ---------- 9.1. @media print (navegador) ---------------------------- */
+@page {
+  size: A4 portrait;
+  margin: 12mm;
+}
+
+@media print {
+  html,
+  body.ata-page {
+    background: #ffffff !important;
+    color: #17324d !important;
+    font-size: 11pt;
+  }
+
+  .ata-page__topbar,
+  .ata-page__breadcrumb,
+  .ata-page__back,
+  .ata-page__back-button,
+  .ata-page__search,
+  .ata-page__table th:last-child,
+  .ata-page__table td:last-child,
+  .ata-report-actions,
+  .ata-page__footer,
+  .ata-page .toast-container {
+    display: none !important;
+  }
+
+  .ata-page__main {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .ata-page__content {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .ata-page__hero {
+    color: #ffffff !important;
+    background: #0b3b66 !important;
+    border: 1px solid #0b3b66 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 8mm;
+  }
+
+  .ata-page__hero h1,
+  .ata-page__hero p,
+  .ata-page__hero .ata-page__eyebrow,
+  .ata-page__hero .ata-page__meta,
+  .ata-page__hero .ata-page__meta strong {
+    color: #ffffff !important;
+  }
+
+  .ata-page__summary,
+  .ata-health,
+  .ata-panel,
+  .ata-chart-card,
+  .ata-page__table-wrap,
+  .ata-page__footer {
+    border-color: #cbd5e1 !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+
+  .ata-page__summary > div {
+    border-right-color: #cbd5e1 !important;
+  }
+
+  .ata-page__summary .ata-page__balance {
+    background: #f1f5f9 !important;
+  }
+
+  .ata-page__summary .ata-page__balance strong {
+    color: #0b3b66 !important;
+  }
+
+  .ata-health__charts {
+    gap: 4mm !important;
+  }
+
+  .ata-chart-card__canvas {
+    height: 45mm !important;
+  }
+
+  .ata-chart-card__canvas--wide,
+  .ata-chart-card__canvas--department,
+  .ata-chart-card__canvas--evolution {
+    height: 50mm !important;
+  }
+
+  .ata-bloco-b {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4mm !important;
+    margin-top: 4mm;
+  }
+
+  .ata-bloco-b__column:nth-child(3) {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4mm;
+  }
+
+  .ata-page__items {
+    break-before: page;
+    page-break-before: always;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .ata-page__section-head {
+    padding: 0 0 4mm;
+    margin-bottom: 3mm;
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+
+  .ata-page__table-wrap {
+    overflow: visible !important;
+    border-radius: 0 !important;
+  }
+
+  .ata-page__table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+  }
+
+  .ata-page__table thead th {
+    background: #0b3d6b !important;
+    color: #ffffff !important;
+    padding: 3mm 2mm !important;
+    font-size: 7.5pt;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .ata-page__table tbody td {
+    padding: 2.5mm 2mm !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #17324d !important;
+    background: #ffffff !important;
+    font-size: 8.5pt;
+    vertical-align: top;
+  }
+
+  .ata-page__table tbody tr:nth-child(even) td {
+    background: #f8fafc !important;
+  }
+
+  .ata-page__table tbody tr:hover td {
+    background: #ffffff !important;
+  }
+
+  .ata-page__table th:nth-child(1),
+  .ata-page__table td:nth-child(1) {
+    width: 8%;
+  }
+  .ata-page__table th:nth-child(2),
+  .ata-page__table td:nth-child(2) {
+    width: 40%;
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
+  .ata-page__table th:nth-child(3),
+  .ata-page__table td:nth-child(3),
+  .ata-page__table th:nth-child(4),
+  .ata-page__table td:nth-child(4) {
+    width: 9%;
+    text-align: right;
+  }
+  .ata-page__table th:nth-child(5),
+  .ata-page__table td:nth-child(5),
+  .ata-page__table th:nth-child(6),
+  .ata-page__table td:nth-child(6) {
+    width: 12%;
+    text-align: right;
+  }
+  .ata-page__table th:nth-child(7),
+  .ata-page__table td:nth-child(7) {
+    width: 10%;
+  }
+
+  .ata-page__table .ata-item-progress-bar {
+    width: 100%;
+    height: 4px;
+    margin: 0 0 2px;
+  }
+
+  .ata-page__hero,
+  .ata-page__summary,
+  .ata-health,
+  .ata-panel,
+  .ata-chart-card,
+  .ata-page__table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .ata-page__table td.saldo-alto {
+    color: #0f6c47 !important;
+  }
+  .ata-page__table td.saldo-baixo {
+    color: #b06e00 !important;
+  }
+  .ata-page__table td.saldo-zerado {
+    color: #a82331 !important;
+  }
+}
+
+/* ---------- 9.2. .ata-printing (html2pdf) --------------------------- */
+.ata-page.ata-printing {
+  background: #ffffff !important;
+  color: #17324d !important;
+}
+
+.ata-page.ata-printing .ata-page__topbar,
+.ata-page.ata-printing .ata-page__breadcrumb,
+.ata-page.ata-printing .ata-page__back,
+.ata-page.ata-printing .ata-page__back-button,
+.ata-page.ata-printing .ata-page__search,
+.ata-page.ata-printing .ata-page__table th:last-child,
+.ata-page.ata-printing .ata-page__table td:last-child,
+.ata-page.ata-printing .ata-report-actions,
+.ata-page.ata-printing .ata-page__footer,
+.ata-page.ata-printing .toast-container {
+  display: none !important;
+}
+
+.ata-page.ata-printing .ata-page__main {
+  min-height: 0 !important;
+  padding: 0 !important;
+  background: #ffffff !important;
+}
+
+.ata-page.ata-printing .ata-page__content {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.ata-page.ata-printing .ata-page__hero {
+  margin-bottom: 8px;
+  padding: 14px 18px;
+  border: 1px solid #0b3b66 !important;
+  border-radius: 6px !important;
+  background: #0b3b66 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  break-inside: avoid;
+}
+
+.ata-page.ata-printing .ata-page__hero h1,
+.ata-page.ata-printing .ata-page__hero p,
+.ata-page.ata-printing .ata-page__hero .ata-page__eyebrow,
+.ata-page.ata-printing .ata-page__hero .ata-page__meta,
+.ata-page.ata-printing .ata-page__hero .ata-page__meta strong {
+  color: #ffffff !important;
+}
+
+.ata-page.ata-printing .ata-page__hero-icon {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #d7ecff !important;
+}
+
+.ata-page.ata-printing .ata-page__days {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.ata-page.ata-printing .ata-page__summary,
+.ata-page.ata-printing .ata-health,
+.ata-page.ata-printing .ata-panel,
+.ata-page.ata-printing .ata-chart-card,
+.ata-page.ata-printing .ata-page__table-wrap {
+  border-color: #cbd5e1 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
+  break-inside: avoid;
+}
+
+.ata-page.ata-printing .ata-page__summary {
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+.ata-page.ata-printing .ata-page__summary > div {
+  padding: 10px 12px;
+  border-right-color: #cbd5e1 !important;
+}
+
+.ata-page.ata-printing .ata-page__summary span {
+  font-size: 8pt !important;
+}
+
+.ata-page.ata-printing .ata-page__summary strong {
+  font-size: 11pt !important;
+}
+
+.ata-page.ata-printing .ata-page__summary .ata-page__balance {
+  background: #f1f5f9 !important;
+}
+
+.ata-page.ata-printing .ata-page__summary .ata-page__balance strong {
+  color: #0b3b66 !important;
+}
+
+.ata-page.ata-printing .ata-health {
+  margin-top: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.ata-page.ata-printing .ata-health__cards {
+  gap: 6px;
+}
+
+.ata-page.ata-printing .ata-health__cards article {
+  min-height: 44px;
+  padding: 8px;
+}
+
+.ata-page.ata-printing .ata-health__card-icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  font-size: 0.9rem;
+  border-radius: 9px;
+}
+
+.ata-page.ata-printing .ata-health__cards small {
+  font-size: 7.5pt !important;
+}
+
+.ata-page.ata-printing .ata-health__cards strong {
+  font-size: 10.5pt !important;
+}
+
+.ata-page.ata-printing .ata-health__charts {
+  gap: 8px;
+  margin-top: 9px;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.ata-page.ata-printing .ata-chart-card--ranking {
+  grid-column: 1 / -1;
+}
+
+.ata-page.ata-printing .ata-chart-card {
+  padding: 9px;
+}
+
+.ata-page.ata-printing .ata-chart-card__canvas {
+  height: 120px !important;
+}
+
+.ata-page.ata-printing .ata-chart-card__canvas--wide,
+.ata-page.ata-printing .ata-chart-card__canvas--department,
+.ata-page.ata-printing .ata-chart-card__canvas--evolution {
+  height: 140px !important;
+}
+
+.ata-page.ata-printing .ata-bloco-b {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.ata-page.ata-printing .ata-bloco-b__column {
+  gap: 9px;
+}
+
+.ata-page.ata-printing .ata-bloco-b__column:nth-child(3) {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 9px;
+}
+
+.ata-page.ata-printing .ata-panel {
+  padding: 10px;
+}
+
+.ata-page.ata-printing .ata-panel__title {
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+}
+
+.ata-page.ata-printing .ata-panel__title h2 {
+  font-size: 0.84rem !important;
+}
+
+.ata-page.ata-printing .ata-panel__scope {
+  font-size: 8pt;
+}
+
+.ata-page.ata-printing .ata-page__items {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 2px solid #0b3d6b;
+  break-before: page;
+  page-break-before: always;
+}
+
+.ata-page.ata-printing .ata-page__section-head {
+  padding: 0 0 7px;
+  border-bottom: 1px solid #c8d6e4;
+  margin-bottom: 8px;
+}
+
+.ata-page.ata-printing .ata-page__section-head h2 {
+  font-size: 0.95rem;
+}
+
+.ata-page.ata-printing .ata-page__table-wrap {
+  overflow: visible !important;
+  border-radius: 0 !important;
+}
+
+.ata-page.ata-printing .ata-page__table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.ata-page.ata-printing .ata-page__table th,
+.ata-page.ata-printing .ata-page__table td {
+  padding: 7px 6px;
+  border: 1px solid #cbd8e4;
+  font-size: 0.62rem;
+  line-height: 1.3;
+  vertical-align: top;
+}
+
+.ata-page.ata-printing .ata-page__table th {
+  background: #0b3d6b !important;
+  color: #ffffff !important;
+  font-size: 0.57rem;
+}
+
+.ata-page.ata-printing .ata-page__table th:nth-child(1),
+.ata-page.ata-printing .ata-page__table td:nth-child(1) {
+  width: 7%;
+}
+.ata-page.ata-printing .ata-page__table th:nth-child(2),
+.ata-page.ata-printing .ata-page__table td:nth-child(2) {
+  width: 41%;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+.ata-page.ata-printing .ata-page__table th:nth-child(3),
+.ata-page.ata-printing .ata-page__table td:nth-child(3),
+.ata-page.ata-printing .ata-page__table th:nth-child(4),
+.ata-page.ata-printing .ata-page__table td:nth-child(4) {
+  width: 9%;
+  text-align: right;
+}
+.ata-page.ata-printing .ata-page__table th:nth-child(5),
+.ata-page.ata-printing .ata-page__table td:nth-child(5),
+.ata-page.ata-printing .ata-page__table th:nth-child(6),
+.ata-page.ata-printing .ata-page__table td:nth-child(6) {
+  width: 12%;
+  text-align: right;
+}
+.ata-page.ata-printing .ata-page__table th:nth-child(7),
+.ata-page.ata-printing .ata-page__table td:nth-child(7) {
+  width: 10%;
+}
+
+.ata-page.ata-printing .ata-page__table .ata-item-progress-bar {
+  width: 100%;
+  height: 4px;
+  margin: 0 0 2px;
+}
+
+.ata-page.ata-printing .ata-page__footer {
+  display: none !important;
+}
+
+/* Responsividade consolidada da tela de detalhe. */
+@media (max-width: 760px) {
+  .ata-page__main {
+    padding-inline: 12px;
+  }
+  .ata-page__content {
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .ata-page__summary,
+  .ata-health__cards,
+  .ata-health__charts {
+    grid-template-columns: 1fr;
+  }
+  .ata-chart-card--ranking {
+    grid-column: auto;
+  }
+  .ata-page__hero {
+    align-items: flex-start;
+  }
+}
+/* Classes realmente geradas pelo ata-page.js */
+.ata-page .ata-ranked-item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ata-line-soft);
+}
+
+.ata-page .ata-ranked-item:last-child {
+  border-bottom: 0;
+}
+
+.ata-page .ata-ranked-item > div:nth-child(2) {
+  min-width: 0;
+}
+
+.ata-page .ata-rank {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--ata-soft);
+  color: var(--ata-blue);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.ata-page .ata-item-name {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ata-ink);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.ata-page .ata-mini-track {
+  height: 6px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--ata-line-soft);
+}
+
+.ata-page .ata-mini-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ata-blue), var(--ata-sky));
+}
+
+.ata-page .ata-item-meta {
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--ata-muted);
+  font-size: 0.68rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ata-page .ata-item-value {
+  color: var(--ata-blue);
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.ata-page .ata-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ata-line-soft);
+}
+
+.ata-page .ata-order > div {
+  min-width: 0;
+}
+
+.ata-page .ata-order strong,
+.ata-page .ata-order span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ata-page .ata-order span {
+  margin-top: 3px;
+  color: var(--ata-muted);
+  font-size: 0.72rem;
+}
+
+.ata-page .ata-order-value {
+  color: var(--ata-green);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+
+/* Carrinho no detalhe da ata: componente compartilhado com o fluxo do módulo. */
+.ata-item-actions { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; flex-wrap: wrap; }
+.ata-page__table .ata-item-quantity { width: 4.4rem; min-height: 2.25rem; padding: .45rem .5rem; border: 1px solid var(--ata-line); border-radius: var(--ata-radius-sm); background: var(--ata-surface); color: var(--ata-ink); font: inherit; font-size: .75rem; font-weight: 700; text-align: center; }
+.ata-page__table .ata-item-quantity:focus { outline: none; border-color: var(--ata-blue); box-shadow: 0 0 0 3px rgb(11 99 206 / 14%); }
+.ata-cart-fab { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 45; display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border: 0; border-radius: 50%; background: linear-gradient(135deg, var(--brand-primary), var(--brand-blue)); color: #fff; box-shadow: var(--shadow-modal); cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+.ata-cart-fab:hover, .ata-cart-fab:focus-visible { transform: translateY(-2px); box-shadow: 0 1rem 2rem rgb(14 63 107 / 24%); outline: none; }
+.ata-cart-fab span { position: absolute; top: -.35rem; right: -.3rem; display: grid; place-items: center; min-width: 1.35rem; height: 1.35rem; padding: 0 .25rem; border: 2px solid #fff; border-radius: 999px; background: var(--state-danger); color: #fff; font-size: .65rem; font-weight: 800; }
+.ata-cart-drawer-overlay { position: fixed; inset: 0; z-index: 55; display: none; background: rgb(14 35 60 / 38%); backdrop-filter: blur(2px); }
+.ata-cart-drawer-overlay.is-open { display: block; }
+.ata-cart-drawer { position: fixed; top: 0; right: 0; z-index: 56; display: grid; grid-template-rows: auto 1fr auto; width: min(28rem, 100vw); height: 100dvh; transform: translateX(105%); background: var(--surface-card); box-shadow: var(--shadow-modal); transition: transform .22s ease; }
+.ata-cart-drawer.is-open { transform: translateX(0); }
+.ata-cart-drawer__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.2rem 1.25rem; border-bottom: 1px solid var(--border-soft); background: linear-gradient(135deg, var(--surface-card), var(--surface-soft-blue)); }
+.ata-cart-drawer__header h2 { margin: .25rem 0 0; color: var(--text-primary); font-size: 1.05rem; }
+.ata-cart-drawer__header h2 i { margin-right: .35rem; color: var(--brand-primary); }
+.ata-cart-drawer__close { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 0; border-radius: 50%; background: transparent; color: var(--text-secondary); cursor: pointer; }
+.ata-cart-drawer__close:hover { background: var(--state-danger-bg); color: var(--state-danger); }
+.ata-cart-drawer__items { display: grid; align-content: start; gap: .7rem; overflow: auto; padding: 1rem 1.1rem; background: var(--surface-muted); }
+.ata-cart-drawer-item { display: flex; align-items: flex-start; justify-content: space-between; gap: .8rem; padding: .85rem; border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: var(--surface-card); }
+.ata-cart-drawer-item strong, .ata-cart-drawer-item small { display: block; }
+.ata-cart-drawer-item strong { color: var(--text-primary); font-size: var(--font-size-sm); }
+.ata-cart-drawer-item small { margin-top: .3rem; color: var(--text-muted); font-size: var(--font-size-xs); }
+.ata-cart-drawer-item b { color: var(--brand-primary); font-size: var(--font-size-sm); white-space: nowrap; }
+.ata-cart-empty { display: grid; justify-items: center; gap: .4rem; padding: 3rem 1rem; color: var(--text-secondary); text-align: center; }
+.ata-cart-empty i { color: var(--brand-primary); font-size: 2rem; }
+.ata-cart-empty p { margin: 0; color: var(--text-primary); font-weight: 700; }
+.ata-cart-empty small { color: var(--text-muted); }
+.ata-cart-drawer__footer { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: 1rem 1.1rem; border-top: 1px solid var(--border-soft); background: var(--surface-card); color: var(--text-secondary); font-size: var(--font-size-xs); }
+.ata-cart-drawer__link { color: var(--brand-primary); font-weight: 700; text-decoration: none; }
+.ata-cart-drawer__link:hover { text-decoration: underline; }
+@media (max-width: 700px) { .ata-cart-fab { right: 1rem; bottom: 1rem; } .ata-cart-drawer__footer { align-items: flex-start; flex-direction: column; } }
+
+
+/* Tabela de itens · descrição expansível e ação em linha. */
+.ata-page__table .ata-item-description { min-width: 18rem; max-width: 34rem; }
+.ata-page__table .ata-item-description__text { display: inline; line-height: 1.45; }
+.ata-page__table .ata-item-description__text[hidden] { display: none; }
+.ata-page__table .ata-item-description small { display: block; margin-top: .22rem; color: var(--ata-muted); }
+.ata-page__table .ata-description-toggle { display: inline-flex; margin: .28rem 0 0 .35rem; padding: 0; border: 0; background: transparent; color: var(--ata-blue); font: inherit; font-size: .7rem; font-weight: 800; cursor: pointer; }
+.ata-page__table .ata-description-toggle:hover, .ata-page__table .ata-description-toggle:focus-visible { color: var(--ata-blue-2); text-decoration: underline; outline: none; }
+.ata-page__table .ata-description-toggle:focus-visible { border-radius: 3px; box-shadow: 0 0 0 3px rgb(11 99 206 / 14%); }
+.ata-item-actions { flex-wrap: nowrap; white-space: nowrap; }
+.ata-page__table th:nth-child(8), .ata-page__table td:nth-child(8) { width: 14rem; min-width: 14rem; }
+@media (max-width: 980px) { .ata-item-actions { flex-wrap: wrap; } }
+
+
+/* Integração final aos tokens compartilhados; mantém os componentes específicos da tela. */
+.ata-page {
+  --ata-line-soft: var(--border-soft, #e8eef5);
+  --ata-surface: var(--surface-card, #fff);
+  --ata-surface-2: var(--surface-muted, #f8fafc);
+  --ata-navy-2: var(--brand-primary-dark, #0d315f);
+  --ata-sky: var(--brand-cyan, #20a9e8);
+  --ata-radius-sm: var(--radius-sm, 8px);
+  --ata-radius: var(--radius-md, 12px);
+  --ata-radius-lg: var(--radius-lg, 16px);
+  --ata-radius-xl: var(--radius-xl, 20px);
+  --ata-shadow-sm: var(--shadow-card, 0 2px 6px rgb(16 42 67 / 5%));
+  --ata-shadow: var(--shadow-card, 0 6px 18px rgb(16 42 67 / 7%));
+  --ata-shadow-lg: var(--shadow-modal, 0 12px 28px rgb(16 42 67 / 10%));
+  --ata-gap: var(--space-4, 14px);
+  --ata-gap-sm: var(--space-3, 10px);
+  --ata-gap-lg: var(--space-5, 22px);
+  font-size: var(--font-size-sm, 14px);
+  line-height: var(--line-height-normal, 1.45);
+}
+.ata-page .ata-page__hero {
+  background: linear-gradient(115deg, var(--brand-primary-dark), var(--brand-primary), var(--brand-blue));
+  box-shadow: var(--shadow-card);
+}
+.ata-page :where(button, input, select, textarea, a):focus-visible {
+  outline: 0;
+  box-shadow: var(--focus-ring);
+}
+
+
+/* Painel acionável do detalhe da ata */
+.ata-decision-panel { margin:1.25rem 0; padding:1.15rem; border:1px solid var(--border-soft); border-radius:var(--radius-xl); background:var(--surface-card); box-shadow:var(--shadow-card); }
+.ata-decision__head { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; }
+.ata-decision__head h2 { margin:.15rem 0 .25rem; color:var(--text-primary); font-size:1.15rem; }
+.ata-decision__head p, .ata-decision__formula { margin:0; color:var(--text-muted); font-size:.75rem; line-height:1.45; }
+.ata-decision__source { color:var(--text-muted); font-size:.7rem; white-space:nowrap; }
+.ata-decision__kpis { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:.55rem; margin-top:1rem; }
+.ata-decision__kpis > div { padding:.65rem; border:1px solid var(--border-soft); border-radius:var(--radius-md); background:var(--surface-muted); }
+.ata-decision__kpis span { display:block; color:var(--text-muted); font-size:.66rem; }
+.ata-decision__kpis strong { display:block; margin-top:.2rem; color:var(--text-primary); font-size:.88rem; }
+.ata-decision__grid { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; margin-top:.7rem; }
+.ata-decision__grid > section { padding:.8rem; border:1px solid var(--border-soft); border-radius:var(--radius-lg); }
+.ata-decision__grid h3 { margin:0 0 .6rem; color:var(--text-primary); font-size:.82rem; }
+.ata-decision__grid h3 i { margin-right:.3rem; color:var(--brand-primary); }
+.ata-decision__grid ul { display:grid; gap:.4rem; margin:0; padding:0; list-style:none; }
+.ata-decision__grid li { display:grid; grid-template-columns:4.5rem 1fr; gap:.5rem; padding:.5rem .6rem; border-left:3px solid var(--state-warning); border-radius:var(--radius-md); background:var(--surface-muted); color:var(--text-secondary); font-size:.73rem; }
+.ata-decision__grid li[data-level="critical"] { border-left-color:var(--state-danger); }
+.ata-decision__grid li[data-level="high"] { border-left-color:var(--state-warning); }
+.ata-decision__grid li[data-level="medium"] { border-left-color:var(--brand-blue); }
+.ata-decision__grid li strong { color:var(--text-primary); }
+.ata-governance-list li { display:flex; justify-content:space-between; gap:.5rem; border-left:0; }
+.ata-governance-list strong.ok { color:var(--state-success); }
+.ata-governance-list strong.pending { color:var(--state-danger); }
+.ata-decision__formula { margin-top:.75rem; }
+@media (max-width: 1000px) { .ata-decision__kpis { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width: 640px) { .ata-decision__head, .ata-decision__grid { display:grid; grid-template-columns:1fr; } .ata-decision__source { white-space:normal; } .ata-decision__kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }

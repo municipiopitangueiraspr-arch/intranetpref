@@ -40,6 +40,7 @@
 // ============================================
 
 import { supabase } from "../supabase.js";
+import { listarUnidadesOperacionais } from "../../../shared/js/services/unidade-operacional-service.js";
 
 export class Carrinho {
   constructor(sistema) {
@@ -115,20 +116,20 @@ export class Carrinho {
   gerarHTML() {
     return `
       <div class="carrinho-view">
-        <nav class="atas-breadcrumb carrinho-breadcrumb" aria-label="Trilha de navegação">
-          <a href="#dashboard" id="breadcrumbVisaoGeral">
-            <i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span>
-          </a>
-          <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
-          <a href="#consulta" id="breadcrumbInicio">
-            <i class="fas fa-magnifying-glass" aria-hidden="true"></i><span>Consultas</span>
-          </a>
-          <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
-          <span aria-current="page">Meu Carrinho</span>
-        </nav>
+        <header class="carrinho-page-header">
+          <div class="carrinho-page-heading">
+            <span class="carrinho-page-eyebrow">GESTÃO DE PEDIDOS</span>
+            <h1><i class="fas fa-cart-shopping" aria-hidden="true"></i> Meu Carrinho</h1>
+            <p>Revise os itens selecionados, ajuste as quantidades e finalize seus pedidos.</p>
+          </div>
+          <div class="carrinho-page-count" aria-live="polite">
+            <span class="carrinho-page-count-icon"><i class="fas fa-boxes-stacked" aria-hidden="true"></i></span>
+            <span><strong id="totalItensCarrinhoCabecalho">0</strong><small>itens selecionados</small></span>
+          </div>
+        </header>
 
         <!-- Loading (oculto por padrão — load é instantâneo do storage) -->
-        <div class="loading-container" id="carrinhoLoading" data-intranet-style="2d281201779c">
+        <div class="loading-container" id="carrinhoLoading">
           <div class="loading-spinner"></div>
           <p>Processando…</p>
         </div>
@@ -136,7 +137,7 @@ export class Carrinho {
         <!-- Conteúdo -->
         <div id="carrinhoViewContent">
           <!-- Carrinho vazio -->
-          <div class="carrinho-empty" id="carrinhoEmpty" data-intranet-style="2d281201779c">
+          <div class="carrinho-empty" id="carrinhoEmpty">
             <div class="empty-icon">
               <i class="fas fa-shopping-cart"></i>
             </div>
@@ -150,7 +151,7 @@ export class Carrinho {
           </div>
 
           <!-- Itens do carrinho -->
-          <div id="carrinhoItems" data-intranet-style="2d281201779c">
+          <div id="carrinhoItems">
             <div id="itensCarrinhoLista"></div>
 
             <div class="carrinho-resumo">
@@ -188,24 +189,6 @@ export class Carrinho {
     const btnContinuar = document.getElementById("btnContinuarComprando");
     if (btnContinuar) {
       btnContinuar.addEventListener("click", () => {
-        this.sistema.ativarTab("consulta");
-      });
-    }
-
-    // Link "Visão geral" da trilha de navegação
-    const breadcrumbDashboard = document.getElementById("breadcrumbVisaoGeral");
-    if (breadcrumbDashboard) {
-      breadcrumbDashboard.addEventListener("click", (e) => {
-        e.preventDefault();
-        this.sistema.ativarTab("dashboard");
-      });
-    }
-
-    // Link "Consultas" da trilha de navegação
-    const breadcrumbInicio = document.getElementById("breadcrumbInicio");
-    if (breadcrumbInicio) {
-      breadcrumbInicio.addEventListener("click", (e) => {
-        e.preventDefault();
         this.sistema.ativarTab("consulta");
       });
     }
@@ -299,6 +282,8 @@ export class Carrinho {
 
     const totalItens = document.getElementById("totalItensCarrinho");
     if (totalItens) totalItens.textContent = carrinho.length;
+    const totalItensCabecalho = document.getElementById("totalItensCarrinhoCabecalho");
+    if (totalItensCabecalho) totalItensCabecalho.textContent = carrinho.length;
 
     const empty = document.getElementById("carrinhoEmpty");
     const items = document.getElementById("carrinhoItems");
@@ -363,12 +348,12 @@ export class Carrinho {
             <table class="tabela-carrinho">
               <thead>
                 <tr>
-                  <th data-intranet-style="1141ed377c3c">Item</th>
+                  <th>Item</th>
                   <th>Descrição</th>
-                  <th data-intranet-style="bb08e3bb2adc">Qtd</th>
-                  <th data-intranet-style="78daa70c42c9">Valor Unit.</th>
-                  <th data-intranet-style="58f5ad668929">Total</th>
-                  <th data-intranet-style="bad4dc0c05f2">Ação</th>
+                  <th>Qtd</th>
+                  <th>Valor Unit.</th>
+                  <th>Total</th>
+                  <th>Ação</th>
                 </tr>
               </thead>
               <tbody>
@@ -397,7 +382,7 @@ export class Carrinho {
                     <td class="numeric item-total">${this.sistema.ui.formatarMoeda(
                       i.valorTotal || 0,
                     )}</td>
-                    <td data-intranet-style="251709996767">
+                    <td>
                       <button
                         class="item-remover"
                         data-item-id="${i.id}"
@@ -413,7 +398,7 @@ export class Carrinho {
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="4" data-intranet-style="4764267ddc80">
+                  <td colspan="4">
                     Subtotal da Ata:
                   </td>
                   <td class="numeric subtotal-valor">
@@ -633,6 +618,17 @@ export class Carrinho {
     const carrinho = this.sistema.carrinho || [];
     if (carrinho.length === 0) return;
 
+    try {
+      this._unidadesOperacionais = await listarUnidadesOperacionais(this.sistema.usuarioAtual);
+    } catch (error) {
+      this.sistema.ui.mostrarToast("erro", "Não foi possível carregar as unidades", error.message);
+      return;
+    }
+    if (!this._unidadesOperacionais.length) {
+      this.sistema.ui.mostrarToast("erro", "Sem unidade operacional", "Seu usuário não possui lotação ativa na árvore organizacional.");
+      return;
+    }
+
     // ---------------------------------------------------------
     // 0) Garante que o modal existe e tem listeners conectados
     // ---------------------------------------------------------
@@ -768,9 +764,22 @@ export class Carrinho {
               ${itensHtml}
             </ul>
 
-            <div class="finalizacao-bloco-total">
-              <span>Subtotal da ATA:</span>
-              <strong>${this.sistema.ui.formatarMoeda(totalAta)}</strong>
+      <div class="finalizacao-bloco-total">
+                <span>Subtotal da ATA:</span>
+                <strong>${this.sistema.ui.formatarMoeda(totalAta)}</strong>
+              </div>
+
+            <div class="finalizacao-bloco-unidade">
+              <label for="unidade-operacional-${ataId}"><i class="fas fa-sitemap"></i> Unidade responsável pela operação <span class="obrigatorio">*</span></label>
+              <select id="unidade-operacional-${ataId}" class="finalizacao-select-unidade" data-ata-id="${ataId}" required>
+                <option value="">Selecione a unidade</option>
+                ${this._unidadesOperacionais.map((unidade) => {
+                  const indentacao = "— ".repeat(Math.max(0, Number(unidade.nivel || 0)));
+                  const label = `${indentacao}${unidade.codigo ? `${unidade.codigo} · ` : ""}${unidade.nome}${unidade.sigla ? ` (${unidade.sigla})` : ""}`;
+                  const selected = this._unidadesOperacionais.length === 1 ? " selected" : "";
+                  return `<option value="${this._escapeAttr(unidade.id)}"${selected}>${this._escapeHtml(label)}</option>`;
+                }).join("")}
+              </select>
             </div>
 
             <div class="finalizacao-bloco-local">
@@ -813,6 +822,9 @@ export class Carrinho {
         this._validarModalFinalizacao();
       });
     });
+    container.querySelectorAll(".finalizacao-select-unidade").forEach((select) => {
+      select.addEventListener("change", () => this._validarModalFinalizacao());
+    });
   }
 
   /**
@@ -853,11 +865,13 @@ export class Carrinho {
     const btn = document.getElementById("btnConfirmarFinalizacao");
     if (!btn) return;
 
-    const todosPreenchidos =
+    const locaisPreenchidos =
       inputs.length > 0 &&
       Array.from(inputs).every((inp) => inp.value.trim().length > 0);
+    const unidades = document.querySelectorAll(".finalizacao-select-unidade");
+    const unidadesPreenchidas = unidades.length > 0 && Array.from(unidades).every((select) => Boolean(select.value));
 
-    btn.disabled = !todosPreenchidos;
+    btn.disabled = !(locaisPreenchidos && unidadesPreenchidas);
   }
 
   /**
@@ -871,6 +885,16 @@ export class Carrinho {
       if (ataId) locais[ataId] = inp.value.trim();
     });
     return locais;
+  }
+
+  _coletarUnidadesDoModal() {
+    const selects = document.querySelectorAll(".finalizacao-select-unidade");
+    const unidades = {};
+    selects.forEach((select) => {
+      const ataId = select.dataset.ataId;
+      if (ataId) unidades[ataId] = select.value;
+    });
+    return unidades;
   }
 
   /**
@@ -936,6 +960,7 @@ export class Carrinho {
     // 1. Validar
     // ---------------------------------------------------------
     const locais = this._coletarLocaisDoModal();
+    const unidades = this._coletarUnidadesDoModal();
     const pedidosPorAta = this._pedidosPendentes;
 
     if (!pedidosPorAta || Object.keys(pedidosPorAta).length === 0) {
@@ -948,6 +973,10 @@ export class Carrinho {
     }
 
     for (const ataId of Object.keys(pedidosPorAta)) {
+      if (!unidades[ataId]) {
+        this.sistema.ui.mostrarToast("aviso", "Unidade obrigatória", `Selecione a unidade responsável pelo pedido da Ata ${pedidosPorAta[ataId].ataNumero}.`);
+        return;
+      }
       if (!locais[ataId] || !locais[ataId].trim()) {
         this.sistema.ui.mostrarToast(
           "aviso",
@@ -990,9 +1019,8 @@ export class Carrinho {
         )}`;
 
         const localEntrega = locais[ataId];
-
         // -----------------------------------------------------
-        // INSERT em pedidos (agora com local_entrega)
+        // INSERT em pedidos com a unidade organizacional escolhida
         // -----------------------------------------------------
         const { data: pedidoData, error: pedidoError } = await supabase
           .from("pedidos")
@@ -1002,6 +1030,7 @@ export class Carrinho {
             usuario_id: this.sistema.usuarioAtual.id,
             ata_id: parseInt(ataId),
             orgao_solicitante_id: this.sistema.usuarioAtual.orgao_id,
+            unidade_organizacional_id: unidades[ataId],
             fornecedor_id: pedido.fornecedorId,
             data_solicitacao: dataAtual,
             data_autorizacao: null,

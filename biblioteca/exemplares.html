@@ -24,11 +24,12 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261010-shared-shell-theme-4">
-  <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261010-shared-shell-theme-5">
+  
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1">
+  <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261018-library-identity-3">
+  <link rel="stylesheet" href="./biblioteca.css?v=20261019-fase2-ux-1">
 </head>
-  <body data-intranet-module="biblioteca" data-intranet-theme="atas" data-intranet-page="biblioteca-exemplares">
+  <body data-intranet-module="biblioteca" data-intranet-theme="shared" data-intranet-page="biblioteca-exemplares" class="app-shell" data-sidebar-open="false" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
     <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
       <div class="spinner"></div>
@@ -37,10 +38,10 @@
     <!-- LAYOUT -->
     <div class="app-layout" id="mainSystem">
       <!-- SIDEBAR -->
-      <aside class="sidebar" id="sidebar"></aside>
+      <aside class="app-sidebar sidebar" id="sidebar"></aside>
 
       <!-- MAIN -->
-      <div class="main-area">
+      <div class="main-area app-main">
         <!-- TOPBAR -->
         <header class="topbar" id="topbar"></header>
 
@@ -200,7 +201,7 @@
     <!-- ============================================================
          MODAL · EXEMPLAR INDIVIDUAL
          ============================================================ -->
-    <div class="modal-overlay intranet-style-126fb65ea9" id="modalExemplar">
+    <div class="modal-overlay" id="modalExemplar">
       <div class="modal">
         <div class="modal-header">
           <h3>
@@ -258,6 +259,29 @@
                 </span>
               </div>
 
+              <!-- IDENTIFICAÇÃO FÍSICA -->
+              <div class="form-group">
+                <label class="form-label" for="inputCodigoTombo">Código de tombo</label>
+                <input type="text" id="inputCodigoTombo" class="form-input" maxlength="80" placeholder="Ex: BIB-2026-0001" / aria-label="Ex: BIB-2026-0001">
+                <span class="form-hint">Identificador patrimonial do exemplar.</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="inputCodigoBarras">Código de barras</label>
+                <input type="text" id="inputCodigoBarras" class="form-input" maxlength="80" placeholder="Ex: 789000000001" / aria-label="Ex: 789000000001">
+              </div>
+
+              <!-- ORIGEM -->
+              <div class="form-group">
+                <label class="form-label" for="inputOrigemAquisicao">Origem da aquisição</label>
+                <select id="inputOrigemAquisicao" class="form-select" aria-label="Origem da aquisição">
+                  <option value="">— Não informada —</option>
+                  <option value="COMPRA">Compra</option>
+                  <option value="DOACAO">Doação</option>
+                  <option value="TRANSFERENCIA">Transferência</option>
+                  <option value="OUTRA">Outra</option>
+                </select>
+              </div>
+
               <!-- PRATELEIRA -->
               <div class="form-group full">
                 <label class="form-label" for="inputPrateleira"
@@ -270,6 +294,12 @@
                   Localização física do exemplar. Gerenciada em
                   <a href="prateleiras.html" target="_blank">Prateleiras</a>.
                 </span>
+              </div>
+
+              <!-- COMPLEMENTO DA LOCALIZAÇÃO -->
+              <div class="form-group full">
+                <label class="form-label" for="inputLocalizacaoComplemento">Complemento da localização</label>
+                <input type="text" id="inputLocalizacaoComplemento" class="form-input" maxlength="160" placeholder="Ex: caixa 2, seção infantil, posição 04" / aria-label="caixa 2, seção infantil, posição 04">
               </div>
 
               <!-- ESTADO -->
@@ -333,6 +363,47 @@
                  aria-label="Ex: Exemplar com dedicatória, páginas soltas na capa, etc."></textarea>
               </div>
             </div>
+
+            <p id="avisoAnexoNovoExemplar" class="bib-documentos__notice" role="note" hidden>
+              Salve o exemplar primeiro. Depois, abra <strong>Editar</strong> para anexar documentos.
+            </p>
+
+            <section id="secaoDocumentosExemplar" class="bib-documentos" aria-labelledby="tituloDocumentosExemplar" hidden>
+              <div class="bib-documentos__header">
+                <div>
+                  <h4 id="tituloDocumentosExemplar"><i class="fas fa-paperclip" aria-hidden="true"></i> Documentos do exemplar</h4>
+                  <p>Registre evidências de conservação, manutenção, dano ou outras ocorrências. Limite de 25 MB por arquivo.</p>
+                </div>
+              </div>
+              <div class="bib-documentos__controls">
+                <div class="form-group">
+                  <label class="form-label" for="inputDocumentoExemplar">Selecionar documento</label>
+                  <input
+                    type="file"
+                    id="inputDocumentoExemplar"
+                    accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.odt"
+                    aria-describedby="ajudaDocumentoExemplar"
+                  />
+                  <span class="form-hint" id="ajudaDocumentoExemplar">PDF, PNG, JPG, WEBP, DOC, DOCX ou ODT. Máximo de 25 MB; o arquivo fica no armazenamento privado da Biblioteca.</span>
+                </div>
+                <button class="btn btn-secondary" id="btnEnviarDocumentoExemplar" type="button" disabled>
+                  <i class="fas fa-cloud-arrow-up" aria-hidden="true"></i> Enviar anexo
+                </button>
+              </div>
+              <div id="previewDocumentoExemplar" class="bib-document-preview" aria-live="polite" hidden>
+                <img id="previewImagemDocumentoExemplar" class="bib-document-preview__image" alt="Prévia do documento selecionado" hidden />
+                <span id="iconePreviewDocumentoExemplar" class="bib-document-preview__icon" aria-hidden="true"><i class="fas fa-file-lines"></i></span>
+                <div class="bib-document-preview__meta">
+                  <strong id="nomePreviewDocumentoExemplar"></strong>
+                  <span id="detalhesPreviewDocumentoExemplar"></span>
+                </div>
+                <button class="btn btn-secondary bib-document-preview__clear" id="btnLimparDocumentoExemplar" type="button" aria-label="Remover arquivo selecionado">
+                  <i class="fas fa-xmark" aria-hidden="true"></i> Remover
+                </button>
+              </div>
+              <p id="statusDocumentosExemplar" class="bib-documentos__status" role="status" aria-live="polite"></p>
+              <ul id="listaDocumentosExemplar" class="bib-documentos__list" aria-label="Documentos anexados ao exemplar"></ul>
+            </section>
           </div>
 
           <div class="modal-footer">
@@ -358,7 +429,7 @@
     <!-- ============================================================
          MODAL · LOTE
          ============================================================ -->
-    <div class="modal-overlay intranet-style-126fb65ea9" id="modalLote">
+    <div class="modal-overlay" id="modalLote">
       <div class="modal">
         <div class="modal-header">
           <h3>
@@ -477,11 +548,11 @@
             </div>
 
             <!-- PREVIEW DO LOTE -->
-            <div class="lote-preview intranet-style-126fb65ea9" id="lotePreview">
+            <div class="lote-preview" id="lotePreview">
               <h5><i class="fas fa-eye"></i> Pré-visualização do lote</h5>
               <ul id="lotePreviewLista"></ul>
               <span
-                class="form-hint intranet-style-0ec6592226"
+                class="form-hint"
 
               >
                 Os códigos definitivos (EX-XXXX) serão gerados automaticamente
@@ -507,7 +578,8 @@
     </div>
 
     <!-- SUPABASE SDK -->
-    <script type="importmap">
+      <script src="../shared/js/system-shell.js?v=20261018-library-identity-3"></script>
+  <script type="importmap">
       {
         "imports": {
           "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
@@ -517,7 +589,8 @@
 
     <script type="module">
 import { supabase } from "../shared/js/supabase.js";
-      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261010-biblioteca-shared-shell-2";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261019-fase2-ux-1";
+      import { uploadDocumento } from "./biblioteca-saas.js?v=20261019-fase2-ux-1";
       await initBibliotecaLayout(supabase);
       // ============================================
       // CONFIGURAÇÃO SUPABASE
@@ -530,6 +603,8 @@ import { supabase } from "../shared/js/supabase.js";
       let prateleirasDisponiveis = [];
       let livroSelecionado = null; // usado no modal individual
       let livroSelecionadoLote = null; // usado no modal de lote
+      let documentosExemplarRequest = 0;
+      let documentoPreviewObjectUrl = null;
 
       // ============================================
       // NOTIFICAÇÕES
@@ -858,7 +933,7 @@ import { supabase } from "../shared/js/supabase.js";
             const autores = (e.livro?.autores || [])
               .map((a) => a.autor?.nome || "")
               .join(" ");
-            const alvo = [e.codigo, e.livro?.titulo, e.livro?.isbn, autores]
+            const alvo = [e.codigo, e.codigo_tombo, e.codigo_barras, e.livro?.titulo, e.livro?.isbn, autores, e.localizacao_complemento]
               .filter(Boolean)
               .join(" ")
               .toLowerCase();
@@ -914,6 +989,8 @@ import { supabase } from "../shared/js/supabase.js";
             const pratLabel = e.prateleira
               ? `Estante ${e.prateleira.estante?.codigo || "?"} · Prat. ${e.prateleira.numero}`
               : "Sem prateleira";
+            const identificacaoFisica = [e.codigo_tombo && `Tombo: ${e.codigo_tombo}`, e.codigo_barras && `Barras: ${e.codigo_barras}`].filter(Boolean).join(" · ");
+            const localizacaoDetalhe = [pratLabel, e.localizacao_complemento].filter(Boolean).join(" · ");
 
             const sitClass =
               {
@@ -935,7 +1012,10 @@ import { supabase } from "../shared/js/supabase.js";
 
             return `
               <tr data-id="${e.id}">
-                <td><span class="codigo-exemplar">${escaparHtml(e.codigo)}</span></td>
+                <td>
+                  <span class="codigo-exemplar">${escaparHtml(e.codigo)}</span>
+                  ${identificacaoFisica ? `<small class="tabela-subtexto">${escaparHtml(identificacaoFisica)}</small>` : ""}
+                </td>
                 <td>
                   <div class="livro-titulo-tabela">
                     <strong>${escaparHtml(e.livro?.titulo || "—")}</strong>
@@ -944,7 +1024,7 @@ import { supabase } from "../shared/js/supabase.js";
                 </td>
                 <td>
                   <span class="prateleira-badge">
-                    <i class="fas fa-layer-group"></i> ${escaparHtml(pratLabel)}
+                    <i class="fas fa-layer-group"></i> ${escaparHtml(localizacaoDetalhe)}
                   </span>
                 </td>
                 <td data-intranet-inline-style="is905008530ca9">
@@ -1151,6 +1231,177 @@ import { supabase } from "../shared/js/supabase.js";
       }
 
       // ============================================
+      // DOCUMENTOS DO EXEMPLAR
+      // ============================================
+      const BUCKET_DOCUMENTOS_BIBLIOTECA = "biblioteca-documentos";
+
+      function tamanhoDocumentoLegivel(bytes) {
+        const tamanho = Number(bytes) || 0;
+        if (tamanho < 1024) return `${tamanho} bytes`;
+        if (tamanho < 1024 * 1024) return `${(tamanho / 1024).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} KB`;
+        return `${(tamanho / (1024 * 1024)).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} MB`;
+      }
+
+      function dataDocumentoLegivel(value) {
+        const data = new Date(value);
+        return Number.isNaN(data.getTime()) ? "Data não informada" : data.toLocaleString("pt-BR");
+      }
+
+      async function carregarDocumentosExemplar(exemplarId) {
+        const section = document.getElementById("secaoDocumentosExemplar");
+        const status = document.getElementById("statusDocumentosExemplar");
+        const list = document.getElementById("listaDocumentosExemplar");
+        const requestId = ++documentosExemplarRequest;
+        section.hidden = false;
+        status.textContent = "Carregando documentos...";
+        list.replaceChildren();
+
+        const { data, error } = await supabase
+          .from("bib_documentos")
+          .select("id,nome_arquivo,storage_path,mime_type,tamanho_bytes,created_at")
+          .eq("entidade", "EXEMPLAR")
+          .eq("entidade_id", String(exemplarId))
+          .order("created_at", { ascending: false });
+
+        if (requestId !== documentosExemplarRequest) return;
+        if (error) {
+          console.error("Erro ao carregar documentos do exemplar:", error);
+          status.textContent = "Não foi possível carregar os anexos. Tente novamente.";
+          return;
+        }
+
+        const documentos = data || [];
+        if (!documentos.length) {
+          status.textContent = "Ainda não há documentos anexados a este exemplar.";
+          return;
+        }
+
+        status.textContent = `${documentos.length} documento${documentos.length === 1 ? "" : "s"} anexado${documentos.length === 1 ? "" : "s"}.`;
+        list.innerHTML = documentos.map((doc) => `
+          <li class="bib-documentos__item">
+            <div class="bib-documentos__item-info">
+              <strong>${escaparHtml(doc.nome_arquivo || "Arquivo sem nome")}</strong>
+              <span>${tamanhoDocumentoLegivel(doc.tamanho_bytes)} · ${dataDocumentoLegivel(doc.created_at)}</span>
+            </div>
+            <button class="btn btn-secondary bib-documentos__open" type="button" data-document-id="${escaparHtml(doc.id)}">
+              <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i> Abrir
+            </button>
+          </li>`).join("");
+
+        list.querySelectorAll("[data-document-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const doc = documentos.find((item) => String(item.id) === button.dataset.documentId);
+            if (doc) void abrirDocumentoExemplar(doc);
+          });
+        });
+      }
+
+      async function abrirDocumentoExemplar(documento) {
+        const tab = window.open("about:blank", "_blank");
+        if (!tab) {
+          window.showNotification("warning", "Abertura bloqueada", "Permita pop-ups para abrir o documento em uma nova aba.");
+          return;
+        }
+        tab.opener = null;
+        try {
+          const { data, error } = await supabase.storage
+            .from(BUCKET_DOCUMENTOS_BIBLIOTECA)
+            .createSignedUrl(documento.storage_path, 60);
+          if (error) throw error;
+          if (!data?.signedUrl) throw new Error("O Storage não retornou um link temporário.");
+          tab.location.replace(data.signedUrl);
+        } catch (error) {
+          tab.close();
+          console.error("Erro ao abrir documento do exemplar:", error);
+          window.showNotification("error", "Não foi possível abrir", "Verifique sua sessão e tente novamente.");
+        }
+      }
+
+      function limparPreviaDocumentoExemplar({ limparArquivo = false } = {}) {
+        if (documentoPreviewObjectUrl) URL.revokeObjectURL(documentoPreviewObjectUrl);
+        documentoPreviewObjectUrl = null;
+        const preview = document.getElementById("previewDocumentoExemplar");
+        const image = document.getElementById("previewImagemDocumentoExemplar");
+        const icon = document.getElementById("iconePreviewDocumentoExemplar");
+        if (image) { image.removeAttribute("src"); image.hidden = true; }
+        if (icon) icon.hidden = false;
+        if (preview) preview.hidden = true;
+        if (limparArquivo) {
+          const input = document.getElementById("inputDocumentoExemplar");
+          if (input) input.value = "";
+          const button = document.getElementById("btnEnviarDocumentoExemplar");
+          if (button) button.disabled = true;
+        }
+      }
+
+      function atualizarPreviaDocumentoExemplar(arquivo) {
+        limparPreviaDocumentoExemplar();
+        const preview = document.getElementById("previewDocumentoExemplar");
+        const image = document.getElementById("previewImagemDocumentoExemplar");
+        const icon = document.getElementById("iconePreviewDocumentoExemplar");
+        const name = document.getElementById("nomePreviewDocumentoExemplar");
+        const details = document.getElementById("detalhesPreviewDocumentoExemplar");
+        const button = document.getElementById("btnEnviarDocumentoExemplar");
+        const status = document.getElementById("statusDocumentosExemplar");
+        if (!arquivo) {
+          if (button) button.disabled = true;
+          if (status) status.textContent = "Nenhum arquivo selecionado.";
+          return;
+        }
+        if (name) name.textContent = arquivo.name;
+        if (details) details.textContent = `${tamanhoDocumentoLegivel(arquivo.size)} · ${arquivo.type || "tipo identificado pela extensão"}`;
+        const isImage = /^image\/(png|jpeg|webp)$/.test(arquivo.type || "") && arquivo.size <= 5 * 1024 * 1024;
+        if (isImage && image) {
+          documentoPreviewObjectUrl = URL.createObjectURL(arquivo);
+          image.src = documentoPreviewObjectUrl;
+          image.hidden = false;
+          if (icon) icon.hidden = true;
+        }
+        if (preview) preview.hidden = false;
+        if (button) button.disabled = false;
+        if (status) status.textContent = `Prévia pronta: ${arquivo.name} (${tamanhoDocumentoLegivel(arquivo.size)}). Confirme e selecione Enviar anexo.`;
+      }
+
+      async function enviarDocumentoExemplar() {
+        const id = document.getElementById("exemplarId").value;
+        const input = document.getElementById("inputDocumentoExemplar");
+        const button = document.getElementById("btnEnviarDocumentoExemplar");
+        const status = document.getElementById("statusDocumentosExemplar");
+        const arquivo = input.files?.[0];
+
+        if (!id) {
+          window.showNotification("warning", "Salve primeiro", "O anexo precisa estar vinculado a um exemplar já cadastrado.");
+          return;
+        }
+        if (!arquivo) {
+          window.showNotification("info", "Selecione um arquivo", "Escolha um documento antes de enviar.");
+          return;
+        }
+
+        button.disabled = true;
+        input.disabled = true;
+        button.setAttribute("aria-busy", "true");
+        status.dataset.state = "loading";
+        status.textContent = `Enviando ${arquivo.name}… Não feche esta janela até a confirmação.`;
+        try {
+          await uploadDocumento({ entidade: "EXEMPLAR", entidadeId: id, arquivo });
+          limparPreviaDocumentoExemplar({ limparArquivo: true });
+          status.dataset.state = "success";
+          window.showNotification("success", "Documento anexado", "O arquivo foi enviado e registrado no exemplar.");
+          await carregarDocumentosExemplar(id);
+        } catch (error) {
+          console.error("Erro ao anexar documento ao exemplar:", error);
+          status.dataset.state = "error";
+          status.textContent = error?.message || "Não foi possível enviar o documento. A seleção foi mantida para você tentar novamente.";
+          window.showNotification("error", "Falha no envio", "O documento não foi anexado. Revise a mensagem e tente novamente.");
+        } finally {
+          input.disabled = false;
+          button.removeAttribute("aria-busy");
+          button.disabled = !input.files?.length;
+        }
+      }
+
+      // ============================================
       // MODAL EXEMPLAR INDIVIDUAL
       // ============================================
       function limparFormExemplar() {
@@ -1158,6 +1409,13 @@ import { supabase } from "../shared/js/supabase.js";
         document.getElementById("exemplarId").value = "";
         document.getElementById("exemplarLivroId").value = "";
         livroSelecionado = null;
+        documentosExemplarRequest += 1;
+        document.getElementById("secaoDocumentosExemplar").hidden = true;
+        document.getElementById("avisoAnexoNovoExemplar").hidden = true;
+        limparPreviaDocumentoExemplar({ limparArquivo: true });
+        document.getElementById("listaDocumentosExemplar").replaceChildren();
+        document.getElementById("statusDocumentosExemplar").textContent = "";
+        document.getElementById("btnEnviarDocumentoExemplar").disabled = true;
         document.getElementById("livroSelecionadoBox").style.display = "none";
         document.getElementById("autocompleteWrapper").style.display = "block";
         document.getElementById("dicaLivro").style.display = "block";
@@ -1167,6 +1425,7 @@ import { supabase } from "../shared/js/supabase.js";
 
       function abrirModalNovoExemplar() {
         limparFormExemplar();
+        document.getElementById("avisoAnexoNovoExemplar").hidden = false;
         document.getElementById("modalExemplarTitulo").textContent =
           "Novo exemplar";
         document.getElementById("modalExemplar").style.display = "flex";
@@ -1205,6 +1464,10 @@ import { supabase } from "../shared/js/supabase.js";
         document.getElementById("autocompleteWrapper").style.display = "none";
         document.getElementById("dicaLivro").style.display = "none";
 
+        document.getElementById("inputCodigoTombo").value = e.codigo_tombo || "";
+        document.getElementById("inputCodigoBarras").value = e.codigo_barras || "";
+        document.getElementById("inputOrigemAquisicao").value = e.origem_aquisicao || "";
+        document.getElementById("inputLocalizacaoComplemento").value = e.localizacao_complemento || "";
         document.getElementById("inputPrateleira").value =
           e.prateleira?.id || "";
         document.getElementById("inputEstado").value =
@@ -1217,9 +1480,12 @@ import { supabase } from "../shared/js/supabase.js";
         document.getElementById("inputObservacoes").value = e.observacoes || "";
 
         document.getElementById("modalExemplar").style.display = "flex";
+        document.getElementById("avisoAnexoNovoExemplar").hidden = true;
+        void carregarDocumentosExemplar(e.id);
       }
 
       function fecharModalExemplar() {
+        documentosExemplarRequest += 1;
         document.getElementById("modalExemplar").style.display = "none";
       }
 
@@ -1317,6 +1583,10 @@ import { supabase } from "../shared/js/supabase.js";
           try {
             const dados = {
               livro_id: livroId,
+              codigo_tombo: document.getElementById("inputCodigoTombo").value.trim() || null,
+              codigo_barras: document.getElementById("inputCodigoBarras").value.trim() || null,
+              origem_aquisicao: document.getElementById("inputOrigemAquisicao").value || null,
+              localizacao_complemento: document.getElementById("inputLocalizacaoComplemento").value.trim() || null,
               prateleira_id: document.getElementById("inputPrateleira").value
                 ? parseInt(document.getElementById("inputPrateleira").value)
                 : null,
@@ -1532,6 +1802,7 @@ import { supabase } from "../shared/js/supabase.js";
               valor_aquisicao: document.getElementById("loteValor").value
                 ? parseFloat(document.getElementById("loteValor").value)
                 : null,
+              origem_aquisicao: document.getElementById("loteOrigemAquisicao")?.value || null,
               ativo: true,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -1621,6 +1892,15 @@ import { supabase } from "../shared/js/supabase.js";
       // ============================================
       // EVENTOS
       // ============================================
+      document.getElementById("inputDocumentoExemplar").addEventListener("change", (event) => {
+        atualizarPreviaDocumentoExemplar(event.target.files?.[0] || null);
+      });
+      document.getElementById("btnLimparDocumentoExemplar").addEventListener("click", () => {
+        limparPreviaDocumentoExemplar({ limparArquivo: true });
+        document.getElementById("statusDocumentosExemplar").textContent = "Seleção removida.";
+      });
+      document.getElementById("btnEnviarDocumentoExemplar").addEventListener("click", () => void enviarDocumentoExemplar());
+
       document
         .getElementById("btnNovoExemplar")
         .addEventListener("click", abrirModalNovoExemplar);

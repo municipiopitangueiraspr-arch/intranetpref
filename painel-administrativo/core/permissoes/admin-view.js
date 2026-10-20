@@ -1,0 +1,917 @@
+/* Controlador extraído da página administrativa original; montado por core/admin-panel.js. */
+
+import { supabase } from "../../../shared/js/supabase.js";
+import { auth } from "../../../shared/js/auth.js";
+      // ============================================
+      // CONFIG SUPABASE
+      // ============================================
+      // ============================================
+      // ESTADO GLOBAL
+      // ============================================
+      let usuarioAtual = null;
+      let usuarios = [];
+      let modulosSistema = [];
+      let permissoesUsuarios = []; // [{ usuario_id, modulo, permitido }]
+      let filtros = {
+        busca: "",
+        status: "todos",
+        perfil: "",
+      };
+      let paginaAtual = 1;
+      const itensPorPagina = 10;
+      let usuarioEditando = null; // usuário sendo editado no modal
+      let selecionadosNoModal = new Set(); // módulos marcados no modal
+
+      // ============================================
+      // UTILITÁRIOS
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
+
+      // Sistema de notificação no padrão Biblioteca (centro inferior)
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      // Mapeia o tipo português (usado no JS atual) para o padrão inglês
+      function mostrarToast(tipo, titulo, mensagem, duracao = 4000) {
+        const mapa = {
+          sucesso: "success",
+          erro: "error",
+          aviso: "warning",
+          info: "info",
+        };
+        return window.showNotification(
+          mapa[tipo] || "info",
+          titulo,
+          mensagem,
+          duracao,
+        );
+      }
+
+      function mostrarLoading(show) {
+        const container = document.getElementById("loadingContainer");
+        if (container) {
+          container.style.display = show ? "flex" : "none";
+        }
+        const content = document.querySelector(".permissoes-content");
+        if (content) {
+          content.style.display = show ? "none" : "block";
+        }
+      }
+
+      function labelPerfil(p) {
+        const map = {
+          ADMIN: "Administrador",
+          SECRETARIO: "Secretário",
+          SOLICITANTE: "Solicitante",
+          ESTAGIARIO: "Estagiário",
+        };
+        return map[p] || p || "—";
+      }
+
+      function classePerfilBadge(p) {
+        const map = {
+          ADMIN: "admin",
+          SECRETARIO: "secretario",
+          SOLICITANTE: "solicitante",
+          ESTAGIARIO: "estagiario",
+        };
+        return map[p] || "solicitante";
+      }
+
+      // ============================================
+      // SIDEBAR TOGGLE (mobile)
+      // ============================================
+      window.toggleSidebar = function () {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) sidebar.classList.toggle("aberta");
+      };
+
+      // Fecha a sidebar ao clicar em um link (mobile)
+      (function bindSidebarLinks() {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) {
+          sidebar.querySelectorAll("a").forEach((a) => {
+            a.addEventListener("click", () =>
+              sidebar.classList.remove("aberta"),
+            );
+          });
+        }
+      })();
+
+      // ============================================
+      // AUTENTICAÇÃO
+      // ============================================
+      async function verificarAutenticacao() {
+        try {
+          const session = await auth.verificarSessao();
+          if (!session) {
+            window.location.href = "../index.html";
+            return false;
+          }
+
+          const perfil = await auth.obterUsuarioAtual();
+
+          if (!perfil || perfil.ativo !== true) {
+            window.location.href = "../intranet.html";
+            return false;
+          }
+
+          if (perfil.perfil !== "ADMIN") {
+            mostrarToast(
+              "erro",
+              "Acesso negado",
+              "Apenas administradores podem acessar esta área.",
+            );
+            setTimeout(() => {
+              window.location.href = "../intranet.html";
+            }, 2000);
+            return false;
+          }
+
+          usuarioAtual = perfil;
+          return true;
+        } catch (error) {
+          console.error("Erro ao verificar autenticação:", error);
+          window.location.href = "../index.html";
+          return false;
+        }
+      }
+
+      function atualizarInterfaceUsuario() {
+        if (!usuarioAtual) return;
+
+        setTexto("topbarNome", usuarioAtual.nome || "Usuário");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+        );
+
+        const avatar = document.getElementById("avatarIniciais");
+        if (avatar && usuarioAtual.nome) {
+          avatar.textContent = iniciais(usuarioAtual.nome);
+        }
+      }
+
+      // ============================================
+      // CARREGAR DADOS
+      // ============================================
+      async function carregarDados() {
+        try {
+          mostrarLoading(true);
+
+          // 1. Usuários (com órgão)
+          const { data: usuariosData, error: errU } = await supabase
+            .from("usuarios")
+            .select(
+              "id, uuid, nome, email, perfil, ativo, orgao_id, orgao:orgaos(id, nome, sigla)",
+            )
+            .order("nome", { ascending: true });
+
+          if (errU) throw errU;
+          usuarios = usuariosData || [];
+
+          // 2. Módulos ativos e visíveis
+          const { data: modulosData, error: errM } = await supabase
+            .from("modulos_sistema")
+            .select(
+              "id, nome, descricao, icone, rota, ordem, cor, ativo, visivel_intranet",
+            )
+            .eq("ativo", true)
+            .eq("visivel_intranet", true)
+            .order("ordem", { ascending: true });
+
+          if (errM) throw errM;
+          modulosSistema = modulosData || [];
+
+          // 3. Permissões individuais já concedidas
+          const { data: permissoesData, error: errP } = await supabase
+            .from("usuarios_modulos")
+            .select("usuario_id, modulo, permitido");
+
+          if (errP) throw errP;
+          permissoesUsuarios = permissoesData || [];
+
+          renderizar();
+        } catch (error) {
+          console.error("Erro ao carregar dados:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível carregar os dados.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      }
+
+      // ============================================
+      // MAPA AUXILIAR · permissões por usuário
+      // ============================================
+      function construirMapaPermissoes() {
+        const mapa = {};
+        permissoesUsuarios.forEach((p) => {
+          if (!mapa[p.usuario_id]) mapa[p.usuario_id] = new Set();
+          if (p.permitido) mapa[p.usuario_id].add(p.modulo);
+        });
+        return mapa;
+      }
+
+      // ============================================
+      // RENDERIZAR PÁGINA
+      // ============================================
+      function renderizar() {
+        const container = document.getElementById("pageContent");
+        if (!container) return;
+
+        // Filtra usuários
+        let usuariosFiltrados = [...usuarios];
+
+        if (filtros.busca) {
+          const termo = filtros.busca.toLowerCase();
+          usuariosFiltrados = usuariosFiltrados.filter((u) => {
+            const alvo = [u.nome, u.email, u.perfil]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            return alvo.includes(termo);
+          });
+        }
+
+        if (filtros.status === "ativo") {
+          usuariosFiltrados = usuariosFiltrados.filter(
+            (u) => u.ativo !== false,
+          );
+        } else if (filtros.status === "inativo") {
+          usuariosFiltrados = usuariosFiltrados.filter(
+            (u) => u.ativo === false,
+          );
+        }
+
+        if (filtros.perfil) {
+          usuariosFiltrados = usuariosFiltrados.filter(
+            (u) => u.perfil === filtros.perfil,
+          );
+        }
+
+        const totalPaginas =
+          Math.ceil(usuariosFiltrados.length / itensPorPagina) || 1;
+        if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+
+        const inicio = (paginaAtual - 1) * itensPorPagina;
+        const paginaUsuarios = usuariosFiltrados.slice(
+          inicio,
+          inicio + itensPorPagina,
+        );
+
+        const mapaPermissoes = construirMapaPermissoes();
+        const totalModulos = modulosSistema.length;
+
+        // Contadores do rodapé
+        const totalAtivos = usuarios.filter((u) => u.ativo !== false).length;
+        const totalInativos = usuarios.filter((u) => u.ativo === false).length;
+
+        container.innerHTML = `
+                <div class="permissoes-content">
+                    <div class="page-header">
+                        <div>
+                            <h1><i class="fas fa-key"></i> Gestão de Permissões</h1>
+                            <p>
+                                Selecione um usuário e defina quais módulos ele pode acessar.
+                                Usuários com perfil <strong>ADMIN</strong> têm acesso total por padrão.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label><i class="fas fa-search"></i> Buscar</label>
+                            <input type="text" id="filtroBusca" placeholder="Nome, e-mail ou perfil..." value="${escaparHtml(filtros.busca)}" / aria-label="Nome, e mail ou perfil...">
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-user-tag"></i> Perfil</label>
+                            <select id="filtroPerfil" aria-label="filtroPerfil">
+                                <option value="">Todos</option>
+                                <option value="ADMIN" ${filtros.perfil === "ADMIN" ? "selected" : ""}>Administrador</option>
+                                <option value="SECRETARIO" ${filtros.perfil === "SECRETARIO" ? "selected" : ""}>Secretário</option>
+                                <option value="SOLICITANTE" ${filtros.perfil === "SOLICITANTE" ? "selected" : ""}>Solicitante</option>
+                                <option value="ESTAGIARIO" ${filtros.perfil === "ESTAGIARIO" ? "selected" : ""}>Estagiário</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-filter"></i> Status</label>
+                            <select id="filtroStatus" aria-label="filtroStatus">
+                                <option value="todos" ${filtros.status === "todos" ? "selected" : ""}>Todos</option>
+                                <option value="ativo" ${filtros.status === "ativo" ? "selected" : ""}>Ativos</option>
+                                <option value="inativo" ${filtros.status === "inativo" ? "selected" : ""}>Inativos</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" id="btnLimparFiltros" type="button">
+                            <i class="fas fa-undo-alt"></i> Limpar
+                        </button>
+                        <button class="btn btn-primary" id="btnAplicarFiltros" type="button">
+                            <i class="fas fa-search"></i> Aplicar
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-container">
+                            ${renderizarTabela(paginaUsuarios, mapaPermissoes, totalModulos)}
+                        </div>
+                        ${
+                          usuariosFiltrados.length > itensPorPagina
+                            ? `
+                            <div class="pagination">
+                                <button class="btn-page" id="btnPagAnterior" ${paginaAtual <= 1 ? "disabled" : ""} type="button">
+                                    <i class="fas fa-chevron-left"></i> Anterior
+                                </button>
+                                <span class="page-info">Página ${paginaAtual} de ${totalPaginas}</span>
+                                <button class="btn-page" id="btnPagProximo" ${paginaAtual >= totalPaginas ? "disabled" : ""} type="button">
+                                    Próximo <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        `
+                            : ""
+                        }
+                    </div>
+
+                    <div class="stats-footer">
+                        <span><i class="fas fa-users"></i> Total: <strong>${usuarios.length}</strong> usuários</span>
+                        <span><i class="fas fa-check-circle"></i> Ativos: <strong>${totalAtivos}</strong></span>
+                        <span><i class="fas fa-times-circle"></i> Inativos: <strong>${totalInativos}</strong></span>
+                        <span><i class="fas fa-cubes"></i> Módulos disponíveis: <strong>${totalModulos}</strong></span>
+                    </div>
+                </div>
+            `;
+
+        configurarEventosPagina();
+      }
+
+      // ============================================
+      // RENDERIZAR TABELA
+      // ============================================
+      function renderizarTabela(lista, mapaPermissoes, totalModulos) {
+        if (!lista || lista.length === 0) {
+          return `
+                    <div class="lista-vazia">
+                        <i class="fas fa-users"></i>
+                        <p>Nenhum usuário encontrado.</p>
+                    </div>
+                `;
+        }
+
+        return `
+                <table class="table" aria-label="Tabela de dados">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Usuário</th>
+                            <th>Perfil</th>
+                            <th>Órgão</th>
+                            <th>Módulos</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${lista
+                          .map((u, index) => {
+                            const num =
+                              (paginaAtual - 1) * itensPorPagina + index + 1;
+                            const isAdmin = u.perfil === "ADMIN";
+                            const setModulos =
+                              mapaPermissoes[u.id] || new Set();
+                            const qtd = isAdmin
+                              ? totalModulos
+                              : setModulos.size;
+
+                            // Classes do badge de módulos
+                            let classeBadge = "negado";
+                            if (
+                              isAdmin ||
+                              (totalModulos > 0 && qtd === totalModulos)
+                            ) {
+                              classeBadge = "admin";
+                            } else if (qtd > 0) {
+                              classeBadge = "permitido";
+                            }
+
+                            const perfilClasse = classePerfilBadge(u.perfil);
+                            const statusClasse =
+                              u.ativo !== false
+                                ? "status-ativo"
+                                : "status-inativo";
+
+                            return `
+                                    <tr>
+                                        <td>${num}</td>
+                                        <td>
+                                            <div class="usuario-cell">
+                                                <div class="avatar-mini">${escaparHtml(iniciais(u.nome))}</div>
+                                                <div class="usuario-info">
+                                                    <strong>${escaparHtml(u.nome || "—")}</strong>
+                                                    <span>${escaparHtml(u.email || "")}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge-perfil-sistema ${perfilClasse}">
+                                                ${escaparHtml(labelPerfil(u.perfil))}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            ${escaparHtml(u.orgao?.sigla || u.orgao?.nome || "—")}
+                                        </td>
+                                        <td>
+                                            <span class="badge-permissao ${classeBadge}">
+                                                ${isAdmin ? "Acesso total" : `${qtd}/${totalModulos} módulos`}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge ${statusClasse}">
+                                                ${u.ativo !== false ? "Ativo" : "Inativo"}
+                                            </span>
+                                        </td>
+                                        <td class="acoes-cell">
+                                            ${
+                                              isAdmin
+                                                ? `<button class="btn btn-sm btn-secondary" disabled title="ADMIN tem acesso total por padrão" type="button">
+                                                        <i class="fas fa-shield-halved"></i> Admin
+                                                       </button>`
+                                                : `<button class="btn btn-sm btn-primary" data-acao="modulos" data-id="${u.id}" title="Gerenciar módulos" type="button">
+                                                        <i class="fas fa-cubes"></i> Módulos
+                                                       </button>`
+                                            }
+                                        </td>
+                                    </tr>
+                                `;
+                          })
+                          .join("")}
+                    </tbody>
+                </table>
+            `;
+      }
+
+      // ============================================
+      // CONFIGURAR EVENTOS DA PÁGINA
+      // ============================================
+      function configurarEventosPagina() {
+        document
+          .getElementById("btnAplicarFiltros")
+          ?.addEventListener("click", aplicarFiltros);
+        document
+          .getElementById("btnLimparFiltros")
+          ?.addEventListener("click", limparFiltros);
+
+        document
+          .getElementById("filtroStatus")
+          ?.addEventListener("change", aplicarFiltros);
+        document
+          .getElementById("filtroPerfil")
+          ?.addEventListener("change", aplicarFiltros);
+
+        document
+          .getElementById("filtroBusca")
+          ?.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") aplicarFiltros();
+          });
+
+        document
+          .getElementById("btnPagAnterior")
+          ?.addEventListener("click", () => {
+            if (paginaAtual > 1) {
+              paginaAtual--;
+              renderizar();
+            }
+          });
+
+        document
+          .getElementById("btnPagProximo")
+          ?.addEventListener("click", () => {
+            const filtrados = usuarios.filter((u) => {
+              if (filtros.status === "ativo" && u.ativo === false) return false;
+              if (filtros.status === "inativo" && u.ativo !== false)
+                return false;
+              if (filtros.perfil && u.perfil !== filtros.perfil) return false;
+              if (filtros.busca) {
+                const t = filtros.busca.toLowerCase();
+                const alvo = [u.nome, u.email, u.perfil]
+                  .filter(Boolean)
+                  .join(" ")
+                  .toLowerCase();
+                if (!alvo.includes(t)) return false;
+              }
+              return true;
+            });
+            const totalPaginas =
+              Math.ceil(filtrados.length / itensPorPagina) || 1;
+            if (paginaAtual < totalPaginas) {
+              paginaAtual++;
+              renderizar();
+            }
+          });
+
+        // Botões "Módulos" nas linhas da tabela
+        document.querySelectorAll("[data-acao='modulos']").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            abrirModalModulos(parseInt(btn.dataset.id));
+          });
+        });
+      }
+
+      // ============================================
+      // FILTROS
+      // ============================================
+      function aplicarFiltros() {
+        filtros.busca = document.getElementById("filtroBusca")?.value || "";
+        filtros.status =
+          document.getElementById("filtroStatus")?.value || "todos";
+        filtros.perfil = document.getElementById("filtroPerfil")?.value || "";
+        paginaAtual = 1;
+        renderizar();
+      }
+
+      function limparFiltros() {
+        filtros = { busca: "", status: "todos", perfil: "" };
+        paginaAtual = 1;
+        renderizar();
+      }
+
+      // ============================================
+      // MODAL · GERENCIAR MÓDULOS DO USUÁRIO
+      // ============================================
+      function abrirModalModulos(usuarioId) {
+        usuarioEditando = usuarios.find((u) => u.id === usuarioId);
+        if (!usuarioEditando) return;
+
+        // Pré-popula o Set com os módulos já permitidos
+        selecionadosNoModal = new Set();
+        permissoesUsuarios.forEach((p) => {
+          if (p.usuario_id === usuarioId && p.permitido) {
+            selecionadosNoModal.add(p.modulo);
+          }
+        });
+
+        const modal = document.createElement("div");
+        modal.className = "modal-overlay";
+        modal.id = "modalModulos";
+        modal.innerHTML = `
+                <div class="modal-container modal-md">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-cubes"></i> Módulos permitidos</h2>
+                        <button class="modal-close" id="btnFecharModal" title="Fechar" type="button">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-user-header">
+                            <div class="avatar-lg">${escaparHtml(iniciais(usuarioEditando.nome))}</div>
+                            <div class="info">
+                                <strong>${escaparHtml(usuarioEditando.nome || "—")}</strong>
+                                <span>
+                                    ${escaparHtml(usuarioEditando.email || "")}
+                                    · ${escaparHtml(labelPerfil(usuarioEditando.perfil))}
+                                    ${usuarioEditando.orgao?.sigla ? " · " + escaparHtml(usuarioEditando.orgao.sigla) : ""}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-hint">
+                            <i class="fas fa-circle-info"></i>
+                            <div>
+                                Marque os módulos que <strong>${escaparHtml(usuarioEditando.nome || "este usuário")}</strong>
+                                pode acessar. As alterações só têm efeito após clicar em
+                                <strong>Salvar</strong>.
+                            </div>
+                        </div>
+
+                        ${
+                          modulosSistema.length === 0
+                            ? `
+                            <div class="empty-state">
+                                <span class="empty-icon"><i class="fas fa-cubes"></i></span>
+                                <p>Nenhum módulo cadastrado ainda.</p>
+                            </div>
+                            `
+                            : `
+                            <div class="modulos-controles">
+                                <div class="info">
+                                    <strong id="contadorSelecionados">${selecionadosNoModal.size}</strong>
+                                    de <strong>${modulosSistema.length}</strong> módulo(s) selecionado(s)
+                                </div>
+                                <div class="botoes">
+                                    <button class="btn btn-sm btn-secondary" id="btnMarcarTodos" type="button">
+                                        <i class="fas fa-check-double"></i> Marcar todos
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" id="btnDesmarcarTodos" type="button">
+                                        <i class="fas fa-xmark"></i> Desmarcar todos
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="modulos-grid" id="modulosGrid">
+                                ${modulosSistema
+                                  .map((m) => {
+                                    const marcado = selecionadosNoModal.has(
+                                      m.nome,
+                                    );
+                                    return `
+                                        <div class="modulo-item ${marcado ? "ativo" : ""}" data-modulo="${escaparHtml(m.nome)}">
+                                            <input type="checkbox"
+                                                   id="mod_${escaparHtml(m.nome)}"
+                                                   data-modulo="${escaparHtml(m.nome)}"
+                                                   ${marcado ? "checked" : ""} / aria-label="mod ${escaparHtml(m.nome)}">
+                                            <label for="mod_${escaparHtml(m.nome)}">
+                                                <i class="fas ${escaparHtml(m.icone || "fa-cube")}"></i>
+                                                ${escaparHtml(m.descricao || m.nome)}
+                                            </label>
+                                        </div>
+                                        `;
+                                  })
+                                  .join("")}
+                            </div>
+                            `
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="btnCancelarModulos" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button class="btn btn-primary" id="btnSalvarModulos" ${modulosSistema.length === 0 ? "disabled" : ""} type="button">
+                            <i class="fas fa-save"></i> Salvar permissões
+                        </button>
+                    </div>
+                </div>
+            `;
+
+        document.body.appendChild(modal);
+
+        // Eventos do modal
+        document
+          .getElementById("btnFecharModal")
+          .addEventListener("click", fecharModalModulos);
+        document
+          .getElementById("btnCancelarModulos")
+          .addEventListener("click", fecharModalModulos);
+        document
+          .getElementById("btnSalvarModulos")
+          .addEventListener("click", salvarModulos);
+
+        document
+          .getElementById("btnMarcarTodos")
+          ?.addEventListener("click", () => {
+            selecionadosNoModal = new Set(modulosSistema.map((m) => m.nome));
+            atualizarModalUI();
+          });
+
+        document
+          .getElementById("btnDesmarcarTodos")
+          ?.addEventListener("click", () => {
+            selecionadosNoModal.clear();
+            atualizarModalUI();
+          });
+
+        // Checkboxes individuais
+        document
+          .querySelectorAll("#modulosGrid input[type='checkbox']")
+          .forEach((cb) => {
+            cb.addEventListener("change", () => {
+              const nome = cb.dataset.modulo;
+              if (cb.checked) selecionadosNoModal.add(nome);
+              else selecionadosNoModal.delete(nome);
+              atualizarModalUI();
+            });
+          });
+
+        // Clique no overlay fecha
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) fecharModalModulos();
+        });
+      }
+
+      function atualizarModalUI() {
+        const contador = document.getElementById("contadorSelecionados");
+        if (contador) contador.textContent = selecionadosNoModal.size;
+
+        document.querySelectorAll("#modulosGrid .modulo-item").forEach((el) => {
+          const nome = el.dataset.modulo;
+          const cb = el.querySelector("input[type='checkbox']");
+          const marcado = selecionadosNoModal.has(nome);
+          if (cb) cb.checked = marcado;
+          el.classList.toggle("ativo", marcado);
+        });
+      }
+
+      function fecharModalModulos() {
+        const modal = document.getElementById("modalModulos");
+        if (modal) modal.remove();
+        usuarioEditando = null;
+        selecionadosNoModal.clear();
+      }
+
+      // ============================================
+      // SALVAR PERMISSÕES
+      // ============================================
+      async function salvarModulos() {
+        if (!usuarioEditando) return;
+
+        const btn = document.getElementById("btnSalvarModulos");
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Salvando...`;
+
+        try {
+          const usuarioId = usuarioEditando.id;
+          const agora = new Date().toISOString();
+
+          // 1. Apaga as permissões atuais deste usuário
+          const { error: errDel } = await supabase
+            .from("usuarios_modulos")
+            .delete()
+            .eq("usuario_id", usuarioId);
+          if (errDel) throw errDel;
+
+          // 2. Insere as novas (só as permitidas)
+          const modulosArray = Array.from(selecionadosNoModal);
+          if (modulosArray.length > 0) {
+            const registros = modulosArray.map((nome) => ({
+              usuario_id: usuarioId,
+              modulo: nome,
+              permitido: true,
+              concedido_por: usuarioAtual.id,
+              concedido_em: agora,
+              updated_at: agora,
+            }));
+
+            const { error: errIns } = await supabase
+              .from("usuarios_modulos")
+              .insert(registros);
+            if (errIns) throw errIns;
+          }
+
+          mostrarToast(
+            "sucesso",
+            "Permissões salvas",
+            `${modulosArray.length} módulo(s) liberado(s) para ${usuarioEditando.nome}.`,
+          );
+
+          fecharModalModulos();
+          await carregarDados();
+        } catch (error) {
+          console.error("Erro ao salvar permissões:", error);
+          mostrarToast(
+            "erro",
+            "Erro ao salvar",
+            error.message || "Não foi possível salvar as permissões.",
+          );
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-save"></i> Salvar permissões`;
+        }
+      }
+
+      // ============================================
+      // MODAL DE CONFIRMAÇÃO
+      // ============================================
+      function showConfirm(title, message, icon = "⚠️") {
+        return new Promise((resolve) => {
+          const modal = document.getElementById("confirmModal");
+          const confirmIcon = document.getElementById("confirmIcon");
+          const confirmTitle = document.getElementById("confirmTitle");
+          const confirmMessage = document.getElementById("confirmMessage");
+          const confirmOkBtn = document.getElementById("confirmOkBtn");
+          const confirmCancelBtn = document.getElementById("confirmCancelBtn");
+
+          if (!modal) {
+            resolve(window.confirm(`${title}\n\n${message}`));
+            return;
+          }
+
+          confirmIcon.textContent = icon;
+          confirmTitle.textContent = title;
+          confirmMessage.textContent = message;
+
+          modal.style.display = "flex";
+
+          function cleanup() {
+            modal.style.display = "none";
+            confirmOkBtn.removeEventListener("click", handleConfirm);
+            confirmCancelBtn.removeEventListener("click", handleCancel);
+            modal.removeEventListener("click", handleClickOutside);
+          }
+
+          function handleConfirm() {
+            cleanup();
+            resolve(true);
+          }
+
+          function handleCancel() {
+            cleanup();
+            resolve(false);
+          }
+
+          function handleClickOutside(e) {
+            if (e.target === modal) {
+              cleanup();
+              resolve(false);
+            }
+          }
+
+          confirmOkBtn.addEventListener("click", handleConfirm);
+          confirmCancelBtn.addEventListener("click", handleCancel);
+          modal.addEventListener("click", handleClickOutside);
+        });
+      }
+
+      // ============================================
+      // LOGOUT
+      // ============================================
+      document.getElementById("btnSair").addEventListener("click", async () => {
+        const ok = await showConfirm(
+          "Sair do sistema",
+          "Tem certeza que deseja sair?",
+          "🔓",
+        );
+        if (ok) {
+          await auth.logout();
+          window.location.href = "../index.html";
+        }
+      });
+
+      // ============================================
+      // EVENTOS GLOBAIS
+      // ============================================
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          const modal = document.getElementById("modalModulos");
+          if (modal) fecharModalModulos();
+        }
+      });
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        const autenticado = await verificarAutenticacao();
+        if (!autenticado) return;
+
+        atualizarInterfaceUsuario();
+        await carregarDados();
+      }
+
+export async function initializeAdminView() { return await init(); }

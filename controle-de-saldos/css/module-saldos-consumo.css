@@ -1,0 +1,347 @@
+/*
+ * Gestão de Atas · Saldos, consumo e auditoria de saldos por JSON.
+ * Escopo: componentes renderizados em #gestaoContent e o modal #modalConsumo.
+ * Tokens, tipografia e controles globais vêm de intranet-identidade.css.
+ */
+
+body[data-intranet-module="atas"] #gestaoContent {
+  --saldo-green: #18794e;
+  --saldo-green-bg: #eaf7ef;
+  --saldo-amber: #9a5b00;
+  --saldo-amber-bg: #fff4d6;
+  --saldo-red: #b42318;
+  --saldo-red-bg: #fff0ee;
+}
+
+body[data-intranet-module="atas"] #gestaoContent [hidden] { display: none !important; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-container { display: grid; gap: 1rem; min-width: 0; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .8rem 1rem;
+  padding: 1.15rem;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+body[data-intranet-module="atas"] #gestaoContent .gestao-titulo {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  color: var(--text-primary);
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 800;
+}
+body[data-intranet-module="atas"] #gestaoContent .gestao-titulo > i { color: var(--brand-primary); }
+body[data-intranet-module="atas"] #gestaoContent .gestao-filtros {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(10rem, .55fr);
+  gap: .55rem;
+}
+body[data-intranet-module="atas"] #gestaoContent .gestao-select,
+body[data-intranet-module="atas"] #gestaoContent .filtro-select,
+body[data-intranet-module="atas"] #gestaoContent .status-select,
+body[data-intranet-module="atas"] #modalConsumo select,
+body[data-intranet-module="atas"] #modalConsumo input {
+  width: 100%;
+  min-height: 2.55rem;
+  padding: .55rem .7rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font: inherit;
+}
+body[data-intranet-module="atas"] #gestaoContent .gestao-select:focus,
+body[data-intranet-module="atas"] #gestaoContent .filtro-select:focus,
+body[data-intranet-module="atas"] #gestaoContent .status-select:focus,
+body[data-intranet-module="atas"] #modalConsumo select:focus,
+body[data-intranet-module="atas"] #modalConsumo input:focus {
+  border-color: var(--border-focus);
+  outline: 0;
+  box-shadow: var(--focus-ring);
+}
+body[data-intranet-module="atas"] #gestaoContent .btn-importar-json-destaque {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: .8rem;
+  width: 100%;
+  padding: .8rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 30%, var(--border-soft));
+  border-radius: var(--radius-lg);
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+body[data-intranet-module="atas"] #gestaoContent .btn-importar-json-destaque:hover {
+  border-color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary-light) 72%, white);
+  transform: translateY(-1px);
+}
+body[data-intranet-module="atas"] #gestaoContent .btn-importar-json-destaque > i:first-child { font-size: 1.2rem; }
+body[data-intranet-module="atas"] #gestaoContent .btn-importar-json-destaque span { display: grid; gap: .15rem; }
+body[data-intranet-module="atas"] #gestaoContent .btn-importar-json-destaque strong { font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #gestaoContent .btn-importar-json-destaque small { color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #gestaoContent .btn-importar-json-destaque > i:last-child { margin-left: auto; }
+
+/* Auditoria de saldos importados: status, resumo, filtros e tabela. */
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-card {
+  display: grid;
+  gap: .9rem;
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-card-principal {
+  border-top: 3px solid var(--brand-primary);
+}
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-header h2 {
+  margin: 0 0 .4rem;
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+}
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-header h2 i { color: var(--brand-primary); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-header p {
+  max-width: 70rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
+}
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-acoes,
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-confirmacao,
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-confirmacao > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .55rem;
+}
+body[data-intranet-module="atas"] #gestaoContent .btn-auditoria-secundario,
+body[data-intranet-module="atas"] #gestaoContent .btn-auditoria-principal,
+body[data-intranet-module="atas"] #gestaoContent .filtro-actions button,
+body[data-intranet-module="atas"] #gestaoContent .btn-status,
+body[data-intranet-module="atas"] #gestaoContent .btn-ajustar-saldo,
+body[data-intranet-module="atas"] #gestaoContent .btn-lancar-rapido,
+body[data-intranet-module="atas"] #modalConsumo .btn-consumo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  min-height: 2.35rem;
+  padding: .5rem .75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 750;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+body[data-intranet-module="atas"] #gestaoContent .btn-auditoria-secundario,
+body[data-intranet-module="atas"] #gestaoContent .btn-limpar {
+  border-color: var(--border-default);
+  background: var(--surface-card);
+  color: var(--text-secondary);
+}
+body[data-intranet-module="atas"] #gestaoContent .btn-auditoria-secundario:hover,
+body[data-intranet-module="atas"] #gestaoContent .btn-limpar:hover { background: var(--surface-hover); color: var(--text-primary); }
+body[data-intranet-module="atas"] #gestaoContent .btn-auditoria-principal,
+body[data-intranet-module="atas"] #gestaoContent .btn-aplicar,
+body[data-intranet-module="atas"] #gestaoContent .btn-status,
+body[data-intranet-module="atas"] #gestaoContent .btn-ajustar-saldo,
+body[data-intranet-module="atas"] #gestaoContent .btn-lancar-rapido,
+body[data-intranet-module="atas"] #modalConsumo .btn-consumo {
+  background: var(--brand-primary);
+  color: var(--text-on-brand, #fff);
+}
+body[data-intranet-module="atas"] #gestaoContent .btn-auditoria-principal:hover,
+body[data-intranet-module="atas"] #gestaoContent .btn-aplicar:hover,
+body[data-intranet-module="atas"] #gestaoContent .btn-status:hover,
+body[data-intranet-module="atas"] #gestaoContent .btn-ajustar-saldo:hover,
+body[data-intranet-module="atas"] #gestaoContent .btn-lancar-rapido:hover,
+body[data-intranet-module="atas"] #modalConsumo .btn-consumo:hover { background: var(--brand-primary-hover, #0c4789); transform: translateY(-1px); }
+body[data-intranet-module="atas"] #gestaoContent button:disabled,
+body[data-intranet-module="atas"] #modalConsumo button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-status {
+  padding: .7rem .85rem;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-status-neutro { background: var(--surface-muted); color: var(--text-secondary); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-status-sucesso { border-color: color-mix(in srgb, var(--state-success) 30%, var(--border-soft)); background: var(--state-success-bg); color: var(--state-success); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-status-erro { border-color: color-mix(in srgb, var(--state-danger) 28%, var(--border-soft)); background: var(--state-danger-bg); color: var(--state-danger); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-filtro { display: flex; align-items: center; gap: .6rem; color: var(--text-secondary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-filtro select { width: min(100%, 24rem); min-height: 2.4rem; padding: .45rem .65rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); color: var(--text-primary); font: inherit; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-resumo { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .65rem; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-resumo > div { display: grid; gap: .15rem; padding: .8rem; border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: var(--surface-soft-blue); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-resumo strong { color: var(--brand-primary); font-size: 1.2rem; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-resumo span { color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-confirmacao { justify-content: space-between; padding: .8rem; border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: var(--surface-muted); color: var(--text-secondary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-confirmacao > span { display: inline-flex; align-items: center; gap: .45rem; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-confirmacao > span i { color: var(--brand-primary); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-selecao-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: .55rem 1rem; padding: .7rem; border-bottom: 1px solid var(--border-soft); color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-selecao-toolbar strong { color: var(--text-primary); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-selecao-toolbar label { display: inline-flex; align-items: center; gap: .4rem; color: var(--text-primary); font-weight: 700; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-tabela-scroll,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela-wrapper { width: 100%; min-width: 0; overflow: auto; border: 1px solid var(--border-soft); border-radius: var(--radius-lg); background: var(--surface-card); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-tabela-scroll table,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela { width: 100%; border-collapse: separate; border-spacing: 0; color: var(--text-primary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-tabela-scroll table { min-width: 76rem; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela { min-width: 78rem; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-tabela-scroll th,
+body[data-intranet-module="atas"] #gestaoContent .auditoria-tabela-scroll td,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela th,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela td { padding: .65rem .7rem; border-bottom: 1px solid var(--border-soft); text-align: left; vertical-align: middle; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-tabela-scroll th,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela th { position: sticky; top: 0; z-index: 1; background: var(--surface-muted); color: var(--text-secondary); font-size: .7rem; font-weight: 800; letter-spacing: .035em; text-transform: uppercase; white-space: nowrap; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-tabela-scroll tbody tr:hover,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela tbody tr:hover { background: var(--surface-hover); }
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela td { line-height: 1.4; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela td > strong,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela td > span { display: block; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-contexto { display: block; margin-top: .2rem; color: var(--text-muted); font-size: .72rem; }
+body[data-intranet-module="atas"] #gestaoContent .numeric { text-align: right !important; font-variant-numeric: tabular-nums; white-space: nowrap; }
+body[data-intranet-module="atas"] #gestaoContent .saldo-real-json { color: var(--brand-primary); font-weight: 800; }
+body[data-intranet-module="atas"] #gestaoContent .saldo-zerado { color: var(--saldo-red); font-weight: 800; }
+body[data-intranet-module="atas"] #gestaoContent .saldo-baixo { color: var(--saldo-amber); font-weight: 800; }
+body[data-intranet-module="atas"] #gestaoContent .saldo-alto { color: var(--saldo-green); font-weight: 750; }
+body[data-intranet-module="atas"] #gestaoContent .saldo-real-cell { min-width: 13rem; }
+body[data-intranet-module="atas"] #gestaoContent .ajuste-saldo-inline { display: flex; align-items: center; gap: .35rem; }
+body[data-intranet-module="atas"] #gestaoContent .ajuste-saldo-inline input { width: 6.5rem; min-width: 5rem; min-height: 2.2rem; padding: .4rem .5rem; border: 1px solid var(--border-default); border-radius: var(--radius-sm, .45rem); background: var(--surface-card); color: var(--text-primary); font: inherit; }
+body[data-intranet-module="atas"] #gestaoContent .ajuste-saldo-inline input:focus { border-color: var(--border-focus); outline: 0; box-shadow: var(--focus-ring); }
+body[data-intranet-module="atas"] #gestaoContent .saldo-status-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 5.1rem; padding: .28rem .55rem; border: 1px solid transparent; border-radius: var(--radius-pill); font-size: .7rem; font-weight: 800; white-space: nowrap; }
+body[data-intranet-module="atas"] #gestaoContent .saldo-status--normal { border-color: color-mix(in srgb, var(--state-success) 24%, transparent); background: var(--state-success-bg); color: var(--state-success); }
+body[data-intranet-module="atas"] #gestaoContent .saldo-status--critico { border-color: color-mix(in srgb, var(--state-warning) 28%, transparent); background: var(--state-warning-bg); color: var(--state-warning); }
+body[data-intranet-module="atas"] #gestaoContent .saldo-status--zerado { border-color: color-mix(in srgb, var(--state-danger) 25%, transparent); background: var(--state-danger-bg); color: var(--state-danger); }
+body[data-intranet-module="atas"] #gestaoContent .gestao-acoes-item { min-width: 8.5rem; text-align: center; }
+body[data-intranet-module="atas"] #gestaoContent .saldo-divergencia-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 4rem; padding: .25rem .5rem; border-radius: var(--radius-pill); font-weight: 800; font-variant-numeric: tabular-nums; }
+body[data-intranet-module="atas"] #gestaoContent .saldo-divergencia-badge--positiva { background: var(--state-warning-bg); color: var(--state-warning); }
+body[data-intranet-module="atas"] #gestaoContent .saldo-divergencia-badge--negativa { background: var(--state-danger-bg); color: var(--state-danger); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-descricao { display: block; max-width: 22rem; margin-top: .2rem; color: var(--text-secondary); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-badge { display: inline-flex; padding: .25rem .5rem; border-radius: var(--radius-pill); background: var(--surface-muted); color: var(--text-secondary); font-size: .68rem; font-weight: 800; white-space: nowrap; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-badge-atualizar { background: var(--state-info-bg); color: var(--state-info); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-badge-sem_alteracao { background: var(--state-success-bg); color: var(--state-success); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-badge-nao_encontrado,
+body[data-intranet-module="atas"] #gestaoContent .auditoria-badge-invalido { background: var(--state-danger-bg); color: var(--state-danger); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-badge-ambiguo,
+body[data-intranet-module="atas"] #gestaoContent .auditoria-badge-divergencia_contratada,
+body[data-intranet-module="atas"] #gestaoContent .auditoria-badge-divergencia_fornecedor { background: var(--state-warning-bg); color: var(--state-warning); }
+body[data-intranet-module="atas"] #gestaoContent tr[class*="auditoria-linha-"] td { transition: background .15s ease; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-linha-atualizar { background: color-mix(in srgb, var(--state-info-bg) 36%, transparent); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-linha-sem_alteracao { background: color-mix(in srgb, var(--state-success-bg) 36%, transparent); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-linha-selecionada { box-shadow: inset 3px 0 var(--brand-primary); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-paginacao { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .65rem .75rem; color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-paginacao > div { display: flex; align-items: center; gap: .6rem; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-paginacao button { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); color: var(--brand-primary); cursor: pointer; }
+body[data-intranet-module="atas"] #gestaoContent .auditoria-paginacao button:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Consulta manual e tabela global de itens de saldo. */
+body[data-intranet-module="atas"] #gestaoContent .consulta-manual-gestao,
+body[data-intranet-module="atas"] #gestaoContent .status-editor,
+body[data-intranet-module="atas"] #gestaoContent .gestao-stats {
+  padding: 1rem;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+body[data-intranet-module="atas"] #gestaoContent .consulta-manual-gestao { display: grid; gap: .8rem; }
+body[data-intranet-module="atas"] #gestaoContent .consulta-manual-titulo { color: var(--text-primary); font-size: var(--font-size-sm); font-weight: 800; }
+body[data-intranet-module="atas"] #gestaoContent .consulta-manual-titulo i { margin-right: .35rem; color: var(--brand-primary); }
+body[data-intranet-module="atas"] #gestaoContent .filtro-row { display: flex; flex-wrap: wrap; gap: .65rem; }
+body[data-intranet-module="atas"] #gestaoContent .filtro-busca { display: flex; flex: 1 1 18rem; align-items: center; gap: .45rem; min-width: min(100%, 14rem); }
+body[data-intranet-module="atas"] #gestaoContent .filtro-busca i { color: var(--text-muted); }
+body[data-intranet-module="atas"] #gestaoContent .filtro-busca input { flex: 1; min-width: 0; }
+body[data-intranet-module="atas"] #gestaoContent .filtro-input,
+body[data-intranet-module="atas"] #gestaoContent .filtro-busca input { min-height: 2.5rem; padding: .5rem .65rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); color: var(--text-primary); font: inherit; }
+body[data-intranet-module="atas"] #gestaoContent .filtro-grid-3col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; }
+body[data-intranet-module="atas"] #gestaoContent .filtro-checkboxes { display: flex; flex-wrap: wrap; gap: .7rem 1.2rem; }
+body[data-intranet-module="atas"] #gestaoContent .filtro-checkboxes label { display: inline-flex; align-items: center; gap: .45rem; color: var(--text-secondary); font-size: var(--font-size-sm); cursor: pointer; }
+body[data-intranet-module="atas"] #gestaoContent .filtro-checkboxes input,
+body[data-intranet-module="atas"] #gestaoContent .auditoria-selecao-toolbar input,
+body[data-intranet-module="atas"] #gestaoContent .auditoria-tabela-scroll input[type="checkbox"] { accent-color: var(--brand-primary); }
+body[data-intranet-module="atas"] #gestaoContent .filtro-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+body[data-intranet-module="atas"] #gestaoContent .btn-limpar { min-height: 2.35rem; padding: .5rem .75rem; border-radius: var(--radius-md); font: inherit; font-size: var(--font-size-sm); cursor: pointer; }
+body[data-intranet-module="atas"] #gestaoContent .btn-exportar { min-height: 2.35rem; padding: .5rem .75rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-muted); color: var(--text-secondary); font: inherit; font-size: var(--font-size-sm); cursor: pointer; }
+body[data-intranet-module="atas"] #gestaoContent .status-editor { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
+body[data-intranet-module="atas"] #gestaoContent .status-editor > span { color: var(--text-secondary); font-size: var(--font-size-sm); font-weight: 700; }
+body[data-intranet-module="atas"] #gestaoContent .status-editor .status-select { width: auto; min-width: 11rem; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-stats > div { display: grid; gap: .25rem; padding: .7rem; border-radius: var(--radius-md); background: var(--surface-muted); color: var(--text-primary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #gestaoContent .gestao-stat-label { color: var(--text-muted); font-size: var(--font-size-xs); font-weight: 750; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela-wrapper { max-height: 68vh; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-estado-inicial,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela-wrapper > div:has(> h3) { display: grid; justify-items: center; gap: .4rem; padding: 2rem 1rem; border: 1px dashed var(--border-default); border-radius: var(--radius-lg); background: var(--surface-card); color: var(--text-secondary); text-align: center; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-estado-inicial > i { color: var(--brand-primary); font-size: 1.3rem; }
+body[data-intranet-module="atas"] #gestaoContent .gestao-estado-inicial h3,
+body[data-intranet-module="atas"] #gestaoContent .gestao-tabela-wrapper > div:has(> h3) h3 { margin: 0; color: var(--text-primary); }
+body[data-intranet-module="atas"] #gestaoContent .gestao-estado-inicial p { max-width: 38rem; margin: 0; font-size: var(--font-size-sm); }
+
+/* Estados de saldo e modal de consumo. */
+body[data-intranet-module="atas"] #modalConsumo .modal-content { width: min(100%, 34rem); padding-bottom: 1rem; }
+body[data-intranet-module="atas"] #modalConsumo .modal-header { align-items: center; }
+body[data-intranet-module="atas"] #modalConsumoConteudo { display: grid; gap: .85rem; padding: 1rem 1.25rem 0; }
+body[data-intranet-module="atas"] #modalConsumoConteudo > div:first-child { padding: .75rem; border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: var(--surface-muted); }
+body[data-intranet-module="atas"] #modalConsumoConteudo p { margin: .2rem 0; color: var(--text-secondary); font-size: var(--font-size-sm); }
+body[data-intranet-module="atas"] #modalConsumoConteudo p strong { color: var(--text-primary); }
+body[data-intranet-module="atas"] #modalConsumoConteudo .filtro-grupo { display: grid; gap: .35rem; }
+body[data-intranet-module="atas"] #modalConsumoConteudo .filtro-grupo label { color: var(--text-secondary); font-size: var(--font-size-sm); font-weight: 700; }
+body[data-intranet-module="atas"] #modalConsumoConteudo > div:last-child { display: flex; justify-content: flex-end; gap: .55rem; padding-top: .4rem; }
+body[data-intranet-module="atas"] #modalConsumoConteudo > div:last-child .btn { border-color: var(--border-default); background: var(--surface-card); color: var(--text-secondary); }
+body[data-intranet-module="atas"] #modalConsumoConteudo > div:last-child .btn-consumo { border-color: transparent; background: var(--brand-primary); color: var(--text-on-brand, #fff); }
+
+@media (max-width: 900px) {
+  body[data-intranet-module="atas"] #gestaoContent .gestao-header { grid-template-columns: 1fr; }
+  body[data-intranet-module="atas"] #gestaoContent .gestao-filtros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-header { flex-direction: column; }
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-resumo,
+  body[data-intranet-module="atas"] #gestaoContent .gestao-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-intranet-module="atas"] #gestaoContent .filtro-grid-3col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  body[data-intranet-module="atas"] #gestaoContent .gestao-container { gap: .7rem; }
+  body[data-intranet-module="atas"] #gestaoContent .gestao-header,
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-card,
+  body[data-intranet-module="atas"] #gestaoContent .consulta-manual-gestao,
+  body[data-intranet-module="atas"] #gestaoContent .status-editor,
+  body[data-intranet-module="atas"] #gestaoContent .gestao-stats { padding: .75rem; }
+  body[data-intranet-module="atas"] #gestaoContent .gestao-filtros,
+  body[data-intranet-module="atas"] #gestaoContent .filtro-grid-3col { grid-template-columns: 1fr; }
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-acoes,
+  body[data-intranet-module="atas"] #gestaoContent .filtro-actions { width: 100%; }
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-acoes > button,
+  body[data-intranet-module="atas"] #gestaoContent .filtro-actions > button { flex: 1 1 auto; }
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-resumo,
+  body[data-intranet-module="atas"] #gestaoContent .gestao-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-confirmacao,
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-paginacao { align-items: flex-start; flex-direction: column; }
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-filtro { align-items: stretch; flex-direction: column; }
+  body[data-intranet-module="atas"] #gestaoContent .auditoria-saldos-filtro select { width: 100%; }
+  body[data-intranet-module="atas"] #modalConsumo .modal-content { width: 100%; max-height: 92vh; overflow: auto; }
+  body[data-intranet-module="atas"] #modalConsumoConteudo { padding-inline: .85rem; }
+  body[data-intranet-module="atas"] #modalConsumoConteudo > div:last-child { flex-wrap: wrap; }
+  body[data-intranet-module="atas"] #modalConsumoConteudo > div:last-child button { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-intranet-module="atas"] #gestaoContent *,
+  body[data-intranet-module="atas"] #modalConsumo * { scroll-behavior: auto; transition-duration: .01ms !important; }
+}

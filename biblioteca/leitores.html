@@ -24,11 +24,12 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261010-shared-shell-theme-4">
-  <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261010-shared-shell-theme-5">
+  
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1">
+  <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261018-library-identity-3">
+  <link rel="stylesheet" href="./biblioteca.css?v=20261018-biblioteca-municipio-unico-1">
 </head>
-  <body data-intranet-module="biblioteca" data-intranet-theme="atas" data-intranet-page="biblioteca-leitores">
+  <body data-intranet-module="biblioteca" data-intranet-theme="shared" data-intranet-page="biblioteca-leitores" class="app-shell" data-sidebar-open="false" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
     <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
       <div class="spinner"></div>
@@ -37,10 +38,10 @@
     <!-- LAYOUT -->
     <div class="app-layout" id="mainSystem">
       <!-- SIDEBAR -->
-      <aside class="sidebar" id="sidebar"></aside>
+      <aside class="app-sidebar sidebar" id="sidebar"></aside>
 
       <!-- MAIN -->
-      <div class="main-area">
+      <div class="main-area app-main">
         <!-- TOPBAR -->
         <header class="topbar" id="topbar"></header>
 
@@ -170,7 +171,7 @@
     <!-- ============================================================
          MODAL · LEITOR (cadastro/edição)
          ============================================================ -->
-    <div class="modal-overlay intranet-style-1673f58bb4" id="modalLeitor">
+    <div class="modal-overlay" id="modalLeitor">
       <div class="modal">
         <div class="modal-header">
           <h3>
@@ -250,7 +251,7 @@
 
                 <!-- Órgão (aparece apenas se SERVIDOR) -->
                 <div
-                  class="form-group full intranet-style-1673f58bb4"
+                  class="form-group full"
                   id="grupoOrgao"
 
                 >
@@ -313,7 +314,7 @@
                   / aria-label="00000 000">
                 </div>
 
-                <div class="form-group intranet-style-46053f2f1d">
+                <div class="form-group">
                   <label class="form-label" for="inputEndereco"
                     >Logradouro</label
                   >
@@ -361,7 +362,7 @@
                   / aria-label="Ex: Centro">
                 </div>
 
-                <div class="form-group intranet-style-46053f2f1d">
+                <div class="form-group">
                   <label class="form-label" for="inputCidade">Cidade</label>
                   <input
                     type="text"
@@ -377,7 +378,7 @@
                   <input
                     type="text"
                     id="inputUf"
-                    class="form-input intranet-style-f324ab0835"
+                    class="form-input"
                     value="PR"
                     maxlength="2"
 
@@ -435,8 +436,8 @@
     <!-- ============================================================
          MODAL · HISTÓRICO DE EMPRÉSTIMOS
          ============================================================ -->
-    <div class="modal-overlay intranet-style-1673f58bb4" id="modalHistorico">
-      <div class="modal intranet-style-cd8313594e">
+    <div class="modal-overlay" id="modalHistorico">
+      <div class="modal">
         <div class="modal-header">
           <h3>
             <i class="fas fa-clock-rotate-left"></i>
@@ -456,7 +457,7 @@
 
            class="intranet-style-d98c148b8a">
             <i
-              class="fas fa-user intranet-style-8daaed738a"
+              class="fas fa-user"
 
             ></i>
             <div>
@@ -484,7 +485,8 @@
     </div>
 
     <!-- SUPABASE SDK -->
-    <script type="importmap">
+      <script src="../shared/js/system-shell.js?v=20261018-library-identity-3"></script>
+  <script type="importmap">
       {
         "imports": {
           "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
@@ -494,7 +496,7 @@
 
     <script type="module">
 import { supabase } from "../shared/js/supabase.js";
-      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261010-biblioteca-shared-shell-2";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261018-biblioteca-municipio-unico-1";
       await initBibliotecaLayout(supabase);
       // ============================================
       // CONFIGURAÇÃO SUPABASE

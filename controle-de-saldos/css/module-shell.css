@@ -1,0 +1,113 @@
+/* Gestão de Atas, Saldos e Pedidos · camada modular
+ * Extraído de consulta-modern.css na refatoração de 2026-10-15.
+ * A identidade global permanece em ../shared/css/intranet-identidade.css.
+ * Não remover o escopo body[data-intranet-module="atas"] sem validar o JS.
+ */
+
+/* Gestão de Atas · camada específica sobre a identidade visual central.
+   A base global (reset, tipografia, tokens e acessibilidade) vem de
+   ../shared/css/intranet-identidade.css. Este arquivo contém apenas o
+   shell e os componentes específicos do módulo. */
+
+/* Compatibilidade do layout injetado por shared/js/layout.js. */
+body[data-intranet-module="atas"] .app-layout {
+  display: grid;
+  grid-template-columns: var(--shell-sidebar-width) minmax(0, 1fr);
+  min-height: 100vh;
+}
+body[data-intranet-module="atas"] .sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-3);
+  background: var(--surface-header);
+  border-right: 1px solid var(--border-soft);
+}
+body[data-intranet-module="atas"] .sidebar-brand { display: flex; align-items: center; gap: .7rem; padding: .25rem .5rem 1.35rem; border-bottom: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] .brand-icon { display: grid; place-items: center; width: 2.65rem; height: 2.65rem; overflow: hidden; border-radius: .75rem; background: var(--surface-soft-blue); color: var(--brand-primary); }
+body[data-intranet-module="atas"] .brasao-municipio { width: 100%; height: 100%; padding: .25rem; object-fit: contain; background: #fff; }
+body[data-intranet-module="atas"] .brand-text h2 { margin: 0; color: var(--text-primary); font-size: var(--font-size-sm); line-height: 1.2; }
+body[data-intranet-module="atas"] .brand-text span,
+body[data-intranet-module="atas"] .nav-section { color: var(--text-muted); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] .sidebar-nav { display: grid; gap: .25rem; margin-top: var(--space-5); }
+body[data-intranet-module="atas"] .nav-section { margin: .8rem .7rem .35rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+body[data-intranet-module="atas"] .sidebar-nav a,
+body[data-intranet-module="atas"] .sidebar-voltar a { display: flex; align-items: center; gap: .7rem; padding: .72rem .8rem; border-radius: var(--radius-md); color: var(--text-secondary); font-size: var(--font-size-sm); font-weight: 650; text-decoration: none; transition: background .16s ease, color .16s ease, transform .16s ease; }
+body[data-intranet-module="atas"] .sidebar-nav a:hover,
+body[data-intranet-module="atas"] .sidebar-nav a.active,
+body[data-intranet-module="atas"] .sidebar-nav a[aria-current="page"] { background: var(--brand-primary-light); color: var(--brand-primary); transform: translateX(2px); }
+body[data-intranet-module="atas"] .sidebar-nav a i,
+body[data-intranet-module="atas"] .sidebar-voltar a i { width: 1.2rem; text-align: center; }
+body[data-intranet-module="atas"] .sidebar-voltar { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] .main-area { min-width: 0; background: var(--surface-page); }
+body[data-intranet-module="atas"] .topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); min-height: var(--shell-header-height); margin: .75rem .9rem 0; padding: .8rem clamp(1rem, 3vw, 2rem); background: rgb(255 255 255 / 96%); border: 1px solid var(--border-soft); border-radius: var(--radius-xl); box-shadow: var(--shadow-header); }
+body[data-intranet-module="atas"] .topbar-esquerda,
+body[data-intranet-module="atas"] .topbar-direita { display: flex; align-items: center; gap: var(--space-4); min-width: 0; }
+body[data-intranet-module="atas"] .topbar-titulo h1 { margin: 0; color: var(--text-primary); font-size: var(--font-size-lg); }
+body[data-intranet-module="atas"] .topbar-titulo h1 i { margin-right: .35rem; color: var(--brand-blue); }
+body[data-intranet-module="atas"] .topbar-titulo p,
+body[data-intranet-module="atas"] .topbar-info span { margin: .2rem 0 0; color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] .topbar-info { display: grid; text-align: right; }
+body[data-intranet-module="atas"] .topbar-info strong { max-width: 14rem; overflow: hidden; color: var(--text-primary); font-size: var(--font-size-sm); text-overflow: ellipsis; white-space: nowrap; }
+body[data-intranet-module="atas"] .avatar-wrapper { position: relative; }
+body[data-intranet-module="atas"] .avatar-btn { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; padding: 0; border: 2px solid #fff; border-radius: 50%; background: var(--brand-primary); color: #fff; cursor: pointer; overflow: hidden; }
+body[data-intranet-module="atas"] .avatar-btn img,
+body[data-intranet-module="atas"] .avatar-btn span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; font-weight: 800; }
+body[data-intranet-module="atas"] .avatar-menu { position: absolute; top: calc(100% + .65rem); right: 0; z-index: 40; display: none; width: min(22rem, calc(100vw - 2rem)); padding: .65rem; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); }
+body[data-intranet-module="atas"] .avatar-menu[aria-hidden="false"],
+body[data-intranet-module="atas"] .avatar-menu.is-open { display: grid; gap: .25rem; }
+body[data-intranet-module="atas"] .avatar-menu-header { padding: .85rem; background: var(--surface-soft-blue); border-radius: var(--radius-md); }
+body[data-intranet-module="atas"] .avatar-menu-header strong,
+body[data-intranet-module="atas"] .avatar-menu-header span { display: block; }
+body[data-intranet-module="atas"] .avatar-menu-header span { margin-top: .2rem; color: var(--text-secondary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] .avatar-menu-item { display: flex; align-items: center; gap: .65rem; width: 100%; padding: .7rem .75rem; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--text-primary); text-align: left; text-decoration: none; cursor: pointer; }
+body[data-intranet-module="atas"] .avatar-menu-item:hover { background: var(--surface-hover); color: var(--brand-primary); }
+body[data-intranet-module="atas"] .avatar-menu-item.sair { margin-top: .35rem; border-top: 1px solid var(--border-soft); color: var(--state-danger); }
+body[data-intranet-module="atas"] .conteudo { min-width: 0; padding: var(--space-5) 0 0; }
+
+/* Componentes funcionais compartilhados pelo SPA do módulo. */
+body[data-intranet-module="atas"] .btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 2.4rem; padding: .55rem .85rem; border: 1px solid transparent; border-radius: var(--radius-md); font-weight: var(--font-weight-semibold, 600); cursor: pointer; }
+body[data-intranet-module="atas"] .btn-primary { background: var(--brand-primary); color: var(--text-on-brand); }
+body[data-intranet-module="atas"] .btn-secondary { background: var(--surface-card); border-color: var(--border-default); color: var(--brand-primary); }
+body[data-intranet-module="atas"] .btn-danger { background: var(--state-danger); color: #fff; }
+body[data-intranet-module="atas"] .modal { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; padding: 1rem; background: var(--surface-overlay); }
+body[data-intranet-module="atas"] .modal.aberto,
+body[data-intranet-module="atas"] .modal.active,
+body[data-intranet-module="atas"] .modal[aria-hidden="false"] { display: grid; }
+body[data-intranet-module="atas"] .modal-content { width: min(100%, 58rem); max-height: min(90vh, 52rem); overflow: auto; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-xl); box-shadow: var(--shadow-modal); }
+body[data-intranet-module="atas"] .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.15rem 1.25rem; border-bottom: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] .modal-body,
+body[data-intranet-module="atas"] .modal-body-finalizacao { padding: 1.25rem; }
+body[data-intranet-module="atas"] .modal-footer,
+body[data-intranet-module="atas"] .modal-footer-finalizacao { display: flex; justify-content: flex-end; gap: .65rem; padding: 1rem 1.25rem; border-top: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] .modal-close { border: 0; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1.15rem; }
+body[data-intranet-module="atas"] .drawer-overlay { position: fixed; inset: 0; z-index: 55; display: none; background: var(--surface-overlay); }
+body[data-intranet-module="atas"] .drawer-overlay.open,
+body[data-intranet-module="atas"] .drawer-overlay.is-open { display: block; }
+body[data-intranet-module="atas"] .drawer-carrinho { position: fixed; top: 0; right: 0; z-index: 56; display: grid; grid-template-rows: auto 1fr auto; width: min(30rem, 100vw); height: 100vh; transform: translateX(105%); background: var(--surface-card); box-shadow: var(--shadow-modal); transition: transform .2s ease; }
+body[data-intranet-module="atas"] .drawer-carrinho.open,
+body[data-intranet-module="atas"] .drawer-carrinho.is-open,
+body[data-intranet-module="atas"] .drawer-carrinho.aberto { transform: translateX(0); }
+body[data-intranet-module="atas"] .drawer-header,
+body[data-intranet-module="atas"] .drawer-footer { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] .drawer-header { display: flex; align-items: center; justify-content: space-between; }
+body[data-intranet-module="atas"] .drawer-header h2 { margin: 0; font-size: var(--font-size-lg); }
+body[data-intranet-module="atas"] .drawer-body { min-height: 0; overflow: auto; padding: 1rem 1.25rem; }
+body[data-intranet-module="atas"] .drawer-footer { border-top: 1px solid var(--border-soft); border-bottom: 0; }
+body[data-intranet-module="atas"] .drawer-total,
+body[data-intranet-module="atas"] .drawer-actions { display: flex; align-items: center; justify-content: space-between; gap: .65rem; }
+body[data-intranet-module="atas"] .drawer-actions { margin-top: .75rem; }
+body[data-intranet-module="atas"] .btn-carrinho-flutuante { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 45; display: grid; place-items: center; width: 3.25rem; height: 3.25rem; border: 0; border-radius: 50%; background: var(--brand-primary); color: #fff; box-shadow: var(--shadow-modal); cursor: pointer; }
+body[data-intranet-module="atas"] .badge-carrinho-flutuante { position: absolute; top: -.2rem; right: -.2rem; display: grid; place-items: center; min-width: 1.3rem; height: 1.3rem; padding: 0 .25rem; border-radius: var(--radius-pill); background: var(--state-danger); color: #fff; font-size: .7rem; font-weight: 800; }
+
+@media (max-width: 900px) {
+  body[data-intranet-module="atas"] .app-layout { grid-template-columns: 1fr; }
+  body[data-intranet-module="atas"] .sidebar { position: fixed; left: 0; z-index: 30; width: min(82vw, 18rem); transform: translateX(-105%); transition: transform .2s ease; box-shadow: var(--shadow-modal); }
+  body[data-intranet-module="atas"] .sidebar.aberta,
+  body[data-intranet-module="atas"] .sidebar.is-open { transform: translateX(0); }
+}
+@media (max-width: 560px) {
+  body[data-intranet-module="atas"] .topbar { margin-inline: .35rem; }
+  body[data-intranet-module="atas"] .topbar-info { display: none; }
+}

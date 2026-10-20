@@ -1,0 +1,166 @@
+/* =====================================================================
+   Cabeçalho institucional unificado · Hall / Meu Perfil / Módulos
+   Componente canônico: .barra-usuario
+   ===================================================================== */
+.barra-usuario {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: auto minmax(16rem, 1fr) auto;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--shell-header-height);
+  margin: .75rem 0 0;
+  padding: .75rem clamp(1rem, 3vw, 2rem);
+  background: rgb(255 255 255 / 94%);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-header);
+  backdrop-filter: blur(12px);
+}
+.barra-usuario::before {
+  display: block;
+  width: 11rem;
+  height: 2.7rem;
+  padding-left: 3.25rem;
+  color: var(--text-primary);
+  content: "INTRANET";
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  line-height: 2.7rem;
+  background: linear-gradient(135deg, var(--brand-blue) 0 45%, var(--brand-green) 45% 70%, transparent 70%) left center / 2.5rem 2.5rem no-repeat;
+}
+.barra-usuario::after {
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--text-secondary);
+  content: "Sistemas e serviços em um só lugar";
+  font-size: var(--font-size-sm);
+}
+.barra-usuario .saudacao-mini { display: none; }
+.barra-usuario .avatar-wrapper { position: relative; grid-column: 3; grid-row: 1; }
+.barra-usuario .avatar-btn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 2.65rem;
+  padding: .25rem .55rem .25rem .25rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.barra-usuario .avatar-btn span {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  overflow: hidden;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  box-shadow: 0 0 0 1px var(--border-default);
+  color: #fff;
+  font-weight: 700;
+}
+.barra-usuario .avatar-btn span img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* O avatar visual é quadrado antes do recorte: nunca deve deformar para oval. */
+.barra-usuario .avatar-btn > span,
+.barra-usuario .avatar-btn > img,
+.barra-usuario .avatar-btn .avatar-foto {
+  flex: 0 0 2.35rem;
+  width: 2.35rem;
+  min-width: 2.35rem;
+  max-width: 2.35rem;
+  height: 2.35rem;
+  min-height: 2.35rem;
+  max-height: 2.35rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.barra-usuario .avatar-btn::after {
+  width: .45rem;
+  height: .45rem;
+  margin-left: .1rem;
+  border-right: 2px solid var(--text-secondary);
+  border-bottom: 2px solid var(--text-secondary);
+  content: "";
+  transform: rotate(45deg) translateY(-.12rem);
+}
+.barra-usuario .avatar-menu {
+  position: absolute;
+  top: calc(100% + .65rem);
+  right: 0;
+  display: none;
+  width: min(22rem, calc(100vw - 2rem));
+  padding: .65rem;
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+}
+.barra-usuario .avatar-menu[aria-hidden="false"],
+.barra-usuario .avatar-menu.is-open,
+.barra-usuario .avatar-menu.aberto { display: grid; gap: .25rem; }
+.barra-usuario .avatar-menu-header {
+  padding: .9rem;
+  background: linear-gradient(135deg, var(--surface-soft-blue), var(--surface-card));
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+}
+.barra-usuario .avatar-menu-header strong,
+.barra-usuario .avatar-menu-header span { display: block; }
+.barra-usuario .avatar-menu-header span { margin-top: .2rem; color: var(--text-secondary); font-size: var(--font-size-xs); }
+.barra-usuario .avatar-menu-section-label,
+.barra-usuario .avatar-menu-kicker { color: var(--text-muted); font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.barra-usuario .avatar-menu-section-label { margin: .9rem .5rem .25rem; }
+.barra-usuario .avatar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: .7rem .75rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.barra-usuario .avatar-menu-item:hover { background: var(--surface-hover); color: var(--brand-primary); }
+.barra-usuario .avatar-menu-item-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .6rem; background: var(--brand-primary-light); color: var(--brand-primary); }
+.barra-usuario .avatar-menu-item--profile { background: var(--surface-hover); }
+.barra-usuario .avatar-menu-item--logout,
+.barra-usuario .avatar-menu-item.sair { margin-top: .55rem; border-top: 1px solid var(--border-soft); color: var(--state-danger); }
+.barra-usuario .avatar-menu-item--logout .avatar-menu-item-icon { background: var(--state-danger-bg); color: var(--state-danger); }
+.barra-usuario .avatar-menu-quick { padding: .5rem .25rem; border-top: 1px solid var(--border-soft); }
+.barra-usuario .avatar-menu-quick-title { margin: .35rem .5rem; color: var(--text-secondary); font-size: var(--font-size-xs); }
+.barra-usuario .avatar-menu-quick-list { display: grid; gap: .15rem; }
+.barra-usuario .avatar-menu-quick-link { padding: .55rem .5rem; }
+.barra-usuario .avatar-menu-quick-icon { display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: .5rem; background: var(--brand-primary-light); color: var(--brand-primary); }
+.barra-usuario .avatar-menu-quick-label { flex: 1; font-size: var(--font-size-sm); }
+.barra-usuario .avatar-menu-quick-arrow { color: var(--text-muted); font-size: var(--font-size-xs); }
+@media (max-width: 800px) {
+  .barra-usuario { grid-template-columns: 1fr auto; }
+  .barra-usuario::after { display: none; }
+  .barra-usuario .avatar-wrapper { grid-column: 2; }
+}
+@media (max-width: 560px) {
+  .barra-usuario { margin-top: .5rem; border-radius: var(--radius-lg); }
+  .barra-usuario::before { width: 2.5rem; padding-left: 0; overflow: hidden; color: transparent; }
+}

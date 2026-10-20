@@ -12,7 +12,7 @@ export class Orgaos {
     container.innerHTML = `
       <div class="orgaos-container">
         <div class="orgaos-header">
-          <h3 data-intranet-style="fc77e4ce3990">
+          <h3>
             <i class="fas fa-university"></i> Gestão de Órgãos / Autarquias
           </h3>
           <button class="btn-novo-orgao" id="btnNovoOrgao">
@@ -52,7 +52,7 @@ export class Orgaos {
       .order('nome')
 
     if (!orgaos?.length) {
-      tbody.innerHTML = '<tr><td colspan="7" data-intranet-style="a8510ce9aae6">Nenhum órgão cadastrado</td></tr>'
+      tbody.innerHTML = '<tr><td colspan="7">Nenhum órgão cadastrado</td></tr>'
       return
     }
 
@@ -60,7 +60,7 @@ export class Orgaos {
       <tr>
         <td>${o.id}</td>
         <td><strong>${o.nome}</strong></td>
-        <td><span class="badge-perfil" data-intranet-style="15d2df11fe88">${o.sigla || '-'}</span></td>
+        <td><span class="badge-perfil">${o.sigla || '-'}</span></td>
         <td>${o.cnpj || '-'}</td>
         <td>
           ${o.telefone ? `<i class="fas fa-phone"></i> ${o.telefone}<br>` : ''}
@@ -136,9 +136,9 @@ export class Orgaos {
           <option value="false">Inativo</option>
         </select>
       </div>
-      <div data-intranet-style="bfa353b688d6">
-        <button type="button" id="btnCancelarOrgao" data-intranet-style="e04c073cea5c">Cancelar</button>
-        <button type="submit" data-intranet-style="33a27e7e748b">
+      <div>
+        <button type="button" id="btnCancelarOrgao">Cancelar</button>
+        <button type="submit">
           <i class="fas fa-save"></i> Salvar Órgão
         </button>
       </div>

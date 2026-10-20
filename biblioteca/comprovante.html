@@ -24,11 +24,14 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261005-fontawesome-local-1">
+  
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1">
+  <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261018-library-identity-3">
+  <link rel="stylesheet" href="./biblioteca.css?v=20261018-biblioteca-municipio-unico-1">
 </head>
   <body data-intranet-module="biblioteca" data-intranet-page="biblioteca-comprovante">
     <!-- ============ BARRA DE AÇÕES (escondida no print) ============ -->
-    <div class="barra-acoes intranet-style-4e5f218e6a" id="barraAcoes">
+    <div class="barra-acoes" id="barraAcoes">
       <div class="info-arquivo">
         <i class="fas fa-file-invoice"></i>
         <span id="infoArquivo">Carregando...</span>
@@ -61,7 +64,7 @@
     </div>
 
     <!-- ============ ESTADO DE ERRO ============ -->
-    <div class="estado-erro intranet-style-4e5f218e6a" id="estadoErro">
+    <div class="estado-erro" id="estadoErro">
       <i class="fas fa-circle-exclamation"></i>
       <h2 id="tituloErro">Não foi possível carregar o comprovante</h2>
       <p id="mensagemErro">
@@ -69,7 +72,7 @@
         visualizá-lo.
       </p>
       <button
-        class="btn btn-primary intranet-style-956457b5c0"
+        class="btn btn-primary"
 
         onclick="
           window.close();
@@ -768,6 +771,6 @@ import { supabase } from "../shared/js/supabase.js";
       // ============================================
       init();
     </script>
-      <script type="module" src="./biblioteca-saas.js?v=20261010-biblioteca-shared-shell-2"></script>
+      <script type="module" src="./biblioteca-saas.js?v=20261018-biblioteca-municipio-unico-1"></script>
   </body>
 </html>

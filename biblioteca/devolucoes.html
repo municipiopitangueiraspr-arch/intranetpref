@@ -24,11 +24,12 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261010-shared-shell-theme-4">
-  <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261010-shared-shell-theme-5">
+  
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1">
+  <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261019-pacote2-circulacao-2">
+  <link rel="stylesheet" href="./biblioteca.css?v=20261019-pacote2-circulacao-2">
 </head>
-  <body data-intranet-module="biblioteca" data-intranet-theme="atas" data-intranet-page="biblioteca-devolucoes">
+  <body data-intranet-module="biblioteca" data-intranet-theme="shared" data-intranet-page="biblioteca-devolucoes" class="app-shell" data-sidebar-open="false" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
     <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
       <div class="spinner"></div>
@@ -37,16 +38,23 @@
     <!-- LAYOUT -->
     <div class="app-layout" id="mainSystem">
       <!-- SIDEBAR -->
-      <aside class="sidebar" id="sidebar"></aside>
+      <aside class="app-sidebar sidebar" id="sidebar"></aside>
 
       <!-- MAIN -->
-      <div class="main-area">
+      <div class="main-area app-main">
         <!-- TOPBAR -->
         <header class="topbar" id="topbar"></header>
 
         <!-- CONTEÚDO -->
         <main class="conteudo conteudo-full">
           <!-- ============ BUSCA PRINCIPAL ============ -->
+          <div class="card-base" id="circulacaoResumoDevolucoes" style="margin-bottom:1rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+            <strong><i class="fas fa-chart-line"></i> Resumo operacional</strong>
+            <span>Em circulação: <b id="devResumoCirculacao">—</b></span>
+            <span>Vencem hoje: <b id="devResumoHoje">—</b></span>
+            <span>Atrasados: <b id="devResumoAtrasados">—</b></span>
+            <span class="muted" id="devResumoReferencia"></span>
+          </div>
           <div class="busca-principal" id="buscaPrincipal">
             <div class="busca-principal-header">
               <div class="icone"><i class="fas fa-magnifying-glass"></i></div>
@@ -76,7 +84,7 @@
           <!-- ============ PAINEL DE DEVOLUÇÃO ============ -->
           <div id="painelContainer">
             <div
-              class="estado-vazio intranet-style-0b80a0263a"
+              class="estado-vazio"
 
             >
               <i class="fas fa-hand-holding-heart"></i>
@@ -95,7 +103,8 @@
     <div class="notification-center" id="notificationCenter"></div>
 
     <!-- SUPABASE SDK -->
-    <script type="importmap">
+      <script src="../shared/js/system-shell.js?v=20261019-pacote2-circulacao-2"></script>
+  <script type="importmap">
       {
         "imports": {
           "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
@@ -105,7 +114,7 @@
 
     <script type="module">
 import { supabase } from "../shared/js/supabase.js";
-      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261010-biblioteca-shared-shell-2";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261019-pacote2-circulacao-2";
       await initBibliotecaLayout(supabase);
       // ============================================
       // CONFIG SUPABASE
@@ -305,6 +314,15 @@ import { supabase } from "../shared/js/supabase.js";
       // MENU DO AVATAR (dropdown)
       // ============================================
       
+
+      async function carregarResumoCirculacao() {
+        const { data, error } = await supabase.from("vw_bib_circulacao_resumo").select("itens_em_circulacao, vencem_hoje, itens_atrasados, referencia_em").limit(1).maybeSingle();
+        if (error || !data) return;
+        setTexto("devResumoCirculacao", data.itens_em_circulacao ?? "—");
+        setTexto("devResumoHoje", data.vencem_hoje ?? "—");
+        setTexto("devResumoAtrasados", data.itens_atrasados ?? "—");
+        setTexto("devResumoReferencia", data.referencia_em ? `Referência: ${formatarData(data.referencia_em)}` : "");
+      }
 
       // ============================================
       // BUSCA INTELIGENTE
@@ -1051,6 +1069,7 @@ import { supabase } from "../shared/js/supabase.js";
           if (!usuario) return;
 
           renderizarUsuario();
+          await carregarResumoCirculacao();
 // Se veio com ?id=XXX, já abre direto o painel
           await carregarPeloParametroURL();
 

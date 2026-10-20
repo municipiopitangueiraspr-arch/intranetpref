@@ -9,6 +9,10 @@
   const firstHeading = (el) => el?.querySelector("h1,h2,h3,h4,[role=heading]");
 
   function ensureSkipLink() {
+    // O shell do módulo de atas já possui navegação estrutural própria;
+    // não inserir o link textual no topo dessa tela. Mantemos o comportamento
+    // compartilhado para as demais páginas do staging.
+    if (document.body?.dataset?.intranetModule === "atas") return;
     if (document.querySelector(".a11y-skip-link")) return;
     const main = document.querySelector("main, [role=main], #main, .main-area, .conteudo, .page-content");
     if (!main) return;

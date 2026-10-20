@@ -1,251 +1,2139 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png?v=20261009-brasao-2">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg?v=20261009-brasao-2">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png?v=20261009-brasao-2">
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico?v=20261009-brasao-2">
 
 
-<script src="../../shared/js/acessibilidade-intranet.js" defer></script>
-<!-- ============================================================ -->
-<!-- MÓDULO · RELATÓRIOS                                          -->
-<!-- ------------------------------------------------------------ -->
-<!-- Este arquivo é o ESQUELETO da view de Relatórios.            -->
-<!-- Ele contém apenas a ESTRUTURA vazia dos dois "modos" da      -->
-<!-- tela:                                                         -->
-<!--                                                               -->
-<!--   · MODO ÍNDICE     → lista de cards com os 6 relatórios     -->
-<!--   · MODO ATIVO      → cabeçalho + filtros + KPIs + gráfico   -->
-<!--                        + tabela + ações (exportar)            -->
-<!--                                                               -->
-<!-- TODO o conteúdo dinâmico (cards, resultados, gráficos) é     -->
-<!-- injetado pelo módulo relatorios.js em tempo de execução.     -->
-<!--                                                               -->
-<!-- O JS usa os IDs / classes abaixo como "contrato":            -->
-<!--   · #relatoriosContent          (container principal)         -->
-<!--   · #relatoriosIndice           (área do índice de cards)     -->
-<!--   · #relatoriosAtivo            (área do relatório aberto)    -->
-<!--                                                               -->
-<!-- Padrão visual espelha o restante do sistema:                  -->
-<!--   · Cards clicáveis com hover (igual aos indicadores)         -->
-<!--   · Header com botão voltar (igual ao detalhes-ata)           -->
-<!--   · Filtros em linha (igual aos filtros de pedidos)           -->
-<!--   · Tabela com o mesmo estilo `.tabela-itens` do sistema      -->
-<!--   · Botões de exportar idênticos aos de pedidos               -->
-<!-- ============================================================ -->
 
-<div class="relatorios-container" id="relatoriosContent" data-intranet-scope="controle-de-saldos-templates-relatorios">
-  <!-- ============================================================ -->
-    <!-- MODO 1 · ÍNDICE DE RELATÓRIOS                                  -->
-  <!-- ------------------------------------------------------------ -->
-  <!-- Este bloco é o que o usuário vê ao clicar em "Relatórios"    -->
-  <!-- no menu lateral. Contém os cards agrupados por finalidade.            -->
-  <!-- O JS preenche o #relatoriosIndiceGrid com os cards.           -->
-  <!--                                                              -->
-  <!-- Estrutura:                                                    -->
-    <!--   · Breadcrumb + barra de contexto                            -->
-  <!--   · Grid responsivo com os cards                              -->
-  <!--                                                              -->
-  <!-- Ao clicar num card, o JS esconde este bloco e mostra o        -->
-  <!-- #relatoriosAtivo, que é o "modo 2".                          -->
-  <!-- ============================================================ -->
-  <div class="relatorios-indice" id="relatoriosIndice">
-    <!-- ---------- Breadcrumb + contexto ---------- -->
-    <nav class="atas-breadcrumb relatorios-breadcrumb" aria-label="Trilha de navegação">
-      <a href="#dashboard"><i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span></a>
-      <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
-      <span aria-current="page">Relatórios</span>
-    </nav>
-    <div class="relatorios-context-bar">
-      <div class="relatorios-context-title">
-        <span class="relatorios-context-icon"><i class="fas fa-chart-column"></i></span>
-        <div>
-          <span class="relatorios-context-kicker">Central de análises</span>
-          <strong id="relatoriosIndiceTitulo">Relatórios Favoritos</strong>
-        </div>
-      </div>
-      <span class="relatorios-context-hint" id="relatoriosContextHint"><i class="fas fa-star"></i> Acesse rapidamente as análises que você salvou</span>
+
+
+    <title>Biblioteca Municipal · Relatórios</title>
+
+    <!-- Font Awesome 6 -->
+
+
+
+
+
+
+
+
+<script src="../shared/js/acessibilidade-intranet.js" defer></script>
+  
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1">
+  <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261019-pacote2-circulacao-2">
+  <link rel="stylesheet" href="./biblioteca.css?v=20261019-pacote2-circulacao-2">
+</head>
+  <body data-intranet-module="biblioteca" data-intranet-theme="shared" data-intranet-page="biblioteca-relatorios" class="app-shell" data-sidebar-open="false" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
+    <!-- LOADING -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
     </div>
 
-    <div class="relatorios-indice-controles" role="tablist" aria-label="Filtrar relatórios">
-      <button class="relatorios-filtro-tab" type="button" role="tab" data-relatorios-filtro="todos" aria-selected="false" aria-controls="relatoriosIndiceGrid">
-        <i class="fas fa-layer-group" aria-hidden="true"></i>
-        <span>Todos os relatórios</span>
-      </button>
-      <button class="relatorios-filtro-tab ativo" type="button" role="tab" data-relatorios-filtro="favoritos" aria-selected="true" aria-controls="relatoriosIndiceGrid">
-        <i class="fas fa-star" aria-hidden="true"></i>
-        <span>Relatórios Favoritos</span>
-        <span class="relatorios-filtro-count" id="relatoriosFavoritosCount">0</span>
-      </button>
+    <!-- LAYOUT -->
+    <div class="app-layout" id="mainSystem">
+      <!-- SIDEBAR -->
+      <aside class="app-sidebar sidebar" id="sidebar"></aside>
+
+      <!-- MAIN -->
+      <div class="main-area app-main">
+        <!-- TOPBAR -->
+        <header class="topbar" id="topbar"></header>
+
+        <!-- CONTEÚDO -->
+        <main class="conteudo conteudo-full">
+          <header class="municipal-report-print-header" aria-label="Identificação institucional do relatório">
+            <img src="../brasao-pref.png" alt="Brasão do Município" />
+            <div>
+              <strong>Prefeitura Municipal de Pitangueiras</strong>
+              <span>Biblioteca Municipal · Relatório institucional</span>
+            </div>
+          </header>
+          <!-- ABAS -->
+          <div class="abas">
+            <button class="aba ativa" data-aba="acervo" type="button">
+              <i class="fas fa-book"></i> Acervo
+            </button>
+            <button class="aba" data-aba="emprestimos" type="button">
+              <i class="fas fa-hand-holding-heart"></i> Empréstimos
+            </button>
+            <button class="aba" data-aba="atrasados" type="button">
+              <i class="fas fa-triangle-exclamation"></i> Atrasados
+            </button>
+            <button class="aba" data-aba="leitores" type="button">
+              <i class="fas fa-users"></i> Leitores
+            </button>
+            <button class="aba" data-aba="mais-emprestados" type="button">
+              <i class="fas fa-fire"></i> Mais emprestados
+            </button>
+            <button class="aba" data-aba="reservas" type="button">
+              <i class="fas fa-calendar-check"></i> Reservas
+            </button>
+            <button class="aba" data-aba="bloqueios" type="button">
+              <i class="fas fa-user-lock"></i> Bloqueios
+            </button>
+          </div>
+
+          <!-- ============================================================
+               ABA · ACERVO
+               ============================================================ -->
+          <div class="aba-conteudo ativa" id="aba-acervo">
+            <div class="filtros">
+              <div class="filtro-grupo">
+                <label>Buscar livro</label>
+                <input
+                  type="text"
+                  id="acBusca"
+                  placeholder="Título, autor ou ISBN..."
+                / aria-label="Título, autor ou ISBN...">
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Categoria</label>
+                <select id="acFiltroCategoria" aria-label="acFiltroCategoria">
+                  <option value="">Todas</option>
+                </select>
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Disponibilidade</label>
+                <select id="acFiltroDisponibilidade" aria-label="acFiltroDisponibilidade">
+                  <option value="">Todos</option>
+                  <option value="com-exemplares">Com exemplares</option>
+                  <option value="sem-exemplares">Sem exemplares</option>
+                  <option value="com-disponiveis">Com disponíveis</option>
+                </select>
+              </div>
+
+              <div class="filtros-acoes">
+                <button class="btn btn-secondary" id="acBtnLimpar" type="button">
+                  <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success" id="acBtnCsv" type="button">
+                  <i class="fas fa-file-csv"></i> CSV
+                </button>
+                <button class="btn btn-azul" id="acBtnImprimir" type="button">
+                  <i class="fas fa-print"></i> Imprimir
+                </button>
+              </div>
+            </div>
+
+            <div class="resumo-grid" id="acResumo">
+              <div class="resumo-card">
+                <div class="resumo-icon ic-cinza">
+                  <i class="fas fa-book"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="acResTotal">—</span>
+                  <span class="label">Livros</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-azul">
+                  <i class="fas fa-bookmark"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="acResExemplares">—</span>
+                  <span class="label">Exemplares</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-verde">
+                  <i class="fas fa-circle-check"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="acResDisponiveis">—</span>
+                  <span class="label">Disponíveis</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-amarelo">
+                  <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="acResEmprestados">—</span>
+                  <span class="label">Emprestados</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-vermelho">
+                  <i class="fas fa-triangle-exclamation"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="acResIndisponiveis">—</span>
+                  <span class="label">Indisponíveis</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="contador-tabela">
+              <span>
+                <strong id="acContador">0</strong> livro(s) encontrado(s)
+              </span>
+            </div>
+
+            <div class="tabela-wrapper">
+              <table class="tabela" id="acTabela" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th>Título</th>
+                    <th class="intranet-style-676b84ab32">Autores</th>
+                    <th class="intranet-style-8d5f52e1df">Categoria</th>
+                    <th class="intranet-style-8d5f52e1df">Editora / Ano</th>
+                    <th class="celula-centro">
+                      Exemplares
+                    </th>
+                    <th class="celula-centro">
+                      Disponíveis
+                    </th>
+                    <th class="celula-centro">Situação</th>
+                  </tr>
+                </thead>
+                <tbody id="acTbody">
+                  <tr>
+                    <td colspan="7">
+                      <div class="loading-inline">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Carregando...
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               ABA · EMPRÉSTIMOS
+               ============================================================ -->
+          <div class="aba-conteudo" id="aba-emprestimos">
+            <div class="filtros">
+              <div class="filtro-grupo">
+                <label>Data inicial</label>
+                <input type="date" id="emDataInicio" / aria-label="emDataInicio">
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Data final</label>
+                <input type="date" id="emDataFim" / aria-label="emDataFim">
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Atalhos</label>
+                <div class="atalhos-datas">
+                  <button class="atalho-data" data-dias="7" type="button">7d</button>
+                  <button class="atalho-data" data-dias="30" type="button">30d</button>
+                  <button class="atalho-data" data-dias="90" type="button">90d</button>
+                  <button class="atalho-data" data-mes="1" type="button">Este mês</button>
+                  <button class="atalho-data" data-ano="1" type="button">Este ano</button>
+                </div>
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Status</label>
+                <select id="emFiltroStatus" aria-label="emFiltroStatus">
+                  <option value="">Todos</option>
+                  <option value="ABERTO">Aberto</option>
+                  <option value="PARCIAL">Parcial</option>
+                  <option value="DEVOLVIDO">Devolvido</option>
+                  <option value="CANCELADO">Cancelado</option>
+                </select>
+              </div>
+
+              <div class="filtros-acoes">
+                <button class="btn btn-primary" id="emBtnFiltrar" type="button">
+                  <i class="fas fa-filter"></i> Aplicar
+                </button>
+                <button class="btn btn-secondary" id="emBtnLimpar" type="button">
+                  <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success" id="emBtnCsv" type="button">
+                  <i class="fas fa-file-csv"></i> CSV
+                </button>
+                <button class="btn btn-azul" id="emBtnImprimir" type="button">
+                  <i class="fas fa-print"></i> Imprimir
+                </button>
+              </div>
+            </div>
+
+            <div class="resumo-grid">
+              <div class="resumo-card">
+                <div class="resumo-icon ic-cinza">
+                  <i class="fas fa-file-contract"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="emResTotal">—</span>
+                  <span class="label">Empréstimos</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-azul">
+                  <i class="fas fa-book"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="emResExemplares">—</span>
+                  <span class="label">Exemplares</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-verde">
+                  <i class="fas fa-circle-check"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="emResDevolvidos">—</span>
+                  <span class="label">Devolvidos</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-amarelo">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="emResAbertos">—</span>
+                  <span class="label">Em aberto</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-vermelho">
+                  <i class="fas fa-triangle-exclamation"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="emResAtrasados">—</span>
+                  <span class="label">Com atraso</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="contador-tabela">
+              <span>
+                <strong id="emContador">0</strong> registro(s) encontrado(s)
+              </span>
+            </div>
+
+            <div class="tabela-wrapper">
+              <table class="tabela" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th class="intranet-style-1ebd157840">Código</th>
+                    <th>Leitor</th>
+                    <th class="celula-centro">Itens</th>
+                    <th class="intranet-style-da61823349">Retirada</th>
+                    <th class="intranet-style-8d5f52e1df">Prazo</th>
+                    <th class="intranet-style-3576150cf1">Devolução</th>
+                    <th class="celula-centro">Status</th>
+                    <th class="celula-centro">Atraso</th>
+                  </tr>
+                </thead>
+                <tbody id="emTbody">
+                  <tr>
+                    <td colspan="8">
+                      <div class="loading-inline">
+                        <i class="fas fa-filter"></i>
+                        Use os filtros e clique em <strong>Aplicar</strong>.
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               ABA · ATRASADOS
+               ============================================================ -->
+          <div class="aba-conteudo" id="aba-atrasados">
+            <div class="filtros">
+              <div class="filtro-grupo">
+                <label>Buscar leitor ou livro</label>
+                <input
+                  type="text"
+                  id="atBusca"
+                  placeholder="Nome, carteirinha, título..."
+                / aria-label="Nome, carteirinha, título...">
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Atraso mínimo (dias)</label>
+                <input
+                  type="number"
+                  id="atMinDias"
+                  value="1"
+                  min="1"
+                  max="999"
+
+                / aria-label="atMinDias" class="intranet-style-24a898e368">
+              </div>
+
+              <div class="filtros-acoes">
+                <button class="btn btn-secondary" id="atBtnLimpar" type="button">
+                  <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success" id="atBtnCsv" type="button">
+                  <i class="fas fa-file-csv"></i> CSV
+                </button>
+                <button class="btn btn-azul" id="atBtnImprimir" type="button">
+                  <i class="fas fa-print"></i> Imprimir
+                </button>
+              </div>
+            </div>
+
+            <div class="resumo-grid">
+              <div class="resumo-card">
+                <div class="resumo-icon ic-vermelho">
+                  <i class="fas fa-triangle-exclamation"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="atResTotal">—</span>
+                  <span class="label">Empréstimos</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-cinza">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="atResLeitores">—</span>
+                  <span class="label">Leitores</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-amarelo">
+                  <i class="fas fa-book"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="atResExemplares">—</span>
+                  <span class="label">Exemplares</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-vermelho">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="atResMediaDias">—</span>
+                  <span class="label">Média de atraso</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="contador-tabela">
+              <span>
+                <strong id="atContador">0</strong> empréstimo(s) em atraso
+              </span>
+            </div>
+
+            <div class="tabela-wrapper">
+              <table class="tabela" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th class="intranet-style-1ebd157840">Código</th>
+                    <th>Leitor</th>
+                    <th class="intranet-style-3576150cf1">Telefone</th>
+                    <th class="celula-centro">Itens</th>
+                    <th class="intranet-style-3576150cf1">Prazo</th>
+                    <th class="celula-centro">
+                      Dias atraso
+                    </th>
+                    <th class="celula-centro">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="atTbody">
+                  <tr>
+                    <td colspan="7">
+                      <div class="loading-inline">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Carregando atrasados...
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               ABA · LEITORES
+               ============================================================ -->
+          <div class="aba-conteudo" id="aba-leitores">
+            <div class="filtros">
+              <div class="filtro-grupo">
+                <label>Buscar leitor</label>
+                <input
+                  type="text"
+                  id="leBusca"
+                  placeholder="Nome, CPF, carteirinha..."
+                / aria-label="Nome, CPF, carteirinha...">
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Status</label>
+                <select id="leFiltroStatus" aria-label="leFiltroStatus">
+                  <option value="">Todos</option>
+                  <option value="ATIVO">Ativos</option>
+                  <option value="INATIVO">Inativos</option>
+                  <option value="SUSPENSO">Suspensos</option>
+                </select>
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Tipo</label>
+                <select id="leFiltroTipo" aria-label="leFiltroTipo">
+                  <option value="">Todos</option>
+                  <option value="COMUNIDADE">Comunidade</option>
+                  <option value="ESTUDANTE">Estudante</option>
+                  <option value="SERVIDOR">Servidor</option>
+                  <option value="PROFESSOR">Professor</option>
+                </select>
+              </div>
+
+              <div class="filtros-acoes">
+                <button class="btn btn-secondary" id="leBtnLimpar" type="button">
+                  <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success" id="leBtnCsv" type="button">
+                  <i class="fas fa-file-csv"></i> CSV
+                </button>
+                <button class="btn btn-azul" id="leBtnImprimir" type="button">
+                  <i class="fas fa-print"></i> Imprimir
+                </button>
+              </div>
+            </div>
+
+            <div class="resumo-grid">
+              <div class="resumo-card">
+                <div class="resumo-icon ic-cinza">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="leResTotal">—</span>
+                  <span class="label">Leitores</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-verde">
+                  <i class="fas fa-circle-check"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="leResAtivos">—</span>
+                  <span class="label">Ativos</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-azul">
+                  <i class="fas fa-book"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="leResComEmprestimos">—</span>
+                  <span class="label">Com empréstimos</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-amarelo">
+                  <i class="fas fa-star"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="leResMedia">—</span>
+                  <span class="label">Média por leitor</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="contador-tabela">
+              <span> <strong id="leContador">0</strong> leitor(es) </span>
+            </div>
+
+            <div class="tabela-wrapper">
+              <table class="tabela" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th class="celula-centro">#</th>
+                    <th>Leitor</th>
+                    <th class="intranet-style-8d5f52e1df">Carteirinha</th>
+                    <th class="intranet-style-8d5f52e1df">Contato</th>
+                    <th class="celula-centro">Ativos</th>
+                    <th class="celula-centro">Total</th>
+                    <th class="intranet-style-676b84ab32">Proporção</th>
+                  </tr>
+                </thead>
+                <tbody id="leTbody">
+                  <tr>
+                    <td colspan="7">
+                      <div class="loading-inline">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Carregando leitores...
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               ABA · MAIS EMPRESTADOS
+               ============================================================ -->
+          <div class="aba-conteudo" id="aba-mais-emprestados">
+            <div class="filtros">
+              <div class="filtro-grupo">
+                <label>Data inicial</label>
+                <input type="date" id="meDataInicio" / aria-label="meDataInicio">
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Data final</label>
+                <input type="date" id="meDataFim" / aria-label="meDataFim">
+              </div>
+
+              <div class="filtro-grupo">
+                <label>Atalhos</label>
+                <div class="atalhos-datas">
+                  <button class="atalho-data" data-dias="30" type="button">30d</button>
+                  <button class="atalho-data" data-dias="90" type="button">90d</button>
+                  <button class="atalho-data" data-ano="1" type="button">Este ano</button>
+                </div>
+              </div>
+
+              <div class="filtros-acoes">
+                <button class="btn btn-primary" id="meBtnFiltrar" type="button">
+                  <i class="fas fa-filter"></i> Aplicar
+                </button>
+                <button class="btn btn-success" id="meBtnCsv" type="button">
+                  <i class="fas fa-file-csv"></i> CSV
+                </button>
+                <button class="btn btn-azul" id="meBtnImprimir" type="button">
+                  <i class="fas fa-print"></i> Imprimir
+                </button>
+              </div>
+            </div>
+
+            <div class="resumo-grid">
+              <div class="resumo-card">
+                <div class="resumo-icon ic-cinza">
+                  <i class="fas fa-book"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="meResLivros">—</span>
+                  <span class="label">Títulos</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-azul">
+                  <i class="fas fa-bookmark"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="meResExemplares">—</span>
+                  <span class="label">Exemplares</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-verde">
+                  <i class="fas fa-fire"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="meResTop">—</span>
+                  <span class="label">Mais emprestado</span>
+                </div>
+              </div>
+              <div class="resumo-card">
+                <div class="resumo-icon ic-roxo">
+                  <i class="fas fa-crown"></i>
+                </div>
+                <div class="resumo-info">
+                  <span class="valor" id="meResMedia">—</span>
+                  <span class="label">Média/título</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="contador-tabela">
+              <span> <strong id="meContador">0</strong> título(s) </span>
+            </div>
+
+            <div class="tabela-wrapper">
+              <table class="tabela" aria-label="Tabela de dados">
+                <thead>
+                  <tr>
+                    <th class="celula-centro">#</th>
+                    <th>Livro</th>
+                    <th class="intranet-style-676b84ab32">Autores</th>
+                    <th class="intranet-style-8d5f52e1df">Categoria</th>
+                    <th class="celula-centro">
+                      Empréstimos
+                    </th>
+                    <th class="intranet-style-3c41ccda88">Proporção</th>
+                  </tr>
+                </thead>
+                <tbody id="meTbody">
+                  <tr>
+                    <td colspan="6">
+                      <div class="loading-inline">
+                        <i class="fas fa-filter"></i>
+                        Use os filtros e clique em <strong>Aplicar</strong>.
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ABA · RESERVAS -->
+          <div class="aba-conteudo" id="aba-reservas">
+            <div class="filtros">
+              <div class="filtro-grupo"><label>Buscar reserva</label><input id="rvBusca" type="search" placeholder="Livro, leitor ou carteirinha..." aria-label="Buscar reserva"></div>
+              <div class="filtro-grupo"><label>Situação</label><select id="rvStatus" aria-label="Situação da reserva"><option value="">Ativas e históricas</option><option value="ATIVA">Ativa</option><option value="AGUARDANDO_RETIRADA">Aguardando retirada</option><option value="CANCELADA">Cancelada</option><option value="ATENDIDA">Atendida</option></select></div>
+              <div class="filtros-acoes"><button class="btn btn-primary" id="rvBtnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar</button><button class="btn btn-success" id="rvBtnCsv" type="button"><i class="fas fa-file-csv"></i> CSV</button></div>
+            </div>
+            <div class="card-base" style="margin-bottom:1rem"><strong><i class="fas fa-plus-circle"></i> Nova reserva</strong><div class="filtros" style="margin-top:.75rem"><div class="filtro-grupo"><label>Livro</label><select id="rvLivro" aria-label="Livro para reservar"><option value="">Selecione...</option></select></div><div class="filtro-grupo"><label>Leitor</label><select id="rvLeitor" aria-label="Leitor da reserva"><option value="">Selecione...</option></select></div><div class="filtro-grupo" style="flex:1"><label>Observações</label><input id="rvObservacoes" type="text" maxlength="500" placeholder="Opcional"></div><div class="filtros-acoes"><button class="btn btn-primary" id="rvBtnCriar" type="button"><i class="fas fa-calendar-plus"></i> Criar reserva</button></div></div><small id="rvConfigAviso" class="muted">A criação respeita a configuração municipal e os bloqueios ativos.</small></div>
+            <div class="contador-tabela"><span><strong id="rvContador">0</strong> reserva(s)</span><span id="rvEstadoFonte" class="muted"></span></div>
+            <div class="tabela-wrapper"><table class="tabela" aria-label="Gestão de reservas"><thead><tr><th>Livro</th><th>Leitor</th><th>Fila</th><th>Disponibilidade</th><th>Reserva</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="rvTbody"><tr><td colspan="7"><div class="loading-inline">Selecione a aba para carregar.</div></td></tr></tbody></table></div>
+          </div>
+
+          <!-- ABA · BLOQUEIOS -->
+          <div class="aba-conteudo" id="aba-bloqueios">
+            <div class="card-base" style="margin-bottom:1rem"><strong><i class="fas fa-user-lock"></i> Registrar bloqueio operacional</strong><div class="filtros" style="margin-top:.75rem"><div class="filtro-grupo"><label>Leitor</label><select id="blLeitor" aria-label="Leitor a bloquear"><option value="">Selecione...</option></select></div><div class="filtro-grupo" style="flex:1"><label>Motivo</label><input id="blMotivo" type="text" minlength="5" maxlength="500" placeholder="Motivo obrigatório"></div><div class="filtro-grupo"><label>Fim (opcional)</label><input id="blFim" type="date" aria-label="Fim do bloqueio"></div><div class="filtros-acoes"><button class="btn btn-danger" id="blBtnCriar" type="button"><i class="fas fa-lock"></i> Bloquear</button></div></div></div>
+            <div class="filtros"><div class="filtro-grupo"><label>Buscar bloqueio</label><input id="blBusca" type="search" placeholder="Leitor, carteirinha ou motivo..." aria-label="Buscar bloqueio"></div><div class="filtros-acoes"><button class="btn btn-primary" id="blBtnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar</button></div></div>
+            <div class="contador-tabela"><span><strong id="blContador">0</strong> bloqueio(s) ativo(s)</span><span id="blEstadoFonte" class="muted"></span></div>
+            <div class="tabela-wrapper"><table class="tabela" aria-label="Bloqueios ativos"><thead><tr><th>Leitor</th><th>Motivo</th><th>Início</th><th>Fim</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="blTbody"><tr><td colspan="6"><div class="loading-inline">Selecione a aba para carregar.</div></td></tr></tbody></table></div>
+          </div>
+        </main>
+      </div>
     </div>
 
-    <!-- ---------- Grid de cards (preenchido pelo JS) ---------- -->
-    <!--
-      O JS injeta os cards aqui. Cada card tem:
-        · data-relatorio="atas_vencendo" (id único)
-        · ícone + título + descrição curta
-        · classe .relatorio-card (hover/elevação)
-      O clique é tratado por DELEGAÇÃO (um único listener no grid).
-    -->
-    <div class="relatorios-indice-grid" id="relatoriosIndiceGrid">
-      <!-- Conteúdo dinâmico renderizado por relatorios.js -->
-      <!-- Skeleton inicial (substituído assim que o JS monta os cards) -->
-      <div class="relatorio-card-skeleton">
-        <div class="skeleton-line skeleton-line-lg"></div>
-        <div class="skeleton-line skeleton-line-md"></div>
-      </div>
-      <div class="relatorio-card-skeleton">
-        <div class="skeleton-line skeleton-line-lg"></div>
-        <div class="skeleton-line skeleton-line-md"></div>
-      </div>
-      <div class="relatorio-card-skeleton">
-        <div class="skeleton-line skeleton-line-lg"></div>
-        <div class="skeleton-line skeleton-line-md"></div>
-      </div>
-      <div class="relatorio-card-skeleton">
-        <div class="skeleton-line skeleton-line-lg"></div>
-        <div class="skeleton-line skeleton-line-md"></div>
-      </div>
-      <div class="relatorio-card-skeleton">
-        <div class="skeleton-line skeleton-line-lg"></div>
-        <div class="skeleton-line skeleton-line-md"></div>
-      </div>
-      <div class="relatorio-card-skeleton">
-        <div class="skeleton-line skeleton-line-lg"></div>
-        <div class="skeleton-line skeleton-line-md"></div>
-      </div>
-    </div>
-  </div>
+    <!-- NOTIFICAÇÕES -->
+    <div class="notification-center" id="notificationCenter"></div>
 
-  <!-- ============================================================ -->
-  <!-- MODO 2 · RELATÓRIO ATIVO                                      -->
-  <!-- ------------------------------------------------------------ -->
-  <!-- Este bloco começa oculto pela regra centralizada e é          -->
-  <!-- mostrado pelo JS quando o usuário clica num card.             -->
-  <!--                                                              -->
-  <!-- Estrutura:                                                    -->
-  <!--   1. Header com botão ← Voltar + título + subtítulo          -->
-  <!--   2. Área de filtros (injetada dinamicamente pelo JS)         -->
-  <!--   3. Área de KPIs (injetada pelo JS)                          -->
-  <!--   4. Área do gráfico (injetada pelo JS quando aplicável)      -->
-  <!--   5. Área da tabela (injetada pelo JS)                        -->
-  <!--   6. Rodapé com botões de exportação                          -->
-  <!--                                                              -->
-  <!-- Os blocos 2 a 5 têm IDs próprios para o JS referenciar.       -->
-  <!-- ============================================================ -->
-  <div class="relatorios-ativo intranet-style-4bd109053b" id="relatoriosAtivo">
-    <!-- ---------- Cabeçalho do relatório ativo ---------- -->
-    <div class="relatorios-ativo-header">
-      <!-- Botão Voltar (delegação — data-action="voltar-indice") -->
-      <button
-        type="button"
-        class="btn-voltar-relatorio"
-        id="btnVoltarRelatorio"
-        data-action="voltar-indice"
-        title="Voltar para a lista de relatórios"
-      >
-        <i class="fas fa-arrow-left"></i>
-        <span>Voltar</span>
-      </button>
+    <!-- SUPABASE SDK -->
+      <script src="../shared/js/system-shell.js?v=20261019-pacote2-circulacao-2"></script>
+  <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
 
-      <!-- Título + subtítulo (preenchidos pelo JS) -->
-      <div class="relatorios-ativo-titulo-wrapper">
-        <h2 class="relatorios-ativo-titulo" id="relatoriosAtivoTitulo">
-          <!-- Preenchido pelo JS: ex: "Atas Vencendo em X Dias" -->
-          <i class="fas fa-chart-bar"></i>
-          <span class="relatorios-ativo-titulo-texto">Relatório</span>
-        </h2>
-        <p class="relatorios-ativo-subtitulo" id="relatoriosAtivoSubtitulo">
-          <!-- Preenchido pelo JS: ex: "Atas que vencem nos próximos X dias" -->
-        </p>
-      </div>
-    </div>
+    <script type="module">
+import { supabase } from "../shared/js/supabase.js";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261019-pacote2-circulacao-2";
+      await initBibliotecaLayout(supabase);
+      // ============================================
+      // CONFIG SUPABASE
+      // ============================================
+      // ============================================
+      // ESTADO
+      // ============================================
+      let usuarioLogado = null;
+      let categoriasDisponiveis = [];
+      let dadosAcervo = [];
+      let dadosEmprestimos = [];
+      let dadosAtrasados = [];
+      let dadosLeitores = [];
+      let dadosMaisEmprestados = [];
 
-    <!-- ---------- Área de filtros (dinâmica) ---------- -->
-    <!--
-      O JS injeta aqui o formulário de filtros específico do
-      relatório ativo. Cada relatório tem seus próprios campos:
-        · "atas_vencendo"          → [X] dias
-        · "consumo_por_orgao"      → data início + data fim
-        · "consumo_por_categoria"  → data início + data fim
-        · "pedidos_por_status"     → data início + data fim
-        · "pedidos_pendentes"      → [X] dias
-        · "ranking_fornecedores"   → data início + data fim + ordenação
-    -->
-    <div class="relatorios-filtros" id="relatoriosFiltros">
-      <!-- Conteúdo dinâmico renderizado por relatorios.js -->
-    </div>
+      // ============================================
+      // NOTIFICAÇÕES
+      // ============================================
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
 
-    <!-- ---------- Área de KPIs (dinâmica) ---------- -->
-    <!--
-      Cards compactos com números-chave do relatório.
-      Ex: total de atas, valor somado, ticket médio.
-      O JS injeta 2-4 KPIs conforme o relatório.
-    -->
-    <div class="relatorios-kpis intranet-style-4bd109053b" id="relatoriosKpis">
-      <!-- Conteúdo dinâmico renderizado por relatorios.js -->
-    </div>
+      // ============================================
+      // HELPERS
+      // ============================================
+      function escaparHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
 
-    <!-- ---------- Área do gráfico (dinâmica, opcional) ---------- -->
-    <!--
-      Presente em todos os relatórios EXCETO "pedidos_pendentes".
-      O JS mostra/esconde este bloco conforme o relatório ativo
-      e injeta um <canvas> para o Chart.js desenhar.
-    -->
-    <div
-      class="relatorios-grafico-wrapper intranet-style-4bd109053b"
-      id="relatoriosGraficoWrapper"
-     
-    >
-      <div class="relatorios-grafico-card">
-        <div class="relatorios-grafico-header">
-          <h3 class="relatorios-grafico-titulo" id="relatoriosGraficoTitulo">
-            <i class="fas fa-chart-pie"></i>
-            Visualização
-          </h3>
-        </div>
-        <div class="relatorios-grafico-body" id="relatoriosGraficoBody">
-          <!-- O JS injeta um <canvas id="relatoriosGraficoCanvas"> aqui -->
-        </div>
-      </div>
-    </div>
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
 
-    <!-- ---------- Área da tabela (dinâmica) ---------- -->
-    <!--
-      O JS injeta a tabela com os resultados formatados.
-      O contador mostra "N registros encontrados".
-    -->
-    <div class="relatorios-resultado" id="relatoriosResultado">
-      <div class="relatorios-resultado-header">
-        <span class="relatorios-contador" id="relatoriosContador">
-          Carregando...
-        </span>
-      </div>
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
 
-      <div class="relatorios-tabela-container" id="relatoriosTabelaContainer">
-        <!-- Conteúdo dinâmico renderizado por relatorios.js -->
-      </div>
-    </div>
+      function esconderLoading() {
+        document.getElementById("loadingOverlay")?.classList.add("hidden");
+      }
 
-    <!-- ---------- Rodapé de ações (exportação) ---------- -->
-    <!--
-      Botões de exportar SEMPRE visíveis no rodapé do relatório ativo.
-      O JS desabilita-os se não houver dados carregados.
-    -->
-    <div class="relatorios-acoes">
-      <button
-        type="button"
-        class="btn-exportar-relatorio btn-exportar-csv"
-        id="btnExportarRelatorioCSV"
-        title="Exportar resultado para CSV"
-      >
-        <i class="fas fa-file-csv"></i>
-        <span>Exportar CSV</span>
-      </button>
+      function formatarData(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return "—";
+        return d.toLocaleDateString("pt-BR");
+      }
 
-      <button
-        type="button"
-        class="btn-exportar-relatorio btn-exportar-pdf"
-        id="btnExportarRelatorioPDF"
-        title="Exportar resultado para PDF"
-      >
-        <i class="fas fa-file-pdf"></i>
-        <span>Exportar PDF</span>
-      </button>
-    </div>
-  </div>
-</div>
+      function hojeISO() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      }
+
+      function diasAtras(dataISO) {
+        const hj = new Date(hojeISO());
+        const d = new Date(dataISO + "T00:00:00");
+        return Math.floor((hj - d) / (1000 * 60 * 60 * 24));
+      }
+
+      function labelStatus(s) {
+        const map = {
+          ABERTO: "Aberto",
+          PARCIAL: "Parcial",
+          DEVOLVIDO: "Devolvido",
+          CANCELADO: "Cancelado",
+        };
+        return map[s] || s || "—";
+      }
+
+      // ============================================
+      // EXPORT CSV
+      // ============================================
+      function exportarCsv(nomeArquivo, colunas, linhas) {
+        try {
+          const cabecalho = colunas
+            .map((c) => `"${c.replace(/"/g, '""')}"`)
+            .join(";");
+
+          const corpo = linhas
+            .map((linha) =>
+              colunas
+                .map((_, idx) => {
+                  const v =
+                    linha[idx] === null || linha[idx] === undefined
+                      ? ""
+                      : String(linha[idx]);
+                  return `"${v.replace(/"/g, '""')}"`;
+                })
+                .join(";"),
+            )
+            .join("\n");
+
+          // BOM UTF-8 para o Excel abrir corretamente
+          const conteudo = "\uFEFF" + cabecalho + "\n" + corpo;
+
+          const blob = new Blob([conteudo], {
+            type: "text/csv;charset=utf-8;",
+          });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = nomeArquivo;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+
+          window.showNotification(
+            "success",
+            "CSV exportado",
+            `${linhas.length} linha(s) exportada(s) para "${nomeArquivo}".`,
+          );
+        } catch (err) {
+          console.error(err);
+          window.showNotification(
+            "error",
+            "Erro ao exportar",
+            err.message || "Não foi possível gerar o arquivo CSV.",
+          );
+        }
+      }
+
+      // ============================================
+      // ATALHOS DE DATA
+      // ============================================
+      function inicializarAtalhosDatas(containerId, inputInicioId, inputFimId) {
+        document
+          .querySelectorAll(`#${containerId} .atalho-data`)
+          .forEach((btn) => {
+            btn.addEventListener("click", () => {
+              // Marca visualmente
+              document
+                .querySelectorAll(`#${containerId} .atalho-data`)
+                .forEach((b) => b.classList.remove("ativo"));
+              btn.classList.add("ativo");
+
+              const hj = new Date();
+              let inicio = new Date(hj);
+              let fim = new Date(hj);
+
+              if (btn.dataset.dias) {
+                const d = parseInt(btn.dataset.dias);
+                inicio.setDate(hj.getDate() - d);
+              } else if (btn.dataset.mes) {
+                inicio = new Date(hj.getFullYear(), hj.getMonth(), 1);
+              } else if (btn.dataset.ano) {
+                inicio = new Date(hj.getFullYear(), 0, 1);
+              }
+
+              const fmt = (d) =>
+                `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+              document.getElementById(inputInicioId).value = fmt(inicio);
+              document.getElementById(inputFimId).value = fmt(fim);
+            });
+          });
+      }
+
+      // ============================================
+      // SESSÃO
+      // ============================================
+      async function verificarSessao() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        const { data: perfil, error } = await supabase
+          .from("usuarios")
+          .select("id, uuid, nome, email, perfil, ativo")
+          .eq("uuid", session.user.id)
+          .maybeSingle();
+
+        if (error || !perfil || perfil.ativo === false) {
+          window.location.href = "../intranet.html";
+          return null;
+        }
+
+        usuarioLogado = perfil;
+        return perfil;
+      }
+
+      function renderizarUsuario() {
+        if (!usuarioLogado) return;
+        setTexto("topbarNome", usuarioLogado.nome || "—");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+        );
+        const el = document.getElementById("avatarIniciais");
+        if (el) el.textContent = iniciais(usuarioLogado.nome);
+
+        // Preenche o dropdown do avatar
+        setTexto("menuNome", usuarioLogado.nome || "—");
+        setTexto("menuEmail", usuarioLogado.email || "—");
+      }
+
+      // ============================================
+      // MENU DO AVATAR (dropdown)
+      // ============================================
+      
+
+      // ============================================
+      // CARREGAR CATEGORIAS (para o filtro de acervo)
+      // ============================================
+      async function carregarCategorias() {
+        const { data } = await supabase
+          .from("bib_categorias")
+          .select("id, nome")
+          .eq("ativo", true)
+          .order("nome");
+        categoriasDisponiveis = data || [];
+
+        const sel = document.getElementById("acFiltroCategoria");
+        sel.innerHTML = '<option value="">Todas</option>';
+        categoriasDisponiveis.forEach((c) => {
+          sel.innerHTML += `<option value="${c.id}">${escaparHtml(c.nome)}</option>`;
+        });
+      }
+
+      // ============================================
+      // ABA · ACERVO
+      // ============================================
+      async function carregarAcervo() {
+        const tbody = document.getElementById("acTbody");
+        tbody.innerHTML = `<tr><td colspan="7"><div class="loading-inline"><i class="fas fa-spinner fa-spin"></i> Carregando...</div></td></tr>`;
+
+        const { data, error } = await supabase
+          .from("bib_livros")
+          .select(
+            `
+            id, titulo, isbn, ano_publicacao, ativo,
+            editora: bib_editoras ( id, nome ),
+            autores: bib_livro_autores ( autor: bib_autores ( id, nome ) ),
+            categorias: bib_livro_categorias ( categoria: bib_categorias ( id, nome, cor ) ),
+            exemplares: bib_exemplares ( id, situacao )
+          `,
+          )
+          .order("titulo", { ascending: true })
+          .limit(1000);
+
+        if (error) {
+          console.error(error);
+          tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Erro ao carregar acervo.</div></td></tr>`;
+          return;
+        }
+
+        dadosAcervo = data || [];
+        aplicarFiltrosAcervo();
+      }
+
+      function aplicarFiltrosAcervo() {
+        const busca = document
+          .getElementById("acBusca")
+          .value.trim()
+          .toLowerCase();
+        const filtroCat = document.getElementById("acFiltroCategoria").value;
+        const filtroDisp = document.getElementById(
+          "acFiltroDisponibilidade",
+        ).value;
+
+        let resultado = dadosAcervo.slice();
+
+        if (busca) {
+          resultado = resultado.filter((l) => {
+            const autores = (l.autores || [])
+              .map((a) => a.autor?.nome)
+              .join(" ");
+            const alvo = [l.titulo, l.isbn, autores]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            return alvo.includes(busca);
+          });
+        }
+
+        if (filtroCat) {
+          const idCat = parseInt(filtroCat);
+          resultado = resultado.filter((l) =>
+            (l.categorias || []).some((c) => c.categoria?.id === idCat),
+          );
+        }
+
+        if (filtroDisp === "com-exemplares") {
+          resultado = resultado.filter((l) => (l.exemplares || []).length > 0);
+        } else if (filtroDisp === "sem-exemplares") {
+          resultado = resultado.filter(
+            (l) => (l.exemplares || []).length === 0,
+          );
+        } else if (filtroDisp === "com-disponiveis") {
+          resultado = resultado.filter((l) =>
+            (l.exemplares || []).some((e) => e.situacao === "DISPONIVEL"),
+          );
+        }
+
+        // Resumo
+        const totalLivros = resultado.length;
+        const totalExemplares = resultado.reduce(
+          (acc, l) => acc + (l.exemplares || []).length,
+          0,
+        );
+        const totalDisponiveis = resultado.reduce(
+          (acc, l) =>
+            acc +
+            (l.exemplares || []).filter((e) => e.situacao === "DISPONIVEL")
+              .length,
+          0,
+        );
+        const totalEmprestados = resultado.reduce(
+          (acc, l) =>
+            acc +
+            (l.exemplares || []).filter((e) => e.situacao === "EMPRESTADO")
+              .length,
+          0,
+        );
+        const totalIndisponiveis = totalExemplares - totalDisponiveis;
+
+        setTexto("acResTotal", totalLivros);
+        setTexto("acResExemplares", totalExemplares);
+        setTexto("acResDisponiveis", totalDisponiveis);
+        setTexto("acResEmprestados", totalEmprestados);
+        setTexto("acResIndisponiveis", totalIndisponiveis);
+        setTexto("acContador", resultado.length);
+
+        renderizarTabelaAcervo(resultado);
+      }
+
+      function renderizarTabelaAcervo(livros) {
+        const tbody = document.getElementById("acTbody");
+
+        if (livros.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-book"></i> Nenhum livro encontrado.</div></td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = livros
+          .map((l) => {
+            const autores = (l.autores || [])
+              .map((a) => a.autor?.nome)
+              .filter(Boolean)
+              .join(", ");
+            const cats = (l.categorias || [])
+              .map((c) => c.categoria)
+              .filter(Boolean);
+            const exemplares = l.exemplares || [];
+            const disponiveis = exemplares.filter(
+              (e) => e.situacao === "DISPONIVEL",
+            ).length;
+
+            const editoraAno = [l.editora?.nome, l.ano_publicacao]
+              .filter(Boolean)
+              .join(" · ");
+
+            const situacaoBadge =
+              exemplares.length === 0
+                ? `<span class="badge badge-cinza">Sem exemplares</span>`
+                : disponiveis > 0
+                  ? `<span class="badge badge-verde">Disponível</span>`
+                  : `<span class="badge badge-vermelho">Indisponível</span>`;
+
+            return `
+              <tr>
+                <td>
+                  <strong data-intranet-inline-style="is76d5c94cc3a1">${escaparHtml(l.titulo)}</strong>
+                  ${l.isbn ? `<div data-intranet-inline-style="is2397fea9859f">${escaparHtml(l.isbn)}</div>` : ""}
+                </td>
+                <td data-intranet-inline-style="is5ece02ac3cc0">${escaparHtml(autores || "—")}</td>
+                <td>
+                  ${
+                    cats.length > 0
+                      ? cats
+                          .slice(0, 2)
+                          .map(
+                            (c) =>
+                              `<span class="badge" style="background:${c.cor}22;color:${c.cor};border:1px solid ${c.cor}55;margin-right:2px;">${escaparHtml(c.nome)}</span>`,
+                          )
+                          .join("") +
+                        (cats.length > 2
+                          ? `<span class="badge badge-cinza">+${cats.length - 2}</span>`
+                          : "")
+                      : `<span data-intranet-inline-style="ised5976318678">—</span>`
+                  }
+                </td>
+                <td data-intranet-inline-style="is58d79b70eb77">${escaparHtml(editoraAno || "—")}</td>
+                <td class="celula-centro"><strong>${exemplares.length}</strong></td>
+                <td class="celula-centro">
+                  <span class="badge ${disponiveis > 0 ? "badge-verde" : "badge-cinza"}">${disponiveis}</span>
+                </td>
+                <td class="celula-centro">${situacaoBadge}</td>
+              </tr>
+            `;
+          })
+          .join("");
+      }
+
+      document
+        .getElementById("acBusca")
+        .addEventListener("input", aplicarFiltrosAcervo);
+      document
+        .getElementById("acFiltroCategoria")
+        .addEventListener("change", aplicarFiltrosAcervo);
+      document
+        .getElementById("acFiltroDisponibilidade")
+        .addEventListener("change", aplicarFiltrosAcervo);
+
+      document.getElementById("acBtnLimpar").addEventListener("click", () => {
+        document.getElementById("acBusca").value = "";
+        document.getElementById("acFiltroCategoria").value = "";
+        document.getElementById("acFiltroDisponibilidade").value = "";
+        aplicarFiltrosAcervo();
+      });
+
+      document.getElementById("acBtnCsv").addEventListener("click", () => {
+        const colunas = [
+          "Título",
+          "ISBN",
+          "Autores",
+          "Categorias",
+          "Editora",
+          "Ano",
+          "Exemplares",
+          "Disponíveis",
+        ];
+        const linhas = dadosAcervo.map((l) => {
+          const autores = (l.autores || [])
+            .map((a) => a.autor?.nome)
+            .filter(Boolean)
+            .join(", ");
+          const cats = (l.categorias || [])
+            .map((c) => c.categoria?.nome)
+            .filter(Boolean)
+            .join(", ");
+          const exs = (l.exemplares || []).length;
+          const disp = (l.exemplares || []).filter(
+            (e) => e.situacao === "DISPONIVEL",
+          ).length;
+          return [
+            l.titulo,
+            l.isbn,
+            autores,
+            cats,
+            l.editora?.nome,
+            l.ano_publicacao,
+            exs,
+            disp,
+          ];
+        });
+        exportarCsv(`acervo-${hojeISO()}.csv`, colunas, linhas);
+      });
+
+      document
+        .getElementById("acBtnImprimir")
+        .addEventListener("click", () => window.print());
+
+      // ============================================
+      // ABA · EMPRÉSTIMOS
+      // ============================================
+      async function carregarEmprestimos() {
+        const tbody = document.getElementById("emTbody");
+        tbody.innerHTML = `<tr><td colspan="8"><div class="loading-inline"><i class="fas fa-spinner fa-spin"></i> Carregando...</div></td></tr>`;
+
+        let query = supabase
+          .from("bib_emprestimos")
+          .select(
+            `
+            id, codigo, status, data_retirada, prazo_devolucao,
+            leitor: bib_leitores ( id, nome, codigo_carteirinha, telefone ),
+            itens: bib_emprestimo_itens (
+              id, data_devolucao, dias_atraso,
+              exemplar: bib_exemplares ( id, codigo, livro: bib_livros ( id, titulo ) )
+            )
+          `,
+          )
+          .order("data_retirada", { ascending: false })
+          .limit(1000);
+
+        const dataInicio = document.getElementById("emDataInicio").value;
+        const dataFim = document.getElementById("emDataFim").value;
+        const status = document.getElementById("emFiltroStatus").value;
+
+        if (dataInicio)
+          query = query.gte("data_retirada", dataInicio + "T00:00:00");
+        if (dataFim) query = query.lte("data_retirada", dataFim + "T23:59:59");
+        if (status) query = query.eq("status", status);
+
+        const { data, error } = await query;
+        if (error) {
+          console.error(error);
+          tbody.innerHTML = `<tr><td colspan="8"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Erro ao carregar empréstimos.</div></td></tr>`;
+          return;
+        }
+
+        dadosEmprestimos = data || [];
+
+        // Resumo
+        const total = dadosEmprestimos.length;
+        const totalItens = dadosEmprestimos.reduce(
+          (acc, e) => acc + (e.itens || []).length,
+          0,
+        );
+        const devolvidos = dadosEmprestimos.filter(
+          (e) => e.status === "DEVOLVIDO",
+        ).length;
+        const abertos = dadosEmprestimos.filter(
+          (e) => e.status === "ABERTO" || e.status === "PARCIAL",
+        ).length;
+        const atrasados = dadosEmprestimos.filter((e) => {
+          if (e.status !== "ABERTO" && e.status !== "PARCIAL") return false;
+          const prazo = new Date(e.prazo_devolucao + "T00:00:00");
+          return prazo < new Date(hojeISO());
+        }).length;
+
+        setTexto("emResTotal", total);
+        setTexto("emResExemplares", totalItens);
+        setTexto("emResDevolvidos", devolvidos);
+        setTexto("emResAbertos", abertos);
+        setTexto("emResAtrasados", atrasados);
+        setTexto("emContador", total);
+
+        renderizarTabelaEmprestimos(dadosEmprestimos);
+      }
+
+      function renderizarTabelaEmprestimos(emps) {
+        const tbody = document.getElementById("emTbody");
+
+        if (emps.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8"><div class="lista-vazia"><i class="fas fa-inbox"></i> Nenhum empréstimo encontrado com os filtros atuais.</div></td></tr>`;
+          return;
+        }
+
+        const hj = new Date(hojeISO());
+
+        tbody.innerHTML = emps
+          .map((e) => {
+            const itens = e.itens || [];
+            const total = itens.length;
+            const devolvidos = itens.filter((i) => i.data_devolucao).length;
+            const pendentes = total - devolvidos;
+
+            const prazoDate = new Date(e.prazo_devolucao + "T00:00:00");
+            const emAtraso = pendentes > 0 && prazoDate < hj;
+
+            let statusLabel, statusClass;
+            if (e.status === "CANCELADO") {
+              statusLabel = "Cancelado";
+              statusClass = "badge-roxo";
+            } else if (e.status === "DEVOLVIDO") {
+              statusLabel = "Devolvido";
+              statusClass = "badge-cinza";
+            } else if (emAtraso) {
+              statusLabel = "Atrasado";
+              statusClass = "badge-vermelho";
+            } else if (e.status === "PARCIAL") {
+              statusLabel = "Parcial";
+              statusClass = "badge-amarelo";
+            } else {
+              statusLabel = "Aberto";
+              statusClass = "badge-verde";
+            }
+
+            const maiorAtraso = Math.max(
+              ...itens.map((i) => i.dias_atraso || 0),
+              0,
+            );
+            const atrasoHtml =
+              maiorAtraso > 0
+                ? `<span class="badge badge-vermelho">${maiorAtraso}d</span>`
+                : `<span data-intranet-inline-style="is610e58bf99ff">—</span>`;
+
+            const ultimaDevolucao = itens
+              .filter((i) => i.data_devolucao)
+              .map((i) => i.data_devolucao)
+              .sort()
+              .pop();
+
+            return `
+              <tr>
+                <td><span class="codigo-mono">${escaparHtml(e.codigo)}</span></td>
+                <td>
+                  <strong data-intranet-inline-style="is76d5c94cc3a1">${escaparHtml(e.leitor?.nome || "—")}</strong>
+                  ${e.leitor?.codigo_carteirinha ? `<div data-intranet-inline-style="is96a27d4632da">${escaparHtml(e.leitor.codigo_carteirinha)}</div>` : ""}
+                </td>
+                <td class="celula-centro">
+                  <strong>${total}</strong>
+                  ${devolvidos > 0 && devolvidos < total ? `<div data-intranet-inline-style="is0abd2bb530c5">${devolvidos} devolv.</div>` : ""}
+                </td>
+                <td data-intranet-inline-style="ise0f1c448f784">${formatarData(e.data_retirada)}</td>
+                <td data-intranet-inline-style="ise0f1c448f784">${formatarData(e.prazo_devolucao)}</td>
+                <td data-intranet-inline-style="ise0f1c448f784">${ultimaDevolucao ? formatarData(ultimaDevolucao) : "—"}</td>
+                <td class="celula-centro"><span class="badge ${statusClass}">${statusLabel}</span></td>
+                <td class="celula-centro">${atrasoHtml}</td>
+              </tr>
+            `;
+          })
+          .join("");
+      }
+
+      document
+        .getElementById("emBtnFiltrar")
+        .addEventListener("click", carregarEmprestimos);
+      document.getElementById("emBtnLimpar").addEventListener("click", () => {
+        document.getElementById("emDataInicio").value = "";
+        document.getElementById("emDataFim").value = "";
+        document.getElementById("emFiltroStatus").value = "";
+        document
+          .querySelectorAll("#aba-emprestimos .atalho-data")
+          .forEach((b) => b.classList.remove("ativo"));
+        carregarEmprestimos();
+      });
+
+      document.getElementById("emBtnCsv").addEventListener("click", () => {
+        const colunas = [
+          "Código",
+          "Leitor",
+          "Carteirinha",
+          "Itens",
+          "Retirada",
+          "Prazo",
+          "Última devolução",
+          "Status",
+        ];
+        const linhas = dadosEmprestimos.map((e) => {
+          const itens = e.itens || [];
+          const ultimaDev = itens
+            .filter((i) => i.data_devolucao)
+            .map((i) => i.data_devolucao)
+            .sort()
+            .pop();
+          return [
+            e.codigo,
+            e.leitor?.nome,
+            e.leitor?.codigo_carteirinha,
+            itens.length,
+            formatarData(e.data_retirada),
+            formatarData(e.prazo_devolucao),
+            ultimaDev ? formatarData(ultimaDev) : "",
+            labelStatus(e.status),
+          ];
+        });
+        exportarCsv(`emprestimos-${hojeISO()}.csv`, colunas, linhas);
+      });
+
+      document
+        .getElementById("emBtnImprimir")
+        .addEventListener("click", () => window.print());
+
+      // ============================================
+      // ABA · ATRASADOS
+      // ============================================
+      async function carregarAtrasados() {
+        const tbody = document.getElementById("atTbody");
+        tbody.innerHTML = `<tr><td colspan="7"><div class="loading-inline"><i class="fas fa-spinner fa-spin"></i> Carregando...</div></td></tr>`;
+
+        const hoje = hojeISO();
+
+        const { data, error } = await supabase
+          .from("bib_emprestimos")
+          .select(
+            `
+            id, codigo, status, prazo_devolucao,
+            leitor: bib_leitores ( id, nome, codigo_carteirinha, telefone ),
+            itens: bib_emprestimo_itens (
+              id, data_devolucao, exemplar: bib_exemplares ( id, codigo, livro: bib_livros ( id, titulo ) )
+            )
+          `,
+          )
+          .in("status", ["ABERTO", "PARCIAL"])
+          .lt("prazo_devolucao", hoje)
+          .order("prazo_devolucao", { ascending: true })
+          .limit(1000);
+
+        if (error) {
+          console.error(error);
+          tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Erro ao carregar atrasados.</div></td></tr>`;
+          return;
+        }
+
+        dadosAtrasados = data || [];
+        aplicarFiltrosAtrasados();
+      }
+
+      function aplicarFiltrosAtrasados() {
+        const busca = document
+          .getElementById("atBusca")
+          .value.trim()
+          .toLowerCase();
+        const minDias =
+          parseInt(document.getElementById("atMinDias").value) || 1;
+
+        let resultado = dadosAtrasados
+          .map((e) => {
+            const dias = diasAtras(e.prazo_devolucao);
+            return { ...e, _diasAtraso: dias };
+          })
+          .filter((e) => e._diasAtraso >= minDias);
+
+        if (busca) {
+          resultado = resultado.filter((e) => {
+            const itens = (e.itens || [])
+              .map((i) => i.exemplar?.livro?.titulo)
+              .join(" ");
+            const alvo = [e.leitor?.nome, e.leitor?.codigo_carteirinha, itens]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            return alvo.includes(busca);
+          });
+        }
+
+        // Resumo
+        const totalEmprestimos = resultado.length;
+        const leitoresUnicos = new Set(resultado.map((e) => e.leitor?.id)).size;
+        const totalExemplares = resultado.reduce(
+          (acc, e) => acc + (e.itens || []).length,
+          0,
+        );
+        const mediaDias =
+          totalEmprestimos > 0
+            ? Math.round(
+                resultado.reduce((acc, e) => acc + e._diasAtraso, 0) /
+                  totalEmprestimos,
+              )
+            : 0;
+
+        setTexto("atResTotal", totalEmprestimos);
+        setTexto("atResLeitores", leitoresUnicos);
+        setTexto("atResExemplares", totalExemplares);
+        setTexto("atResMediaDias", mediaDias);
+
+        setTexto("atContador", totalEmprestimos);
+
+        renderizarTabelaAtrasados(resultado);
+      }
+
+      function renderizarTabelaAtrasados(emps) {
+        const tbody = document.getElementById("atTbody");
+
+        if (emps.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-circle-check" data-intranet-inline-style="is65f68b342265"></i> Nenhum empréstimo em atraso. Excelente!</div></td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = emps
+          .map((e) => {
+            const itens = e.itens || [];
+            const pendentes = itens.filter((i) => !i.data_devolucao).length;
+
+            return `
+              <tr>
+                <td><span class="codigo-mono">${escaparHtml(e.codigo)}</span></td>
+                <td>
+                  <strong data-intranet-inline-style="is76d5c94cc3a1">${escaparHtml(e.leitor?.nome || "—")}</strong>
+                  ${e.leitor?.codigo_carteirinha ? `<div data-intranet-inline-style="is96a27d4632da">${escaparHtml(e.leitor.codigo_carteirinha)}</div>` : ""}
+                </td>
+                <td data-intranet-inline-style="ise0f1c448f784">
+                  ${e.leitor?.telefone ? `<i class="fas fa-phone" data-intranet-inline-style="is07f43e852dfe"></i> ${escaparHtml(e.leitor.telefone)}` : `<span data-intranet-inline-style="is610e58bf99ff">—</span>`}
+                </td>
+                <td class="celula-centro">
+                  <strong>${pendentes}</strong>
+                  ${itens.length > pendentes ? `<div data-intranet-inline-style="is0abd2bb530c5">de ${itens.length}</div>` : ""}
+                </td>
+                <td data-intranet-inline-style="ise0f1c448f784">${formatarData(e.prazo_devolucao)}</td>
+                <td class="celula-centro">
+                  <span class="badge badge-vermelho">${e._diasAtraso} dia${e._diasAtraso !== 1 ? "s" : ""}</span>
+                </td>
+                <td class="celula-centro">
+                  <button class="btn btn-secondary" data-intranet-inline-style="isce474c6f90c8" onclick="window.location.href='devolucoes.html?id=${e.id}'" type="button">
+                    <i class="fas fa-rotate-left"></i> Devolver
+                  </button>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+      }
+
+      document
+        .getElementById("atBusca")
+        .addEventListener("input", aplicarFiltrosAtrasados);
+      document
+        .getElementById("atMinDias")
+        .addEventListener("input", aplicarFiltrosAtrasados);
+
+      document.getElementById("atBtnLimpar").addEventListener("click", () => {
+        document.getElementById("atBusca").value = "";
+        document.getElementById("atMinDias").value = "1";
+        aplicarFiltrosAtrasados();
+      });
+
+      document.getElementById("atBtnCsv").addEventListener("click", () => {
+        const colunas = [
+          "Código",
+          "Leitor",
+          "Carteirinha",
+          "Telefone",
+          "Itens",
+          "Prazo",
+          "Dias atraso",
+        ];
+        const linhas = dadosAtrasados.map((e) => {
+          const dias = diasAtras(e.prazo_devolucao);
+          const pendentes = (e.itens || []).filter(
+            (i) => !i.data_devolucao,
+          ).length;
+          return [
+            e.codigo,
+            e.leitor?.nome,
+            e.leitor?.codigo_carteirinha,
+            e.leitor?.telefone,
+            pendentes,
+            formatarData(e.prazo_devolucao),
+            dias,
+          ];
+        });
+        exportarCsv(`atrasados-${hojeISO()}.csv`, colunas, linhas);
+      });
+
+      document
+        .getElementById("atBtnImprimir")
+        .addEventListener("click", () => window.print());
+
+      // ============================================
+      // ABA · LEITORES
+      // ============================================
+      async function carregarLeitores() {
+        const tbody = document.getElementById("leTbody");
+        tbody.innerHTML = `<tr><td colspan="7"><div class="loading-inline"><i class="fas fa-spinner fa-spin"></i> Carregando...</div></td></tr>`;
+
+        const { data, error } = await supabase
+          .from("bib_leitores")
+          .select(
+            `
+            id, nome, cpf, codigo_carteirinha, telefone, email, status, tipo_leitor,
+            emprestimos: bib_emprestimos ( id, status )
+          `,
+          )
+          .order("nome", { ascending: true })
+          .limit(2000);
+
+        if (error) {
+          console.error(error);
+          tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Erro ao carregar leitores.</div></td></tr>`;
+          return;
+        }
+
+        dadosLeitores = data || [];
+        aplicarFiltrosLeitores();
+      }
+
+      function aplicarFiltrosLeitores() {
+        const busca = document
+          .getElementById("leBusca")
+          .value.trim()
+          .toLowerCase();
+        const status = document.getElementById("leFiltroStatus").value;
+        const tipo = document.getElementById("leFiltroTipo").value;
+
+        let resultado = dadosLeitores.map((l) => {
+          const emps = l.emprestimos || [];
+          const ativos = emps.filter(
+            (e) => e.status === "ABERTO" || e.status === "PARCIAL",
+          ).length;
+          const total = emps.length;
+          return { ...l, _ativos: ativos, _total: total };
+        });
+
+        if (busca) {
+          resultado = resultado.filter((l) => {
+            const alvo = [l.nome, l.cpf, l.codigo_carteirinha, l.email]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            return alvo.includes(busca);
+          });
+        }
+        if (status) resultado = resultado.filter((l) => l.status === status);
+        if (tipo) resultado = resultado.filter((l) => l.tipo_leitor === tipo);
+
+        // Ordena por total de empréstimos (desc)
+        resultado.sort((a, b) => b._total - a._total);
+
+        // Resumo
+        const total = resultado.length;
+        const ativos = resultado.filter((l) => l.status === "ATIVO").length;
+        const comEmprestimos = resultado.filter((l) => l._total > 0).length;
+        const media =
+          total > 0
+            ? (resultado.reduce((acc, l) => acc + l._total, 0) / total).toFixed(
+                1,
+              )
+            : "0";
+
+        setTexto("leResTotal", total);
+        setTexto("leResAtivos", ativos);
+        setTexto("leResComEmprestimos", comEmprestimos);
+        setTexto("leResMedia", media);
+        setTexto("leContador", total);
+
+        renderizarTabelaLeitores(resultado);
+      }
+
+      function renderizarTabelaLeitores(leitores) {
+        const tbody = document.getElementById("leTbody");
+
+        if (leitores.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-users"></i> Nenhum leitor encontrado.</div></td></tr>`;
+          return;
+        }
+
+        const maxTotal = Math.max(...leitores.map((l) => l._total), 1);
+
+        tbody.innerHTML = leitores
+          .map((l, idx) => {
+            const pct = Math.round((l._total / maxTotal) * 100);
+            const contato =
+              [l.telefone, l.email].filter(Boolean).join(" · ") || "—";
+
+            return `
+              <tr>
+                <td class="celula-centro"><strong>${idx + 1}</strong></td>
+                <td>
+                  <strong data-intranet-inline-style="is76d5c94cc3a1">${escaparHtml(l.nome)}</strong>
+                  <div data-intranet-inline-style="is9f6963333660">${escaparHtml(l.cpf || "CPF não informado")}</div>
+                </td>
+                <td><span class="codigo-mono">${escaparHtml(l.codigo_carteirinha || "—")}</span></td>
+                <td data-intranet-inline-style="is58d79b70eb77">${escaparHtml(contato)}</td>
+                <td class="celula-centro">
+                  ${
+                    l._ativos > 0
+                      ? `<span class="badge badge-verde">${l._ativos}</span>`
+                      : `<span data-intranet-inline-style="is610e58bf99ff">—</span>`
+                  }
+                </td>
+                <td class="celula-centro"><strong>${l._total}</strong></td>
+                <td>
+                  <div class="barra-progresso">
+                    <div class="barra"><div class="fill" style="width:${pct}%"></div></div>
+                    <span class="valor">${l._total}</span>
+                  </div>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+      }
+
+      document
+        .getElementById("leBusca")
+        .addEventListener("input", aplicarFiltrosLeitores);
+      document
+        .getElementById("leFiltroStatus")
+        .addEventListener("change", aplicarFiltrosLeitores);
+      document
+        .getElementById("leFiltroTipo")
+        .addEventListener("change", aplicarFiltrosLeitores);
+
+      document.getElementById("leBtnLimpar").addEventListener("click", () => {
+        document.getElementById("leBusca").value = "";
+        document.getElementById("leFiltroStatus").value = "";
+        document.getElementById("leFiltroTipo").value = "";
+        aplicarFiltrosLeitores();
+      });
+
+      document.getElementById("leBtnCsv").addEventListener("click", () => {
+        const colunas = [
+          "Nome",
+          "CPF",
+          "Carteirinha",
+          "Telefone",
+          "E-mail",
+          "Tipo",
+          "Status",
+          "Empréstimos ativos",
+          "Empréstimos totais",
+        ];
+        const linhas = dadosLeitores
+          .map((l) => {
+            const emps = l.emprestimos || [];
+            const ativos = emps.filter(
+              (e) => e.status === "ABERTO" || e.status === "PARCIAL",
+            ).length;
+            return [
+              l.nome,
+              l.cpf,
+              l.codigo_carteirinha,
+              l.telefone,
+              l.email,
+              l.tipo_leitor,
+              l.status,
+              ativos,
+              emps.length,
+            ];
+          })
+          .sort((a, b) => b[8] - a[8]);
+        exportarCsv(`leitores-${hojeISO()}.csv`, colunas, linhas);
+      });
+
+      document
+        .getElementById("leBtnImprimir")
+        .addEventListener("click", () => window.print());
+
+      // ============================================
+      // ABA · MAIS EMPRESTADOS
+      // ============================================
+      async function carregarMaisEmprestados() {
+        const tbody = document.getElementById("meTbody");
+        tbody.innerHTML = `<tr><td colspan="6"><div class="loading-inline"><i class="fas fa-spinner fa-spin"></i> Carregando...</div></td></tr>`;
+
+        const dataInicio = document.getElementById("meDataInicio").value;
+        const dataFim = document.getElementById("meDataFim").value;
+
+        let query = supabase
+          .from("bib_emprestimo_itens")
+          .select(
+            `
+            id,
+            emprestimo: bib_emprestimos!inner ( id, data_retirada, status ),
+            exemplar: bib_exemplares!inner (
+              id, livro: bib_livros!inner (
+                id, titulo, isbn,
+                autores: bib_livro_autores ( autor: bib_autores ( id, nome ) ),
+                categorias: bib_livro_categorias ( categoria: bib_categorias ( id, nome, cor ) )
+              )
+            )
+          `,
+          )
+          .limit(5000);
+
+        if (dataInicio)
+          query = query.gte(
+            "emprestimo.data_retirada",
+            dataInicio + "T00:00:00",
+          );
+        if (dataFim)
+          query = query.lte("emprestimo.data_retirada", dataFim + "T23:59:59");
+
+        const { data, error } = await query;
+        if (error) {
+          console.error(error);
+          tbody.innerHTML = `<tr><td colspan="6"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Erro ao carregar dados.</div></td></tr>`;
+          return;
+        }
+
+        // Agrupa por livro
+        const porLivro = new Map();
+        (data || []).forEach((item) => {
+          const livro = item.exemplar?.livro;
+          if (!livro) return;
+          if (!porLivro.has(livro.id)) {
+            porLivro.set(livro.id, {
+              livro,
+              emprestimos: 0,
+              exemplares: new Set(),
+            });
+          }
+          const reg = porLivro.get(livro.id);
+          reg.emprestimos++;
+          if (item.exemplar?.id) reg.exemplares.add(item.exemplar.id);
+        });
+
+        dadosMaisEmprestados = Array.from(porLivro.values())
+          .map((r) => ({
+            ...r,
+            exemplares: r.exemplares.size,
+          }))
+          .sort((a, b) => b.emprestimos - a.emprestimos);
+
+        // Resumo
+        const totalLivros = dadosMaisEmprestados.length;
+        const totalExemplares = dadosMaisEmprestados.reduce(
+          (acc, r) => acc + r.exemplares,
+          0,
+        );
+        const totalEmprestimos = dadosMaisEmprestados.reduce(
+          (acc, r) => acc + r.emprestimos,
+          0,
+        );
+        const top = dadosMaisEmprestados[0];
+        const media =
+          totalLivros > 0 ? (totalEmprestimos / totalLivros).toFixed(1) : "0";
+
+        setTexto("meResLivros", totalLivros);
+        setTexto("meResExemplares", totalExemplares);
+        setTexto("meResTop", top ? top.emprestimos : 0);
+        setTexto("meResMedia", media);
+        setTexto("meContador", totalLivros);
+
+        renderizarTabelaMaisEmprestados(dadosMaisEmprestados);
+      }
+
+      function renderizarTabelaMaisEmprestados(registros) {
+        const tbody = document.getElementById("meTbody");
+
+        if (registros.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6"><div class="lista-vazia"><i class="fas fa-fire"></i> Nenhum empréstimo registrado no período.</div></td></tr>`;
+          return;
+        }
+
+        const maxEmp = Math.max(...registros.map((r) => r.emprestimos), 1);
+
+        tbody.innerHTML = registros
+          .map((r, idx) => {
+            const livro = r.livro;
+            const autores = (livro.autores || [])
+              .map((a) => a.autor?.nome)
+              .filter(Boolean)
+              .join(", ");
+            const cats = (livro.categorias || [])
+              .map((c) => c.categoria)
+              .filter(Boolean);
+
+            const pct = Math.round((r.emprestimos / maxEmp) * 100);
+            const medalha =
+              idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "";
+
+            return `
+              <tr>
+                <td class="celula-centro">
+                  <strong>${medalha || idx + 1}</strong>
+                </td>
+                <td>
+                  <strong data-intranet-inline-style="is76d5c94cc3a1">${escaparHtml(livro.titulo)}</strong>
+                  ${livro.isbn ? `<div data-intranet-inline-style="is96a27d4632da">${escaparHtml(livro.isbn)}</div>` : ""}
+                </td>
+                <td data-intranet-inline-style="is58d79b70eb77">${escaparHtml(autores || "—")}</td>
+                <td>
+                  ${
+                    cats.length > 0
+                      ? cats
+                          .slice(0, 2)
+                          .map(
+                            (c) =>
+                              `<span class="badge" style="background:${c.cor}22;color:${c.cor};border:1px solid ${c.cor}55;margin-right:2px;">${escaparHtml(c.nome)}</span>`,
+                          )
+                          .join("")
+                      : `<span data-intranet-inline-style="ised5976318678">—</span>`
+                  }
+                </td>
+                <td class="celula-centro"><strong>${r.emprestimos}</strong></td>
+                <td>
+                  <div class="barra-progresso">
+                    <div class="barra"><div class="fill" style="width:${pct}%"></div></div>
+                    <span class="valor">${r.emprestimos}</span>
+                  </div>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+      }
+
+      document
+        .getElementById("meBtnFiltrar")
+        .addEventListener("click", carregarMaisEmprestados);
+
+      document.getElementById("meBtnCsv").addEventListener("click", () => {
+        const colunas = [
+          "Posição",
+          "Título",
+          "ISBN",
+          "Autores",
+          "Categorias",
+          "Empréstimos",
+          "Exemplares diferentes",
+        ];
+        const linhas = dadosMaisEmprestados.map((r, idx) => {
+          const autores = (r.livro.autores || [])
+            .map((a) => a.autor?.nome)
+            .filter(Boolean)
+            .join(", ");
+          const cats = (r.livro.categorias || [])
+            .map((c) => c.categoria?.nome)
+            .filter(Boolean)
+            .join(", ");
+          return [
+            idx + 1,
+            r.livro.titulo,
+            r.livro.isbn,
+            autores,
+            cats,
+            r.emprestimos,
+            r.exemplares,
+          ];
+        });
+        exportarCsv(`mais-emprestados-${hojeISO()}.csv`, colunas, linhas);
+      });
+
+      document
+        .getElementById("meBtnImprimir")
+        .addEventListener("click", () => window.print());
+
+      // ============================================
+      // PACOTE 2 · RESERVAS E BLOQUEIOS
+      // ============================================
+      let dadosReservas = [];
+      let dadosBloqueios = [];
+      let opcoesCarregadas = false;
+
+      async function carregarOpcoesCirculacao() {
+        if (opcoesCarregadas) return;
+        const [{ data: livros }, { data: leitores }] = await Promise.all([
+          supabase.from("bib_livros").select("id,titulo,isbn").eq("ativo", true).order("titulo").limit(1000),
+          supabase.from("bib_leitores").select("id,nome,codigo_carteirinha,status").eq("status", "ATIVO").order("nome").limit(1000),
+        ]);
+        const livroHtml = (livros || []).map((x) => `<option value="${x.id}">${escaparHtml(x.titulo)}${x.isbn ? ` · ${escaparHtml(x.isbn)}` : ""}</option>`).join("");
+        const leitorHtml = (leitores || []).map((x) => `<option value="${x.id}">${escaparHtml(x.nome)}${x.codigo_carteirinha ? ` · ${escaparHtml(x.codigo_carteirinha)}` : ""}</option>`).join("");
+        document.getElementById("rvLivro").insertAdjacentHTML("beforeend", livroHtml);
+        document.getElementById("rvLeitor").insertAdjacentHTML("beforeend", leitorHtml);
+        document.getElementById("blLeitor").insertAdjacentHTML("beforeend", leitorHtml);
+        opcoesCarregadas = true;
+      }
+
+      function agruparReservasFiltradas() {
+        const termo = (document.getElementById("rvBusca").value || "").trim().toLowerCase();
+        const status = document.getElementById("rvStatus").value;
+        return dadosReservas.filter((r) => (!status || r.reserva_status === status) && (!termo || [r.livro_titulo,r.leitor_nome,r.codigo_carteirinha].filter(Boolean).join(" ").toLowerCase().includes(termo)));
+      }
+
+      function renderizarReservas() {
+        const rows = agruparReservasFiltradas();
+        setTexto("rvContador", rows.length);
+        const tbody = document.getElementById("rvTbody");
+        if (!rows.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-inbox"></i> Nenhuma reserva encontrada.</div></td></tr>`; return; }
+        tbody.innerHTML = rows.map((r) => `<tr><td><strong>${escaparHtml(r.livro_titulo)}</strong><div class="muted">${escaparHtml(r.isbn || "")}</div></td><td><strong>${escaparHtml(r.leitor_nome)}</strong><div class="muted">${escaparHtml(r.codigo_carteirinha || "")}</div></td><td class="celula-centro">${r.posicao_fila ?? "—"}</td><td>${r.exemplares_disponiveis ?? 0} disponível(is)<div class="muted">${r.exemplares_em_circulacao ?? 0} em circulação</div></td><td>${formatarData(r.data_reserva)}<div class="muted">expira: ${formatarData(r.data_expiracao)}</div></td><td><span class="badge ${r.situacao_operacional === "ATIVA" ? "badge-verde" : r.situacao_operacional === "EXPIRA_HOJE" ? "badge-amarelo" : "badge-cinza"}">${escaparHtml(r.situacao_operacional || r.reserva_status)}</span></td><td>${["ATIVA","AGUARDANDO_RETIRADA"].includes(r.reserva_status) ? `<button class="btn-acao cancelar-reserva" data-id="${r.reserva_id}" title="Cancelar reserva" type="button"><i class="fas fa-ban"></i></button>` : "—"}</td></tr>`).join("");
+        tbody.querySelectorAll(".cancelar-reserva").forEach((b) => b.addEventListener("click", () => cancelarReserva(Number(b.dataset.id))));
+      }
+
+      async function carregarReservas() {
+        await carregarOpcoesCirculacao();
+        const tbody = document.getElementById("rvTbody");
+        tbody.innerHTML = `<tr><td colspan="7"><div class="loading-inline"><i class="fas fa-spinner fa-spin"></i> Carregando reservas...</div></td></tr>`;
+        const { data, error } = await supabase.from("vw_bib_reservas_operacionais").select("municipio_id,reserva_id,livro_id,livro_titulo,isbn,leitor_id,leitor_nome,codigo_carteirinha,data_reserva,data_expiracao,reserva_status,observacoes,situacao_operacional,posicao_fila,exemplares_disponiveis,exemplares_em_circulacao").order("data_reserva", { ascending: false }).limit(1000);
+        if (error) { document.getElementById("rvEstadoFonte").textContent = "Fonte indisponível"; tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Não foi possível carregar reservas.<br/><small>${escaparHtml(error.message)}</small></div></td></tr>`; return; }
+        dadosReservas = data || []; document.getElementById("rvEstadoFonte").textContent = "Fonte: vw_bib_reservas_operacionais"; renderizarReservas();
+      }
+
+      async function criarReserva() {
+        const livro = Number(document.getElementById("rvLivro").value); const leitor = Number(document.getElementById("rvLeitor").value); const obs = document.getElementById("rvObservacoes").value.trim();
+        if (!livro || !leitor) { window.showNotification("warning", "Dados incompletos", "Selecione o livro e o leitor."); return; }
+        const btn = document.getElementById("rvBtnCriar"); btn.disabled = true;
+        try { const { error } = await supabase.rpc("bib_registrar_reserva", { p_livro_id: livro, p_leitor_id: leitor, p_observacoes: obs || null }); if (error) throw error; window.showNotification("success", "Reserva criada", "A reserva foi registrada na fila operacional."); document.getElementById("rvObservacoes").value = ""; await carregarReservas(); } catch (e) { window.showNotification("error", "Não foi possível criar", e.message || "A RPC recusou a reserva."); } finally { btn.disabled = false; }
+      }
+
+      async function cancelarReserva(id) {
+        const motivo = window.prompt("Informe o motivo do cancelamento:");
+        if (!motivo || motivo.trim().length < 3) { if (motivo !== null) window.showNotification("warning", "Motivo obrigatório", "Informe pelo menos 3 caracteres."); return; }
+        try { const { error } = await supabase.rpc("bib_cancelar_reserva", { p_reserva_id: id, p_motivo: motivo.trim() }); if (error) throw error; window.showNotification("success", "Reserva cancelada", "O evento foi registrado na auditoria."); await carregarReservas(); } catch (e) { window.showNotification("error", "Não foi possível cancelar", e.message || "A RPC recusou o cancelamento."); }
+      }
+
+      function renderizarBloqueios() {
+        const termo = (document.getElementById("blBusca").value || "").trim().toLowerCase();
+        const rows = dadosBloqueios.filter((b) => !termo || [b.leitor_nome,b.codigo_carteirinha,b.motivo].filter(Boolean).join(" ").toLowerCase().includes(termo));
+        setTexto("blContador", rows.length); const tbody = document.getElementById("blTbody");
+        if (!rows.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="lista-vazia"><i class="fas fa-circle-check"></i> Nenhum bloqueio ativo encontrado.</div></td></tr>`; return; }
+        tbody.innerHTML = rows.map((b) => `<tr><td><strong>${escaparHtml(b.leitor_nome)}</strong><div class="muted">${escaparHtml(b.codigo_carteirinha || "")}</div></td><td>${escaparHtml(b.motivo)}</td><td>${formatarData(b.inicio)}</td><td>${formatarData(b.fim)}</td><td><span class="badge ${b.situacao_operacional === "ATIVO" ? "badge-vermelho" : "badge-amarelo"}">${escaparHtml(b.situacao_operacional)}</span></td><td><button class="btn-acao resolver-bloqueio" data-id="${b.bloqueio_id}" title="Resolver bloqueio" type="button"><i class="fas fa-unlock"></i></button></td></tr>`).join("");
+        tbody.querySelectorAll(".resolver-bloqueio").forEach((b) => b.addEventListener("click", () => resolverBloqueio(Number(b.dataset.id))));
+      }
+
+      async function carregarBloqueios() {
+        await carregarOpcoesCirculacao(); const tbody = document.getElementById("blTbody");
+        const { data, error } = await supabase.from("vw_bib_bloqueios_ativos").select("bloqueio_id,leitor_id,leitor_nome,codigo_carteirinha,motivo,inicio,fim,ativo,situacao_operacional").order("inicio", { ascending:false }).limit(500);
+        if (error) { document.getElementById("blEstadoFonte").textContent = "Fonte indisponível"; tbody.innerHTML = `<tr><td colspan="6"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Não foi possível carregar bloqueios.</div></td></tr>`; return; }
+        dadosBloqueios = data || []; document.getElementById("blEstadoFonte").textContent = "Fonte: vw_bib_bloqueios_ativos"; renderizarBloqueios();
+      }
+
+      async function criarBloqueio() {
+        const leitor = Number(document.getElementById("blLeitor").value); const motivo = document.getElementById("blMotivo").value.trim(); const fim = document.getElementById("blFim").value || null;
+        if (!leitor || motivo.length < 5) { window.showNotification("warning", "Dados incompletos", "Selecione o leitor e informe um motivo com pelo menos 5 caracteres."); return; }
+        const btn = document.getElementById("blBtnCriar"); btn.disabled = true;
+        try { const { error } = await supabase.rpc("bib_registrar_bloqueio", { p_leitor_id: leitor, p_motivo: motivo, p_fim: fim ? `${fim}T23:59:59` : null }); if (error) throw error; window.showNotification("success", "Leitor bloqueado", "O bloqueio foi registrado na auditoria."); document.getElementById("blMotivo").value = ""; document.getElementById("blFim").value = ""; await carregarBloqueios(); } catch (e) { window.showNotification("error", "Não foi possível bloquear", e.message || "A RPC recusou o bloqueio."); } finally { btn.disabled = false; }
+      }
+
+      async function resolverBloqueio(id) {
+        const motivo = window.prompt("Informe a regularização (opcional):") || null;
+        try { const { data, error } = await supabase.rpc("bib_resolver_bloqueio", { p_bloqueio_id: id, p_motivo: motivo }); if (error) throw error; if (!data) throw new Error("Bloqueio já resolvido ou não encontrado."); window.showNotification("success", "Bloqueio resolvido", "O evento foi registrado na auditoria."); await carregarBloqueios(); } catch (e) { window.showNotification("error", "Não foi possível resolver", e.message || "A RPC recusou a operação."); }
+      }
+
+      document.getElementById("rvBtnCriar").addEventListener("click", criarReserva);
+      document.getElementById("rvBtnAtualizar").addEventListener("click", carregarReservas);
+      document.getElementById("rvBtnCsv").addEventListener("click", () => {
+        const colunas = ["Reserva", "Livro", "Leitor", "Carteirinha", "Fila", "Disponíveis", "Em circulação", "Status", "Data"];
+        const linhas = agruparReservasFiltradas().map((r) => [r.reserva_id, r.livro_titulo, r.leitor_nome, r.codigo_carteirinha, r.posicao_fila, r.exemplares_disponiveis, r.exemplares_em_circulacao, r.situacao_operacional || r.reserva_status, formatarData(r.data_reserva)]);
+        exportarCsv(`reservas-${hojeISO()}.csv`, colunas, linhas);
+      });
+      document.getElementById("rvBusca").addEventListener("input", renderizarReservas);
+      document.getElementById("rvStatus").addEventListener("change", renderizarReservas);
+      document.getElementById("blBtnCriar").addEventListener("click", criarBloqueio);
+      document.getElementById("blBtnAtualizar").addEventListener("click", carregarBloqueios);
+      document.getElementById("blBusca").addEventListener("input", renderizarBloqueios);
+
+      // ============================================
+      // ABAS · TROCA
+      // ============================================
+      const carregadoresPorAba = {
+        acervo: carregarAcervo,
+        emprestimos: null, // só carrega ao aplicar filtro
+        atrasados: carregarAtrasados,
+        leitores: carregarLeitores,
+        "mais-emprestados": null, // só carrega ao aplicar filtro
+        reservas: carregarReservas,
+        bloqueios: carregarBloqueios
+      };
+
+      document.querySelectorAll(".aba").forEach((aba) => {
+        aba.addEventListener("click", () => {
+          const destino = aba.dataset.aba;
+
+          document
+            .querySelectorAll(".aba")
+            .forEach((a) => a.classList.remove("ativa"));
+          document
+            .querySelectorAll(".aba-conteudo")
+            .forEach((a) => a.classList.remove("ativa"));
+
+          aba.classList.add("ativa");
+          document.getElementById(`aba-${destino}`).classList.add("ativa");
+
+          const fn = carregadoresPorAba[destino];
+          if (fn) fn();
+        });
+      });
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        try {
+          const usuario = await verificarSessao();
+          if (!usuario) return;
+
+          renderizarUsuario();
+// Inicializa atalhos de data
+          inicializarAtalhosDatas(
+            "aba-emprestimos",
+            "emDataInicio",
+            "emDataFim",
+          );
+          inicializarAtalhosDatas(
+            "aba-mais-emprestados",
+            "meDataInicio",
+            "meDataFim",
+          );
+
+          await carregarCategorias();
+          await carregarAcervo();
+        } catch (err) {
+          console.error("Erro na inicialização:", err);
+          window.showNotification(
+            "error",
+            "Erro inesperado",
+            "Não foi possível inicializar a página.",
+          );
+        } finally {
+          esconderLoading();
+        }
+      }
+
+      init();
+
+      // ============================================
+      // TOGGLE SIDEBAR MOBILE
+      // ============================================
+    </script>
+      
+  </body>
+</html>

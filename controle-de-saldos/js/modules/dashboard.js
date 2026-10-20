@@ -80,7 +80,7 @@ export class Dashboard {
     if (!container) return;
 
     // Buscar o template HTML
-    const response = await fetch("templates/dashboard.html?v=20261006-dashboard-prioridades-1");
+    const response = await fetch("templates/dashboard.html?v=20261016-governanca-1");
     const html = await response.text();
     container.innerHTML = html;
 
@@ -140,6 +140,12 @@ export class Dashboard {
       const tarefas = [
         // ---------- FAIXA DE ALERTA (topo contextual) ----------
         this.carregarFaixaAlerta(),
+        this.carregarVisaoExecutiva(),
+        this.carregarConsumoPorOrgao(),
+        this.carregarMatrizSaudeVigencia(),
+        this.carregarFunilSolicitacoes(),
+        this.carregarDecisoesPeriodo(),
+        this.carregarFilaPendenteAtual(),
 
         // ---------- KPIs ----------
         this.carregarIndicadores(),
@@ -350,6 +356,10 @@ export class Dashboard {
 
     const badgeTopItens = document.getElementById("badgePeriodoTopItens");
     if (badgeTopItens) badgeTopItens.textContent = labelAtivo;
+    const badgeFunil = document.getElementById("badgePeriodoFunil");
+    if (badgeFunil) badgeFunil.textContent = labelAtivo;
+    const badgeDecisoes = document.getElementById("badgePeriodoDecisoes");
+    if (badgeDecisoes) badgeDecisoes.textContent = labelAtivo;
 
     const badgeEvolucao = document.getElementById("badgePeriodoEvolucao");
     if (badgeEvolucao) {
@@ -516,7 +526,7 @@ export class Dashboard {
         ],
       },
       options: {
-        responsive: false,
+        responsive: true,
         maintainAspectRatio: false,
         plugins: { legend: { display: false }, tooltip: { enabled: false } },
         scales: {
@@ -951,6 +961,77 @@ export class Dashboard {
   }
 
   // ============================================================
+  // VISÃO EXECUTIVA E SAÚDE DA CARTEIRA
+  // ============================================================
+  async carregarVisaoExecutiva() {
+    try {
+      const dados = await this.sistema.consulta.getIndicadoresDashboard();
+      if (!dados) return;
+      const moeda = (valor) => this.sistema.ui.formatarMoeda(valor || 0);
+      const set = (id, valor) => { const el = document.getElementById(id); if (el) el.textContent = valor; };
+      set("prefeitoValorContratado", moeda(dados.valorTotal));
+      set("prefeitoValorConsumido", moeda(dados.valorConsumido));
+      set("prefeitoSaldoDisponivel", moeda(dados.saldoUtilizavel ?? dados.saldoTotal));
+      set("prefeitoAtasVigentes", dados.totalAtas || 0);
+      const hoje = new Date();
+      const fim = new Date();
+      fim.setDate(hoje.getDate() + 30);
+      const scopeIds = await this.sistema.consulta.obterEscopoAnaliticoAtas();
+      let vencQuery = supabase.from("atas").select("id", { count: "exact", head: true }).gte("data_fim_vigencia", this.toISODate(hoje)).lte("data_fim_vigencia", this.toISODate(fim)).in("situacao", ["ATIVA", "PROXIMA"]);
+      let pendingQuery = supabase.from("pedidos").select("id", { count: "exact", head: true }).eq("status_aprovacao", "AGUARDANDO_APROVACAO");
+      if (scopeIds !== null) { vencQuery = vencQuery.in("id", scopeIds); pendingQuery = pendingQuery.in("ata_id", scopeIds); }
+      const [vencimentos, pedidos] = await Promise.all([vencQuery, pendingQuery]);
+      set("prefeitoAtasVencendo", vencimentos.count || 0);
+      set("prefeitoPedidosPendentes", pedidos.count || 0);
+    } catch (error) { console.warn("Visão executiva indisponível:", error.message); }
+  }
+
+  async carregarConsumoPorOrgao() {
+    const container = document.getElementById("listaConsumoOrgao");
+    if (!container) return;
+    try {
+      const scopeIds = await this.sistema.consulta.obterEscopoAnaliticoAtas();
+      let consumoQuery = supabase.from("consumos").select("valor_total, orgao_solicitante_id, ata_id");
+      if (scopeIds !== null) consumoQuery = consumoQuery.in("ata_id", scopeIds);
+      const { data, error } = await consumoQuery;
+      if (error) throw error;
+      const ids = [...new Set((data || []).map((item) => item.orgao_solicitante_id).filter(Boolean))];
+      const respostaOrgaos = ids.length ? await supabase.from("orgaos").select("id, nome, sigla").in("id", ids) : { data: [] };
+      const nomes = Object.fromEntries((respostaOrgaos.data || []).map((orgao) => [orgao.id, orgao.sigla || orgao.nome || "Órgão"]));
+      const grupos = {};
+      (data || []).forEach((item) => { const chave = item.orgao_solicitante_id || "sem-orgao"; grupos[chave] = (grupos[chave] || 0) + (item.valor_total || 0); });
+      const linhas = Object.entries(grupos).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      const maximo = linhas[0]?.[1] || 1;
+      container.innerHTML = linhas.length ? linhas.map(([id, valor]) => `<div class="orgao-consumo-row"><div class="orgao-consumo-label"><strong>${this._escapeHtml(nomes[id] || "Não informado")}</strong><span>${this.sistema.ui.formatarMoeda(valor)}</span></div><div class="orgao-consumo-bar"><i style="width:${Math.max(3, valor / maximo * 100)}%"></i></div></div>`).join("") : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhum consumo por órgão.</p></div>';
+    } catch (error) { container.innerHTML = '<div class="empty-state"><i class="fas fa-circle-info"></i><p>Consumo por órgão indisponível.</p></div>'; }
+  }
+
+  async carregarMatrizSaudeVigencia() {
+    const container = document.getElementById("matrizSaudeVigencia");
+    if (!container) return;
+    try {
+      const scopeIds = await this.sistema.consulta.obterEscopoAnaliticoAtas();
+      let atasQuery = supabase.from("atas").select("id, numero_ata, data_fim_vigencia, valor_global, situacao").in("situacao", ["ATIVA", "PROXIMA"]).order("data_fim_vigencia").limit(100);
+      if (scopeIds !== null) atasQuery = atasQuery.in("id", scopeIds);
+      const { data: atas, error } = await atasQuery;
+      if (error) throw error;
+      const ids = (atas || []).map((ata) => ata.id);
+      const respostaConsumos = ids.length ? await supabase.from("consumos").select("ata_id, valor_total").in("ata_id", ids) : { data: [] };
+      const consumos = {};
+      (respostaConsumos.data || []).forEach((item) => { consumos[item.ata_id] = (consumos[item.ata_id] || 0) + (item.valor_total || 0); });
+      const hoje = new Date();
+      const linhas = (atas || []).slice(0, 8).map((ata) => {
+        const contratado = ata.valor_global || 0;
+        const percentual = contratado ? Math.min(100, (consumos[ata.id] || 0) / contratado * 100) : 0;
+        const dias = Math.ceil((new Date(ata.data_fim_vigencia) - hoje) / 86400000);
+        const nivel = percentual >= 90 || dias <= 15 ? "critica" : percentual >= 70 || dias <= 45 ? "atencao" : "saudavel";
+        return { ata, percentual, dias, nivel };
+      });
+      container.innerHTML = linhas.length ? `<div class="saude-matriz-legenda"><span class="saude-dot saudavel"></span> Saudável <span class="saude-dot atencao"></span> Atenção <span class="saude-dot critica"></span> Crítica</div><div class="saude-matriz-grid">${linhas.map(({ ata, percentual, dias, nivel }) => `<div class="saude-matriz-item ${nivel}"><div><strong>${this._escapeHtml(ata.numero_ata || "N/I")}</strong><span>${dias < 0 ? "Vencida" : `${dias} dias`}</span></div><div class="saude-matriz-track"><i style="width:${Math.max(3, percentual)}%"></i></div><small>${percentual.toFixed(1)}% consumido</small></div>`).join("")}</div>` : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhuma ata vigente encontrada.</p></div>';
+    } catch (error) { container.innerHTML = '<div class="empty-state"><i class="fas fa-circle-info"></i><p>Matriz de saúde indisponível.</p></div>'; }
+  }
+
+  // ============================================================
   // FAIXA DE ALERTA CONTEXTUAL (topo)
   // ============================================================
   async carregarFaixaAlerta() {
@@ -967,6 +1048,7 @@ export class Dashboard {
       if (perfil === "SOLICITANTE") {
         if (!usuarioId) {
           faixa.style.display = "none";
+          faixa.classList.remove("is-visible");
           return;
         }
 
@@ -996,13 +1078,8 @@ export class Dashboard {
           .select("*", { count: "exact", head: true })
           .eq("status_aprovacao", "AGUARDANDO_APROVACAO");
 
-        if (perfil === "SECRETARIO" && this.sistema.usuarioAtual?.orgao_id) {
-          query = query.eq(
-            "orgao_solicitante_id",
-            this.sistema.usuarioAtual.orgao_id,
-          );
-        }
-
+        const scopeIds = await this.sistema.consulta.obterEscopoAnaliticoAtas();
+        if (scopeIds !== null) query = query.in("ata_id", scopeIds);
         const { count: countPedidos, error: e1 } = await query;
         if (e1) throw e1;
 
@@ -1042,11 +1119,13 @@ export class Dashboard {
 
       if (itens.length === 0) {
         faixa.style.display = "none";
+        faixa.classList.remove("is-visible");
         conteudo.innerHTML = "";
         return;
       }
 
-      faixa.style.display = "flex";
+      faixa.style.display = "";
+      faixa.classList.add("is-visible");
       faixa.dataset.alertasCount = String(itens.length);
       conteudo.innerHTML = itens
         .map(
@@ -1076,7 +1155,10 @@ export class Dashboard {
     } catch (error) {
       console.error("Erro ao carregar faixa de alerta:", error);
       const faixa = document.getElementById("dashboardFaixaAlerta");
-      if (faixa) faixa.style.display = "none";
+      if (faixa) {
+        faixa.style.display = "none";
+        faixa.classList.remove("is-visible");
+      }
     }
   }
 
@@ -1162,9 +1244,9 @@ export class Dashboard {
                 ${this.sistema.ui.formatarData(p.data_solicitacao)}
               </span>
             </div>
-            <div data-intranet-style="f3c07a2216ae">
+            <div>
               <span class="item-valor">${this.sistema.ui.formatarMoeda(p.valor_total || 0)}</span>
-              <span class="status-badge ${info.classe}" data-intranet-style="0e729efc4f77">${info.label}</span>
+              <span class="status-badge ${info.classe}">${info.label}</span>
             </div>
           </div>
         `;
@@ -1189,7 +1271,7 @@ export class Dashboard {
       if (!container) return;
 
       const perfil = this.sistema.usuarioAtual?.perfil;
-      if (perfil !== "ADMIN" && perfil !== "SECRETARIO") {
+      if (!["ADMIN", "SECRETARIO", "PREFEITO"].includes(perfil)) {
         return;
       }
 
@@ -1209,14 +1291,7 @@ export class Dashboard {
         )
         .eq("status_aprovacao", "AGUARDANDO_APROVACAO")
         .order("created_at", { ascending: true });
-
-      if (perfil === "SECRETARIO" && this.sistema.usuarioAtual?.orgao_id) {
-        query = query.eq(
-          "orgao_solicitante_id",
-          this.sistema.usuarioAtual.orgao_id,
-        );
-      }
-
+      // Fila operacional: o RLS limita a secretaria e seus descendentes; não depende de consumo prévio.
       const { data: pedidos, error } = await query;
       if (error) throw error;
 
@@ -1226,7 +1301,7 @@ export class Dashboard {
             <i class="fas fa-check-circle"></i>
             <div>
               <strong>Nada na fila</strong>
-              <p>Nenhum pedido aguardando sua aprovação.</p>
+              <p>${perfil === "PREFEITO" ? "Nenhum pedido pendente no município." : "Nenhum pedido aguardando sua aprovação."}</p>
             </div>
           </div>
         `;
@@ -1244,7 +1319,7 @@ export class Dashboard {
             <i class="fas fa-clipboard-check"></i>
             <span>
               <strong>${total}</strong>
-              ${total === 1 ? "pedido aguardando" : "pedidos aguardando"} sua aprovação
+              ${perfil === "PREFEITO" ? `${total === 1 ? "pedido pendente" : "pedidos pendentes"} no município` : `${total === 1 ? "pedido aguardando" : "pedidos aguardando"} sua aprovação`}
             </span>
           </div>
           <span class="fila-destaque-total">
@@ -1330,7 +1405,7 @@ export class Dashboard {
       if (!container || !card) return;
 
       const perfil = this.sistema.usuarioAtual?.perfil;
-      if (perfil !== "ADMIN" && perfil !== "SECRETARIO") {
+      if (!["ADMIN", "SECRETARIO", "PREFEITO"].includes(perfil)) {
         return;
       }
 
@@ -1345,14 +1420,7 @@ export class Dashboard {
         `,
         )
         .eq("status_aprovacao", "AGUARDANDO_APROVACAO");
-
-      if (perfil === "SECRETARIO" && this.sistema.usuarioAtual?.orgao_id) {
-        queryPed = queryPed.eq(
-          "orgao_solicitante_id",
-          this.sistema.usuarioAtual.orgao_id,
-        );
-      }
-
+      // Lista operacional de pedidos da unidade; RLS é a autoridade do escopo.
       const { data: pedidos, error: e1 } = await queryPed;
       if (e1) throw e1;
 
@@ -1714,16 +1782,22 @@ export class Dashboard {
           );
           const statusClass = dias <= 7 ? "urgente" : "warning";
 
+          const dataVencimento = new Date(`${a.data_fim_vigencia}T12:00:00`).toLocaleDateString("pt-BR");
+          const labelDias = dias === 0 ? "vence hoje" : `${dias} dia${dias !== 1 ? "s" : ""}`;
           return `
-          <div class="lista-item clickable" onclick="sistema.consulta.abrirDetalhes(${a.id})">
-            <div class="item-info">
-              <span class="item-titulo">Ata ${a.numero_ata}</span>
+          <div class="vencimento-item lista-item clickable" onclick="sistema.consulta.abrirDetalhes(${a.id})" role="button" tabindex="0" aria-label="Ata ${this._escapeHtml(String(a.numero_ata || ""))}, ${this._escapeHtml(labelDias)}">
+            <div class="vencimento-item-main">
+              <div class="vencimento-identidade">
+                <span class="vencimento-icone"><i class="fas fa-file-signature"></i></span>
+                <span class="item-titulo">Ata ${this._escapeHtml(String(a.numero_ata || "N/I"))}</span>
+              </div>
               <span class="item-subtitulo">
-                <i class="fas fa-building"></i> ${fornecedorMap[a.fornecedor_id] || "N/I"}
+                <i class="fas fa-building"></i> ${this._escapeHtml(fornecedorMap[a.fornecedor_id] || "Fornecedor não informado")}
               </span>
             </div>
-            <div class="item-valor ${statusClass}">
-              ${dias} dia${dias !== 1 ? "s" : ""}
+            <div class="vencimento-prazo ${statusClass}">
+              <strong>${this._escapeHtml(labelDias)}</strong>
+              <small>até ${dataVencimento}</small>
             </div>
           </div>
         `;
@@ -1842,6 +1916,37 @@ export class Dashboard {
           },
         });
 
+        const canvasExecutivo = document.getElementById("graficoEvolucaoPrefeitoCanvas");
+        if (canvasExecutivo) {
+          if (this.charts.evolucaoPrefeito) this.charts.evolucaoPrefeito.destroy();
+          this.charts.evolucaoPrefeito = new Chart(canvasExecutivo.getContext("2d"), {
+            type: "line",
+            data: {
+              labels,
+              datasets: [{
+                label: "Consumo mensal",
+                data,
+                borderColor: "#0d5e3a",
+                backgroundColor: "rgba(13, 94, 58, 0.12)",
+                fill: true,
+                tension: 0.35,
+                pointRadius: 3,
+              }],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: { callback: (value) => `R$ ${Number(value).toLocaleString("pt-BR")}` },
+                },
+              },
+            },
+          });
+        }
+
         canvas.style.display = "block";
         document
           .querySelector("#graficoEvolucao .skeleton-chart-line")
@@ -1855,41 +1960,107 @@ export class Dashboard {
   }
 
   // ============================================
-  // TERMÔMETRO DE EXECUÇÃO
-  // ============================================
+  // ============================================================
+  // FUNIL · COORTE POR DATA DE SOLICITAÇÃO
+  // ============================================================
+  async carregarFunilSolicitacoes() {
+    const container = document.getElementById("funilSolicitacoes");
+    if (!container) return;
+    try {
+      const { inicio, fim } = this.obterIntervaloAtivo();
+      const scopeIds = await this.sistema.consulta.obterEscopoAnaliticoAtas();
+      let query = supabase.from("pedidos").select("id, status_aprovacao, ata_id")
+        .gte("data_solicitacao", this.toISODate(inicio)).lte("data_solicitacao", this.toISODate(fim));
+      if (scopeIds !== null) query = query.in("ata_id", scopeIds.length ? scopeIds : [-1]);
+      const { data, error } = await query.limit(5000);
+      if (error) throw error;
+      const mapa = [
+        ["AGUARDANDO_APROVACAO", "Pendente / em análise", "badge-warning"],
+        ["APROVADO", "Aprovado", "badge-success"],
+        ["REPROVADO", "Rejeitado", "badge-danger"],
+        ["CANCELADO", "Cancelado", "badge-info"],
+        ["DEVOLVIDO_AJUSTE", "Devolvido", "badge-info"],
+      ];
+      const contagens = Object.fromEntries(mapa.map(([k]) => [k, 0]));
+      let naoClassificados = 0;
+      (data || []).forEach((p) => contagens[p.status_aprovacao] === undefined ? naoClassificados++ : contagens[p.status_aprovacao]++);
+      const total = (data || []).length;
+      if (!total) { container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Sem pedidos no período.</p></div>'; return; }
+      const itens = mapa.map(([k, label, classe]) => [label, contagens[k], classe]);
+      if (naoClassificados) itens.push(["Não classificado", naoClassificados, "badge-info"]);
+      container.innerHTML = `<div class="funil-total"><strong>${total}</strong><span>pedidos válidos solicitados no período</span></div><div class="funil-lista">${itens.map(([label, n, classe]) => `<div class="funil-item"><div class="funil-item-top"><span>${this._escapeHtml(label)}</span><strong>${n} · ${(n / total * 100).toFixed(1)}%</strong></div><div class="funil-track"><i class="${classe}" style="width:${Math.max(n ? 2 : 0, n / total * 100)}%"></i></div></div>`).join("")}</div>`;
+    } catch (error) { console.error("Erro no funil:", error); container.innerHTML = '<div class="empty-state"><i class="fas fa-circle-info"></i><p>Funil indisponível.</p></div>'; }
+  }
+
+  // ============================================================
+  // DECISÕES NO PERÍODO · TRILHA DE EVENTOS
+  // ============================================================
+  async carregarDecisoesPeriodo() {
+    const container = document.getElementById("decisoesPeriodo");
+    if (!container) return;
+    try {
+      const { inicio, fim } = this.obterIntervaloAtivo();
+      const scopeIds = await this.sistema.consulta.obterEscopoAnaliticoAtas();
+      let pedidoIds = null;
+      if (scopeIds !== null) {
+        const pedidosScope = await supabase.from("pedidos").select("id").in("ata_id", scopeIds.length ? scopeIds : [-1]).limit(5000);
+        if (pedidosScope.error) throw pedidosScope.error;
+        pedidoIds = (pedidosScope.data || []).map((p) => p.id);
+      }
+      let query = supabase.from("pedidos_eventos").select("id, pedido_id, status_anterior, status_novo, ocorrido_em")
+        .gte("ocorrido_em", inicio.toISOString()).lte("ocorrido_em", fim.toISOString())
+        .not("status_anterior", "is", null).not("status_novo", "is", null);
+      if (pedidoIds !== null) query = query.in("pedido_id", pedidoIds.length ? pedidoIds : [-1]);
+      const { data, error } = await query.limit(5000);
+      if (error) throw error;
+      const decisoes = (data || []).filter((e) => e.status_anterior !== e.status_novo);
+      const grupos = {};
+      decisoes.forEach((e) => { const k = e.status_novo || "NAO_CLASSIFICADO"; grupos[k] = (grupos[k] || 0) + 1; });
+      const labels = { APROVADO: "Aprovados", REPROVADO: "Rejeitados", CANCELADO: "Cancelados", AGUARDANDO_APROVACAO: "Pendências", DEVOLVIDO_AJUSTE: "Devolvidos" };
+      container.innerHTML = decisoes.length ? `<div class="decisoes-total"><strong>${decisoes.length}</strong><span>transições no período</span></div>${Object.entries(grupos).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<div class="resumo-linha"><span>${this._escapeHtml(labels[k] || k)}</span><strong>${n}</strong></div>`).join("")}` : '<div class="empty-state"><i class="fas fa-check-circle"></i><p>Nenhuma decisão registrada no período.</p></div>';
+    } catch (error) { console.error("Erro nas decisões:", error); container.innerHTML = '<div class="empty-state"><i class="fas fa-circle-info"></i><p>Decisões indisponíveis.</p></div>'; }
+  }
+
+  // ============================================================
+  // FILA PENDENTE ATUAL · SNAPSHOT SEM PERÍODO
+  // ============================================================
+  async carregarFilaPendenteAtual() {
+    const container = document.getElementById("filaPendenteAtual");
+    if (!container) return;
+    try {
+      const scopeIds = await this.sistema.consulta.obterEscopoAnaliticoAtas();
+      let query = supabase.from("pedidos").select("id, ata_id", { count: "exact", head: true }).eq("status_aprovacao", "AGUARDANDO_APROVACAO");
+      if (scopeIds !== null) query = query.in("ata_id", scopeIds.length ? scopeIds : [-1]);
+      const { count, error } = await query;
+      if (error) throw error;
+      container.innerHTML = `<div class="fila-snapshot"><strong>${count || 0}</strong><span>${(count || 0) === 1 ? "pedido aguardando aprovação agora" : "pedidos aguardando aprovação agora"}</span></div><a class="card-link" href="#pedidos" data-dashboard-tab="pedidos">Abrir fila completa <i class="fas fa-arrow-right"></i></a>`;
+    } catch (error) { console.error("Erro na fila atual:", error); container.innerHTML = '<div class="empty-state"><i class="fas fa-circle-info"></i><p>Fila indisponível.</p></div>'; }
+  }
+
+  // ============================================================
+  // UTILIZAÇÃO DAS ATAS
+  // ============================================================
   async carregarTermometroExecucao() {
     try {
       const container = document.getElementById("termometroExecucao");
       if (!container) return;
 
-      const { data: atas } = await supabase
-        .from("atas")
-        .select("id, valor_global")
-        .in("situacao", ["ATIVA", "PROXIMA"]);
-
-      const totalContratado = (atas || []).reduce(
-        (s, a) => s + (a.valor_global || 0),
-        0,
-      );
-
-      const { data: consumos } = await supabase
-        .from("consumos")
-        .select("valor_total");
-
-      const totalConsumido = (consumos || []).reduce(
-        (s, c) => s + (c.valor_total || 0),
-        0,
-      );
-
-      const percentual =
-        totalContratado > 0
-          ? Math.min((totalConsumido / totalContratado) * 100, 100)
-          : 0;
+      const scopeIds = await this.sistema.consulta.obterEscopoAnaliticoAtas();
+      let atasQuery = supabase.from("atas").select("id, valor_global").in("situacao", ["ATIVA", "PROXIMA"]);
+      if (scopeIds !== null) atasQuery = atasQuery.in("id", scopeIds.length ? scopeIds : [-1]);
+      const { data: atas } = await atasQuery;
+      const ids = (atas || []).map((a) => a.id);
+      const { data: consumos } = ids.length ? await supabase.from("consumos").select("valor_total, ata_id").in("ata_id", ids) : { data: [] };
+      const totalContratado = (atas || []).reduce((s, a) => s + Number(a.valor_global || 0), 0);
+      const totalConsumido = (consumos || []).reduce((s, c) => s + Number(c.valor_total || 0), 0);
+      const percentual = totalContratado > 0 ? (totalConsumido / totalContratado) * 100 : null;
       const disponivel = totalContratado - totalConsumido;
+      const percentualVisual = percentual === null ? 0 : Math.min(Math.max(percentual, 0), 100);
+      const excedeu = percentual !== null && percentual > 100;
 
       const raio = 78;
       const circunferencia = 2 * Math.PI * raio;
-      const offset = circunferencia * (1 - percentual / 100);
+      const offset = circunferencia * (1 - percentualVisual / 100);
 
       container.innerHTML = `
         <div class="termometro-svg">
@@ -1911,8 +2082,8 @@ export class Dashboard {
             />
           </svg>
           <div class="termometro-valor-central">
-            <div class="percentual">${percentual.toFixed(0)}%</div>
-            <div class="rotulo">Consumido</div>
+            <div class="percentual">${percentual === null ? "N/A" : `${percentual.toFixed(1)}%`}</div>
+            <div class="rotulo">${excedeu ? "Possível estouro" : "Utilização"}</div>
           </div>
         </div>
         <div class="termometro-info">
@@ -1922,8 +2093,10 @@ export class Dashboard {
           </div>
           <div class="termometro-info-item">
             <div class="valor disponivel">${this.sistema.ui.formatarMoeda(disponivel)}</div>
-            <div class="label">Disponível</div>
+            <div class="label">Saldo (limite − consumo)</div>
           </div>
+          ${excedeu ? '<div class="termometro-alerta">Consumo acima do limite vigente. Verifique os registros.</div>' : ''}
+          ${percentual === null ? '<div class="termometro-alerta">Não aplicável: denominador zero.</div>' : ''}
         </div>
       `;
     } catch (error) {
@@ -2177,7 +2350,7 @@ export class Dashboard {
       "#b45309",
     ];
 
-    let html = `<div class="grafico-simples" data-intranet-style="2cf5e4fec449">`;
+    let html = `<div class="grafico-simples">`;
 
     if (isLine) {
       const pontos = data
@@ -2188,26 +2361,26 @@ export class Dashboard {
         .join("");
 
       html += `
-        <div data-intranet-style="5f7afabeed26">
+        <div>
           ${pontos}
         </div>
-        <div data-intranet-style="643af8010797">
+        <div>
           ${labels.map((l) => `<span>${l}</span>`).join("")}
         </div>
       `;
     } else {
       html += `
-        <div data-intranet-style="7ae4ba49f118">
+        <div>
           ${data
             .map((v, i) => {
               const percent = (v / max) * 100;
               return `
-              <div data-intranet-style="b6fa5ff465f2">
-                <span data-intranet-style="1b299d65327a">${labels[i]}</span>
-                <div data-intranet-style="08f8b7f71bb2">
+              <div>
+                <span>${labels[i]}</span>
+                <div>
                   <div class="intranet-dashboard-chart-bar" style="--bar-width: ${Math.max(percent, 2)}%; --bar-color: ${colors[i % colors.length]};"></div>
                 </div>
-                <span data-intranet-style="e54bf0559c57">${this.sistema.ui.formatarMoeda(v)}</span>
+                <span>${this.sistema.ui.formatarMoeda(v)}</span>
               </div>
             `;
             })

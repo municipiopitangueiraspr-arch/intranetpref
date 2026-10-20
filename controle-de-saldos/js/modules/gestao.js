@@ -1,5 +1,10 @@
 import { supabase } from "../supabase.js";
 import { getMunicipalCrestUrl } from "../../../shared/js/report-branding.js";
+import { listarUnidadesOperacionais, popularSelectUnidades } from "../../../shared/js/services/unidade-operacional-service.js";
+
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+})[char]);
 
 export class Gestao {
   constructor(sistema) {
@@ -101,7 +106,7 @@ export class Gestao {
                         </select>
                     </div>
                     <div class="filtro-row">
-                        <select id="filtroGestaoSaldo" class="filtro-select" data-intranet-style="ec1a8053e224">
+                        <select id="filtroGestaoSaldo" class="filtro-select">
                             <option value="todos">Todos os itens</option>
                             <option value="disponivel">Com saldo disponível</option>
                             <option value="critico">Saldo crítico (<10%)</option>
@@ -120,7 +125,7 @@ export class Gestao {
                 </div>
 
 
-                <div id="statusEditorContainer" class="status-editor" data-intranet-style="2d281201779c">
+                <div id="statusEditorContainer" class="status-editor">
                     <span><i class="fas fa-tag"></i> Status da Ata:</span>
                     <select id="statusAtaSelect" class="status-select">
                         <option value="ATIVA">🟢 ATIVA</option>
@@ -1335,12 +1340,12 @@ export class Gestao {
     const container = document.getElementById("itensGestaoContainer");
     if (!itens.length) {
       container.innerHTML =
-        '<div data-intranet-style="b59c96af38c6"><i class="fas fa-box-open" data-intranet-style="effc4ebccc11"></i><h3 data-intranet-style="51d43ecd0438">Nenhum item encontrado</h3></div>';
+        '<div><i class="fas fa-box-open"></i><h3>Nenhum item encontrado</h3></div>';
       return;
     }
-    const podeConsumir =
-      this.sistema.usuarioAtual?.perfil === "ADMIN" ||
-      this.sistema.usuarioAtual?.perfil === "ESTAGIARIO";
+    const podeConsumir = ["ADMIN", "ESTAGIARIO", "SECRETARIO", "SOLICITANTE"].includes(
+      this.sistema.usuarioAtual?.perfil,
+    );
     container.innerHTML = `<table class="gestao-tabela">
             <thead><tr><th>ATA</th><th>Fornecedor / CPF/CNPJ</th><th>Item</th><th>Descrição</th><th>Qtd. contratada</th><th>Saldo atual</th><th>Saldo real</th><th>Valor Unit.</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody>${itens
@@ -1357,7 +1362,7 @@ export class Gestao {
                     <td class="numeric ${saldo <= 0 ? "saldo-zerado" : critico ? "saldo-baixo" : "saldo-alto"}">${saldo}</td>
                     <td class="numeric saldo-real-cell">${this.sistema.usuarioAtual?.perfil === "ADMIN" ? `<div class="ajuste-saldo-inline ajuste-saldo-real"><input type="number" min="0" step="any" value="${saldo}" id="saldoReal_${item.id}" aria-label="Saldo real do item ${item.item_numero}"><button class="btn-ajustar-saldo" onclick="sistema.gestao.ajustarSaldo(${item.id}, document.getElementById('saldoReal_${item.id}').value)"><i class="fas fa-save"></i> Salvar</button></div>` : "—"}</td>
                     <td class="numeric">${this.sistema.ui.formatarMoeda(item.valor_unitario)}</td>
-                    <td><span class="status-badge" style="background:${saldo <= 0 ? "var(--error-100)" : critico ? "var(--warning-100)" : "var(--success-100)"};color:${saldo <= 0 ? "var(--error-800)" : critico ? "var(--warning-800)" : "var(--success-800)"};">${saldo <= 0 ? "Esgotado" : critico ? "Crítico" : "Normal"}</span></td>
+                    <td><span class="status-badge saldo-status-badge ${saldo <= 0 ? "saldo-status--zerado" : critico ? "saldo-status--critico" : "saldo-status--normal"}">${saldo <= 0 ? "Esgotado" : critico ? "Crítico" : "Normal"}</span></td>
                     <td class="gestao-acoes-item">${podeConsumir ? `<button class="btn-lancar-rapido" onclick="sistema.gestao.abrirModalConsumo(${item.ata_id},${item.id})"><i class="fas fa-pen"></i> Consumo</button>` : ""}</td>
                 </tr>`;
               })
@@ -1367,112 +1372,74 @@ export class Gestao {
   }
 
   async abrirModalConsumo(ataId, itemId) {
-    const { data: item } = await supabase
-      .from("itens_ata")
-      .select("*")
-      .eq("id", itemId)
-      .single();
-    const saldo = item.saldo_quantidade || 0;
-    const ataContexto = (this._atasGestaoGlobal || []).find(
-      (ata) => Number(ata.id) === Number(ataId),
-    );
-    await this.sistema.ui.carregarSelectOrgaos("autarquiaConsumo");
-    document.getElementById("modalConsumoConteudo").innerHTML = `<div>
-            <div data-intranet-style="d33673ccaf74">
-                <p data-intranet-style="0d1587ea37c8"><strong>Ata:</strong> ${ataContexto?.numero_ata || "—"}</p>
-                <p data-intranet-style="0d1587ea37c8"><strong>Item:</strong> ${item.descricao}</p>
-                <p data-intranet-style="0d1587ea37c8"><strong>Saldo:</strong> <span data-intranet-style="2e0a4ee88b0b">${saldo}</span></p>
+    try {
+      const [{ data: item, error: itemError }, unidades] = await Promise.all([
+        supabase.from("itens_ata").select("*").eq("id", itemId).single(),
+        listarUnidadesOperacionais(this.sistema.usuarioAtual),
+      ]);
+      if (itemError) throw itemError;
+      if (!unidades.length) {
+        this.sistema.ui.mostrarToast("erro", "Sem unidade operacional", "Seu usuário não possui lotação ativa na árvore organizacional.");
+        return;
+      }
+      const saldo = item.saldo_quantidade || 0;
+      const ataContexto = (this._atasGestaoGlobal || []).find((ata) => Number(ata.id) === Number(ataId));
+      document.getElementById("modalConsumoConteudo").innerHTML = `<div>
+            <div>
+                <p><strong>Ata:</strong> ${escapeHtml(ataContexto?.numero_ata || "—")}</p>
+                <p><strong>Item:</strong> ${escapeHtml(item.descricao || "—")}</p>
+                <p><strong>Saldo:</strong> <span>${saldo}</span></p>
             </div>
-            <div class="filtro-grupo" data-intranet-style="bbfef44a91b1">
-                <label data-intranet-style="1d216d611cd1">Órgão</label>
-                <select id="autarquiaConsumo" class="filtro-select" data-intranet-style="0e4ddb7fd099" required></select>
+            <div class="filtro-grupo">
+                <label for="unidadeConsumo">Unidade onde ocorrerá o consumo</label>
+                <select id="unidadeConsumo" class="filtro-select" required></select>
             </div>
-            <div class="filtro-grupo" data-intranet-style="bbfef44a91b1">
-                <label data-intranet-style="1d216d611cd1">Quantidade</label>
-                <input type="number" id="quantidadeConsumo" class="filtro-input" data-intranet-style="0e4ddb7fd099" min="1" max="${saldo}" placeholder="Quantidade" required>
+            <div class="filtro-grupo">
+                <label for="quantidadeConsumo">Quantidade</label>
+                <input type="number" id="quantidadeConsumo" class="filtro-input" min="1" max="${saldo}" placeholder="Quantidade" required>
             </div>
-            <div class="filtro-grupo" data-intranet-style="bd3960dc8396">
-                <label data-intranet-style="1d216d611cd1">Observação</label>
-                <input type="text" id="obsConsumo" class="filtro-input" data-intranet-style="0e4ddb7fd099" placeholder="Opcional">
+            <div class="filtro-grupo">
+                <label for="obsConsumo">Observação</label>
+                <input type="text" id="obsConsumo" class="filtro-input" placeholder="Opcional">
             </div>
-            <div data-intranet-style="14e175291984">
-                <button class="btn" data-intranet-style="a28c06e2cbe2" onclick="sistema.fecharModalConsumo()">Cancelar</button>
-                <button class="btn-consumo" data-intranet-style="4c416ce9e4f2" onclick="sistema.gestao.registrarConsumo(${ataId}, ${itemId})"><i class="fas fa-save"></i> Registrar</button>
+            <div>
+                <button class="btn" onclick="sistema.fecharModalConsumo()">Cancelar</button>
+                <button class="btn-consumo" onclick="sistema.gestao.registrarConsumo(${ataId}, ${itemId})"><i class="fas fa-save"></i> Registrar</button>
             </div>
         </div>`;
-    document.getElementById("modalConsumo").classList.add("active");
+      popularSelectUnidades(document.getElementById("unidadeConsumo"), unidades);
+      document.getElementById("modalConsumo").classList.add("active");
+    } catch (error) {
+      this.sistema.ui.mostrarToast("erro", "Não foi possível abrir o consumo", error.message);
+    }
   }
 
   // ============================================================
-  // REGISTRAR CONSUMO - CORRIGIDO PARA USAR TABELA DIRETAMENTE
-  // (Fallback caso a Stored Procedure não exista)
+  // Consumo é registrado atomicamente pelo backend com unidade canônica.
   // ============================================================
   async registrarConsumo(ataId, itemId) {
-    const quantidade = parseInt(
-      document.getElementById("quantidadeConsumo").value,
-    );
-    const orgaoId = parseInt(document.getElementById("autarquiaConsumo").value);
-    const obs = document.getElementById("obsConsumo").value;
+    const quantidade = Number(document.getElementById("quantidadeConsumo")?.value);
+    const unidadeId = document.getElementById("unidadeConsumo")?.value;
+    const obs = document.getElementById("obsConsumo")?.value || "";
 
     if (!quantidade || quantidade <= 0) {
       this.sistema.ui.mostrarToast("erro", "Quantidade inválida!");
       return;
     }
-    if (!orgaoId) {
-      this.sistema.ui.mostrarToast("erro", "Selecione um órgão!");
+    if (!unidadeId) {
+      this.sistema.ui.mostrarToast("erro", "Selecione a unidade onde ocorrerá o consumo.");
       return;
     }
 
     try {
-      // Buscar o item da ata para obter o saldo atual
-      const { data: itemAtual, error: itemError } = await supabase
-        .from("itens_ata")
-        .select("saldo_quantidade, quantidade_contratada, valor_unitario")
-        .eq("id", itemId)
-        .single();
-
-      if (itemError) throw itemError;
-      if (!itemAtual) {
-        this.sistema.ui.mostrarToast("erro", "Item não encontrado!");
-        return;
-      }
-
-      if (quantidade > (itemAtual.saldo_quantidade || 0)) {
-        this.sistema.ui.mostrarToast(
-          "erro",
-          `Saldo insuficiente! Disponível: ${itemAtual.saldo_quantidade}`,
-        );
-        return;
-      }
-
-      // 1. Registrar o consumo
-      const { error: consumoError } = await supabase.from("consumos").insert({
-        ata_id: ataId,
-        item_ata_id: itemId,
-        orgao_solicitante_id: orgaoId,
-        usuario_id: this.sistema.usuarioAtual.id,
-        quantidade: quantidade,
-        valor_unitario: itemAtual.valor_unitario,
-        valor_total: itemAtual.valor_unitario * quantidade,
-        observacao: obs || null,
-        data_consumo: new Date().toISOString().split("T")[0],
-        created_at: new Date().toISOString(),
+      const { error } = await supabase.rpc("registrar_consumo_unidade", {
+        p_ata_id: Number(ataId),
+        p_item_ata_id: Number(itemId),
+        p_unidade_organizacional_id: unidadeId,
+        p_quantidade: quantidade,
+        p_observacao: obs.trim() || null,
       });
-
-      if (consumoError) throw consumoError;
-
-      // 2. Atualizar o saldo do item
-      const novoSaldo = (itemAtual.saldo_quantidade || 0) - quantidade;
-      const { error: updateError } = await supabase
-        .from("itens_ata")
-        .update({
-          saldo_quantidade: novoSaldo,
-          situacao: novoSaldo <= 0 ? "ESGOTADO" : "DISPONIVEL",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", itemId);
-
-      if (updateError) throw updateError;
+      if (error) throw error;
 
       this.sistema.ui.mostrarToast("sucesso", "Consumo registrado!");
       this.sistema.fecharModalConsumo();
@@ -1657,26 +1624,26 @@ export class Gestao {
       // Exibir relatório
       const brasaoUrl = getMunicipalCrestUrl();
       let html = `
-        <div class="municipal-report-content" data-intranet-style="b2b3b4814f4e">
+        <div class="municipal-report-content">
           <header class="municipal-report-heading">
             <img class="municipal-report-crest" src="${brasaoUrl}" alt="Brasão do Município" />
             <div><strong>Prefeitura Municipal de Pitangueiras</strong><h3>Relatório de Divergências de Saldo</h3></div>
           </header>
-          <p data-intranet-style="4de85eb5c1d8">
+          <p>
             Foram encontradas ${relatorio.length} divergência(s) entre o saldo esperado e o saldo real.
           </p>
           <div class="tabela-container">
-            <table data-intranet-style="4ff18fa42b11">
+            <table>
               <thead>
-                <tr data-intranet-style="3d619e041b18">
-                  <th data-intranet-style="994f61e990fa">Ata</th>
-                  <th data-intranet-style="994f61e990fa">Item</th>
-                  <th data-intranet-style="e54d9d98ecb2">Contratado</th>
-                  <th data-intranet-style="e54d9d98ecb2">Consumido</th>
-                  <th data-intranet-style="e54d9d98ecb2">Esperado</th>
-                  <th data-intranet-style="e54d9d98ecb2">Real</th>
-                  <th data-intranet-style="e35f40d8dfd0">Divergência</th>
-                  <th data-intranet-style="e35f40d8dfd0">Ação</th>
+                <tr>
+                  <th>Ata</th>
+                  <th>Item</th>
+                  <th>Contratado</th>
+                  <th>Consumido</th>
+                  <th>Esperado</th>
+                  <th>Real</th>
+                  <th>Divergência</th>
+                  <th>Ação</th>
                 </tr>
               </thead>
               <tbody>
@@ -1686,18 +1653,18 @@ export class Gestao {
                   <tr>
                     <td>${escaparHtml(r.ata)}</td>
                     <td>${escaparHtml(r.item)}</td>
-                    <td data-intranet-style="a531b503a9a8">${escaparHtml(r.contratado)}</td>
-                    <td data-intranet-style="a531b503a9a8">${escaparHtml(r.consumido)}</td>
-                    <td data-intranet-style="a531b503a9a8">${escaparHtml(r.saldoEsperado)}</td>
-                    <td data-intranet-style="a531b503a9a8">${escaparHtml(r.saldoReal)}</td>
-                    <td data-intranet-style="251709996767">
+                    <td>${escaparHtml(r.contratado)}</td>
+                    <td>${escaparHtml(r.consumido)}</td>
+                    <td>${escaparHtml(r.saldoEsperado)}</td>
+                    <td>${escaparHtml(r.saldoReal)}</td>
+                    <td>
                       <span class="saldo-divergencia-badge ${r.divergencia > 0 ? "saldo-divergencia-badge--positiva" : "saldo-divergencia-badge--negativa"}">
                         ${r.divergencia > 0 ? "+" : ""}${escaparHtml(r.divergencia)}
                       </span>
                     </td>
-                    <td data-intranet-style="251709996767">
+                    <td>
                       <button class="btn btn-sm btn-primary" data-action="ajustar-saldo" data-item-id="${escaparHtml(r.itemId)}" data-saldo-esperado="${Number(r.saldoEsperado)}"
-                              data-intranet-style="d866d5fb7661">
+                             >
                         <i class="fas fa-sync"></i> Corrigir
                       </button>
                     </td>
@@ -1708,7 +1675,7 @@ export class Gestao {
               </tbody>
             </table>
           </div>
-          <div data-intranet-style="3530f16f978b">
+          <div>
             <button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">Fechar</button>
             <button class="btn btn-primary" onclick="sistema.gestao.corrigirTodasDivergencias()">
               <i class="fas fa-magic"></i> Corrigir Todas
@@ -1721,12 +1688,12 @@ export class Gestao {
       const modal = document.createElement("div");
       modal.className = "modal-overlay";
       modal.innerHTML = `
-        <div class="modal-container" data-intranet-style="f9cfd15a5a65">
+        <div class="modal-container">
           <div class="modal-header">
             <h2><i class="fas fa-file-invoice"></i> Relatório de Divergências</h2>
             <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
           </div>
-          <div class="modal-body" data-intranet-style="0dbd0d3e219d">
+          <div class="modal-body">
             ${html}
           </div>
         </div>

@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../apple-touch-icon.png?v=20261009-brasao-2"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="../favicon.svg?v=20261009-brasao-2"
+    />
+    <title>Saúde da Ata | Intranet Municipal</title>
+    <link
+      rel="stylesheet"
+      href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1"
+    />
+    <!-- Design system oficial da Intranet; sem CSS global/canônico legado. -->
+    <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261017-typography-contract-1" />
+    <link rel="stylesheet" href="../shared/css/pwa-responsive.css?v=20261008-pwa-1" />
+    <link rel="stylesheet" href="./css/ata-page.css?v=20261016-governanca-2" />
+    <script src="../shared/js/acessibilidade-intranet.js" defer></script>
+  </head>
+  <body
+    data-intranet-module="atas"
+    data-intranet-page="saude-detalhe-ata"
+    data-pwa-worker="../service-worker.js"
+    class="ata-page"
+  >
+    <!-- Cabeçalho canônico compartilhado com o Hall e o Meu Perfil. -->
+    <div class="barra-usuario" id="ataUserBar">
+      <div class="saudacao-mini">
+        <span>Logado como</span>
+        <strong id="saudacaoMiniNome">—</strong>
+      </div>
+      <div class="avatar-wrapper">
+        <button class="avatar-btn" id="avatarBtn" type="button" title="Menu do usuário" aria-haspopup="menu" aria-expanded="false" aria-label="Abrir menu do usuário">
+          <span id="avatarIniciais">?</span>
+        </button>
+        <div class="avatar-menu" id="avatarMenu" role="menu" aria-hidden="true">
+          <div class="avatar-menu-header">
+            <span class="avatar-menu-kicker">Conta conectada</span>
+            <strong id="menuNome">—</strong>
+            <span class="avatar-menu-email" id="menuEmail">—</span>
+          </div>
+          <div class="avatar-menu-section-label">Ações da conta</div>
+          <a class="avatar-menu-item avatar-menu-item--profile" id="menuMeuPerfil" href="../perfil.html" role="menuitem">
+            <span class="avatar-menu-item-icon"><i class="fas fa-user-circle"></i></span>
+            <span>Meu Perfil</span>
+          </a>
+          <a class="avatar-menu-item" id="menuVoltarIntranet" href="../intranet.html" role="menuitem">
+            <span class="avatar-menu-item-icon"><i class="fas fa-house"></i></span>
+            <span>Voltar à intranet</span>
+          </a>
+          <button class="avatar-menu-item avatar-menu-item--logout sair" id="menuSair" type="button" role="menuitem">
+            <span class="avatar-menu-item-icon"><i class="fas fa-sign-out-alt"></i></span>
+            <span>Sair</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <main class="ata-page__main">
+      <div class="ata-page__content" id="ataContent" hidden>
+        <div class="ata-page__breadcrumb">
+          <a class="ata-page__back-button" href="./gestao-atas.html#saude">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+            <span>Voltar</span>
+          </a>
+          <span class="ata-page__breadcrumb-current">Saúde das Atas / Detalhe</span>
+        </div>
+
+        <span id="ataTitulo" hidden></span>
+        <span id="ataCnpj" hidden></span>
+        <span id="ataProcesso" hidden></span>
+        <span id="ataCategoria" hidden></span>
+        <span id="ataPregao" hidden></span>
+        <span id="ataModalidade" hidden></span>
+
+        <header class="ata-page__hero">
+          <div class="ata-page__hero-icon">
+            <i class="fas fa-file-contract"></i>
+          </div>
+          <div class="ata-page__hero-copy">
+            <span class="ata-page__eyebrow">ATA DE REGISTRO DE PREÇOS</span>
+            <h1>Ata nº <span id="ataNumero">—</span></h1>
+            <p id="ataFornecedor">—</p>
+            <div class="ata-page__meta">
+              <span
+                ><i class="far fa-calendar-alt"></i><strong>Vigência:</strong>
+                <span id="ataVigencia">—</span></span
+              >
+              <span id="ataStatus">—</span>
+              <span id="ataDiasRestantes" class="ata-page__days">—</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="ata-page__summary" aria-label="Resumo da ata">
+          <div>
+            <span>Valor global</span><strong id="ataValorGlobal">—</strong>
+          </div>
+          <div><span>Consumido</span><strong id="ataConsumido">—</strong></div>
+          <div class="ata-page__balance">
+            <span>Saldo disponível</span><strong id="ataSaldo">—</strong>
+          </div>
+          <div>
+            <span>Total de itens</span
+            ><strong id="ataTotalItensResumo">—</strong>
+          </div>
+        </section>
+
+        <section class="ata-health" aria-labelledby="ataHealthTitle">
+          <div class="ata-health__heading">
+            <div>
+              <span class="ata-page__eyebrow ata-page__eyebrow--dark"
+                >Resumo e disponibilidade</span
+              >
+              <h2 id="ataHealthTitle">Acompanhamento da ata</h2>
+            </div>
+            <span class="ata-health__usage" id="ataUtilizacaoLabel"
+              >0% utilizado</span
+            >
+          </div>
+          <div class="ata-health__progress">
+            <div id="ataUtilizacaoBar"></div>
+          </div>
+          <div class="ata-health__cards">
+            <article>
+              <span class="ata-health__card-icon ata-health__card-icon--blue"
+                ><i class="fas fa-boxes-stacked"></i
+              ></span>
+              <div>
+                <small>Total de itens</small
+                ><strong id="ataTotalItens">—</strong>
+              </div>
+            </article>
+            <article>
+              <span class="ata-health__card-icon ata-health__card-icon--green"
+                ><i class="fas fa-circle-check"></i
+              ></span>
+              <div>
+                <small>Saldo confortável</small
+                ><strong id="ataItensConfortaveis">—</strong>
+              </div>
+            </article>
+            <article>
+              <span class="ata-health__card-icon ata-health__card-icon--orange"
+                ><i class="fas fa-triangle-exclamation"></i
+              ></span>
+              <div>
+                <small>Itens críticos</small
+                ><strong id="ataItensCriticos">—</strong>
+              </div>
+            </article>
+            <article>
+              <span class="ata-health__card-icon ata-health__card-icon--red"
+                ><i class="fas fa-circle-xmark"></i
+              ></span>
+              <div>
+                <small>Itens esgotados</small
+                ><strong id="ataItensEsgotados">—</strong>
+              </div>
+            </article>
+          </div>
+          <div class="ata-health__charts">
+            <article class="ata-chart-card">
+              <div>
+                <h3>Consumo financeiro</h3>
+                <p>Consumido x saldo disponível</p>
+              </div>
+              <div class="ata-chart-card__canvas">
+                <canvas id="ataGraficoConsumo"></canvas>
+              </div>
+            </article>
+            <article class="ata-chart-card">
+              <div>
+                <h3>Distribuição dos itens</h3>
+                <p>Por faixa de disponibilidade</p>
+              </div>
+              <div class="ata-chart-card__canvas ata-chart-card__canvas--wide">
+                <canvas id="ataGraficoItens"></canvas>
+              </div>
+            </article>
+            <article class="ata-chart-card ata-chart-card--ranking">
+              <div>
+                <h3>Itens mais utilizados</h3>
+                <p>Percentual consumido</p>
+              </div>
+              <div id="ataRankingItens" class="ata-ranking"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="ataDecisionPanel" class="ata-decision-panel" aria-labelledby="ataDecisionTitle"></section>
+
+        <section
+          class="ata-bloco-b"
+          aria-label="Análise e acompanhamento da ata"
+        >
+          <div class="ata-bloco-b__column">
+            <article class="ata-panel">
+              <div class="ata-panel__title">
+                <div>
+                  <span class="ata-page__eyebrow ata-page__eyebrow--dark"
+                    >Análise dos itens</span
+                  >
+                  <h2>Itens mais consumidos</h2>
+                </div>
+                <i class="fas fa-arrow-trend-up"></i>
+              </div>
+              <div
+                id="ataItensMaisConsumidos"
+                class="ata-ranking ata-ranking--large"
+              ></div>
+            </article>
+            <article class="ata-panel ata-resumo-panel">
+              <div class="ata-panel__title">
+                <div>
+                  <span class="ata-page__eyebrow ata-page__eyebrow--dark"
+                    >Identificação</span
+                  >
+                  <h2>Resumo da ata</h2>
+                </div>
+                <i class="fas fa-file-contract"></i>
+              </div>
+              <dl>
+                <div>
+                  <dt>Fornecedor</dt>
+                  <dd id="ataResumoFornecedor">—</dd>
+                </div>
+                <div>
+                  <dt>CNPJ</dt>
+                  <dd id="ataResumoCnpj">—</dd>
+                </div>
+                <div>
+                  <dt>Vigência</dt>
+                  <dd id="ataResumoVigencia">—</dd>
+                </div>
+                <div>
+                  <dt>Valor global</dt>
+                  <dd id="ataResumoValor">—</dd>
+                </div>
+                <div>
+                  <dt>Saldo disponível</dt>
+                  <dd id="ataResumoSaldo">—</dd>
+                </div>
+              </dl>
+            </article>
+          </div>
+          <div class="ata-bloco-b__column">
+            <article class="ata-panel">
+              <div class="ata-panel__title">
+                <div>
+                  <span class="ata-page__eyebrow ata-page__eyebrow--dark"
+                    >Distribuição</span
+                  >
+                  <h2>Consumo por departamento</h2>
+                </div>
+                <i class="fas fa-building"></i>
+              </div>
+              <div
+                class="ata-chart-card__canvas ata-chart-card__canvas--department"
+              >
+                <canvas id="ataGraficoDepartamentos"></canvas>
+              </div>
+              <p class="ata-panel__scope" id="ataEscopoConsumo">
+                Exibindo apenas os registros permitidos para o seu perfil.
+              </p>
+            </article>
+            <article class="ata-panel">
+              <div class="ata-panel__title">
+                <div>
+                  <span class="ata-page__eyebrow ata-page__eyebrow--dark"
+                    >Movimentações</span
+                  >
+                  <h2>Últimos registros</h2>
+                </div>
+                <i class="fas fa-clock-rotate-left"></i>
+              </div>
+              <div id="ataUltimosRegistros" class="ata-records"></div>
+            </article>
+          </div>
+          <div class="ata-bloco-b__column">
+            <article class="ata-panel">
+              <div class="ata-panel__title">
+                <div>
+                  <span class="ata-page__eyebrow ata-page__eyebrow--dark"
+                    >Histórico</span
+                  >
+                  <h2>Evolução do consumo</h2>
+                </div>
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div
+                class="ata-chart-card__canvas ata-chart-card__canvas--evolution"
+              >
+                <canvas id="ataGraficoEvolucao"></canvas>
+              </div>
+              <p class="ata-panel__scope" id="ataEvolucaoVazia" hidden>
+                Ainda não há histórico suficiente para exibir a evolução.
+              </p>
+            </article>
+            <article class="ata-panel ata-alert-panel">
+              <div class="ata-alert">
+                <i class="fas fa-circle-info"></i>
+                <div>
+                  <strong>Atenção</strong>
+                  <p>
+                    O saldo disponível da ata é atualizado após a confirmação do
+                    pedido.
+                  </p>
+                </div>
+              </div>
+            </article>
+            <article class="ata-panel ata-report-panel">
+              <div class="ata-panel__title">
+                <div>
+                  <span class="ata-page__eyebrow ata-page__eyebrow--dark"
+                    >Documentação</span
+                  >
+                  <h2>Relatório da ata</h2>
+                </div>
+                <i class="fas fa-print"></i>
+              </div>
+              <p>
+                Gere uma versão para impressão ou salve o relatório completo em
+                PDF.
+              </p>
+              <div class="ata-report-meta">
+                <span id="ataReportEscopo">Escopo: —</span>
+                <span id="ataReportGeradoEm">Gerado em: —</span>
+              </div>
+              <div class="ata-report-actions">
+                <button type="button" onclick="imprimirRelatorioAta()">
+                  <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button
+                  type="button"
+                  class="primary"
+                  onclick="exportarRelatorioAta()"
+                >
+                  <i class="fas fa-file-pdf"></i> Exportar PDF
+                </button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="ata-page__items" aria-labelledby="itensTitulo">
+          <div class="ata-page__section-head">
+            <div>
+              <span class="ata-page__eyebrow ata-page__eyebrow--dark"
+                >Disponibilidade</span
+              >
+              <h2 id="itensTitulo">
+                <i class="fas fa-boxes"></i> Itens da ata
+                <small id="qtdItens">0 itens</small>
+              </h2>
+            </div>
+            <div class="ata-page__search">
+              <i class="fas fa-search"></i>
+              <input
+                id="buscaItens"
+                type="search"
+                placeholder="Buscar item por descrição ou número..."
+                autocomplete="off"
+              />
+              <span id="contadorItens"></span>
+            </div>
+          </div>
+          <div class="ata-page__table-wrap">
+            <table class="ata-page__table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Descrição</th>
+                  <th>Contratado</th>
+                  <th>Saldo físico</th>
+                  <th>Consumo</th>
+                  <th>Valor unit.</th>
+                  <th>Valor total</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="itensTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer class="ata-page__footer">
+          <span
+            ><i class="fas fa-circle-info"></i> O saldo é atualizado após a
+            confirmação do pedido.</span
+          >
+          <a class="ata-page__back-button" href="./gestao-atas.html#saude"
+            >Voltar</a
+          >
+        </footer>
+      </div>
+
+      <div class="ata-page__loading" id="loadingContainer">
+        <span class="loading-spinner"></span>
+        <p>Carregando ata...</p>
+      </div>
+
+      <section id="notFound" class="ata-page__notfound" hidden>
+        <i class="fas fa-file-circle-exclamation"></i>
+        <h2>Ata não encontrada</h2>
+        <p>Não foi possível encontrar a ata solicitada.</p>
+        <a href="./gestao-atas.html#saude">Voltar para Saúde das Atas</a>
+      </section>
+    </main>
+
+    <div id="ataCartDrawerOverlay" class="ata-cart-drawer-overlay" aria-hidden="true"></div>
+    <aside id="ataCartDrawer" class="ata-cart-drawer" aria-label="Carrinho da ata" aria-hidden="true">
+      <header class="ata-cart-drawer__header">
+        <div><span class="ata-page__eyebrow ata-page__eyebrow--dark">SELEÇÃO ATUAL</span><h2><i class="fas fa-cart-shopping"></i> Meu carrinho</h2></div>
+        <button id="ataCartDrawerClose" class="ata-cart-drawer__close" type="button" aria-label="Fechar carrinho"><i class="fas fa-times"></i></button>
+      </header>
+      <div id="ataCartDrawerItems" class="ata-cart-drawer__items"></div>
+      <footer class="ata-cart-drawer__footer"><span><strong id="ataCartDrawerTotal">0 itens</strong> selecionados</span><a href="./gestao-atas.html#carrinho" class="ata-cart-drawer__link">Abrir carrinho completo <i class="fas fa-arrow-right"></i></a></footer>
+    </aside>
+    <button id="ataCartFab" class="ata-cart-fab" type="button" aria-label="Abrir carrinho vazio"><i class="fas fa-cart-shopping"></i><span id="ataCartBadge" hidden>0</span></button>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+    <script
+      type="module"
+      src="js/modules/ata-page.js?v=20261016-governanca-2"
+    ></script>
+    <script
+      src="../shared/js/pwa-install.js?v=20261009-mobile-only-1"
+      defer
+    ></script>
+  </body>
+</html>

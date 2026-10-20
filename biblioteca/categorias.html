@@ -24,11 +24,12 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261010-shared-shell-theme-4">
-  <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261010-shared-shell-theme-5">
+  
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1">
+  <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261018-library-identity-3">
+  <link rel="stylesheet" href="./biblioteca.css?v=20261018-biblioteca-municipio-unico-1">
 </head>
-  <body data-intranet-module="biblioteca" data-intranet-theme="atas" data-intranet-page="biblioteca-categorias">
+  <body data-intranet-module="biblioteca" data-intranet-theme="shared" data-intranet-page="biblioteca-categorias" class="app-shell" data-sidebar-open="false" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
     <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
       <div class="spinner"></div>
@@ -37,10 +38,10 @@
     <!-- LAYOUT -->
     <div class="app-layout" id="mainSystem">
       <!-- SIDEBAR -->
-      <aside class="sidebar" id="sidebar"></aside>
+      <aside class="app-sidebar sidebar" id="sidebar"></aside>
 
       <!-- MAIN -->
-      <div class="main-area">
+      <div class="main-area app-main">
         <!-- TOPBAR -->
         <header class="topbar" id="topbar"></header>
 
@@ -91,7 +92,7 @@
     <div class="notification-center" id="notificationCenter"></div>
 
     <!-- MODAL DE CADASTRO/EDIÇÃO -->
-    <div class="modal-overlay intranet-style-67680c5c72" id="modalOverlay">
+    <div class="modal-overlay" id="modalOverlay">
       <div class="modal">
         <div class="modal-header">
           <h3>
@@ -162,70 +163,70 @@
               <div class="color-presets" id="colorPresets">
                 <button
                   type="button"
-                  class="color-preset intranet-style-5ed5a01197"
+                  class="color-preset"
                   data-cor="#0d5e3a"
 
                   title="Verde institucional"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-75cb6cffec"
+                  class="color-preset"
                   data-cor="#1a3a6b"
 
                   title="Azul institucional"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-a4fa767636"
+                  class="color-preset"
                   data-cor="#8b5cf6"
 
                   title="Roxo"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-81cf1899d5"
+                  class="color-preset"
                   data-cor="#06b6d4"
 
                   title="Ciano"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-20ab84e474"
+                  class="color-preset"
                   data-cor="#f59e0b"
 
                   title="Âmbar"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-3748afa89d"
+                  class="color-preset"
                   data-cor="#ef4444"
 
                   title="Vermelho"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-bcac7204e7"
+                  class="color-preset"
                   data-cor="#ec4899"
 
                   title="Rosa"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-5cf9b89efc"
+                  class="color-preset"
                   data-cor="#10b981"
 
                   title="Esmeralda"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-7532862184"
+                  class="color-preset"
                   data-cor="#64748b"
 
                   title="Cinza"
                 ></button>
                 <button
                   type="button"
-                  class="color-preset intranet-style-204cba925a"
+                  class="color-preset"
                   data-cor="#0f172a"
 
                   title="Preto"
@@ -259,7 +260,8 @@
     </div>
 
     <!-- SUPABASE SDK -->
-    <script type="importmap">
+      <script src="../shared/js/system-shell.js?v=20261018-library-identity-3"></script>
+  <script type="importmap">
       {
         "imports": {
           "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
@@ -269,7 +271,7 @@
 
     <script type="module">
 import { supabase } from "../shared/js/supabase.js";
-      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261010-biblioteca-shared-shell-2";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261018-biblioteca-municipio-unico-1";
       await initBibliotecaLayout(supabase);
       // ============================================
       // CONFIGURAÇÃO SUPABASE

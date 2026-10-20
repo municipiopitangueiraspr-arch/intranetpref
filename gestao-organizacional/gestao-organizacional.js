@@ -1,0 +1,60 @@
+import { supabase } from "../shared/js/supabase.js";
+import { AuthGuard } from "../shared/js/auth-guard.js";
+import { UnidadesOrganizacionaisService } from "../shared/js/services/unidades-organizacionais-service.js";
+
+const $ = (selector) => document.querySelector(selector);
+const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
+const state = { units: [], users: [], permissions: [], currentUser: null };
+const TYPE_OPTIONS = [["PREFEITURA", "Prefeitura"], ["ORGAO_ADMINISTRACAO_ESPECIFICA", "Órgão de administração específica"], ["ORGAO_ADMINISTRACAO_SUPERIOR", "Órgão de administração superior"], ["ORGAO_ASSISTENCIA_SUPERIOR", "Órgão de assistência superior"], ["SECRETARIA", "Secretaria"], ["PROCURADORIA", "Procuradoria"], ["GABINETE", "Gabinete"], ["DEPARTAMENTO", "Departamento"], ["DIVISAO", "Divisão"], ["SUBDIVISAO", "Subdivisão"], ["ASSESSORIA", "Assessoria"], ["CONSELHO", "Conselho"], ["COMISSAO", "Comissão"], ["AUTARQUIA", "Autarquia"], ["FUNDACAO", "Fundação"], ["CAMARA", "Câmara"], ["SAAE", "SAAE"], ["REDE", "Rede"], ["OUTRO", "Outro"]];
+const typeLabel = (type) => TYPE_OPTIONS.find(([key]) => key === type)?.[1] || type || "Outro";
+
+function toast(message, error = false) { const node = $("#toast"); node.textContent = message; node.className = `org-toast is-visible${error ? " error" : ""}`; window.setTimeout(() => node.classList.remove("is-visible"), 4000); }
+function fillSelect(selector, rows, placeholder, label) { const node = $(selector); if (!node) return; node.innerHTML = `<option value="">${placeholder}</option>${rows.map((row) => `<option value="${esc(row.id)}">${esc(label(row))}</option>`).join("")}`; }
+function unitLabel(unit) { return `${"— ".repeat(unit.nivel || 0)}${unit.codigo} · ${unit.nome}`; }
+function setView(view) { document.querySelectorAll(".org-view").forEach((node) => node.classList.toggle("is-visible", node.dataset.panel === view)); document.querySelectorAll(".app-nav__link").forEach((node) => node.classList.toggle("is-active", node.dataset.view === view)); const meta = { overview: ["Visão geral", "Acompanhe a saúde do diretório municipal e acesse as operações administrativas."], structure: ["Organograma", "Mantenha a estrutura hierárquica, seus níveis e seu histórico."], users: ["Usuários e lotações", "Administre o ciclo de vida e os vínculos organizacionais."], access: ["Permissões", "Conceda acessos por unidade, descendentes ou município."] }[view] || ["Gestão organizacional", ""]; $("#pageTitle").textContent = meta[0]; $("#pageSubtitle").textContent = meta[1]; window.history.replaceState(null, "", `#${view}`); document.body.dataset.sidebarOpen = "false"; }
+
+function renderTree() {
+  const target = $("#unitTree"); if (!target) return;
+  const children = new Map(); state.units.forEach((unit) => { const key = unit.parent_id || "__root__"; if (!children.has(key)) children.set(key, []); children.get(key).push(unit); });
+  const walk = (parent, depth) => (children.get(parent || "__root__") || []).map((unit) => `<div class="org-row ${unit.ativo ? "" : "is-inactive"}" style="--tree-depth:${depth}"><div class="org-row-main"><span class="org-row-code">${esc(unit.codigo)}</span><strong>${esc(unit.nome)}</strong><small>${esc(unit.sigla || "")}</small></div><div class="org-row-meta"><span class="org-pill">${esc(typeLabel(unit.tipo))}</span><button class="org-toggle" data-unit-toggle="${esc(unit.id)}" type="button">${unit.ativo ? "Inativar" : "Reativar"}</button></div></div>${walk(unit.id, depth + 1)}`).join("");
+  target.innerHTML = walk(null, 0) || `<div class="org-empty">Nenhuma unidade cadastrada.</div>`; $("#unitCount").textContent = `${state.units.filter((unit) => unit.ativo).length} ativas · ${state.units.length} total`;
+  target.querySelectorAll("[data-unit-toggle]").forEach((button) => button.addEventListener("click", async () => { const unit = state.units.find((row) => row.id === button.dataset.unitToggle); if (!unit) return; button.disabled = true; try { await UnidadesOrganizacionaisService.alternarAtivo(unit.id, !unit.ativo); toast(unit.ativo ? "Unidade inativada." : "Unidade reativada."); await loadAll(); } catch (error) { toast(error.message || "Falha ao atualizar unidade.", true); button.disabled = false; } }));
+}
+
+function renderUsers() { const query = ($( "#userSearch" )?.value || "").toLowerCase().trim(); const rows = state.users.filter((user) => `${user.nome} ${user.email}`.toLowerCase().includes(query)); const target = $("#userTable"); target.innerHTML = rows.map((user) => `<tr><td><strong>${esc(user.nome || "Sem nome")}</strong><small>${esc(user.email || "")}</small></td><td>${esc(user.perfil || "—")}</td><td>${esc(user.orgao_id ?? "—")}</td><td><span class="org-pill">${user.ativo ? "Ativo" : "Inativo"}</span></td><td><button class="org-button secondary" data-user-toggle="${esc(user.id)}" type="button">${user.ativo ? "Inativar" : "Reativar"}</button></td></tr>`).join("") || `<tr><td colspan="5" class="org-empty">Nenhum usuário encontrado.</td></tr>`; target.querySelectorAll("[data-user-toggle]").forEach((button) => button.addEventListener("click", async () => { const user = state.users.find((row) => String(row.id) === String(button.dataset.userToggle)); if (!user) return; button.disabled = true; const { error } = await supabase.from("usuarios").update({ ativo: !user.ativo }).eq("id", user.id); if (error) { toast(error.message, true); button.disabled = false; return; } toast(user.ativo ? "Usuário inativado." : "Usuário reativado."); await loadAll(); })); }
+function renderPermissions() {
+  const names = new Map(state.users.map((user) => [String(user.id), user.nome || user.email]));
+  const target = $("#permissionTable");
+  target.innerHTML = state.permissions.map((permission) => `<tr><td>${esc(names.get(String(permission.usuario_id)) || `Usuário #${permission.usuario_id}`)}</td><td>${esc(permission.modulo)}</td><td>${esc(permission.acao)}</td><td>${esc(permission.escopo)}</td><td><button class="org-button secondary" data-permission-revoke="${esc(permission.id)}" type="button">Revogar</button></td></tr>`).join("") || `<tr><td colspan="5" class="org-empty">Nenhuma permissão registrada.</td></tr>`;
+  target.querySelectorAll("[data-permission-revoke]").forEach((button) => button.addEventListener("click", async () => {
+    const permission = state.permissions.find((row) => String(row.id) === String(button.dataset.permissionRevoke));
+    if (!permission || !permission.usuario_id || !String(permission.modulo || "").trim()) {
+      toast("Não foi possível identificar o usuário e o módulo da permissão.", true);
+      return;
+    }
+    if (!window.confirm("Revogar esta permissão pelo fluxo oficial? O histórico será preservado.")) return;
+    button.disabled = true;
+    const actor = state.currentUser?.nome || state.currentUser?.email || "ADMIN";
+    const observation = `Revogação administrativa pela tela de Gestão Organizacional; permissão #${permission.id}; ação ${permission.acao || "não informada"}; escopo ${permission.escopo || "não informado"}; operador ${actor}.`;
+    try {
+      const { error } = await supabase.rpc("admin_revogar_modulo_usuario", {
+        p_usuario_id: Number(permission.usuario_id),
+        p_modulo: String(permission.modulo).trim(),
+        p_observacao: observation,
+      });
+      if (error) throw error;
+      toast("Permissão revogada pelo fluxo oficial e registrada na auditoria.");
+      await loadAll();
+    } catch (error) {
+      toast(error.message || "Falha ao revogar a permissão pelo fluxo oficial.", true);
+      button.disabled = false;
+    }
+  }));
+}
+function populateControls() { const units = state.units.filter((unit) => unit.ativo); fillSelect("#unitParent", units, "Unidade raiz", unitLabel); fillSelect("#linkUnit", units, "Selecione uma unidade", unitLabel); fillSelect("#permissionUnit", units, "Selecione uma unidade", unitLabel); fillSelect("#linkUser", state.users.filter((user) => user.ativo), "Selecione um usuário", (user) => `${user.nome || user.email}`); fillSelect("#permissionUser", state.users.filter((user) => user.ativo), "Selecione um usuário", (user) => `${user.nome || user.email}`); $("#unitType").innerHTML = TYPE_OPTIONS.map(([value, label]) => `<option value="${value}">${label}</option>`).join(""); }
+async function loadAll() { const [units, users, permissions] = await Promise.all([UnidadesOrganizacionaisService.listar(), supabase.from("usuarios").select("id,nome,email,perfil,ativo,orgao_id").order("nome").limit(500), supabase.from("permissoes_unidades").select("id,usuario_id,unidade_id,modulo,acao,escopo,permitido").order("created_at", { ascending: false }).limit(500)]); if (users.error) throw users.error; if (permissions.error) throw permissions.error; state.units = units; state.users = users.data || []; state.permissions = permissions.data || []; populateControls(); renderTree(); renderUsers(); renderPermissions(); $("#kpiUnits").textContent = state.units.filter((unit) => unit.ativo).length; $("#kpiUsers").textContent = state.users.filter((user) => user.ativo).length; $("#kpiLinks").textContent = "—"; $("#kpiPermissions").textContent = state.permissions.filter((permission) => permission.ativo !== false && permission.permitido !== false).length; }
+
+function bindEvents() { document.querySelectorAll("[data-view]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.view); })); document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go))); $("#sidebarToggle").addEventListener("click", () => { document.body.dataset.sidebarOpen = document.body.dataset.sidebarOpen === "true" ? "false" : "true"; }); $("#refreshButton").addEventListener("click", () => loadAll().then(() => toast("Dados atualizados.")).catch((error) => toast(error.message, true))); $("#userSearch").addEventListener("input", renderUsers); $("#unitForm").addEventListener("submit", async (event) => { event.preventDefault(); const button = event.currentTarget.querySelector("button"); button.disabled = true; try { await UnidadesOrganizacionaisService.criar(Object.fromEntries(new FormData(event.currentTarget).entries())); event.currentTarget.reset(); toast("Unidade criada e registrada no histórico."); await loadAll(); } catch (error) { toast(error.message, true); } finally { button.disabled = false; } }); $("#linkForm").addEventListener("submit", async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget).entries()); try { await UnidadesOrganizacionaisService.criarVinculoUsuario({ ...data, principal: data.principal === "true" }); event.currentTarget.reset(); toast("Vínculo registrado."); await loadAll(); } catch (error) { toast(error.message, true); } }); $("#permissionForm").addEventListener("submit", async (event) => { event.preventDefault(); try { await UnidadesOrganizacionaisService.criarPermissaoUnidade(Object.fromEntries(new FormData(event.currentTarget).entries())); event.currentTarget.reset(); toast("Permissão concedida."); await loadAll(); } catch (error) { toast(error.message, true); } }); }
+
+async function init() { const guard = await AuthGuard.protegerRota({ registrarAcesso: true }); if (!guard.ok) return; if (guard.usuario?.perfil !== "ADMIN") { document.body.innerHTML = `<main class="app-main"><div class="org-card"><h2>Acesso restrito</h2><p>Esta área está disponível apenas para administradores.</p><a class="org-button primary" href="../intranet.html">Voltar ao hall</a></div></main>`; return; } state.currentUser = guard.usuario; $("#currentUserName").textContent = guard.usuario.nome || guard.usuario.email; $("#currentUserAvatar").textContent = (guard.usuario.nome || guard.usuario.email || "?").slice(0, 1).toUpperCase(); bindEvents(); setView(location.hash.slice(1) || "overview"); try { await loadAll(); } catch (error) { toast(error.message || "Não foi possível carregar a administração.", true); } }
+init();

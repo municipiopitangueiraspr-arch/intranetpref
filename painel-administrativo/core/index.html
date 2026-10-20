@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b3b66">
+  <title>Painel Admin · Intranet Municipal</title>
+  <link rel="stylesheet" href="../../shared/css/vendor-fontawesome/all.min.css?v=20261004-unified-5">
+  <link rel="stylesheet" href="../../shared/css/intranet-identidade.css?v=20261014-admin-1">
+  <link rel="stylesheet" href="css/admin-shell.css?v=20261015-admin-shell-2">
+  <link rel="stylesheet" href="css/organizacao.css?v=20261015-org-tree-1">
+</head>
+<body class="admin-municipal admin-saas saas-admin system-mother" data-intranet-module="core" data-intranet-page="core-index">
+  <section id="adminGate" class="admin-gate" aria-live="polite" hidden>
+    <div class="admin-gate-card">
+      <img src="../../brasao-pref.png" alt="Brasão da Prefeitura Municipal de Pitangueiras">
+      <h1 id="adminGateTitle"></h1>
+      <p id="adminGateMessage"></p>
+      <a href="../../intranet.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar à intranet</a>
+    </div>
+  </section>
+
+  <div id="mainSystem" class="app-layout" hidden>
+    <aside id="sidebar" class="sidebar" aria-label="Navegação do Painel Admin"></aside>
+    <div class="main-area">
+      <header id="topbar" class="topbar"></header>
+      <div id="adminViewHost" class="admin-content" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script src="../../shared/js/system-shell.js?v=20261014-admin-shell-consolidated-1"></script>
+  <script type="module" src="admin-panel.js?v=20261014-admin-shell-consolidated-1"></script>
+</body>
+</html>

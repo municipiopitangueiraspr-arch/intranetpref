@@ -1,0 +1,224 @@
+/* Gestão de Atas · view Cadastrar Ata
+   Regras confinadas a #cadastroContent; nenhuma alteração nos demais módulos. */
+#cadastroContent .cadastro-container {
+  display: grid;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: var(--content-max-width, 96rem);
+  margin-inline: auto;
+  min-width: 0;
+  color: var(--text-primary);
+}
+#cadastroContent .cadastro-indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+#cadastroContent .indicador-card {
+  display: grid;
+  gap: .35rem;
+  min-height: 6.25rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border-default);
+  border-top: 3px solid var(--brand-primary);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+#cadastroContent .indicador-card.indicador-ativa { border-top-color: var(--state-success); }
+#cadastroContent .indicador-card.indicador-proxima { border-top-color: var(--state-warning); }
+#cadastroContent .indicador-card.indicador-vencida { border-top-color: var(--state-danger); }
+#cadastroContent .indicador-numero { color: var(--text-primary); font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); line-height: 1; font-variant-numeric: tabular-nums; }
+#cadastroContent .indicador-label { color: var(--text-secondary); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+
+#cadastroContent .cadastro-filtros {
+  display: grid;
+  grid-template-columns: minmax(15rem, 1fr) minmax(11rem, .45fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+#cadastroContent .filtro-busca { position: relative; min-width: 0; }
+#cadastroContent .filtro-busca > i { position: absolute; top: 50%; left: .85rem; color: var(--text-muted); transform: translateY(-50%); pointer-events: none; }
+#cadastroContent .filtro-input,
+#cadastroContent .filtro-select,
+#cadastroContent .form-group input,
+#cadastroContent .form-group textarea,
+#cadastroContent .tabela-itens-cadastro input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: .65rem .8rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font: inherit;
+  transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
+}
+#cadastroContent .filtro-busca .filtro-input,
+#cadastroContent .filtro-busca input { padding-left: 2.5rem; }
+#cadastroContent .filtro-input::placeholder,
+#cadastroContent .form-group input::placeholder,
+#cadastroContent .form-group textarea::placeholder { color: var(--text-muted); }
+#cadastroContent .filtro-input:focus,
+#cadastroContent .filtro-select:focus,
+#cadastroContent .form-group input:focus,
+#cadastroContent .form-group textarea:focus,
+#cadastroContent .tabela-itens-cadastro input:focus { border-color: var(--border-focus); outline: 0; box-shadow: var(--focus-ring); }
+#cadastroContent button {
+  font-family: var(--font-family-sans);
+}
+#cadastroContent .btn-nova-ata,
+#cadastroContent .btn-extracao,
+#cadastroContent .btn-adicionar-item,
+#cadastroContent .btn-salvar-ata,
+#cadastroContent .btn-editar,
+#cadastroContent .btn-visualizar,
+#cadastroContent .btn-remover-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.5rem;
+  padding: .55rem .85rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease, box-shadow .16s ease;
+}
+#cadastroContent .btn-nova-ata,
+#cadastroContent .btn-adicionar-item,
+#cadastroContent .btn-salvar-ata,
+#cadastroContent .btn-editar { background: var(--brand-primary); color: var(--text-on-brand); }
+#cadastroContent .btn-nova-ata:hover,
+#cadastroContent .btn-adicionar-item:hover,
+#cadastroContent .btn-salvar-ata:hover,
+#cadastroContent .btn-editar:hover { background: var(--brand-primary-dark); box-shadow: var(--shadow-card); transform: translateY(-1px); }
+#cadastroContent .btn-extracao,
+#cadastroContent .btn-visualizar { border-color: var(--border-default); background: var(--surface-card); color: var(--brand-primary); }
+#cadastroContent .btn-extracao:hover,
+#cadastroContent .btn-visualizar:hover { border-color: var(--border-focus); background: var(--surface-hover); }
+#cadastroContent .btn-remover-item { width: 2.35rem; min-width: 2.35rem; min-height: 2.35rem; padding: .4rem; border-color: color-mix(in srgb, var(--state-danger) 22%, var(--border-default)); background: var(--state-danger-bg); color: var(--state-danger); }
+#cadastroContent .btn-remover-item:hover { background: var(--state-danger); color: #fff; }
+
+#cadastroContent .atas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  align-items: stretch;
+  gap: var(--space-4);
+  min-width: 0;
+}
+#cadastroContent .atas-grid:empty { display: none; }
+#cadastroContent .ata-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+#cadastroContent .ata-card:hover { border-color: color-mix(in srgb, var(--brand-primary) 35%, var(--border-default)); box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+#cadastroContent .ata-header { display: grid; gap: .75rem; padding: 1rem 1.05rem; color: var(--text-secondary); font-size: var(--font-size-sm); }
+#cadastroContent .ata-header > div:not(.ata-status):not(.ata-contexto-modalidade) { display: flex; align-items: flex-start; gap: .45rem; line-height: 1.45; }
+#cadastroContent .ata-header > div > i { flex: 0 0 auto; margin-top: .2rem; color: var(--brand-primary); }
+#cadastroContent .ata-status { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
+#cadastroContent .ata-status > span:last-child { display: inline-flex; align-items: center; gap: .3rem; color: var(--text-muted); font-size: var(--font-size-xs); }
+#cadastroContent .ata-numero { color: var(--text-primary); font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); }
+#cadastroContent .ata-contexto-modalidade { display: grid; gap: .35rem; }
+#cadastroContent .ata-modalidade-badge { display: inline-flex; align-items: center; gap: .35rem; width: fit-content; max-width: 100%; padding: .25rem .55rem; border-radius: var(--radius-pill); background: var(--brand-primary-light); color: var(--brand-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+#cadastroContent .ata-modalidade-nao-cadastrada { background: var(--state-warning-bg); color: var(--state-warning); }
+#cadastroContent .ata-contexto-processo { color: var(--text-muted); font-size: var(--font-size-xs); overflow-wrap: anywhere; }
+#cadastroContent .ata-fornecedor { color: var(--text-primary); font-weight: var(--font-weight-semibold); }
+#cadastroContent .ata-fornecedor span { color: var(--text-muted); font-size: var(--font-size-xs); font-weight: var(--font-weight-regular); }
+#cadastroContent .status-badge { display: inline-flex; align-items: center; width: fit-content; padding: .25rem .6rem; border-radius: var(--radius-pill); font-size: .7rem; font-weight: var(--font-weight-bold); }
+#cadastroContent .status-ativa { background: var(--state-success-bg); color: var(--state-success); }
+#cadastroContent .status-proxima { background: var(--state-warning-bg); color: var(--state-warning); }
+#cadastroContent .status-vencida { background: var(--state-danger-bg); color: var(--state-danger); }
+#cadastroContent .ata-footer { display: flex; align-items: center; justify-content: space-between; gap: .65rem; padding: .75rem 1rem; border-top: 1px solid var(--border-soft); background: var(--surface-muted); }
+#cadastroContent .ata-footer > span { color: var(--text-primary); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); font-variant-numeric: tabular-nums; }
+#cadastroContent .ata-footer > div { display: flex; gap: .4rem; }
+#cadastroContent .ata-footer .btn-visualizar { width: 2.5rem; min-width: 2.5rem; padding: .4rem; }
+#cadastroContent .atas-grid > div:only-child:not(.ata-card) { grid-column: 1 / -1; padding: 2rem; border: 1px dashed var(--border-default); border-radius: var(--radius-lg); background: var(--surface-muted); color: var(--text-secondary); text-align: center; }
+
+#cadastroContent .cadastro-divider { display: flex; align-items: center; gap: 1rem; color: var(--text-muted); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); letter-spacing: .08em; text-transform: uppercase; }
+#cadastroContent .cadastro-divider::before,
+#cadastroContent .cadastro-divider::after { height: 1px; flex: 1; background: var(--border-default); content: ""; }
+#cadastroContent .cadastro-divider span { display: inline-flex; align-items: center; gap: .5rem; }
+#cadastroContent .cadastro-divider i { color: var(--brand-primary); }
+#cadastroContent .cadastro-form-wrapper { display: grid; gap: var(--space-5); padding: clamp(1rem, 2vw, 1.5rem); border: 1px solid var(--border-default); border-radius: var(--radius-xl); background: var(--surface-card); box-shadow: var(--shadow-card); }
+#cadastroContent .cadastro-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); padding-bottom: var(--space-4); border-bottom: 1px solid var(--border-soft); }
+#cadastroContent .cadastro-titulo { display: flex; align-items: center; gap: .65rem; color: var(--text-primary); font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); }
+#cadastroContent .cadastro-titulo i { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: var(--radius-md); background: var(--brand-primary-light); color: var(--brand-primary); }
+#cadastroContent #fileJsonInput { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); clip-path: inset(50%); white-space: nowrap; }
+#cadastroContent #formCadastroAta { display: grid; gap: var(--space-4); }
+#cadastroContent .cadastro-secao { display: grid; gap: var(--space-4); padding: 1.1rem; border: 1px solid var(--border-soft); border-radius: var(--radius-lg); background: var(--surface-card); }
+#cadastroContent .secao-titulo { display: flex; align-items: center; gap: .55rem; padding-bottom: .65rem; border-bottom: 1px solid var(--border-soft); color: var(--text-primary); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); }
+#cadastroContent .secao-titulo i { color: var(--brand-primary); }
+#cadastroContent .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--space-3); }
+#cadastroContent .form-row:has(> .form-group > textarea) { grid-template-columns: minmax(0, 1fr); }
+#cadastroContent .form-group { display: grid; align-content: start; gap: .4rem; min-width: 0; }
+#cadastroContent .form-group label { color: var(--text-primary); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
+#cadastroContent .form-group textarea { min-height: 5.5rem; resize: vertical; }
+#cadastroContent .campo-ajuda-modalidade { color: var(--text-muted); font-size: var(--font-size-xs); line-height: 1.45; }
+#cadastroContent .itens-cadastro-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); color: var(--text-secondary); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
+#cadastroContent .tabela-container { width: 100%; min-width: 0; overflow: auto; border: 1px solid var(--border-default); border-radius: var(--radius-lg); }
+#cadastroContent .tabela-itens-cadastro { width: 100%; min-width: 720px; border-collapse: separate; border-spacing: 0; color: var(--text-primary); font-size: var(--font-size-sm); }
+#cadastroContent .tabela-itens-cadastro th,
+#cadastroContent .tabela-itens-cadastro td { padding: .65rem .7rem; border-bottom: 1px solid var(--border-soft); text-align: left; vertical-align: middle; }
+#cadastroContent .tabela-itens-cadastro th { background: var(--surface-muted); color: var(--text-secondary); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); text-transform: uppercase; white-space: nowrap; }
+#cadastroContent .tabela-itens-cadastro tbody tr:hover { background: var(--surface-hover); }
+#cadastroContent .tabela-itens-cadastro tbody tr:last-child td { border-bottom: 1px solid var(--border-default); }
+#cadastroContent .tabela-itens-cadastro td:nth-child(1) { width: 5rem; }
+#cadastroContent .tabela-itens-cadastro td:nth-child(2) { min-width: 16rem; }
+#cadastroContent .tabela-itens-cadastro td:nth-child(3),
+#cadastroContent .tabela-itens-cadastro td:nth-child(4) { width: 10rem; }
+#cadastroContent .tabela-itens-cadastro td:nth-child(5) { min-width: 9rem; font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+#cadastroContent .tabela-itens-cadastro tfoot td { border-bottom: 0; background: var(--surface-muted); color: var(--text-primary); font-weight: var(--font-weight-bold); text-align: right; }
+#cadastroContent .tabela-itens-cadastro tfoot td:last-child { text-align: left; }
+#cadastroContent .btn-salvar-ata { justify-self: end; min-width: 12rem; min-height: 2.85rem; padding-inline: 1.25rem; }
+
+@media (max-width: 900px) {
+  #cadastroContent .cadastro-filtros { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  #cadastroContent .cadastro-filtros .btn-nova-ata { grid-column: 1 / -1; }
+}
+@media (max-width: 720px) {
+  #cadastroContent .cadastro-container { gap: var(--space-4); }
+  #cadastroContent .cadastro-indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #cadastroContent .cadastro-form-wrapper { padding: 1rem; }
+  #cadastroContent .cadastro-secao { padding: .85rem; }
+  #cadastroContent .cadastro-header { align-items: flex-start; }
+  #cadastroContent .cadastro-header .btn-extracao { width: 100%; }
+  #cadastroContent .cadastro-filtros { grid-template-columns: minmax(0, 1fr); }
+  #cadastroContent .cadastro-filtros .btn-nova-ata { grid-column: auto; }
+  #cadastroContent .btn-salvar-ata { width: 100%; }
+}
+@media (max-width: 440px) {
+  #cadastroContent .cadastro-indicadores { grid-template-columns: minmax(0, 1fr); }
+  #cadastroContent .indicador-card { min-height: 5rem; }
+  #cadastroContent .ata-footer { align-items: flex-start; flex-direction: column; }
+  #cadastroContent .ata-footer > div { width: 100%; }
+  #cadastroContent .ata-footer .btn-editar { flex: 1 1 auto; }
+  #cadastroContent .itens-cadastro-header .btn-adicionar-item { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #cadastroContent * { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+
+
+#cadastroContent :where(button, input, select, textarea, a):focus-visible {
+  outline: 0;
+  box-shadow: var(--focus-ring);
+}

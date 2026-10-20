@@ -13,91 +13,51 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-
     <!-- Font Awesome 6 -->
 
-
-
-
-
-
-
-
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
-  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261006-ui-polish-1">
+  <!-- Design system oficial da nova identidade visual -->
+  <link rel="stylesheet" href="shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
+  <link rel="stylesheet" href="shared/css/intranet-identidade.css?v=20261015-design-system-entry-1">
+    <link rel="stylesheet" href="shared/identity-login.css?v=20261015-login-layer-2">
+    <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261014-pwa-2">
   <script src="shared/js/pwa-device.js?v=20261009-mobile-only-1" data-manifest-href="./manifest.webmanifest?v=20261009-brasao-2"></script>
-  <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261008-pwa-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="index" data-pwa-worker="./service-worker.js">
-    <!-- ========== MODAL DE LOGIN ========== -->
-    <div class="modal-overlay" id="loginModalOverlay">
-      <div class="modal-login">
-        <div class="modal-login-header">
-          <div class="brasao-mini"><img src="brasao-pref.png" alt="Brasão da Prefeitura de Pitangueiras" /></div>
-          <h2>Intranet Municipal</h2>
-          <p>Acesso restrito a servidores autorizados</p>
-        </div>
-        <form id="loginForm" novalidate>
-          <div class="form-group">
-            <label class="form-label" for="loginEmail">E-mail</label>
-            <div class="input-wrapper">
-              <span class="input-icon"><i class="fas fa-envelope"></i></span>
-              <input
-                type="email"
-                id="loginEmail"
-                class="form-input"
-                placeholder="seu.email@prefeitura.gov.br"
-                required
-                autocomplete="email"
-                aria-label="seu.email@prefeitura.gov.br"
-              />
+    <!-- Login: estrutura semântica do design system oficial -->
+    <main class="page-login">
+      <section class="login-overlay" id="loginModalOverlay" aria-label="Autenticação">
+        <div class="login-card ui-card">
+          <header class="login-card__header">
+            <img src="brasao-pref.png" alt="Brasão da Prefeitura de Pitangueiras" />
+            <h1 class="login-card__title">Intranet Municipal</h1>
+            <p class="login-card__subtitle">Acesso restrito a servidores autorizados</p>
+          </header>
+          <form id="loginForm" class="login-form" novalidate>
+            <div class="ui-field">
+              <label class="ui-field__label" for="loginEmail">E-mail</label>
+              <input type="email" id="loginEmail" class="ui-input" placeholder="seu.email@prefeitura.gov.br" required autocomplete="email" aria-label="seu.email@prefeitura.gov.br" />
             </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="loginSenha">Senha</label>
-            <div class="input-wrapper">
-              <span class="input-icon"><i class="fas fa-lock"></i></span>
-              <input
-                type="password"
-                id="loginSenha"
-                class="form-input"
-                placeholder="••••••••"
-                required
-                autocomplete="current-password"
-                aria-label="Senha"
-              />
+            <div class="ui-field">
+              <label class="ui-field__label" for="loginSenha">Senha</label>
+              <input type="password" id="loginSenha" class="ui-input" placeholder="••••••••" required autocomplete="current-password" aria-label="Senha" />
             </div>
-          </div>
-          <button type="submit" class="btn btn-primary" id="btnEntrar">
-            <i class="fas fa-arrow-right-to-bracket"></i> Entrar
-          </button>
-          <div class="login-status" id="loginStatus" role="status" aria-live="polite" hidden></div>
-        </form>
-        <button type="button" class="btn btn-primary intranet-style-6e24e007eb" id="btnGoogle">
-          <i class="fab fa-google"></i> Entrar com Google
-        </button>
-        <button type="button" class="btn btn-secondary intranet-style-4bdb2fcf81" id="btnSolicitarAcesso">
-          Solicitar Acesso
-        </button>
-        <div class="modal-footer-link">
-          <a
-            href="#"
-            onclick="
-              event.preventDefault();
-              showNotification(
-                'info',
-                'Esqueceu a senha?',
-                'Entre em contato com o suporte de TI para redefinir sua senha.',
-              );
-            "
-          >
-            Esqueceu a senha?
-          </a>
+            <div class="login-form__actions">
+              <button type="submit" class="ui-btn ui-btn--primary" id="btnEntrar">
+                <i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i> Entrar
+              </button>
+              <div class="login-card__divider" aria-hidden="true">ou</div>
+              <button type="button" class="ui-btn ui-btn--secondary" id="btnGoogle">
+                <span class="google-g" aria-hidden="true">G</span> Entrar com Google
+              </button>
+              <button type="button" class="ui-btn ui-btn--secondary login-access-btn" id="btnSolicitarAcesso">Solicitar Acesso</button>
+            </div>
+            <div class="login-status" id="loginStatus" role="status" aria-live="polite" hidden></div>
+          </form>
+          <p class="login-help"><a href="#" id="btnEsqueciSenha">Esqueceu a senha?</a></p>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <!-- CONTÊINER DE NOTIFICAÇÕES -->
     <div class="notification-center" id="notificationCenter"></div>
@@ -112,7 +72,7 @@
     </script>
 
     <script type="module">
-	import { supabase, SUPABASE_CONFIG } from "./shared/js/supabase.js";
+	import { supabase, SUPABASE_CONFIG } from "/shared/js/supabase.js";
       const OAUTH_AUDIT_MARKER = "intranet.oauth_audit_started_at";
       function consumeOAuthAuditMarker(session) {
         const startedAt = Number(sessionStorage.getItem(OAUTH_AUDIT_MARKER) || 0);
@@ -142,7 +102,7 @@
             <div class="notification-title">${title}</div>
             <div class="notification-message">${message}</div>
           </div>
-          <button class="notification-close" onclick="this.parentElement.remove()" type="button">✕</button>
+          <button class="notification-close" type="button" aria-label="Fechar notificação">✕</button>
         `;
         container.appendChild(toast);
         if (duration > 0) {
@@ -161,22 +121,22 @@
       // ============================================
       window.showConfirm = function (title, message, onConfirm) {
         const overlay = document.createElement("div");
-        overlay.className = "modal-overlay";
+        overlay.className = "confirm-overlay";
         overlay.innerHTML = `
-          <div class="modal-confirm">
-            <div class="modal-confirm-icon"><i class="fas fa-circle-question"></i></div>
+          <div class="confirm-card ui-card">
+            <div class="confirm-card__icon"><i class="fas fa-circle-question"></i></div>
             <h3>${title}</h3>
             <p>${message}</p>
-            <div class="modal-confirm-actions">
-              <button class="btn btn-secondary" id="cancelBtn" type="button">Cancelar</button>
-              <button class="btn btn-primary" id="confirmBtn" type="button">Confirmar</button>
+            <div class="confirm-card__actions">
+              <button class="ui-btn ui-btn--secondary" id="cancelBtn" type="button">Cancelar</button>
+              <button class="ui-btn ui-btn--primary" id="confirmBtn" type="button">Confirmar</button>
             </div>
           </div>
         `;
         document.body.appendChild(overlay);
 
         const closeModal = () => {
-          overlay.style.opacity = "0";
+          overlay.classList.add("is-closing");
           setTimeout(() => overlay.remove(), 200);
         };
 
@@ -201,7 +161,7 @@
       async function carregarAuthGuard() {
         if (AuthGuard) return AuthGuard;
         try {
-          const mod = await import("./shared/js/auth-guard.js");
+          const mod = await import("/shared/js/auth-guard.js");
           AuthGuard = mod.AuthGuard || mod.default;
           return AuthGuard;
         } catch (err) {
@@ -348,13 +308,13 @@
           if (oauthAuditContext.started) {
             if (!oauthAuditContext.verified) {
               await supabase.auth.signOut();
-              document.getElementById("loginModalOverlay").style.display = "flex";
+              document.getElementById("loginModalOverlay").classList.remove("is-hidden");
               window.showNotification("error", "Login não validado", "Não foi possível confirmar o retorno seguro do provedor. Tente novamente.");
               return;
             }
             const auditRecorded = await registrarSucessoOAuth(session, oauthAuditContext.startedAt);
             if (!auditRecorded) {
-              document.getElementById("loginModalOverlay").style.display = "flex";
+              document.getElementById("loginModalOverlay").classList.remove("is-hidden");
               return;
             }
           }
@@ -369,7 +329,7 @@
           }
           if (usuario.ativo !== true) {
             await supabase.auth.signOut();
-            document.getElementById("loginModalOverlay").style.display = "flex";
+            document.getElementById("loginModalOverlay").classList.remove("is-hidden");
             window.showNotification("error", "Acesso não autorizado", "Esta conta não possui um perfil ativo na intranet.");
             return;
           }
@@ -377,7 +337,7 @@
         } else {
           sessionStorage.removeItem(OAUTH_AUDIT_MARKER);
           // Mostrar modal de login
-          document.getElementById("loginModalOverlay").style.display = "flex";
+          document.getElementById("loginModalOverlay").classList.remove("is-hidden");
           document.getElementById("loginEmail").focus();
         }
       }
@@ -423,6 +383,11 @@
             btnEntrar.innerHTML = textoOriginal;
           }
         });
+
+      document.getElementById("btnEsqueciSenha").addEventListener("click", (event) => {
+        event.preventDefault();
+        window.showNotification("info", "Esqueceu a senha?", "Entre em contato com o suporte de TI para redefinir sua senha.");
+      });
 
       document.getElementById("btnGoogle").addEventListener("click", entrarComGoogle);
       document.getElementById("btnSolicitarAcesso").addEventListener("click", () => {

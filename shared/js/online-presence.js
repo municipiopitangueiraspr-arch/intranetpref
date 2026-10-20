@@ -100,7 +100,19 @@ export async function conectarPresencaOnline(
 
       if (["CHANNEL_ERROR", "TIMED_OUT", "CLOSED"].includes(status)) {
         rastreando = false;
-        informarIndisponivelUmaVez(error || new Error(`Realtime: ${status}`));
+        // Presença é complementar. Fechamentos transitórios do WebSocket,
+        // especialmente o código 1006, não são falhas da autenticação nem
+        // devem gerar erro no console ou interromper o uso da intranet.
+        const mensagem = [error?.message, error?.cause?.message]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        const fechamentoTransitório = status === "CLOSED" || /socket closed: 1006|abnormal closure/.test(mensagem);
+        if (fechamentoTransitório || status === "TIMED_OUT") {
+          informarIndisponivelUmaVez(null);
+        } else {
+          informarIndisponivelUmaVez(error || new Error(`Realtime: ${status}`));
+        }
         if (autorizacaoNegada(error)) {
           void channel.unsubscribe().catch(() => {});
         }

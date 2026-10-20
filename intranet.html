@@ -25,10 +25,12 @@
 
 
 <script src="shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="shared/css/intranet-global.css?v=20261004-unified-5">
-  <link rel="stylesheet" href="shared/css/login-hall-blue.css?v=20261007-avatar-data-url-1">
+  <!-- Design system oficial da nova identidade visual -->
+  <link rel="stylesheet" href="shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
+  <link rel="stylesheet" href="shared/css/intranet-identidade.css?v=20261015-design-system-entry-1">
+    <link rel="stylesheet" href="shared/identity-hall.css?v=20261015-hall-layer-1">
+    <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261014-pwa-2">
   <script src="shared/js/pwa-device.js?v=20261009-mobile-only-1" data-manifest-href="./manifest.webmanifest?v=20261009-brasao-2"></script>
-  <link rel="stylesheet" href="shared/css/pwa-responsive.css?v=20261008-pwa-1">
 </head>
   <body data-intranet-module="plataforma" data-intranet-page="intranet" data-pwa-worker="./service-worker.js">
     <!-- ============================================================ -->
@@ -38,8 +40,7 @@
     <!-- ============================================================ -->
 
     <!-- ========== HALL DE ACESSO ========== -->
-    <div class="portal-prefeitura" id="hallContent">
-      <!-- BARRA DE USUÁRIO (saudação + avatar com dropdown) -->
+    <!-- BARRA DE USUÁRIO (saudação + avatar com dropdown) -->
       <div class="barra-usuario">
         <div class="saudacao-mini">
           <span>Logado como</span>
@@ -55,22 +56,24 @@
            type="button">
             <span id="avatarIniciais">?</span>
           </button>
-          <div class="avatar-menu" id="avatarMenu" role="menu">
+          <div class="avatar-menu" id="avatarMenu" role="menu" aria-hidden="true">
             <div class="avatar-menu-header">
+              <span class="avatar-menu-kicker">Conta conectada</span>
               <strong id="menuNome">—</strong>
-              <span id="menuEmail">—</span>
+              <span class="avatar-menu-email" id="menuEmail">—</span>
             </div>
+            <div class="avatar-menu-section-label">Ações da conta</div>
             <button
-              class="avatar-menu-item"
+              class="avatar-menu-item avatar-menu-item--profile"
               id="menuMeuPerfil"
               type="button"
               role="menuitem"
             >
-              <i class="fas fa-user-circle"></i> Meu Perfil
+              <span class="avatar-menu-item-icon"><i class="fas fa-user-circle"></i></span><span>Meu Perfil</span>
             </button>
             <section class="avatar-menu-quick" aria-labelledby="avatarQuickTitle">
               <h2 class="avatar-menu-quick-title" id="avatarQuickTitle">
-                <i class="fas fa-bolt" aria-hidden="true"></i> Acessos rápidos
+                <i class="fas fa-bolt" aria-hidden="true"></i> Módulos autorizados
               </h2>
               <div
                 class="avatar-menu-quick-list"
@@ -82,17 +85,18 @@
               </div>
             </section>
             <button
-              class="avatar-menu-item sair"
+              class="avatar-menu-item avatar-menu-item--logout sair"
               id="menuSair"
               type="button"
               role="menuitem"
             >
-              <i class="fas fa-sign-out-alt"></i> Sair
+              <span class="avatar-menu-item-icon"><i class="fas fa-sign-out-alt"></i></span><span>Sair</span>
             </button>
           </div>
         </div>
       </div>
 
+    <div class="portal-prefeitura" id="hallContent">
       <!-- CABEÇALHO COM BRASÃO OFICIAL (PNG) -->
       <div class="brasao-header">
         <div class="brasao-img-container">
@@ -100,11 +104,6 @@
             src="brasao-pref.png"
             alt="Brasão Prefeitura de Pitangueiras"
             class="brasao-oficial"
-            onerror="
-              this.onerror = null;
-              this.src =
-                'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%23f8fafc\' stroke=\'%230d5e3a\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'58\' font-size=\'12\' text-anchor=\'middle\' fill=\'%230f172a\' font-weight=\'bold\'%3EPMG%3C/text%3E%3Ctext x=\'50\' y=\'75\' font-size=\'9\' text-anchor=\'middle\' fill=\'%23475669\'%3EPitangueiras%3C/text%3E%3C/svg%3E';
-            "
           />
         </div>
         <div class="boas-vindas">
@@ -116,7 +115,7 @@
             <i class="fas fa-building"></i> Prefeitura de Pitangueiras ·
             Departamento de Informática
           </span>
-          <div class="intranet-style-1f7b8ab338">
+          <div class="hall-access-badge-wrap">
             <span class="badge-intranet">
               <i class="fas fa-shield-haltered"></i> INTRANET MUNICIPAL · ACESSO
               RESTRITO
@@ -149,24 +148,24 @@
       </div>
 
       <!-- ===== ENTRADA ÚNICA DO PAINEL ADMIN (visível só para ADMIN) ===== -->
-      <div id="adminSection" class="intranet-style-067b223240">
-        <div class="intranet-style-882bca5b70">
-          <i class="fas fa-shield-halved intranet-style-3e2a423be1" aria-hidden="true"></i>
-          <h3 class="intranet-style-49ec2a94e6">Administração do Sistema</h3>
-          <span class="intranet-style-1ebf4b6de3">Admin</span>
+      <div id="adminSection" class="admin-section">
+        <div class="admin-section__header">
+          <i class="fas fa-shield-halved" aria-hidden="true"></i>
+          <h3 class="admin-section__title">Administração do Sistema</h3>
+          <span class="admin-section__badge">Admin</span>
         </div>
-        <div class="sistemas-grid intranet-style-19399a0b26">
-          <div class="sistema-card intranet-style-6119208092"
+        <div class="sistemas-grid">
+          <div class="sistema-card"
                role="link" tabindex="0"
-               aria-label="Abrir Painel Admin com todas as áreas de administração"
-               onclick="window.acessarModulo('core')"
-               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.acessarModulo('core')}">
-            <div class="card-icon intranet-style-90d02688be" aria-hidden="true">
+               aria-label="Abrir Gestão organizacional"
+               onclick="window.location.href='./gestao-organizacional.html'"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='./gestao-organizacional.html'}">
+            <div class="card-icon" aria-hidden="true">
               <i class="fas fa-cogs"></i>
             </div>
-            <h3>Painel Admin</h3>
-            <p>Visão geral, auditoria e logs, usuários, órgãos e unidades, módulos, perfis, permissões e governança de acesso.</p>
-            <span class="acesso-badge intranet-style-b627f1c602"><i class="fas fa-arrow-right-to-bracket"></i> Abrir painel</span>
+            <h3>Gestão organizacional</h3>
+            <p>Usuários, lotações, organograma e permissões por unidade, descendentes ou município.</p>
+            <span class="acesso-badge"><i class="fas fa-arrow-right-to-bracket"></i> Abrir gestão</span>
           </div>
         </div>
       </div>
@@ -206,7 +205,7 @@
 
       <div
 
-       class="intranet-style-940f94e3a4">
+       class="hall-version">
         <i class="fas fa-lock"></i> Ambiente controlado · Prefeitura de
         Pitangueiras · v.2026.02
       </div>
@@ -216,7 +215,7 @@
     <div class="notification-center" id="notificationCenter"></div>
 
     <!-- MODAL DE COMPLEMENTO DE PERFIL (fallback legado) -->
-    <div id="perfilModal" class="modal-overlay intranet-style-db51406721">
+    <div id="perfilModal" class="modal-overlay is-hidden">
       <div class="modal-perfil">
         <div class="modal-perfil-header">
           <div class="perfil-icon"><i class="fas fa-user-edit"></i></div>
@@ -281,8 +280,8 @@
     </script>
 
     <script type="module">
-import { supabase } from "./shared/js/supabase.js";
-import { conectarPresencaOnline } from "./shared/js/online-presence.js";
+import { supabase } from "/shared/js/supabase.js";
+import { conectarPresencaOnline } from "/shared/js/online-presence.js";
       // ============================================
       // CONFIGURAÇÃO SUPABASE
       // ============================================
@@ -358,7 +357,7 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
         const overlay = document.createElement("div");
         overlay.className = "modal-overlay";
         overlay.innerHTML = `
-          <div class="modal-confirm">
+          <div class="modal-confirm ui-card">
             <div class="modal-confirm-icon">❓</div>
             <h3>${title}</h3>
             <p>${message}</p>
@@ -370,7 +369,7 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
         `;
         document.body.appendChild(overlay);
         const closeModal = () => {
-          overlay.style.opacity = "0";
+          overlay.classList.add("is-hidden");
           setTimeout(() => overlay.remove(), 200);
         };
         overlay
@@ -489,18 +488,18 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
             "Perfil atualizado",
             "Seus dados foram salvos com sucesso.",
           );
-          modal.style.display = "none";
+          modal.classList.add("is-hidden");
           await carregarSessaoEHall();
         };
 
         document.getElementById("logoutPerfilLink").onclick = async (e) => {
           e.preventDefault();
           await supabase.auth.signOut();
-          modal.style.display = "none";
+          modal.classList.add("is-hidden");
           window.location.href = "index.html";
         };
 
-        modal.style.display = "flex";
+        modal.classList.remove("is-hidden");
       }
 
       // ============================================
@@ -518,36 +517,29 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
         `;
 
         try {
-          // 1. Todos os módulos ativos e visíveis na intranet
-          const { data: modulos, error: errM } = await supabase
-            .from("modulos_sistema")
-            .select("nome, descricao, icone, rota, ordem, cor")
-            .eq("ativo", true)
-            .eq("visivel_intranet", true)
-            .order("ordem", { ascending: true });
+          // A view centraliza perfil legado e permissões por unidade/descendentes.
+          // O hall não consulta mais usuarios_modulos diretamente.
+          const { data: modulosView, error: errM } = await supabase
+            .from("vw_modulos_por_usuario")
+            .select("modulo, modulo_descricao, modulo_icone, modulo_rota, modulo_ordem, modulo_cor, permitido, concedido_em")
+            .eq("permitido", true)
+            .order("modulo_ordem", { ascending: true });
 
           if (errM) throw errM;
 
-          const listaModulos = modulos || [];
+          const listaModulos = (modulosView || []).map((m) => ({
+            nome: m.modulo,
+            descricao: m.modulo_descricao,
+            icone: m.modulo_icone,
+            rota: m.modulo_rota,
+            ordem: m.modulo_ordem,
+            cor: m.modulo_cor,
+            permitido: m.permitido,
+            concedido_em: m.concedido_em,
+          }));
 
-          // 2. Permissões do usuário (exceto ADMIN que vê tudo)
-          let modulosPermitidos = [];
-          if (usuarioLogado.perfil === "ADMIN") {
-            modulosPermitidos = listaModulos.map((m) => m.nome);
-          } else if (usuarioLogado.id) {
-            const { data: perms } = await supabase
-              .from("usuarios_modulos")
-              .select("modulo")
-              .eq("usuario_id", usuarioLogado.id)
-              .eq("permitido", true);
-
-            modulosPermitidos = (perms || []).map((p) => p.modulo);
-          }
-
-          // 3. Filtra apenas os permitidos
-          const visiveis = listaModulos.filter((m) =>
-            modulosPermitidos.includes(m.nome),
-          );
+          // A view já aplicou ADMIN, usuarios_modulos e escopos hierárquicos.
+          const visiveis = listaModulos;
 
           // 4. Atualiza o mapa de rotas global
           window.__rotasModulos = {};
@@ -665,14 +657,12 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
                 <div class="sistema-card${classeIdentidade}"
                      data-modulo="${escaparHtml(m.nome)}"
                      onclick="window.acessarModulo('${escaparHtml(m.nome)}')">
-                  <div class="card-icon"
-                       style="--module-icon-color: ${cor}; --module-icon-background: linear-gradient(135deg, ${cor}22 0%, ${cor}11 100%); --module-icon-border-color: ${cor}33;">
+                  <div class="card-icon module-color-${indice % paletaCoresModulos.length}">
                     <i class="fas ${escaparHtml(icone)}"></i>
                   </div>
                   <h3>${escaparHtml(copy.titulo)}</h3>
                   <p>${escaparHtml(copy.resumo)}</p>
-                  <span class="acesso-badge"
-                        style="background: ${cor}15; color: ${cor}; border-color: ${cor}33;">
+                  <span class="acesso-badge module-color-${indice % paletaCoresModulos.length}">
                     <i class="fas fa-arrow-right-to-bracket"></i>
                     ${temRota ? "Acessar" : "Em breve"}
                   </span>
@@ -702,7 +692,7 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
             <div class="lista-vazia-placeholder">
               <i class="fas fa-circle-exclamation"></i>
               Não foi possível carregar os módulos.<br/>
-              <small data-intranet-inline-style="isb0a4a26a6630">${escaparHtml(err.message || "")}</small>
+              <small>${escaparHtml(err.message || "")}</small>
             </div>
           `;
         }
@@ -827,15 +817,14 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
         // Mostrar/esconder seção Admin (só ADMIN vê)
         const adminSection = document.getElementById("adminSection");
         if (adminSection) {
-          adminSection.style.display =
-            usuarioLogado.perfil === "ADMIN" ? "block" : "none";
+          adminSection.classList.toggle("is-visible", usuarioLogado.perfil === "ADMIN");
         }
 
         // Renderizar os cards de módulos + card "Meu Perfil"
         await carregarModulosParaUsuario();
 
         await iniciarPresencaServidores(session);
-        document.getElementById("hallContent").style.display = "";
+        document.getElementById("hallContent").classList.add("is-ready");
         atualizarDataRodape();
         return true;
       }
@@ -876,31 +865,31 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
 
         // --- Módulos internos do Core ---
         if (modulo === "core" || modulo === "admin" || modulo === "painel-admin") {
-          window.location.href = "core/index.html?view=dashboard";
+          window.location.href = "painel-administrativo/core/index.html?view=dashboard";
           return;
         }
         if (modulo === "orgaos") {
-          window.location.href = "core/index.html?view=orgaos";
+          window.location.href = "painel-administrativo/core/index.html?view=orgaos";
           return;
         }
         if (modulo === "usuarios") {
-          window.location.href = "core/index.html?view=usuarios";
+          window.location.href = "painel-administrativo/core/index.html?view=usuarios";
           return;
         }
         if (modulo === "modulos") {
-          window.location.href = "core/index.html?view=modulos";
+          window.location.href = "painel-administrativo/core/index.html?view=modulos";
           return;
         }
         if (modulo === "permissoes") {
-          window.location.href = "core/index.html?view=permissoes";
+          window.location.href = "painel-administrativo/core/index.html?view=permissoes";
           return;
         }
         if (modulo === "auditoria" || modulo === "logs") {
-          window.location.href = "core/index.html?view=auditoria";
+          window.location.href = "painel-administrativo/core/index.html?view=auditoria";
           return;
         }
         if (modulo === "governanca" || modulo === "admin-acessos" || modulo === "solicitacoes") {
-          window.location.href = "core/index.html?view=governanca";
+          window.location.href = "painel-administrativo/core/index.html?view=governanca";
           return;
         }
 
@@ -911,7 +900,7 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
           const legado = caminho.match(/(?:^|\/)(?:core\/)?(auditoria|usuarios|orgaos|modulos|modules|permissoes)\/index\.html/);
           let viewAdmin = legado ? ({ auditoria:"auditoria", usuarios:"usuarios", orgaos:"orgaos", modulos:"modulos", modules:"modulos", permissoes:"permissoes" })[legado[1]] : null;
           if (/admin-acessos\.html/.test(caminho)) viewAdmin = "governanca";
-          if (viewAdmin) rota = `core/index.html?view=${viewAdmin}`;
+          if (viewAdmin) rota = `painel-administrativo/core/index.html?view=${viewAdmin}`;
         }
 
         if (!rota || rota === "#") {
@@ -982,11 +971,10 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
               "Contagem de servidores online indisponível",
             );
             elContagem.title = "Contagem temporariamente indisponível";
-            if (error) {
-              console.warn(
-                "[Intranet] Contagem de presença indisponível:",
-                error,
-              );
+            // Presença é um recurso complementar; indisponibilidade não
+            // deve aparecer como erro fatal no console do Hall.
+            if (error && !/socket closed: 1006|abnormal closure/i.test(String(error?.message || error))) {
+              console.info("[Intranet] Contagem de presença temporariamente indisponível.");
             }
           },
         );
@@ -1005,6 +993,7 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
           e.stopPropagation();
           const aberto = menu.classList.toggle("aberto");
           btn.setAttribute("aria-expanded", aberto ? "true" : "false");
+          menu.setAttribute("aria-hidden", aberto ? "false" : "true");
         });
 
         // Fecha ao clicar fora
@@ -1012,6 +1001,7 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
           if (!menu.contains(e.target) && !btn.contains(e.target)) {
             menu.classList.remove("aberto");
             btn.setAttribute("aria-expanded", "false");
+            menu.setAttribute("aria-hidden", "true");
           }
         });
 
@@ -1020,6 +1010,7 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
           if (e.key === "Escape") {
             menu.classList.remove("aberto");
             btn.setAttribute("aria-expanded", "false");
+            menu.setAttribute("aria-hidden", "true");
           }
         });
 
@@ -1030,6 +1021,7 @@ import { conectarPresencaOnline } from "./shared/js/online-presence.js";
           const modulo = atalho.dataset.atalhoModulo;
           menu.classList.remove("aberto");
           btn.setAttribute("aria-expanded", "false");
+          menu.setAttribute("aria-hidden", "true");
           if (modulo) window.acessarModulo(modulo);
         });
 

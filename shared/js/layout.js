@@ -129,8 +129,9 @@ export async function initLayout(config = {}) {
   // ---------- 2. Localiza os containers no DOM ----------
   const sidebar = document.getElementById("sidebar");
   const topbar = document.getElementById("topbar");
+  const hallHeader = document.querySelector(".barra-usuario");
 
-  if (!sidebar || !topbar) {
+  if (!sidebar || (!topbar && !hallHeader)) {
     console.error(
       "[layout] Elementos #sidebar e/ou #topbar não encontrados. " +
         "Verifique se o HTML da página segue o padrão .app-layout.",
@@ -165,11 +166,24 @@ export async function initLayout(config = {}) {
     console.error("[layout] Erro ao renderizar sidebar:", err);
   }
 
-  // ---------- 5. Renderiza topbar ----------
-  try {
-    topbar.innerHTML = renderTopbar(cfg, usuario);
-  } catch (err) {
-    console.error("[layout] Erro ao renderizar topbar:", err);
+  // ---------- 5. Reutiliza o cabeçalho original do Hall, se presente ----------
+  if (topbar && !hallHeader) {
+    try {
+      topbar.innerHTML = renderTopbar(cfg, usuario);
+    } catch (err) {
+      console.error("[layout] Erro ao renderizar topbar:", err);
+    }
+  }
+  if (hallHeader) {
+    const nome = usuario.nome || usuario.email || "Usuário";
+    const greeting = document.getElementById("saudacaoMiniNome");
+    const menuName = document.getElementById("menuNome");
+    const menuEmail = document.getElementById("menuEmail");
+    const avatar = document.getElementById("avatarIniciais");
+    if (greeting) greeting.textContent = nome;
+    if (menuName) menuName.textContent = nome;
+    if (menuEmail) menuEmail.textContent = usuario.email || "—";
+    if (avatar) avatar.textContent = gerarIniciais(nome);
   }
 
   // ---------- 6. Marca o item ativo do menu ----------
@@ -269,7 +283,7 @@ function renderSidebar(cfg, usuario) {
     <div class="sidebar-brand">
       <div class="brand-icon" aria-label="Brasão do Município">
         <img class="brasao-municipio" src="${escaparAtributo(brasaoSrc)}" alt="Brasão do Município" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <i class="fas ${escaparHtml(cfg.brand.icone)}" aria-hidden="true" data-intranet-style="304557ef7fda"></i>
+        <i class="fas ${escaparHtml(cfg.brand.icone)}" aria-hidden="true"></i>
       </div>
       <div class="brand-text">
         <h2>${escaparHtml(cfg.brand.nome)}</h2>
@@ -374,7 +388,7 @@ function renderTopbar(cfg, usuario) {
     cfg.menuUsuario && typeof cfg.menuUsuario === "object"
       ? cfg.menuUsuario
       : null;
-  const avatarVisual = fotoUrl ? `<img class="avatar-foto" data-intranet-style="9f8aa4036d64" src="${fotoUrl}" alt="Foto de ${nome}" loading="lazy">` : `<span>${iniciais}</span>`;
+  const avatarVisual = fotoUrl ? `<img class="avatar-foto" src="${fotoUrl}" alt="Foto de ${nome}" loading="lazy">` : `<span>${iniciais}</span>`;
   const retorno = `${window.location.pathname}${window.location.search}${window.location.hash}`;
   const perfilHref = `${menuUsuario?.rotaPerfil || "../perfil.html"}?returnTo=${encodeURIComponent(retorno)}`;
   const intranetHref = escaparAtributo(resolverUrlIntranet(cfg));
@@ -488,9 +502,11 @@ function resolverUrlIntranet(cfg = {}) {
   }
 }
 
-async function carregarAtalhosModulos(supabase, usuario, cfg = {}) {
-  const host = document.getElementById("avatarModuleLinks");
-  if (!host) return;
+export async function carregarAtalhosModulos(supabase, usuario, cfg = {}) {
+  const host = document.getElementById("avatarQuickModules") || document.getElementById("avatarModuleLinks");
+  if (!host || host.dataset.modulesLoaded === "true" || host.dataset.modulesLoading === "true") return;
+  const hallHost = host.id === "avatarQuickModules";
+  host.dataset.modulesLoading = "true";
 
   try {
     const { data: modulos, error: erroModulos } = await supabase
@@ -550,7 +566,8 @@ async function carregarAtalhosModulos(supabase, usuario, cfg = {}) {
       .filter(Boolean);
 
     if (!itens.length) {
-      host.innerHTML = '<p class="avatar-module-switcher-status" role="status">Nenhum módulo com acesso direto está disponível.</p>';
+      host.innerHTML = '<p class="avatar-menu-quick-empty" role="status">Nenhum módulo com acesso direto está disponível.</p>';
+      host.dataset.modulesLoaded = "true";
       return;
     }
 
@@ -558,6 +575,16 @@ async function carregarAtalhosModulos(supabase, usuario, cfg = {}) {
     host.innerHTML = itens.map((item) => {
       const caminhoDestino = new URL(item.href).pathname.replace(/\/+$/, "") || "/";
       const atual = caminhoDestino === caminhoAtual;
+      if (hallHost) {
+        return `
+          <a class="avatar-menu-item avatar-menu-quick-link${atual ? " is-current" : ""}"
+             href="${escaparAtributo(item.href)}" title="${escaparAtributo(item.titulo)}" role="menuitem" data-avatar-module-link
+             ${atual ? 'aria-current="page"' : ""}>
+            <span class="avatar-menu-quick-icon"><i class="${escaparAtributo(item.icone)}" aria-hidden="true"></i></span>
+            <span class="avatar-menu-quick-label">${escaparHtml(item.titulo)}</span>
+            <i class="fas fa-arrow-up-right-from-square avatar-menu-quick-arrow" aria-hidden="true"></i>
+          </a>`;
+      }
       return `
         <a class="avatar-menu-item avatar-module-link${atual ? " is-current" : ""}"
            href="${escaparAtributo(item.href)}" title="${escaparAtributo(item.titulo)}" role="menuitem" data-avatar-module-link
@@ -567,9 +594,12 @@ async function carregarAtalhosModulos(supabase, usuario, cfg = {}) {
           ${atual ? '<span class="avatar-module-current">Atual</span>' : ""}
         </a>`;
     }).join("");
+    host.dataset.modulesLoaded = "true";
   } catch (erro) {
     console.warn("[layout] Não foi possível carregar os módulos do menu:", erro);
-    host.innerHTML = '<p class="avatar-module-switcher-status" role="status">Não foi possível carregar seus acessos. Use “Ver todos os módulos”.</p>';
+    host.innerHTML = '<p class="avatar-menu-quick-empty" role="status">Não foi possível carregar os módulos autorizados.</p>';
+  } finally {
+    host.dataset.modulesLoading = "false";
   }
 }
 
@@ -577,26 +607,44 @@ async function carregarAtalhosModulos(supabase, usuario, cfg = {}) {
    marcarItemAtivo · aplica .active no item do menu correspondente
    ===================================================================== */
 function marcarItemAtivo(moduloAtivo) {
-  if (!moduloAtivo) return;
+  const links = [...document.querySelectorAll(".sidebar-nav a[data-modulo]")];
+  if (!links.length) return;
 
-  const links = document.querySelectorAll(".sidebar-nav a[data-modulo]");
-  let encontrou = false;
+  const aplicar = (id) => {
+    let encontrou = false;
+    links.forEach((a) => {
+      const ativo = a.dataset.modulo === id;
+      a.classList.toggle("active", ativo);
+      if (ativo) {
+        a.setAttribute("aria-current", "page");
+        encontrou = true;
+      } else {
+        a.removeAttribute("aria-current");
+      }
+    });
+    return encontrou;
+  };
+
+  const itemDoHash = () => {
+    const hash = window.location.hash;
+    return links.find((a) => {
+      try { return new URL(a.href, document.baseURI).hash === hash && hash; }
+      catch { return false; }
+    });
+  };
 
   links.forEach((a) => {
-    if (a.dataset.modulo === moduloAtivo) {
-      a.classList.add("active");
-      a.setAttribute("aria-current", "page");
-      encontrou = true;
-    } else {
-      a.classList.remove("active");
-      a.removeAttribute("aria-current");
-    }
+    a.addEventListener("click", () => aplicar(a.dataset.modulo));
+  });
+  window.addEventListener("hashchange", () => {
+    const item = itemDoHash();
+    aplicar(item?.dataset.modulo || moduloAtivo);
   });
 
-  if (!encontrou) {
-    console.warn(
-      `[layout] Nenhum item do menu corresponde a moduloAtivo="${moduloAtivo}".`,
-    );
+  const itemInicial = itemDoHash();
+  const encontrou = aplicar(itemInicial?.dataset.modulo || moduloAtivo);
+  if (!encontrou && moduloAtivo) {
+    console.warn(`[layout] Nenhum item do menu corresponde a moduloAtivo="${moduloAtivo}".`);
   }
 }
 

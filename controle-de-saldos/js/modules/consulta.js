@@ -1,4 +1,11 @@
 import { supabase } from "../supabase.js";
+import { getAnalyticAtaIds, isGlobalProfile } from "../../../shared/js/ata-scope.js";
+
+// A ata é universalmente acessível no município; a unidade limita a operação
+// no backend, nunca a relação informativa ata–órgão. PREFEITO é somente leitura.
+const PERFIS_COM_OPERACAO = new Set(["ADMIN", "ESTAGIARIO", "SECRETARIO", "SOLICITANTE"]);
+const ataPodeOperar = (usuario) => PERFIS_COM_OPERACAO.has(String(usuario?.perfil || "").toUpperCase());
+const mensagemAcessoAta = (usuario) => ataPodeOperar(usuario) ? "" : "Este perfil possui acesso somente de leitura";
 
 export class Consulta {
   constructor(sistema) {
@@ -17,7 +24,7 @@ export class Consulta {
     this._atasCache = [];
     this._ultimaBusca = null;
     this._favoritasIds = new Set();
-    this._mostrarTodas = false;
+    this._mostrarTodas = true;
     this._modoVisualizacao = "cards";
     this._carregandoInicial = false;
     // Termo de busca atual (para destacar nos resultados)
@@ -133,7 +140,7 @@ export class Consulta {
     // ============================================================
     this.aplicarModoCompra();
     await this.carregarFavoritas();
-    this._mostrarTodas = false;
+    this._mostrarTodas = true;
     this._carregandoInicial = true;
 
     // ============================================================
@@ -319,11 +326,6 @@ export class Consulta {
   // ============================================================
   async gerarHTMLConsultas() {
     return `
-      <nav class="atas-breadcrumb" aria-label="Trilha de navegação">
-        <a href="#dashboard"><i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span></a>
-        <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
-        <span aria-current="page">Consulta</span>
-      </nav>
       <div class="filtros-container">
         <!-- ============================================================ -->
         <!-- RESULTADOS RÁPIDOS - CARD CLICÁVEIS                          -->
@@ -341,6 +343,23 @@ export class Consulta {
         <!-- #filtroVencimentoModo + #filtroVencimentoDias, marca o card  -->
         <!-- como .ativo e chama filtrarAtas().                            -->
         <!-- ============================================================ -->
+        <div class="consulta-inteligencia" id="consultaInteligencia" aria-live="polite">
+          <div class="consulta-inteligencia-header">
+            <div><span class="consulta-inteligencia-eyebrow">LEITURA GERENCIAL</span><h2>Prioridades da carteira</h2><p>Indicadores calculados sobre as atas carregadas e os saldos informados nos itens.</p></div>
+            <span class="consulta-inteligencia-atualizacao" id="consultaIndicadoresAtualizacao">—</span>
+          </div>
+          <div class="consulta-inteligencia-kpis">
+            <article class="consulta-inteligencia-kpi"><span><i class="fas fa-coins"></i></span><div><strong id="consultaValorVigente">—</strong><small>Valor global vigente</small></div></article>
+            <article class="consulta-inteligencia-kpi"><span><i class="fas fa-wallet"></i></span><div><strong id="consultaSaldoEstimado">—</strong><small>Saldo estimado da carteira</small></div></article>
+            <article class="consulta-inteligencia-kpi"><span><i class="fas fa-box-open"></i></span><div><strong id="consultaItensRuptura">—</strong><small>Itens sem saldo</small></div></article>
+            <article class="consulta-inteligencia-kpi"><span><i class="fas fa-user-shield"></i></span><div><strong id="consultaGovernancaPendente">—</strong><small>Atas com governança pendente</small></div></article>
+          </div>
+          <div class="consulta-inteligencia-grid">
+            <section class="consulta-inteligencia-bloco"><h3><i class="fas fa-hourglass-half"></i> Exposição por vencimento</h3><div class="consulta-exposicao-grid"><span><b id="consultaExposicao30">—</b><small>até 30 dias</small></span><span><b id="consultaExposicao90">—</b><small>31–90 dias</small></span><span><b id="consultaExposicaoVencida">—</b><small>vencidas</small></span></div><p class="consulta-inteligencia-nota">Saldo calculado por <code>saldo_valor</code> ou quantidade remanescente × preço unitário.</p></section>
+            <section class="consulta-inteligencia-bloco"><h3><i class="fas fa-list-check"></i> Fila de decisão</h3><ul id="consultaFilaDecisao" class="consulta-fila-decisao"><li>Calculando prioridades…</li></ul></section>
+          </div>
+        </div>
+
         <div class="resumo-rapido" id="resumoRapido">
           <button type="button" class="resumo-card" data-filtro="total" title="Mostrar todas as atas">
             <span class="resumo-icone" aria-hidden="true"><i class="fa-solid fa-file-contract"></i></span>
@@ -368,7 +387,7 @@ export class Consulta {
         <!-- FILTROS                                                        -->
         <!-- ============================================================ -->
         <div class="filtros-grid">
-          <div class="filtro-grupo filtro-busca-global" data-intranet-style="36b46462dcc9">
+          <div class="filtro-grupo filtro-busca-global">
             <label class="filtro-label"><i class="fas fa-search"></i> Busca Global</label>
             <input
               type="text"
@@ -436,7 +455,7 @@ export class Consulta {
                   min="1"
                   max="9999"
                   value="30"
-                  data-intranet-style="2d281201779c"
+                 
                 >
               </div>
             </div>
@@ -1064,6 +1083,11 @@ export class Consulta {
           e.preventDefault();
           const itemId = btnAddCarrinho.dataset.itemId;
           const ataId = btnAddCarrinho.dataset.ataId;
+          const ata = (this._atasCache || []).find((item) => String(item.id) === String(ataId));
+          if (ata && !ataPodeOperar(this.sistema.usuarioAtual, ata)) {
+            this.sistema.ui.mostrarToast("aviso", "Ação bloqueada", mensagemAcessoAta(this.sistema.usuarioAtual, ata) + ".");
+            return;
+          }
           if (itemId && ataId) {
             this.adicionarItemAoCarrinhoInline(ataId, itemId);
           }
@@ -1082,6 +1106,11 @@ export class Consulta {
           e.preventDefault();
           const itemId = btnRemCarrinho.dataset.itemId;
           const ataId = btnRemCarrinho.dataset.ataId;
+          const ata = (this._atasCache || []).find((item) => String(item.id) === String(ataId));
+          if (ata && !ataPodeOperar(this.sistema.usuarioAtual, ata)) {
+            this.sistema.ui.mostrarToast("aviso", "Ação bloqueada", mensagemAcessoAta(this.sistema.usuarioAtual, ata) + ".");
+            return;
+          }
           if (itemId && ataId) {
             this.removerItemDoCarrinhoInline(ataId, itemId);
           }
@@ -1112,10 +1141,8 @@ export class Consulta {
           return;
         }
 
-        // ----- 3) Card inteiro OU botão "Ver Itens" → abrir detalhes -----
-        const alvoDetalhes = target.closest(
-          "[data-action='abrir-detalhes']",
-        );
+        // ----- 3) Botão “Ver itens” → manter o modal atual -----
+        const alvoDetalhes = target.closest("[data-action='abrir-detalhes']");
         if (alvoDetalhes) {
           e.stopPropagation();
           e.preventDefault();
@@ -1123,15 +1150,31 @@ export class Consulta {
           if (ataId) {
             void this.abrirDetalhes(ataId).catch((error) => {
               console.error("[Consulta] Falha ao abrir detalhes da ata:", error);
-              this.sistema.ui.mostrarToast(
-                "erro",
-                "Não foi possível abrir os itens",
-                "Tente novamente. Se o problema continuar, recarregue a consulta.",
-              );
+              this.sistema.ui.mostrarToast("erro", "Não foi possível abrir os itens", "Tente novamente. Se o problema continuar, recarregue a consulta.");
             });
           }
           return;
         }
+
+        // ----- 4) Card inteiro → abrir a Saúde da Ata -----
+        const alvoSaude = target.closest("[data-action='abrir-saude']");
+        if (alvoSaude) {
+          e.stopPropagation();
+          e.preventDefault();
+          const ataId = alvoSaude.dataset.ataId;
+          if (ataId) this.sistema.abrirSaudeAta(ataId);
+          return;
+        }
+
+      });
+
+      listaAtas.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const target = e.target instanceof Element ? e.target : e.target?.parentElement;
+        const card = target?.closest(".ata-card[data-action='abrir-saude']");
+        if (!card || target.closest("button, input, select, textarea, a[href], [data-action]:not([data-action='abrir-saude'])")) return;
+        e.preventDefault();
+        this.sistema.abrirSaudeAta(card.dataset.ataId);
       });
     }
 
@@ -1538,7 +1581,7 @@ export class Consulta {
     let query = supabase
       .from("atas")
       .select(
-        "*, fornecedor:fornecedores(razao_social,cnpj), itens:itens_ata(*), categoria:categorias(id,nome)",
+        "*, fornecedor:fornecedores(razao_social,cnpj), itens:itens_ata!fk_item_ata(*), categoria:categorias(id,nome)",
       );
 
     // Filtro de status
@@ -1548,9 +1591,20 @@ export class Consulta {
     }
     // Mantemos vencidas carregadas para que o card Alertas possa filtrá-las.
 
-    const { data: atas } = await query.order("data_inicio_vigencia", {
-      ascending: false,
-    });
+    let atas;
+    try {
+      const resultado = await query.order("data_inicio_vigencia", {
+        ascending: false,
+      });
+      if (resultado.error) {
+        this.mostrarErroCarregamento(resultado.error, container);
+        return;
+      }
+      atas = resultado.data;
+    } catch (error) {
+      this.mostrarErroCarregamento(error, container);
+      return;
+    }
 
     const atasBase = atas || [];
     const vencimentoModoInicial =
@@ -1793,8 +1847,8 @@ export class Consulta {
     // ============================================================
     if (!atasFiltradas.length) {
       container.innerHTML =
-        '<div data-intranet-style="dd91c8520c1b">' +
-        '<i class="fas fa-inbox" data-intranet-style="e4936772c3d8"></i>' +
+        '<div>' +
+        '<i class="fas fa-inbox"></i>' +
         (busca
           ? `Nenhuma ata encontrada para "<strong>${this.escaparHtml(busca)}</strong>"`
           : "Nenhuma ata encontrada com os filtros aplicados") +
@@ -1813,9 +1867,48 @@ export class Consulta {
       .join("");
   }
 
-  // ============================================================
-  // ATUALIZAR CONTADOR DE RESULTADOS
-  // ============================================================
+    // ============================================================
+    // TRATAR ERRO DE CARREGAMENTO DA CONSULTA
+    // ============================================================
+    mostrarErroCarregamento(error, container) {
+      const diagnostico = {
+        code: error?.code || null,
+        message: error?.message || String(error || "Erro desconhecido"),
+        details: error?.details || null,
+        hint: error?.hint || null,
+      };
+      console.error("[Consulta] Falha ao carregar atas:", diagnostico);
+
+      this._atasCache = [];
+      this.atualizarContadorResultados(0);
+      this.atualizarResumoRapido([]);
+
+      const codigo = diagnostico.code
+        ? ` (código ${this.escaparHtml(diagnostico.code)})`
+        : "";
+      container.innerHTML =
+        '<div class="consulta-erro-carregamento" role="alert">' +
+        '<i class="fas fa-triangle-exclamation" aria-hidden="true"></i>' +
+        "<strong>Não foi possível carregar as atas</strong>" +
+        `<span>Verifique sua sessão ou tente novamente.${codigo}</span>` +
+        '<button type="button" class="btn btn-secondary" data-acao-consulta="tentar-novamente">' +
+        '<i class="fas fa-rotate-right" aria-hidden="true"></i> Tentar novamente' +
+        "</button></div>";
+
+      container
+        .querySelector('[data-acao-consulta="tentar-novamente"]')
+        ?.addEventListener("click", () => this.filtrarAtas());
+
+      this.sistema.ui?.mostrarToast(
+        "erro",
+        "Falha ao carregar atas",
+        "A consulta não pôde ser concluída. O erro foi registrado para diagnóstico.",
+      );
+    }
+
+    // ============================================================
+    // ATUALIZAR CONTADOR DE RESULTADOS
+    // ============================================================
   atualizarContadorResultados(total) {
     const el = document.getElementById("consultaContadorTexto");
     if (!el) return;
@@ -2232,7 +2325,7 @@ export class Consulta {
         const descricaoCompleta = item.descricao || "";
 
         // Aplica corte inteligente para gerar o resumo
-        const resumo = this.resumirDescricao(descricaoCompleta);
+        const resumo = descricaoCompleta.length > 50 ? `${descricaoCompleta.slice(0, 50).trimEnd()}…` : descricaoCompleta;
 
         // Aplica destaque <mark> no resumo
         const descricaoDestacada = this.destacarTermo(resumo);
@@ -2252,9 +2345,6 @@ export class Consulta {
              </span>`
           : "";
 
-        // Tooltip com descrição completa (escapada)
-        const tooltipCompleto = this.escaparHtml(descricaoCompleta);
-
         // ============================================================
         // ✅ NOVO · BOTÃO DE AÇÃO (Adicionar / No carrinho / Esgotado)
         // ------------------------------------------------------------
@@ -2268,12 +2358,15 @@ export class Consulta {
         // chegar ao card. Isso impede que o clique abra o modal.
         // ============================================================
         const esgotado = saldo <= 0;
+        const podeOperar = ataPodeOperar(this.sistema.usuarioAtual, ata);
         const regCarrinho = this._buscarNoCarrinho(ata.id, item.id);
         const qtdNoCarrinho = regCarrinho?.quantidade || 0;
 
         let botaoAcaoHtml = "";
 
-        if (esgotado) {
+        if (!podeOperar) {
+          botaoAcaoHtml = `<button type="button" class="btn-item-bloqueado" disabled title="${this.escaparHtml(mensagemAcessoAta(this.sistema.usuarioAtual, ata))}"><i class="fas fa-lock"></i> Bloqueado</button>`;
+        } else if (esgotado) {
           botaoAcaoHtml = `
             <button
               type="button"
@@ -2325,7 +2418,7 @@ export class Consulta {
           <li class="item-correspondente">
             <div class="item-correspondente-linha-1">
               ${numero}
-              <span class="item-correspondente-descricao" title="${tooltipCompleto}">${descricaoDestacada}</span>
+              <span class="item-correspondente-descricao">${descricaoDestacada}</span>
               ${statusBadge}
             </div>
             <div class="item-correspondente-linha-2">
@@ -2558,6 +2651,7 @@ export class Consulta {
     definir("vencimento60", venc60);
     definir("vencimento90", venc90);
     definir("totalAlertas", vencidas);
+    this.renderizarIndicadoresCarteira(lista);
     const cardAlertas = document.querySelector(".resumo-alertas");
     if (cardAlertas) {
       cardAlertas.classList.toggle("alert-pulse-critical", vencidas > 0);
@@ -2570,6 +2664,57 @@ export class Consulta {
       if (venc90 > 0) card90.dataset.alertLevel = "warning";
       else delete card90.dataset.alertLevel;
     }
+  }
+
+  renderizarIndicadoresCarteira(atas) {
+    const lista = Array.isArray(atas) ? atas : [];
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    const vigente = (ata) => String(ata.situacao || "").toUpperCase() !== "VENCIDA";
+    const moeda = (v) => Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    const numero = (v) => Number(v || 0).toLocaleString("pt-BR");
+    const saldoItem = (item) => {
+      const qtd = Number(item.quantidade_contratada || 0);
+      const unit = Number(item.valor_unitario || 0);
+      if (item.saldo_valor != null) return Number(item.saldo_valor || 0);
+      return Math.max(0, Number(item.saldo_quantidade ?? qtd) * unit);
+    };
+    const contratacaoItem = (item) => Number(item.valor_total ?? Number(item.quantidade_contratada || 0) * Number(item.valor_unitario || 0));
+    const ativas = lista.filter(vigente);
+    const valorVigente = ativas.reduce((s, a) => s + Number(a.valor_global || 0), 0);
+    const saldoEstimado = ativas.reduce((s, a) => s + (a.itens || []).reduce((x, i) => x + Math.max(0, saldoItem(i)), 0), 0);
+    const itens = lista.flatMap((a) => (a.itens || []).map((i) => ({ ...i, ata: a })));
+    const itensSemSaldo = itens.filter((i) => Number(i.saldo_quantidade ?? 0) <= 0).length;
+    const itensCriticos = itens.filter((i) => {
+      const qtd = Number(i.quantidade_contratada || 0); const saldo = Number(i.saldo_quantidade ?? qtd);
+      return qtd > 0 && saldo > 0 && saldo / qtd <= 0.10;
+    }).length;
+    const governancaPendente = lista.filter((a) => !a.gestor_id || !a.fiscal_id || !a.orgao_responsavel_id || !a.ato_designacao || !a.data_designacao).length;
+    let exp30 = 0, exp90 = 0, expVencida = 0;
+    for (const ata of lista) {
+      const saldo = (ata.itens || []).reduce((s, i) => s + Math.max(0, saldoItem(i)), 0);
+      const fim = ata.data_fim_vigencia ? new Date(`${String(ata.data_fim_vigencia).slice(0, 10)}T00:00:00`) : null;
+      if (!fim || Number.isNaN(fim.getTime())) continue;
+      const dias = Math.ceil((fim - hoje) / 86400000);
+      if (dias < 0) expVencida += saldo;
+      else if (dias <= 30) exp30 += saldo;
+      else if (dias <= 90) exp90 += saldo;
+    }
+    const fila = [];
+    const push = (nivel, texto, filtro = null) => fila.push({ nivel, texto, filtro });
+    if (expVencida > 0) push("critica", `${moeda(expVencida)} em saldo associado a atas vencidas`);
+    if (exp30 > 0) push("alta", `${moeda(exp30)} em saldo de atas que vencem em até 30 dias`, { tipo: "vencimento", dias: 30 });
+    if (itensSemSaldo > 0) push("alta", `${numero(itensSemSaldo)} item(ns) sem saldo disponível`, { tipo: "saldo_zero" });
+    if (governancaPendente > 0) push("media", `${numero(governancaPendente)} ata(s) sem governança completa`, { tipo: "governanca" });
+    if (!fila.length) push("info", "Nenhuma prioridade calculada para a carteira atual.");
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+    set("consultaValorVigente", moeda(valorVigente));
+    set("consultaSaldoEstimado", moeda(saldoEstimado));
+    set("consultaItensRuptura", `${numero(itensSemSaldo)} · ${numero(itensCriticos)} críticos`);
+    set("consultaGovernancaPendente", `${numero(governancaPendente)} / ${numero(lista.length)}`);
+    set("consultaExposicao30", moeda(exp30)); set("consultaExposicao90", moeda(exp90)); set("consultaExposicaoVencida", moeda(expVencida));
+    set("consultaIndicadoresAtualizacao", `${numero(lista.length)} atas avaliadas`);
+    const alvo = document.getElementById("consultaFilaDecisao");
+    if (alvo) alvo.innerHTML = fila.slice(0, 5).map((item) => `<li data-nivel="${item.nivel}"><span class="consulta-fila-dot"></span><span>${this.escaparHtml(item.texto)}</span></li>`).join("");
   }
 
   // ============================================================
@@ -2587,6 +2732,8 @@ export class Consulta {
       }[ata.situacao] || "status-ativa";
     const categoriaNome = ata.categoria?.nome || "Outros";
     const favorita = this._favoritasIds.has(String(ata.id));
+    const podeOperar = ataPodeOperar(this.sistema.usuarioAtual, ata);
+    const avisoAcesso = mensagemAcessoAta(this.sistema.usuarioAtual, ata);
     const botaoFavorita = `<button type="button" class="btn-favoritar-ata ${favorita ? "ativo" : ""}" data-action="toggle-favorita" data-ata-id="${ata.id}" aria-pressed="${favorita}" aria-label="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}" title="${favorita ? "Remover das favoritas" : "Adicionar às favoritas"}"><i class="${favorita ? "fas" : "far"} fa-star" aria-hidden="true"></i>${favorita ? "" : "<span>Favoritar</span>"}</button>`;
 
     // Calcular valor consumido para exibição
@@ -2615,7 +2762,7 @@ export class Consulta {
     const indicadorSaldo =
       saldoPercentualCalculado === null
         ? `<span class="ata-card-balance-note">Percentual não calculável</span>`
-        : `<div class="ata-card-progress-track" role="progressbar" aria-label="Saldo disponível em relação ao valor dos itens" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${saldoPercentual}" aria-valuetext="${saldoPercentual}% do saldo disponível"><span style="width: ${saldoPercentual}%"></span></div>
+        : `<progress class="ata-card-progress" value="${saldoPercentual}" max="100" aria-label="Saldo disponível em relação ao valor dos itens">${saldoPercentual}%</progress>
            <span class="ata-card-balance-note">${saldoPercentual}% do valor dos itens ainda disponível</span>`;
 
     // ============================================================
@@ -2683,12 +2830,13 @@ export class Consulta {
     const blocoItens = this.renderBlocoItensCorrespondentes(ata);
 
     return `
-      <div class="ata-card ${nivelAlertaCard ? `alert-pulse-${nivelAlertaCard}` : ""}" data-alert-level="${nivelAlertaCard}" data-ata-id="${ata.id}" data-action="abrir-detalhes">
+      <div class="ata-card ${nivelAlertaCard ? `alert-pulse-${nivelAlertaCard}` : ""} ${!podeOperar ? "ata-card--bloqueada" : ""}" data-alert-level="${nivelAlertaCard}" data-ata-id="${ata.id}" data-action="abrir-saude" role="link" tabindex="0" aria-label="Abrir saúde da Ata nº ${this.escaparHtml(ata.numero_ata || "")}">
         <div class="ata-header">
           <div class="ata-status">
             <span class="status-badge ${statusClass}">${ata.situacao || "ATIVA"}</span>
             ${badgeVencimento}
             <span class="ata-card-item-count"><i class="fas fa-box" aria-hidden="true"></i> ${itens.length} ${itens.length === 1 ? "item" : "itens"}</span>
+            ${!podeOperar ? `<span class="ata-access-badge" title="${this.escaparHtml(avisoAcesso)}"><i class="fas fa-lock"></i> Acesso bloqueado</span>` : ""}
           </div>
           <div class="ata-numero"><span class="ata-titulo-numero">Ata nº ${numeroAtaDestacado}</span>${botaoFavorita}</div>
         </div>
@@ -2892,7 +3040,7 @@ export class Consulta {
     let query = supabase
       .from("atas")
       .select(
-        "*, fornecedor:fornecedores(razao_social,cnpj), itens:itens_ata(*), categoria:categorias(id,nome)",
+        "*, fornecedor:fornecedores(razao_social,cnpj), itens:itens_ata!fk_item_ata(*), categoria:categorias(id,nome)",
       );
 
     const statusFiltro = document.getElementById("filtroStatus")?.value;
@@ -2926,6 +3074,10 @@ export class Consulta {
   // A lista de itens é renderizada por renderizarConteudoModalDetalhes(),
   // que já aplica as marcações "no carrinho" (decisão C).
   // ============================================================
+  abrirSaudeAta(ataId) {
+    this.sistema.abrirSaudeAta(ataId);
+  }
+
   async abrirDetalhes(ataId) {
     // Encontra a ata no cache local (evita refetch — já temos tudo)
     const ata = (this._atasCache || []).find(
@@ -2954,7 +3106,7 @@ export class Consulta {
       tituloEl.innerHTML = `
         <i class="fas fa-file-contract"></i>
         Ata nº ${this.escaparHtml(ata.numero_ata || "N/I")}
-        <span data-intranet-style="9d1aa4514689">
+        <span>
           ${this.escaparHtml(ata.fornecedor?.razao_social || "")}
         </span>
       `;
@@ -3017,8 +3169,8 @@ export class Consulta {
     // Se não houver itens
     if (itens.length === 0) {
       container.innerHTML = `
-        <div data-intranet-style="e6e8db90be51">
-          <i class="fas fa-box-open" data-intranet-style="9454f8024a9d"></i>
+        <div>
+          <i class="fas fa-box-open"></i>
           Nenhum item cadastrado nesta ata.
         </div>
       `;
@@ -3062,7 +3214,7 @@ export class Consulta {
         </div>
         <div class="info-item">
           <span class="info-label">Saldo</span>
-          <span class="info-value" data-intranet-style="2e0a4ee88b0b">
+          <span class="info-value">
             ${this.sistema.ui.formatarMoeda(saldoAta)}
           </span>
         </div>
@@ -3094,9 +3246,9 @@ export class Consulta {
 
     container.innerHTML = `
       ${cabecalho}
-      <h4 data-intranet-style="939416d8be86">
+      <h4>
         <i class="fas fa-boxes"></i> Itens da Ata
-        <span data-intranet-style="86fa6b4db039">
+        <span>
           (${itens.length} ${itens.length === 1 ? "item" : "itens"})
         </span>
       </h4>
@@ -3105,13 +3257,13 @@ export class Consulta {
         <table class="tabela-itens">
           <thead>
             <tr>
-              <th data-intranet-style="641e9713c312">Item</th>
+              <th>Item</th>
               <th>Descrição</th>
-              <th data-intranet-style="0837b275535d">Contratado</th>
-              <th data-intranet-style="0837b275535d">Saldo</th>
-              <th data-intranet-style="0a5c1a3c4d33">Valor Unit.</th>
-              <th data-intranet-style="ea9f983d8905">Valor Total</th>
-              <th data-intranet-style="9f5625179af8">Ação</th>
+              <th>Contratado</th>
+              <th>Saldo</th>
+              <th>Valor Unit.</th>
+              <th>Valor Total</th>
+              <th>Ação</th>
             </tr>
           </thead>
           <tbody data-modal-itens-body>
@@ -3223,8 +3375,8 @@ export class Consulta {
     const tr = document.createElement("tr");
     tr.dataset.emptyState = "1";
     tr.innerHTML = `
-      <td colspan="7" data-intranet-style="713250fc02d3">
-        <i class="fas fa-search" data-intranet-style="a2a779b6e948"></i>
+      <td colspan="7">
+        <i class="fas fa-search"></i>
         Nenhum item corresponde a "<strong>${this.escaparHtml(termo)}</strong>"
       </td>
     `;
@@ -3274,6 +3426,7 @@ export class Consulta {
     const step = aceitaDecimais ? Math.pow(10, -precisao) : 1;
 
     const esgotado = saldo <= 0;
+    const podeOperar = ataPodeOperar(this.sistema.usuarioAtual, ata);
     const regCarrinho = this._buscarNoCarrinho(ata.id, item.id);
     const qtdNoCarrinho = regCarrinho?.quantidade || 0;
 
@@ -3313,7 +3466,7 @@ export class Consulta {
     // que ajusta o valor do input sem I/O.
     // ============================================================
     let inputInlineHtml = "";
-    if (!esgotado && !regCarrinho) {
+    if (!esgotado && !regCarrinho && podeOperar) {
       const classeWrapper = aceitaDecimais
         ? "qtd-input-wrapper qtd-decimal"
         : "qtd-input-wrapper";
@@ -3342,7 +3495,9 @@ export class Consulta {
     // --- Botões de ação (decisão C) ---
     let acaoHtml = "";
 
-    if (esgotado) {
+    if (!podeOperar) {
+      acaoHtml = `<button type="button" class="btn-item-bloqueado" disabled title="${this.escaparHtml(mensagemAcessoAta(this.sistema.usuarioAtual, ata))}"><i class="fas fa-lock"></i> Acesso bloqueado</button>`;
+    } else if (esgotado) {
       acaoHtml = `
         <button type="button" class="btn-item-esgotado" disabled>
           <i class="fas fa-ban"></i> Esgotado
@@ -3389,7 +3544,7 @@ export class Consulta {
 
     return `
       <tr data-item-id="${item.id}">
-        <td data-intranet-style="bbe74ab7e336">
+        <td>
           ${this.escaparHtml(item.item_numero || "—")}
         </td>
         <td>
@@ -3402,7 +3557,7 @@ export class Consulta {
         <td class="numeric ${saldoClasse}">${this.formatarQtdInput(saldo, unidade)}</td>
         <td class="numeric">${this.sistema.ui.formatarMoeda(valorUnit)}</td>
         <td class="numeric">${this.sistema.ui.formatarMoeda(valorTotal)}</td>
-        <td data-intranet-style="021b566d98d0">
+        <td>
           <div class="item-acoes-modal">
             ${inputInlineHtml}
             ${acaoHtml}
@@ -3431,6 +3586,11 @@ export class Consulta {
   //   o input está vazio (fallback / conveniência).
   // ============================================================
   async adicionarItemAoCarrinhoInline(ataId, itemId) {
+    const ataAtual = this._ataModalAberta || (this._atasCache || []).find((item) => String(item.id) === String(ataId));
+    if (ataAtual && !ataPodeOperar(this.sistema.usuarioAtual, ataAtual)) {
+      this.sistema.ui.mostrarToast("aviso", "Ação bloqueada", mensagemAcessoAta(this.sistema.usuarioAtual, ataAtual) + ".");
+      return;
+    }
     // ---------------------------------------------------------
     // 1) Localiza a ata (modal aberto tem prioridade, senão cache)
     // ---------------------------------------------------------
@@ -4030,172 +4190,62 @@ export class Consulta {
   // MÉTODOS AUXILIARES PARA O DASHBOARD (mantidos)
   // ============================================================
 
+  async obterEscopoAnaliticoAtas() {
+    try { return await getAnalyticAtaIds(supabase, this.sistema.usuarioAtual); }
+    catch (error) { console.warn("Escopo analítico indisponível; usando carteira vazia:", error); return isGlobalProfile(this.sistema.usuarioAtual) ? null : []; }
+  }
   async getIndicadoresDashboard() {
     try {
-      const { data: atasAtivas, error: e1 } = await supabase
-        .from("atas")
-        .select("id, valor_global, situacao")
-        .in("situacao", ["ATIVA", "PROXIMA"]);
-
+      const escopoIds = await this.obterEscopoAnaliticoAtas();
+      let atasQuery = supabase.from("atas").select("id, valor_global, situacao, orgao_responsavel_id").in("situacao", ["ATIVA", "PROXIMA"]);
+      if (escopoIds !== null) atasQuery = atasQuery.in("id", escopoIds.length ? escopoIds : [-1]);
+      const { data: atasAtivas, error: e1 } = await atasQuery;
       if (e1) throw e1;
-
-      const totalAtas = atasAtivas?.length || 0;
-      const valorTotal =
-        atasAtivas?.reduce((s, a) => s + (a.valor_global || 0), 0) || 0;
-
-      const { data: itens, error: e2 } = await supabase
-        .from("itens_ata")
-        .select("id, quantidade_contratada, valor_unitario, ata_id, descricao")
-        .in("ata_id", atasAtivas?.map((a) => a.id) || []);
-
+      const atasDoEscopo = atasAtivas || [];
+      const idsAtasDoEscopo = atasDoEscopo.map((ata) => ata.id);
+      const idsAtasFiltro = idsAtasDoEscopo.length ? idsAtasDoEscopo : [-1];
+      const totalAtas = atasDoEscopo.length;
+      const valorTotal = atasDoEscopo.reduce((sum, ata) => sum + Number(ata.valor_global || 0), 0);
+      const { data: itens, error: e2 } = await supabase.from("itens_ata").select("id, quantidade_contratada, valor_unitario, ata_id, descricao").in("ata_id", idsAtasFiltro);
       if (e2) throw e2;
-
-      const { data: consumos, error: e3 } = await supabase
-        .from("consumos")
-        .select("item_ata_id, quantidade, valor_total");
-
+      const consumosQuery = supabase.from("consumos").select("item_ata_id, quantidade, valor_total, orgao_solicitante_id").in("ata_id", idsAtasFiltro);
+      const { data: consumos, error: e3 } = await consumosQuery;
       if (e3) throw e3;
-
       const consumoPorItem = {};
-      consumos?.forEach((c) => {
-        if (!consumoPorItem[c.item_ata_id]) {
-          consumoPorItem[c.item_ata_id] = { quantidade: 0, valor: 0 };
-        }
-        consumoPorItem[c.item_ata_id].quantidade += c.quantidade || 0;
-        consumoPorItem[c.item_ata_id].valor += c.valor_total || 0;
-      });
-
-      let saldoTotal = 0;
-      let itensComSaldo = 0;
-      let itensCriticos = 0;
-      let totalItens = 0;
-
-      itens?.forEach((item) => {
-        totalItens++;
-        const consumido = consumoPorItem[item.id]?.valor || 0;
-        const valorContratado =
-          (item.quantidade_contratada || 0) * (item.valor_unitario || 0);
-        const saldoItem = Math.max(0, valorContratado - consumido);
-        saldoTotal += saldoItem;
-
-        if (saldoItem > 0) itensComSaldo++;
-
-        if (
-          saldoItem > 0 &&
-          valorContratado > 0 &&
-          saldoItem / valorContratado < 0.1
-        ) {
-          itensCriticos++;
-        }
-      });
-
-      const valorConsumido =
-        consumos?.reduce((s, c) => s + (c.valor_total || 0), 0) || 0;
-
-      // Pedidos aguardando decisão representam valor reservado operacionalmente.
-      // Pedidos já aprovados já foram convertidos em consumo e não entram aqui.
-      const { data: pedidosPendentes, error: e4 } = await supabase
-        .from("pedidos")
-        .select("valor_total")
-        .eq("status_aprovacao", "AGUARDANDO_APROVACAO");
+      (consumos || []).forEach((c) => { const row = consumoPorItem[c.item_ata_id] || { quantidade: 0, valor: 0 }; row.quantidade += Number(c.quantidade || 0); row.valor += Number(c.valor_total || 0); consumoPorItem[c.item_ata_id] = row; });
+      let saldoTotal = 0, itensComSaldo = 0, itensCriticos = 0, totalItens = 0;
+      (itens || []).forEach((item) => { totalItens++; const consumido = consumoPorItem[item.id]?.valor || 0; const contratado = Number(item.quantidade_contratada || 0) * Number(item.valor_unitario || 0); const saldo = Math.max(0, contratado - consumido); saldoTotal += saldo; if (saldo > 0) itensComSaldo++; if (saldo > 0 && contratado > 0 && saldo / contratado < .1) itensCriticos++; });
+      const valorConsumido = (consumos || []).reduce((sum, item) => sum + Number(item.valor_total || 0), 0);
+      const pedidosQuery = supabase.from("pedidos").select("valor_total").eq("status_aprovacao", "AGUARDANDO_APROVACAO").in("ata_id", idsAtasFiltro);
+      const { data: pedidosPendentes, error: e4 } = await pedidosQuery;
       if (e4) throw e4;
-      const valorReservado =
-        pedidosPendentes?.reduce((s, p) => s + (p.valor_total || 0), 0) || 0;
-      const saldoUtilizavel = Math.max(0, saldoTotal - valorReservado);
-
-      return {
-        totalAtas,
-        valorTotal,
-        saldoTotal,
-        saldoUtilizavel,
-        valorReservado,
-        valorConsumido,
-        itensCriticos,
-        totalItens,
-        itensComSaldo,
-      };
-    } catch (error) {
-      console.error("Erro ao buscar indicadores para dashboard:", error);
-      return null;
-    }
+      const valorReservado = (pedidosPendentes || []).reduce((sum, pedido) => sum + Number(pedido.valor_total || 0), 0);
+      return { totalAtas, valorTotal, saldoTotal, saldoUtilizavel: Math.max(0, saldoTotal - valorReservado), valorReservado, valorConsumido, itensCriticos, totalItens, itensComSaldo };
+    } catch (error) { console.error("Erro ao buscar indicadores para dashboard:", error); return null; }
   }
-
   async getConsumoPorCategoria() {
     try {
-      const { data: consumos, error } = await supabase.from("consumos").select(`
-          valor_total,
-          ata_id,
-          item_ata_id,
-          itens_ata!inner (
-            categoria,
-            descricao
-          )
-        `);
-
+      const escopoIds = await this.obterEscopoAnaliticoAtas();
+      let query = supabase.from("consumos").select("valor_total, ata_id, item_ata_id, orgao_solicitante_id, itens_ata!inner(categoria, descricao)");
+      if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+      const { data: consumos, error } = await query;
       if (error) throw error;
-
       const categorias = {};
-      consumos?.forEach((c) => {
-        const categoria = c.itens_ata?.categoria || "Outros";
-        if (!categorias[categoria]) {
-          categorias[categoria] = 0;
-        }
-        categorias[categoria] += c.valor_total || 0;
-      });
-
-      return Object.entries(categorias)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 8)
-        .map(([categoria, valor]) => ({ categoria, valor }));
-    } catch (error) {
-      console.error("Erro ao buscar consumo por categoria:", error);
-      return [];
-    }
+      (consumos || []).forEach((item) => { const categoria = item.itens_ata?.categoria || "Outros"; categorias[categoria] = (categorias[categoria] || 0) + Number(item.valor_total || 0); });
+      return Object.entries(categorias).sort((a,b) => b[1]-a[1]).slice(0,8).map(([categoria, valor]) => ({ categoria, valor }));
+    } catch (error) { console.error("Erro ao buscar consumo por categoria:", error); return []; }
   }
-
   async getVencimentosProximos() {
     try {
-      const hoje = new Date();
-      const trintaDias = new Date();
-      trintaDias.setDate(trintaDias.getDate() + 30);
-
-      const { data: atas, error } = await supabase
-        .from("atas")
-        .select(
-          `
-          id,
-          numero_ata,
-          data_fim_vigencia,
-          fornecedor_id,
-          fornecedores!inner (razao_social),
-          valor_global,
-          situacao
-        `,
-        )
-        .gte("data_fim_vigencia", hoje.toISOString().split("T")[0])
-        .lte("data_fim_vigencia", trintaDias.toISOString().split("T")[0])
-        .in("situacao", ["ATIVA", "PROXIMA"])
-        .order("data_fim_vigencia", { ascending: true });
-
+      const hoje = new Date(); const trintaDias = new Date(); trintaDias.setDate(trintaDias.getDate() + 30);
+      const escopoIds = await this.obterEscopoAnaliticoAtas();
+      let query = supabase.from("atas").select("id, numero_ata, data_fim_vigencia, fornecedor_id, fornecedores!inner(razao_social), valor_global, situacao, orgao_responsavel_id").gte("data_fim_vigencia", hoje.toISOString().split("T")[0]).lte("data_fim_vigencia", trintaDias.toISOString().split("T")[0]).in("situacao", ["ATIVA", "PROXIMA"]).order("data_fim_vigencia", { ascending: true });
+      if (escopoIds !== null) query = query.in("id", escopoIds.length ? escopoIds : [-1]);
+      const { data: atas, error } = await query;
       if (error) throw error;
-
-      return (
-        atas?.map((a) => ({
-          id: a.id,
-          numero_ata: a.numero_ata,
-          data_fim_vigencia: a.data_fim_vigencia,
-          fornecedor: a.fornecedores?.razao_social || "N/I",
-          dias_restantes: Math.ceil(
-            (new Date(a.data_fim_vigencia) - hoje) / (1000 * 60 * 60 * 24),
-          ),
-        })) || []
-      );
-    } catch (error) {
-      console.error("Erro ao buscar vencimentos próximos:", error);
-      return [];
-    }
+      return (atas || []).map((a) => ({ id: a.id, numero_ata: a.numero_ata, data_fim_vigencia: a.data_fim_vigencia, fornecedor: a.fornecedores?.razao_social || "N/I", dias_restantes: Math.ceil((new Date(a.data_fim_vigencia) - hoje) / 86400000) }));
+    } catch (error) { console.error("Erro ao buscar vencimentos próximos:", error); return []; }
   }
-
   async getTopFornecedores(limit = 5) {
     try {
       const { data: fornecedores, error } = await supabase
@@ -4217,17 +4267,18 @@ export class Consulta {
       if (error) throw error;
 
       if (!fornecedores) return [];
+      const escopoIds = await this.obterEscopoAnaliticoAtas();
 
       const ranking = fornecedores
         .map((f) => {
-          const total =
-            f.atas?.reduce((s, a) => s + (a.valor_global || 0), 0) || 0;
+          const atasVisiveis = (f.atas || []).filter((ata) => escopoIds === null || escopoIds.includes(Number(ata.id)));
+          const total = atasVisiveis.reduce((s, a) => s + (a.valor_global || 0), 0);
           return {
             id: f.id,
             razao_social: f.razao_social || "N/I",
             cnpj: f.cnpj || "",
             total,
-            total_atas: f.atas?.length || 0,
+            total_atas: atasVisiveis.length,
           };
         })
         .filter((f) => f.total > 0)
@@ -4247,12 +4298,14 @@ export class Consulta {
       const dataInicio = new Date();
       dataInicio.setMonth(dataInicio.getMonth() - meses);
 
-      const { data: consumos, error } = await supabase
+      const escopoIds = await this.obterEscopoAnaliticoAtas();
+      let queryConsumos = supabase
         .from("consumos")
-        .select("valor_total, data_consumo, created_at")
+        .select("valor_total, data_consumo, created_at, ata_id")
         .gte("data_consumo", dataInicio.toISOString().split("T")[0])
         .order("data_consumo", { ascending: true });
-
+      if (escopoIds !== null) queryConsumos = queryConsumos.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+      const { data: consumos, error } = await queryConsumos;
       if (error) throw error;
 
       const mesesMap = {};
@@ -4293,11 +4346,13 @@ export class Consulta {
 
   async getAtividadesRecentes(limit = 5) {
     try {
-      const { data: pedidos, error } = await supabase
+      const escopoIds = await this.obterEscopoAnaliticoAtas();
+      let query = supabase
         .from("pedidos")
         .select(
           `
           id,
+          ata_id,
           numero_pedido,
           status_aprovacao,
           created_at,
@@ -4307,6 +4362,8 @@ export class Consulta {
         )
         .order("created_at", { ascending: false })
         .limit(limit * 2);
+      if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+      const { data: pedidos, error } = await query;
 
       if (error) throw error;
 
@@ -4328,9 +4385,10 @@ export class Consulta {
 
   async getStatusDistribuicaoAtas() {
     try {
-      const { data: atas, error } = await supabase
-        .from("atas")
-        .select("situacao");
+      const escopoIds = await this.obterEscopoAnaliticoAtas();
+      let query = supabase.from("atas").select("id, situacao");
+      if (escopoIds !== null) query = query.in("id", escopoIds.length ? escopoIds : [-1]);
+      const { data: atas, error } = await query;
 
       if (error) throw error;
 
@@ -4362,9 +4420,10 @@ export class Consulta {
 
   async getStatusDistribuicaoPedidos() {
     try {
-      const { data: pedidos, error } = await supabase
-        .from("pedidos")
-        .select("status_aprovacao");
+      const escopoIds = await this.obterEscopoAnaliticoAtas();
+      let query = supabase.from("pedidos").select("ata_id, status_aprovacao");
+      if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+      const { data: pedidos, error } = await query;
 
       if (error) throw error;
 

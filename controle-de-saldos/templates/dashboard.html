@@ -91,7 +91,7 @@
   >
     <div class="dashboard-alertas-cabecalho">
       <div>
-        <span class="dashboard-alertas-kicker"><i class="fas fa-bolt"></i> Prioridade da secretaria</span>
+        <span class="dashboard-alertas-kicker"><i class="fas fa-bolt"></i> Prioridades da secretaria</span>
         <h2><i class="fas fa-shield-heart"></i> Atenção necessária</h2>
         <p>Veja o que precisa de intervenção agora.</p>
       </div>
@@ -100,6 +100,8 @@
     <div
       class="dashboard-faixa-alerta-conteudo"
       id="dashboardFaixaAlertaConteudo"
+      aria-live="polite"
+      aria-label="Alertas e prioridades da secretaria"
     >
       <!-- Conteúdo dinâmico renderizado por dashboard.js -->
     </div>
@@ -109,6 +111,37 @@
   <!-- CARDS DE INDICADORES (KPIs) - 4 CARDS                        -->
   <!-- Agora com sparkline + comparativo                            -->
   <!-- ============================================================ -->
+
+  <section class="dashboard-executivo" aria-labelledby="tituloVisaoPrefeito">
+    <div class="dashboard-secao-cabecalho">
+      <div>
+        <span class="dashboard-secao-kicker"><i class="fas fa-landmark"></i> Visão agregada</span>
+        <h2 id="tituloVisaoPrefeito">Visão do prefeito</h2>
+        <p>Resumo executivo das atas, consumo, saldos, pedidos e riscos da operação.</p>
+      </div>
+      <span class="dashboard-secao-badge"><i class="fas fa-chart-line"></i> Indicadores consolidados</span>
+    </div>
+    <div class="dashboard-executivo-kpis">
+      <article class="executivo-kpi executivo-kpi-contratado"><span class="executivo-kpi-icone"><i class="fas fa-file-signature"></i></span><div><strong id="prefeitoValorContratado">--</strong><span>Valor contratado</span></div></article>
+      <article class="executivo-kpi executivo-kpi-consumido"><span class="executivo-kpi-icone"><i class="fas fa-chart-line"></i></span><div><strong id="prefeitoValorConsumido">--</strong><span>Valor consumido</span></div></article>
+      <article class="executivo-kpi executivo-kpi-saldo"><span class="executivo-kpi-icone"><i class="fas fa-wallet"></i></span><div><strong id="prefeitoSaldoDisponivel">--</strong><span>Saldo disponível</span></div></article>
+      <article class="executivo-kpi executivo-kpi-atas"><span class="executivo-kpi-icone"><i class="fas fa-file-contract"></i></span><div><strong id="prefeitoAtasVigentes">--</strong><span>Atas vigentes</span></div></article>
+      <article class="executivo-kpi executivo-kpi-vencimento"><span class="executivo-kpi-icone"><i class="fas fa-calendar-days"></i></span><div><strong id="prefeitoAtasVencendo">--</strong><span>Atas vencendo</span><small>próximos 30 dias</small></div></article>
+      <article class="executivo-kpi executivo-kpi-pedidos"><span class="executivo-kpi-icone"><i class="fas fa-clipboard-check"></i></span><div><strong id="prefeitoPedidosPendentes">--</strong><span>Pedidos pendentes</span></div></article>
+    </div>
+    <div class="dashboard-executivo-grid">
+      <div class="dashboard-executivo-card dashboard-executivo-orgao">
+        <div class="dashboard-subcard-header"><h3><i class="fas fa-building"></i> Consumo por órgão</h3><a href="#relatorios" data-dashboard-tab="relatorios">Ver relatório <i class="fas fa-arrow-right"></i></a></div>
+        <div id="listaConsumoOrgao"><div class="skeleton-lista"><div class="skeleton-line skeleton-line-lg"></div><div class="skeleton-line skeleton-line-md"></div><div class="skeleton-line skeleton-line-lg"></div></div></div>
+      </div>
+      <div class="dashboard-executivo-card dashboard-executivo-evolucao">
+        <div class="dashboard-subcard-header"><h3><i class="fas fa-chart-area"></i> Evolução mensal</h3><span class="card-badge">últimos 6 meses</span></div>
+        <div class="executivo-evolucao-legenda"><span><i class="fas fa-circle"></i> Consumo</span><span><i class="fas fa-circle"></i> Contratado</span></div>
+        <div class="grafico-container executivo-grafico" id="graficoEvolucaoPrefeito"><canvas id="graficoEvolucaoPrefeitoCanvas"></canvas></div>
+      </div>
+    </div>
+  </section>
+
   <div class="dashboard-kpis">
     <!-- KPI 1: ATAS ATIVAS -->
     <div
@@ -322,8 +355,8 @@
     <div class="dashboard-indicadores-row">
     <div class="dashboard-card card-estreito card-termometro">
       <div class="card-header">
-        <h3><i class="fas fa-temperature-half"></i> Execução Orçamentária</h3>
-        <span class="card-badge">Atas ativas</span>
+        <h3><i class="fas fa-temperature-half"></i> Utilização das atas</h3>
+        <span class="card-badge">Consumo ÷ limite vigente</span>
       </div>
       <div class="card-body">
         <div class="termometro-wrapper" id="termometroExecucao">
@@ -371,6 +404,46 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- FUNIL DE SOLICITAÇÕES · COORTE POR DATA DE SOLICITAÇÃO      -->
+    <!-- ========================================================== -->
+    <div class="dashboard-card card-largo card-funil-solicitacoes">
+      <div class="card-header">
+        <div>
+          <h3><i class="fas fa-filter"></i> Funil de solicitações</h3>
+          <p class="card-subtitle">Situação atual dos pedidos solicitados no período</p>
+        </div>
+        <span class="card-badge" id="badgePeriodoFunil">Últimos 30d</span>
+      </div>
+      <div class="card-body">
+        <div id="funilSolicitacoes">
+          <div class="skeleton-lista"><div class="skeleton-line skeleton-line-lg"></div><div class="skeleton-line skeleton-line-md"></div><div class="skeleton-line skeleton-line-lg"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-card card-medio card-decisoes-periodo">
+      <div class="card-header">
+        <div>
+          <h3><i class="fas fa-timeline"></i> Decisões realizadas</h3>
+          <p class="card-subtitle">Transições registradas na trilha de auditoria</p>
+        </div>
+        <span class="card-badge" id="badgePeriodoDecisoes">Últimos 30d</span>
+      </div>
+      <div class="card-body"><div id="decisoesPeriodo"><div class="skeleton-lista"><div class="skeleton-line skeleton-line-md"></div><div class="skeleton-line skeleton-line-lg"></div></div></div></div>
+    </div>
+
+    <div class="dashboard-card card-medio card-fila-atual">
+      <div class="card-header">
+        <div>
+          <h3><i class="fas fa-inbox"></i> Fila pendente atual</h3>
+          <p class="card-subtitle">Fotografia do momento, sem filtro de período</p>
+        </div>
+        <span class="card-badge card-badge-warning">Agora</span>
+      </div>
+      <div class="card-body"><div id="filaPendenteAtual"><div class="skeleton-lista"><div class="skeleton-line skeleton-line-md"></div><div class="skeleton-line skeleton-line-lg"></div></div></div></div>
     </div>
 
     <!-- ========================================================== -->
@@ -434,6 +507,13 @@
       </div>
     </div>
   </div>
+
+
+  <section class="dashboard-gestao-resumo" aria-labelledby="tituloGestaoResumo">
+    <div class="dashboard-secao-cabecalho"><div><span class="dashboard-secao-kicker"><i class="fas fa-sliders"></i> Gestão de atas</span><h2 id="tituloGestaoResumo">Visão geral do módulo</h2><p>Indicadores de atas, itens e pedidos para orientar a operação diária.</p></div></div>
+    <div class="dashboard-gestao-links"><a href="#consulta" data-dashboard-tab="consulta"><i class="fas fa-search"></i><span>Consultar atas</span><small>Buscar e filtrar</small></a><a href="#pedidos" data-dashboard-tab="pedidos"><i class="fas fa-file-invoice"></i><span>Pedidos e aprovações</span><small>Acompanhar pendências</small></a><a href="#aditivos" data-dashboard-tab="aditivos"><i class="fas fa-file-contract"></i><span>Aditivos</span><small>Ver alterações</small></a><a href="#relatorios" data-dashboard-tab="relatorios"><i class="fas fa-chart-bar"></i><span>Relatórios</span><small>Análises completas</small></a></div>
+    <div class="dashboard-saude-card"><div class="dashboard-subcard-header"><h3><i class="fas fa-heart-pulse"></i> Saúde das atas · matriz consumo x vigência</h3><a href="#saude" data-dashboard-tab="saude">Abrir saúde das atas <i class="fas fa-arrow-right"></i></a></div><div id="matrizSaudeVigencia"><div class="skeleton-lista"><div class="skeleton-line skeleton-line-lg"></div><div class="skeleton-line skeleton-line-md"></div></div></div></div>
+  </section>
 
   <!-- ============================================================ -->
   <!-- NOTA DE RODAPÉ DO DASHBOARD                                  -->

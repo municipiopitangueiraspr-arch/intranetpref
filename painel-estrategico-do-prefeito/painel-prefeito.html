@@ -3,43 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png?v=20261009-brasao-2">
-    <link rel="icon" type="image/svg+xml" href="../favicon.svg?v=20261009-brasao-2">
-    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png?v=20261009-brasao-2">
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico?v=20261009-brasao-2">
-
-    <title>Visão Executiva | Atas, Saldos e Pedidos</title>
-    <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261008-drive-prefeito-2" />
-    <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261008-drive-prefeito-1" />
-    <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261008-drive-prefeito-header-1" />
-    <link rel="stylesheet" href="./painel-prefeito.css?v=20261008-drive-prefeito-redesign-1" />
-    <script src="../shared/js/acessibilidade-intranet.js" defer></script>
+    <meta name="theme-color" content="#1557a6" />
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=20261009-brasao-2" />
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg?v=20261009-brasao-2" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png?v=20261009-brasao-2" />
+    <title>Painel Estratégico do Prefeito | Intranet Pitangueiras</title>
+    <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1" />
+    <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261017-typography-contract-1" />
+    <link rel="stylesheet" href="../shared/css/pwa-responsive.css?v=20261014-pwa-2" />
+    <link rel="stylesheet" href="./painel-prefeito.css?v=20261019-reconciliacao-1" />
   </head>
-  <body class="painel-executivo" data-intranet-module="atas" data-intranet-page="controle-de-saldos-gestao-atas">
+  <body class="painel-executivo" data-intranet-module="visao-agregada" data-intranet-page="painel-prefeito" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
     <div class="app-layout" id="mainSystem">
-      <aside class="sidebar" id="sidebar"></aside>
+      <aside class="sidebar" id="sidebar" aria-label="Navegação do painel"></aside>
       <div class="main-area">
-        <header class="topbar" id="topbar"></header>
         <main class="conteudo conteudo-full painel-conteudo">
-          <section id="dashboard" class="painel-dashboard">
+          <section id="dashboard" class="painel-dashboard" aria-label="Painel estratégico da gestão municipal">
             <section id="visao-geral" class="painel-hero" aria-labelledby="tituloPainel">
-              <div class="painel-hero-copy"><span class="eyebrow">Centro Integrado de Gestão</span><h1 id="tituloPainel">Capacidade de atendimento e execução</h1><p>Uma leitura executiva para saber se o Município tem contratos, saldo e fluxo de pedidos suficientes para atender às necessidades das secretarias.</p><div id="summaryGrid" class="painel-summary-grid"></div></div>
-              <div class="painel-control-card"><div class="painel-section-heading"><div><span class="eyebrow">Período de decisão</span><h2>Atualizar visão</h2></div><i class="fas fa-calendar-days" aria-hidden="true"></i></div><div class="painel-period-fields"><label for="inicio">Início<input id="inicio" type="date" /></label><label for="fim">Fim<input id="fim" type="date" /></label></div><button id="atualizar" class="btn btn-primary" type="button"><i class="fas fa-arrows-rotate" aria-hidden="true"></i> Atualizar indicadores</button><p class="painel-control-note"><i class="fas fa-circle-info" aria-hidden="true"></i> O período altera pedidos e tendências. Vigências e alertas operacionais consideram a posição atual.</p></div>
+              <div class="painel-hero-copy ui-card">
+                <span class="eyebrow">Painel Estratégico da Gestão do Prefeito</span>
+                <h1 id="tituloPainel">Uma visão integrada do Município</h1>
+                <p>Decisões executivas com evidências sobre capacidade de atendimento, execução, riscos e prioridades das secretarias.</p>
+                <div class="painel-source-banner"><i class="fas fa-database" aria-hidden="true"></i><div><strong>Base disponível nesta versão</strong><span>Gestão de atas, saldos e pedidos</span></div><span class="status-badge status-badge--real">Dados reais</span></div>
+                <div id="summaryGrid" class="painel-summary-grid" aria-live="polite"></div>
+              </div>
+              <div class="painel-control-card ui-card">
+                <div class="painel-section-heading"><div><span class="eyebrow">Período de decisão</span><h2>Atualizar visão</h2></div><i class="fas fa-calendar-days" aria-hidden="true"></i></div>
+                <div class="painel-period-fields"><label for="inicio">Início<input id="inicio" class="ui-input" type="date" /></label><label for="fim">Fim<input id="fim" class="ui-input" type="date" /></label></div>
+                <button id="atualizar" class="ui-btn ui-btn--primary painel-refresh-btn" type="button"><i class="fas fa-arrows-rotate" aria-hidden="true"></i> Atualizar indicadores</button>
+                <p class="painel-control-note"><i class="fas fa-circle-info" aria-hidden="true"></i> Pedidos e tendências respeitam o período. Vigências e alertas consideram a posição atual.</p>
+                <p id="updated" class="painel-updated" role="status" aria-live="polite">Aguardando consulta...</p>
+              </div>
             </section>
 
-            <section id="saude-atas" class="painel-section" aria-labelledby="tituloSaude"><div class="painel-section-heading"><div><span class="eyebrow">Saúde contratual</span><h2 id="tituloSaude">Atas e capacidade de atendimento</h2><p>Quanto está contratado, quanto ainda pode ser utilizado e onde existe risco de continuidade.</p></div><span class="painel-section-count">Atas e saldos</span></div><div id="healthGrid" class="painel-health-grid"></div><div class="painel-execution-layout"><div class="painel-panel"><div class="painel-panel-heading"><div><span class="eyebrow">Execução financeira</span><h3>Consumo do valor contratado</h3></div><strong id="executionPct">—</strong></div><div class="painel-progress-large"><span id="executionBar"></span></div><div class="painel-progress-labels"><span>Consumido: <b id="consumedValue">—</b></span><span>Saldo: <b id="balanceValue">—</b></span></div></div><div class="painel-panel painel-reading"><div class="painel-panel-heading"><div><span class="eyebrow">Leitura executiva</span><h3>O que merece atenção</h3></div><i class="fas fa-lightbulb" aria-hidden="true"></i></div><p id="healthReading">—</p></div></div></section>
+            <section id="leitura-executiva" class="painel-section ui-card" aria-labelledby="tituloLeitura">
+              <div class="painel-section-heading"><div><span class="eyebrow">Leitura para decisão</span><h2 id="tituloLeitura">Saúde atual da gestão</h2><p>O que os dados disponíveis permitem afirmar agora e quais áreas ainda aguardam implantação.</p></div><span class="painel-section-count status-badge status-badge--info">Visão somente leitura</span></div>
+              <div id="executiveReading" class="painel-executive-reading"></div>
+              <div id="priorityGrid" class="painel-priority-grid"></div>
+            </section>
 
-            <section id="pedidos-decisoes" class="painel-section" aria-labelledby="tituloPedidos"><div class="painel-section-heading"><div><span class="eyebrow">Fluxo decisório</span><h2 id="tituloPedidos">Pedidos e decisões</h2><p>O volume de solicitações, o que já foi autorizado e o que ainda está parado aguardando análise.</p></div><a class="painel-section-link" href="../controle-de-saldos/gestao-atas.html#pedidos">Abrir pedidos e aprovações <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div><div class="painel-orders-layout"><div class="painel-panel"><div class="painel-panel-heading"><div><span class="eyebrow">Funil do período</span><h3>Distribuição das decisões</h3></div><strong id="ordersTotal">—</strong></div><div id="ordersFunnel" class="painel-funnel"></div></div><div class="painel-panel"><div class="painel-panel-heading"><div><span class="eyebrow">Pressão operacional</span><h3>Indicadores de decisão</h3></div><i class="fas fa-gauge-high" aria-hidden="true"></i></div><div id="decisionGrid" class="painel-decision-grid"></div></div></div></section>
+            <section id="saude-atas" class="painel-section ui-card" aria-labelledby="tituloSaude">
+              <div class="painel-section-heading"><div><span class="eyebrow">Módulo disponível</span><h2 id="tituloSaude">Atas, saldos e capacidade de atendimento</h2><p>Quanto está contratado, quanto ainda pode ser utilizado e onde existe risco de continuidade.</p></div><span class="painel-section-count status-badge status-badge--real">Dados reais</span></div>
+              <div id="healthGrid" class="painel-health-grid" aria-live="polite"></div>
+              <div class="painel-execution-layout"><div class="painel-panel ui-card"><div class="painel-panel-heading"><div><span class="eyebrow">Fonte operacional legada</span><h3>Execução armazenada</h3></div><strong id="executionPct">—</strong></div><progress id="executionBar" class="painel-progress-large" max="100" value="0" aria-label="Execução armazenada, não reconciliada"></progress><div class="painel-progress-labels"><span>Consumido (fonte legada): <b id="consumedValue">—</b></span><span>Saldo armazenado: <b id="balanceValue">—</b></span></div></div><div class="painel-panel painel-reading ui-card"><div class="painel-panel-heading"><div><span class="eyebrow">Leitura executiva</span><h3>O que merece atenção</h3></div><i class="fas fa-lightbulb" aria-hidden="true"></i></div><p id="healthReading">—</p></div></div>
+            </section>
 
-            <section id="tendencias" class="painel-section" aria-labelledby="tituloTendencias"><div class="painel-section-heading"><div><span class="eyebrow">Evolução</span><h2 id="tituloTendencias">Ritmo de pedidos</h2><p>Volume mensal de solicitações para identificar aceleração ou redução da demanda.</p></div><span class="painel-section-count">Últimos meses disponíveis</span></div><div id="trendLegend" class="painel-legend"></div><div id="trendChart" class="painel-trend-chart"></div></section>
+            <section id="reconciliacao-financeira" class="painel-section ui-card" aria-labelledby="tituloReconciliacao">
+              <div class="painel-section-heading"><div><span class="eyebrow">Fonte decisória</span><h2 id="tituloReconciliacao">Reconciliação financeira</h2><p>Contratado, reservas, consumo, estornos, entregas, saldo derivado e divergências por item de ata.</p></div><span id="reconStatus" class="painel-section-count status-badge status-badge--info">Consultando</span></div>
+              <div id="reconStatusDetail" class="painel-reconciliation-status" role="status" aria-live="polite"></div>
+              <div id="reconMetrics" class="painel-reconciliation-grid" aria-live="polite"></div>
+              <div class="painel-reconciliation-foot"><span id="reconFormula"></span><span id="reconEvidence"></span></div>
+            </section>
 
-            <section id="alertas" class="painel-section" aria-labelledby="tituloAlertas"><div class="painel-section-heading"><div><span class="eyebrow">Gestão por exceção</span><h2 id="tituloAlertas">Riscos que exigem acompanhamento</h2><p>Alertas agregados para orientar a prioridade da administração.</p></div><span id="alertCount" class="painel-section-count">—</span></div><div id="alertsList" class="painel-alerts-grid"></div></section>
-            <footer class="painel-footer"><span><i class="fas fa-circle-check" aria-hidden="true"></i> Dados consultados com escopo de tenant</span><span>Visão somente leitura · Atualização sob demanda</span></footer>
+            <section id="pedidos-decisoes" class="painel-section ui-card" aria-labelledby="tituloPedidos">
+              <div class="painel-section-heading"><div><span class="eyebrow">Módulo disponível</span><h2 id="tituloPedidos">Pedidos e decisões</h2><p>O volume de solicitações, o que já foi autorizado e o que ainda está parado aguardando análise.</p></div><div class="painel-section-actions"><span class="painel-section-count status-badge status-badge--real">Dados reais</span><a class="painel-section-link ui-btn ui-btn--ghost" href="../controle-de-saldos/gestao-atas.html#pedidos">Abrir gestão <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div>
+              <div class="painel-orders-layout"><div class="painel-panel ui-card"><div class="painel-panel-heading"><div><span class="eyebrow">Funil do período</span><h3>Distribuição das decisões</h3></div><strong id="ordersTotal">—</strong></div><div id="ordersFunnel" class="painel-funnel"></div></div><div class="painel-panel ui-card"><div class="painel-panel-heading"><div><span class="eyebrow">Pressão operacional</span><h3>Indicadores de decisão</h3></div><i class="fas fa-gauge-high" aria-hidden="true"></i></div><div id="decisionGrid" class="painel-decision-grid"></div></div></div>
+            </section>
+
+            <section id="cobertura-modulos" class="painel-section ui-card" aria-labelledby="tituloCobertura">
+              <div class="painel-section-heading"><div><span class="eyebrow">Visão de governo</span><h2 id="tituloCobertura">Mapa integrado das secretarias</h2><p>O painel foi desenhado para crescer como uma visão única do Município. Os módulos sem fonte operacional ainda não geram indicadores.</p></div><span class="painel-section-count status-badge status-badge--construction">Construção progressiva</span></div>
+              <div id="moduleCoverage" class="painel-module-grid"></div>
+            </section>
+
+            <section id="tendencias" class="painel-section ui-card" aria-labelledby="tituloTendencias"><div class="painel-section-heading"><div><span class="eyebrow">Evolução disponível</span><h2 id="tituloTendencias">Ritmo de pedidos</h2><p>Volume mensal de solicitações para identificar aceleração ou redução da demanda.</p></div><span class="painel-section-count status-badge status-badge--real">Dados reais quando disponíveis</span></div><div id="trendLegend" class="painel-legend"></div><div id="trendChart" class="painel-trend-chart"></div></section>
+
+            <section id="alertas" class="painel-section ui-card" aria-labelledby="tituloAlertas"><div class="painel-section-heading"><div><span class="eyebrow">Gestão por exceção</span><h2 id="tituloAlertas">Riscos e próximas decisões</h2><p>Alertas operacionais reais e pontos de implantação futura, sem simulação de dados.</p></div><span id="alertCount" class="painel-section-count status-badge status-badge--info">—</span></div><div id="alertsList" class="painel-alerts-grid"></div></section>
+
+            <footer class="painel-footer"><span><i class="fas fa-circle-info" aria-hidden="true"></i> Base atual: Atas, Saldos e Pedidos</span><span>Demais módulos e indicadores: em fase de construção · Atualização sob demanda</span></footer>
           </section>
         </main>
       </div>
     </div>
-    <script src="../shared/js/system-shell.js?v=20261008-drive-prefeito-1"></script>
-    <script type="module" src="./painel-prefeito.js?v=20261008-drive-prefeito-finance-2"></script>
+    <script src="../shared/js/system-shell.js?v=20261019-reconciliacao-1"></script>
+    <script type="module" src="./painel-prefeito.js?v=20261019-reconciliacao-1"></script>
   </body>
 </html>

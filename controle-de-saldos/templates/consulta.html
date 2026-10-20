@@ -75,6 +75,12 @@
     </button>
   </div>
 
+  <div class="consulta-inteligencia" id="consultaInteligencia" aria-live="polite">
+    <div class="consulta-inteligencia-header"><div><span class="consulta-inteligencia-eyebrow">LEITURA GERENCIAL</span><h2>Prioridades da carteira</h2><p>Indicadores calculados sobre as atas e os saldos informados nos itens.</p></div><span class="consulta-inteligencia-atualizacao" id="consultaIndicadoresAtualizacao">—</span></div>
+    <div class="consulta-inteligencia-kpis"><article class="consulta-inteligencia-kpi"><span><i class="fas fa-coins"></i></span><div><strong id="consultaValorVigente">—</strong><small>Valor global vigente</small></div></article><article class="consulta-inteligencia-kpi"><span><i class="fas fa-wallet"></i></span><div><strong id="consultaSaldoEstimado">—</strong><small>Saldo estimado da carteira</small></div></article><article class="consulta-inteligencia-kpi"><span><i class="fas fa-box-open"></i></span><div><strong id="consultaItensRuptura">—</strong><small>Itens sem saldo</small></div></article><article class="consulta-inteligencia-kpi"><span><i class="fas fa-user-shield"></i></span><div><strong id="consultaGovernancaPendente">—</strong><small>Atas com governança pendente</small></div></article></div>
+    <div class="consulta-inteligencia-grid"><section class="consulta-inteligencia-bloco"><h3><i class="fas fa-hourglass-half"></i> Exposição por vencimento</h3><div class="consulta-exposicao-grid"><span><b id="consultaExposicao30">—</b><small>até 30 dias</small></span><span><b id="consultaExposicao90">—</b><small>31–90 dias</small></span><span><b id="consultaExposicaoVencida">—</b><small>vencidas</small></span></div><p class="consulta-inteligencia-nota">Saldo por <code>saldo_valor</code> ou quantidade remanescente × preço unitário.</p></section><section class="consulta-inteligencia-bloco"><h3><i class="fas fa-list-check"></i> Fila de decisão</h3><ul id="consultaFilaDecisao" class="consulta-fila-decisao"><li>Calculando prioridades…</li></ul></section></div>
+  </div>
+
   <!-- ============================================================ -->
   <!-- FILTROS BÁSICOS                                              -->
   <!-- ============================================================ -->
@@ -213,7 +219,7 @@
           <input
             type="number"
             id="filtroVencimentoDias"
-            class="filtro-input filtro-vencimento-dias intranet-style-68dea055f8"
+            class="filtro-input filtro-vencimento-dias"
             placeholder="X dias"
             min="1"
             max="9999"

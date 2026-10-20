@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png?v=20261009-brasao-2" />
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg?v=20261009-brasao-2" />
+    <title>Biblioteca Municipal · Inventário</title>
+    <script src="../shared/js/acessibilidade-intranet.js" defer></script>
+    <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1" />
+    <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261019-pacote3-inventario-1" />
+    <link rel="stylesheet" href="./biblioteca.css?v=20261019-pacote3-inventario-1" />
+  </head>
+  <body data-intranet-module="biblioteca" data-intranet-theme="shared" data-intranet-page="biblioteca-inventario" class="app-shell" data-sidebar-open="false" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <div class="app-layout" id="mainSystem">
+      <aside class="app-sidebar sidebar" id="sidebar"></aside>
+      <div class="main-area app-main">
+        <header class="topbar" id="topbar"></header>
+        <main class="conteudo conteudo-full">
+          <section class="bib-ops-heading" aria-label="Inventário operacional">
+            <div>
+              <span class="bib-ops-eyebrow">GESTÃO DA BIBLIOTECA</span>
+              <h1>Inventário operacional</h1>
+              <p>Faça a conferência física do acervo por código de exemplar, com divergências e histórico auditável.</p>
+            </div>
+            <div class="bib-ops-heading__actions"><a class="btn btn-secondary" href="dashboard.html"><i class="fas fa-arrow-left"></i> Voltar ao painel</a></div>
+          </section>
+
+          <section class="resumo-grid" aria-label="Resumo do inventário">
+            <div class="resumo-card"><div class="resumo-icon ic-cinza"><i class="fas fa-clipboard-list"></i></div><div class="resumo-info"><span class="valor" id="resCampanhas">—</span><span class="label">Campanhas</span></div></div>
+            <div class="resumo-card"><div class="resumo-icon ic-azul"><i class="fas fa-boxes-stacked"></i></div><div class="resumo-info"><span class="valor" id="resTotal">—</span><span class="label">Itens na campanha</span></div></div>
+            <div class="resumo-card"><div class="resumo-icon ic-verde"><i class="fas fa-barcode"></i></div><div class="resumo-info"><span class="valor" id="resLidos">—</span><span class="label">Lidos</span></div></div>
+            <div class="resumo-card"><div class="resumo-icon ic-amarelo"><i class="fas fa-triangle-exclamation"></i></div><div class="resumo-info"><span class="valor" id="resDivergentes">—</span><span class="label">Divergentes</span></div></div>
+            <div class="resumo-card"><div class="resumo-icon ic-vermelho"><i class="fas fa-location-crosshairs"></i></div><div class="resumo-info"><span class="valor" id="resNaoLidos">—</span><span class="label">Não localizados</span></div></div>
+          </section>
+
+          <div class="card-base" style="margin-bottom:1rem">
+            <div class="secao-header"><h3><i class="fas fa-plus-circle"></i> Nova campanha</h3><span class="muted">Uma campanha em execução por município</span></div>
+            <div class="filtros" style="margin-top:.75rem">
+              <div class="filtro-grupo" style="flex:1"><label for="inputNome">Nome da campanha</label><input id="inputNome" type="text" maxlength="160" placeholder="Ex.: Inventário anual 2026" /></div>
+              <div class="filtro-grupo"><label for="inputSituacaoEscopo">Situação do escopo</label><select id="inputSituacaoEscopo" aria-label="Situação do escopo"><option value="">Todas as situações</option><option value="DISPONIVEL">Disponíveis</option><option value="EMPRESTADO">Emprestados</option><option value="RESERVADO">Reservados</option><option value="MANUTENCAO">Em manutenção</option><option value="EXTRAVIADO">Extraviados</option></select></div>
+              <div class="filtros-acoes"><button class="btn btn-primary" id="btnIniciar" type="button"><i class="fas fa-play"></i> Iniciar campanha</button></div>
+            </div>
+            <small class="muted">O escopo atual inclui todos os exemplares ativos; o filtro de situação é aplicado no momento da abertura.</small>
+          </div>
+
+          <section class="secao" aria-labelledby="tituloCampanhas">
+            <div class="secao-header"><h3 id="tituloCampanhas"><i class="fas fa-clipboard-check"></i> Campanhas de inventário</h3><button class="btn btn-secondary" id="btnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar</button></div>
+            <div class="tabela-wrapper"><table class="tabela" aria-label="Campanhas de inventário"><thead><tr><th>Campanha</th><th>Status</th><th>Início</th><th class="celula-centro">Itens</th><th class="celula-centro">Lidos</th><th class="celula-centro">Divergentes</th><th>Ações</th></tr></thead><tbody id="campanhasTbody"><tr><td colspan="7"><div class="loading-inline"><i class="fas fa-spinner fa-spin"></i> Carregando...</div></td></tr></tbody></table></div>
+          </section>
+
+          <section class="secao" id="painelLeitura" aria-labelledby="tituloLeitura" hidden>
+            <div class="secao-header"><div><h3 id="tituloLeitura"><i class="fas fa-barcode"></i> Leitura da campanha <span id="campanhaSelecionada">—</span></h3><p class="muted" id="campanhaProgresso">Selecione uma campanha em execução.</p></div><div class="filtros-acoes"><button class="btn btn-success" id="btnConcluir" type="button"><i class="fas fa-flag-checkered"></i> Concluir</button><button class="btn btn-danger" id="btnCancelar" type="button"><i class="fas fa-ban"></i> Cancelar</button></div></div>
+            <div class="card-base" style="margin:1rem 0"><div class="filtros"><div class="filtro-grupo" style="flex:1"><label for="inputCodigo">Código, tombo ou código de barras</label><input id="inputCodigo" type="search" autocomplete="off" placeholder="Aponte o leitor e pressione Enter" /></div><div class="filtro-grupo" style="flex:1"><label for="inputObservacao">Observação da leitura</label><input id="inputObservacao" type="text" maxlength="500" placeholder="Opcional" /></div><div class="filtros-acoes"><button class="btn btn-primary" id="btnLer" type="button"><i class="fas fa-barcode"></i> Registrar leitura</button></div></div><p id="ultimaLeitura" class="muted" role="status" aria-live="polite">Aguardando leitura.</p></div>
+            <div class="filtros"><div class="filtro-grupo"><label for="filtroItens">Exibir</label><select id="filtroItens" aria-label="Filtrar itens do inventário"><option value="todos">Todos</option><option value="nao-lidos">Não lidos</option><option value="divergentes">Divergentes</option><option value="lidos">Lidos</option></select></div><div class="filtros-acoes"><button class="btn btn-success" id="btnCsv" type="button"><i class="fas fa-file-csv"></i> CSV</button></div></div>
+            <div class="tabela-wrapper"><table class="tabela" aria-label="Itens da campanha"><thead><tr><th>Exemplar</th><th>Livro</th><th>Localização</th><th>Estado atual</th><th>Leitura</th><th>Situação</th><th>Observação</th></tr></thead><tbody id="itensTbody"><tr><td colspan="7"><div class="loading-inline">Selecione uma campanha.</div></td></tr></tbody></table></div>
+          </section>
+        </main>
+      </div>
+    </div>
+    <div class="notification-center" id="notificationCenter"></div>
+    <script src="../shared/js/system-shell.js?v=20261019-pacote3-inventario-1"></script>
+    <script type="importmap">{"imports":{"@supabase/supabase-js":"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"}}</script>
+    <script type="module">
+      import { supabase } from "../shared/js/supabase.js";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261019-pacote3-inventario-1";
+      await initBibliotecaLayout(supabase);
+
+      let usuarioLogado = null;
+      let inventarios = [];
+      let itens = [];
+      let inventarioAtual = null;
+
+      function setTexto(id, valor) { const el = document.getElementById(id); if (el) el.textContent = valor; }
+      function escaparHtml(str) { return String(str ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+      function formatarData(iso) { if (!iso) return "—"; const d=new Date(iso); return isNaN(d) ? "—" : d.toLocaleDateString("pt-BR"); }
+      function formatarDataHora(iso) { if (!iso) return "—"; const d=new Date(iso); return isNaN(d) ? "—" : d.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}); }
+      function notificar(tipo,titulo,mensagem,duracao=5000) { window.showNotification?.(tipo,titulo,mensagem,duracao); }
+      function estadoStatus(status) { return {EM_EXECUCAO:"Em execução",CONCLUIDO:"Concluído",CANCELADO:"Cancelado",ABERTO:"Aberto"}[status] || status || "—"; }
+      function classeStatus(status) { return status === "EM_EXECUCAO" ? "badge-amarelo" : status === "CONCLUIDO" ? "badge-verde" : "badge-cinza"; }
+
+      async function verificarSessao() {
+        const { data:{ session } } = await supabase.auth.getSession();
+        if (!session) { window.location.href="../intranet.html"; return null; }
+        const { data: perfil, error } = await supabase.from("usuarios").select("id,uuid,nome,email,perfil,ativo").eq("uuid",session.user.id).maybeSingle();
+        if (error || !perfil || perfil.ativo === false) { window.location.href="../intranet.html"; return null; }
+        usuarioLogado=perfil; return perfil;
+      }
+      function renderizarUsuario() { if (!usuarioLogado) return; setTexto("topbarNome",usuarioLogado.nome || "—"); setTexto("menuNome",usuarioLogado.nome || "—"); setTexto("menuEmail",usuarioLogado.email || "—"); const av=document.getElementById("avatarIniciais"); if(av) av.textContent=(usuarioLogado.nome||"?").split(/\s+/).map(x=>x[0]).slice(0,2).join("").toUpperCase(); }
+      function renderizarResumo(r) { if (!r) return; setTexto("resTotal",r.total_itens ?? "—"); setTexto("resLidos",r.itens_lidos ?? "—"); setTexto("resNaoLidos",r.itens_nao_lidos ?? "—"); setTexto("resDivergentes",r.itens_divergentes ?? "—"); setTexto("campanhaProgresso",`${r.itens_lidos ?? 0} de ${r.total_itens ?? 0} lidos · ${r.percentual_lido ?? 0}% · ${r.itens_divergentes ?? 0} divergente(s)`); }
+
+      async function carregarCampanhas() {
+        const tbody=document.getElementById("campanhasTbody");
+        const { data,error }=await supabase.from("vw_bib_inventarios_operacionais").select("inventario_id,nome,escopo,status,iniciado_em,concluido_em,total_itens,itens_lidos,itens_nao_lidos,itens_divergentes,percentual_lido").order("iniciado_em",{ascending:false}).limit(100);
+        if(error){ tbody.innerHTML=`<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Erro ao carregar campanhas.<br/><small>${escaparHtml(error.message)}</small></div></td></tr>`; return; }
+        inventarios=data||[]; setTexto("resCampanhas",inventarios.length); const ativa=inventarios.find(x=>x.status==="EM_EXECUCAO");
+        if(ativa && !inventarioAtual) await selecionarInventario(ativa.inventario_id);
+        if(!inventarios.length){ tbody.innerHTML=`<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-inbox"></i> Nenhuma campanha criada.</div></td></tr>`; return; }
+        tbody.innerHTML=inventarios.map(r=>`<tr><td><strong>${escaparHtml(r.nome)}</strong><div class="muted">#${r.inventario_id}</div></td><td><span class="badge ${classeStatus(r.status)}">${estadoStatus(r.status)}</span></td><td>${formatarDataHora(r.iniciado_em)}</td><td class="celula-centro">${r.total_itens??0}</td><td class="celula-centro">${r.itens_lidos??0} <small class="muted">(${r.percentual_lido??0}%)</small></td><td class="celula-centro">${r.itens_divergentes??0}</td><td><button class="btn btn-secondary btn-selecionar" data-id="${r.inventario_id}" type="button"><i class="fas fa-eye"></i> Abrir</button></td></tr>`).join("");
+        tbody.querySelectorAll(".btn-selecionar").forEach(b=>b.addEventListener("click",()=>selecionarInventario(Number(b.dataset.id))));
+      }
+
+      async function selecionarInventario(id) {
+        inventarioAtual=inventarios.find(x=>x.inventario_id===id) || null; if(!inventarioAtual) return;
+        document.getElementById("painelLeitura").hidden=false; setTexto("campanhaSelecionada",inventarioAtual.nome); renderizarResumo(inventarioAtual);
+        document.getElementById("btnConcluir").disabled=inventarioAtual.status!=="EM_EXECUCAO"; document.getElementById("btnCancelar").disabled=inventarioAtual.status!=="EM_EXECUCAO"; document.getElementById("inputCodigo").disabled=inventarioAtual.status!=="EM_EXECUCAO"; document.getElementById("btnLer").disabled=inventarioAtual.status!=="EM_EXECUCAO";
+        const {data,error}=await supabase.from("vw_bib_inventario_itens_operacionais").select("inventario_id,inventario_item_id,exemplar_id,lido_em,codigo_informado,situacao_encontrada,observacao,divergente,exemplar_codigo,codigo_tombo,codigo_barras,exemplar_situacao,estado_conservacao,prateleira_numero,estante_codigo,livro_titulo").eq("inventario_id",id).order("livro_titulo").limit(2000);
+        if(error){document.getElementById("itensTbody").innerHTML=`<tr><td colspan="7"><div class="lista-vazia">Erro ao carregar itens.</div></td></tr>`;return;} itens=data||[]; renderizarItens();
+      }
+      function renderizarItens(){ const filtro=document.getElementById("filtroItens").value; const rows=itens.filter(x=>filtro==="nao-lidos"?!x.lido_em:filtro==="lidos"?!!x.lido_em:filtro==="divergentes"?x.divergente:true); const tbody=document.getElementById("itensTbody"); if(!rows.length){tbody.innerHTML=`<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-circle-check"></i> Nenhum item neste filtro.</div></td></tr>`;return;} tbody.innerHTML=rows.map(x=>`<tr><td><strong>${escaparHtml(x.exemplar_codigo)}</strong><div class="muted">Tombo: ${escaparHtml(x.codigo_tombo||"—")}</div></td><td>${escaparHtml(x.livro_titulo)}</td><td>${escaparHtml([x.estante_codigo,x.prateleira_numero&&`Prat. ${x.prateleira_numero}`].filter(Boolean).join(" · ")||"—")}</td><td>${escaparHtml(x.exemplar_situacao)} · ${escaparHtml(x.estado_conservacao)}</td><td>${x.lido_em?`<span class="badge badge-verde">${formatarDataHora(x.lido_em)}</span><div class="muted">${escaparHtml(x.codigo_informado||"")}</div>`:`<span class="badge badge-cinza">Não lido</span>`}</td><td>${x.divergente?`<span class="badge badge-vermelho">Divergente</span>`:`<span class="badge badge-verde">Conferido</span>`}</td><td>${escaparHtml(x.observacao||"—")}</td></tr>`).join(""); }
+
+      async function iniciarInventario(){ const nome=document.getElementById("inputNome").value.trim()||`Inventário ${new Date().toLocaleDateString("pt-BR")}`; const situacao=document.getElementById("inputSituacaoEscopo").value; const btn=document.getElementById("btnIniciar"); btn.disabled=true; try{const escopo=situacao?{situacao}:{}; const {data,error}=await supabase.rpc("bib_iniciar_inventario",{p_nome:nome,p_escopo:escopo}); if(error)throw error; notificar("success","Campanha iniciada",`${data.nome} com ${data.id?"itens do acervo ativo":"escopo selecionado"}.`); document.getElementById("inputNome").value=""; await carregarCampanhas(); await selecionarInventario(Number(data.id)); document.getElementById("inputCodigo").focus();}catch(e){notificar("error","Não foi possível iniciar",e.message||"A RPC recusou a campanha.");}finally{btn.disabled=false;} }
+      async function registrarLeitura(){ if(!inventarioAtual||inventarioAtual.status!=="EM_EXECUCAO")return; const codigo=document.getElementById("inputCodigo").value.trim(); const obs=document.getElementById("inputObservacao").value.trim()||null; if(!codigo){notificar("warning","Código obrigatório","Informe ou leia um código.");return;} const btn=document.getElementById("btnLer");btn.disabled=true;try{const {data,error}=await supabase.rpc("bib_registrar_leitura_inventario",{p_inventario_id:inventarioAtual.inventario_id,p_codigo:codigo,p_observacao:obs});if(error)throw error;setTexto("ultimaLeitura",`Leitura registrada: ${codigo} · ${new Date().toLocaleTimeString("pt-BR")}`);document.getElementById("inputCodigo").value="";document.getElementById("inputObservacao").value="";await carregarCampanhas();await selecionarInventario(inventarioAtual.inventario_id);document.getElementById("inputCodigo").focus();}catch(e){notificar("error","Leitura não registrada",e.message||"Exemplar não localizado ou fora do escopo.");}finally{btn.disabled=false;} }
+      async function concluirInventario(){if(!inventarioAtual)return;if(!window.confirm("Concluir esta campanha? Os itens não lidos serão marcados como não localizados e divergentes."))return;try{const {error}=await supabase.rpc("bib_concluir_inventario",{p_inventario_id:inventarioAtual.inventario_id,p_observacao:null});if(error)throw error;notificar("success","Inventário concluído","Itens não lidos foram preservados como divergência para análise.");inventarioAtual=null;await carregarCampanhas();}catch(e){notificar("error","Não foi possível concluir",e.message||"A RPC recusou o encerramento.");}}
+      async function cancelarInventario(){if(!inventarioAtual)return;const motivo=window.prompt("Informe o motivo do cancelamento:");if(!motivo||motivo.trim().length<3)return;try{const {error}=await supabase.rpc("bib_cancelar_inventario",{p_inventario_id:inventarioAtual.inventario_id,p_motivo:motivo.trim()});if(error)throw error;notificar("success","Inventário cancelado","O histórico da campanha foi preservado.");inventarioAtual=null;await carregarCampanhas();}catch(e){notificar("error","Não foi possível cancelar",e.message||"A RPC recusou o cancelamento.");}}
+      function exportarCsv(){const rows=itens.map(x=>[x.inventario_item_id,x.exemplar_codigo,x.codigo_tombo,x.livro_titulo,x.exemplar_situacao,x.lido_em?"LIDO":"NAO_LIDO",x.divergente?"DIVERGENTE":"CONFERIDO",x.observacao||""]);const csv=[['Item','Exemplar','Tombo','Livro','Situação','Leitura','Resultado','Observação'],...rows].map(r=>r.map(v=>`"${String(v??"").replaceAll('"','""')}"`).join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download=`inventario-${inventarioAtual?.inventario_id||'relatorio'}.csv`;a.click();URL.revokeObjectURL(a.href);}
+
+      document.getElementById("btnIniciar").addEventListener("click",iniciarInventario); document.getElementById("btnAtualizar").addEventListener("click",carregarCampanhas); document.getElementById("btnLer").addEventListener("click",registrarLeitura); document.getElementById("inputCodigo").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();registrarLeitura();}}); document.getElementById("filtroItens").addEventListener("change",renderizarItens); document.getElementById("btnConcluir").addEventListener("click",concluirInventario); document.getElementById("btnCancelar").addEventListener("click",cancelarInventario); document.getElementById("btnCsv").addEventListener("click",exportarCsv);
+      async function init(){try{const u=await verificarSessao();if(!u)return;renderizarUsuario();await carregarCampanhas();}catch(e){console.error(e);notificar("error","Erro inesperado","Não foi possível carregar o inventário.");}finally{document.getElementById("loadingOverlay")?.classList.add("hidden");}}
+      init();
+    </script>
+  </body>
+</html>

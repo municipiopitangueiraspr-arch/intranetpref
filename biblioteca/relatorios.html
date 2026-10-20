@@ -24,11 +24,12 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261010-shared-shell-theme-4">
-  <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261010-shared-shell-theme-5">
+  
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1">
+  <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261019-pacote2-circulacao-2">
+  <link rel="stylesheet" href="./biblioteca.css?v=20261019-pacote2-circulacao-2">
 </head>
-  <body data-intranet-module="biblioteca" data-intranet-theme="atas" data-intranet-page="biblioteca-relatorios">
+  <body data-intranet-module="biblioteca" data-intranet-theme="shared" data-intranet-page="biblioteca-relatorios" class="app-shell" data-sidebar-open="false" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
     <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
       <div class="spinner"></div>
@@ -37,10 +38,10 @@
     <!-- LAYOUT -->
     <div class="app-layout" id="mainSystem">
       <!-- SIDEBAR -->
-      <aside class="sidebar" id="sidebar"></aside>
+      <aside class="app-sidebar sidebar" id="sidebar"></aside>
 
       <!-- MAIN -->
-      <div class="main-area">
+      <div class="main-area app-main">
         <!-- TOPBAR -->
         <header class="topbar" id="topbar"></header>
 
@@ -70,6 +71,12 @@
             <button class="aba" data-aba="mais-emprestados" type="button">
               <i class="fas fa-fire"></i> Mais emprestados
             </button>
+            <button class="aba" data-aba="reservas" type="button">
+              <i class="fas fa-calendar-check"></i> Reservas
+            </button>
+            <button class="aba" data-aba="bloqueios" type="button">
+              <i class="fas fa-user-lock"></i> Bloqueios
+            </button>
           </div>
 
           <!-- ============================================================
@@ -77,7 +84,7 @@
                ============================================================ -->
           <div class="aba-conteudo ativa" id="aba-acervo">
             <div class="filtros">
-              <div class="filtro-grupo intranet-style-c09b4c184d">
+              <div class="filtro-grupo">
                 <label>Buscar livro</label>
                 <input
                   type="text"
@@ -178,13 +185,13 @@
                     <th class="intranet-style-676b84ab32">Autores</th>
                     <th class="intranet-style-8d5f52e1df">Categoria</th>
                     <th class="intranet-style-8d5f52e1df">Editora / Ano</th>
-                    <th class="celula-centro intranet-style-e4ff80939d">
+                    <th class="celula-centro">
                       Exemplares
                     </th>
-                    <th class="celula-centro intranet-style-e4ff80939d">
+                    <th class="celula-centro">
                       Disponíveis
                     </th>
-                    <th class="celula-centro intranet-style-8d7f198305">Situação</th>
+                    <th class="celula-centro">Situação</th>
                   </tr>
                 </thead>
                 <tbody id="acTbody">
@@ -314,12 +321,12 @@
                   <tr>
                     <th class="intranet-style-1ebd157840">Código</th>
                     <th>Leitor</th>
-                    <th class="celula-centro intranet-style-8d7f198305">Itens</th>
+                    <th class="celula-centro">Itens</th>
                     <th class="intranet-style-da61823349">Retirada</th>
                     <th class="intranet-style-8d5f52e1df">Prazo</th>
                     <th class="intranet-style-3576150cf1">Devolução</th>
-                    <th class="celula-centro intranet-style-1ebd157840">Status</th>
-                    <th class="celula-centro intranet-style-c596150dc6">Atraso</th>
+                    <th class="celula-centro">Status</th>
+                    <th class="celula-centro">Atraso</th>
                   </tr>
                 </thead>
                 <tbody id="emTbody">
@@ -341,7 +348,7 @@
                ============================================================ -->
           <div class="aba-conteudo" id="aba-atrasados">
             <div class="filtros">
-              <div class="filtro-grupo intranet-style-c09b4c184d">
+              <div class="filtro-grupo">
                 <label>Buscar leitor ou livro</label>
                 <input
                   type="text"
@@ -427,12 +434,12 @@
                     <th class="intranet-style-1ebd157840">Código</th>
                     <th>Leitor</th>
                     <th class="intranet-style-3576150cf1">Telefone</th>
-                    <th class="celula-centro intranet-style-8d7f198305">Itens</th>
+                    <th class="celula-centro">Itens</th>
                     <th class="intranet-style-3576150cf1">Prazo</th>
-                    <th class="celula-centro intranet-style-1ebd157840">
+                    <th class="celula-centro">
                       Dias atraso
                     </th>
-                    <th class="celula-centro intranet-style-e4ff80939d">Ações</th>
+                    <th class="celula-centro">Ações</th>
                   </tr>
                 </thead>
                 <tbody id="atTbody">
@@ -454,7 +461,7 @@
                ============================================================ -->
           <div class="aba-conteudo" id="aba-leitores">
             <div class="filtros">
-              <div class="filtro-grupo intranet-style-c09b4c184d">
+              <div class="filtro-grupo">
                 <label>Buscar leitor</label>
                 <input
                   type="text"
@@ -544,12 +551,12 @@
               <table class="tabela" aria-label="Tabela de dados">
                 <thead>
                   <tr>
-                    <th class="celula-centro intranet-style-367631a177">#</th>
+                    <th class="celula-centro">#</th>
                     <th>Leitor</th>
                     <th class="intranet-style-8d5f52e1df">Carteirinha</th>
                     <th class="intranet-style-8d5f52e1df">Contato</th>
-                    <th class="celula-centro intranet-style-e4ff80939d">Ativos</th>
-                    <th class="celula-centro intranet-style-e4ff80939d">Total</th>
+                    <th class="celula-centro">Ativos</th>
+                    <th class="celula-centro">Total</th>
                     <th class="intranet-style-676b84ab32">Proporção</th>
                   </tr>
                 </thead>
@@ -651,11 +658,11 @@
               <table class="tabela" aria-label="Tabela de dados">
                 <thead>
                   <tr>
-                    <th class="celula-centro intranet-style-367631a177">#</th>
+                    <th class="celula-centro">#</th>
                     <th>Livro</th>
                     <th class="intranet-style-676b84ab32">Autores</th>
                     <th class="intranet-style-8d5f52e1df">Categoria</th>
-                    <th class="celula-centro intranet-style-3576150cf1">
+                    <th class="celula-centro">
                       Empréstimos
                     </th>
                     <th class="intranet-style-3c41ccda88">Proporção</th>
@@ -674,6 +681,26 @@
               </table>
             </div>
           </div>
+
+          <!-- ABA · RESERVAS -->
+          <div class="aba-conteudo" id="aba-reservas">
+            <div class="filtros">
+              <div class="filtro-grupo"><label>Buscar reserva</label><input id="rvBusca" type="search" placeholder="Livro, leitor ou carteirinha..." aria-label="Buscar reserva"></div>
+              <div class="filtro-grupo"><label>Situação</label><select id="rvStatus" aria-label="Situação da reserva"><option value="">Ativas e históricas</option><option value="ATIVA">Ativa</option><option value="AGUARDANDO_RETIRADA">Aguardando retirada</option><option value="CANCELADA">Cancelada</option><option value="ATENDIDA">Atendida</option></select></div>
+              <div class="filtros-acoes"><button class="btn btn-primary" id="rvBtnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar</button><button class="btn btn-success" id="rvBtnCsv" type="button"><i class="fas fa-file-csv"></i> CSV</button></div>
+            </div>
+            <div class="card-base" style="margin-bottom:1rem"><strong><i class="fas fa-plus-circle"></i> Nova reserva</strong><div class="filtros" style="margin-top:.75rem"><div class="filtro-grupo"><label>Livro</label><select id="rvLivro" aria-label="Livro para reservar"><option value="">Selecione...</option></select></div><div class="filtro-grupo"><label>Leitor</label><select id="rvLeitor" aria-label="Leitor da reserva"><option value="">Selecione...</option></select></div><div class="filtro-grupo" style="flex:1"><label>Observações</label><input id="rvObservacoes" type="text" maxlength="500" placeholder="Opcional"></div><div class="filtros-acoes"><button class="btn btn-primary" id="rvBtnCriar" type="button"><i class="fas fa-calendar-plus"></i> Criar reserva</button></div></div><small id="rvConfigAviso" class="muted">A criação respeita a configuração municipal e os bloqueios ativos.</small></div>
+            <div class="contador-tabela"><span><strong id="rvContador">0</strong> reserva(s)</span><span id="rvEstadoFonte" class="muted"></span></div>
+            <div class="tabela-wrapper"><table class="tabela" aria-label="Gestão de reservas"><thead><tr><th>Livro</th><th>Leitor</th><th>Fila</th><th>Disponibilidade</th><th>Reserva</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="rvTbody"><tr><td colspan="7"><div class="loading-inline">Selecione a aba para carregar.</div></td></tr></tbody></table></div>
+          </div>
+
+          <!-- ABA · BLOQUEIOS -->
+          <div class="aba-conteudo" id="aba-bloqueios">
+            <div class="card-base" style="margin-bottom:1rem"><strong><i class="fas fa-user-lock"></i> Registrar bloqueio operacional</strong><div class="filtros" style="margin-top:.75rem"><div class="filtro-grupo"><label>Leitor</label><select id="blLeitor" aria-label="Leitor a bloquear"><option value="">Selecione...</option></select></div><div class="filtro-grupo" style="flex:1"><label>Motivo</label><input id="blMotivo" type="text" minlength="5" maxlength="500" placeholder="Motivo obrigatório"></div><div class="filtro-grupo"><label>Fim (opcional)</label><input id="blFim" type="date" aria-label="Fim do bloqueio"></div><div class="filtros-acoes"><button class="btn btn-danger" id="blBtnCriar" type="button"><i class="fas fa-lock"></i> Bloquear</button></div></div></div>
+            <div class="filtros"><div class="filtro-grupo"><label>Buscar bloqueio</label><input id="blBusca" type="search" placeholder="Leitor, carteirinha ou motivo..." aria-label="Buscar bloqueio"></div><div class="filtros-acoes"><button class="btn btn-primary" id="blBtnAtualizar" type="button"><i class="fas fa-rotate"></i> Atualizar</button></div></div>
+            <div class="contador-tabela"><span><strong id="blContador">0</strong> bloqueio(s) ativo(s)</span><span id="blEstadoFonte" class="muted"></span></div>
+            <div class="tabela-wrapper"><table class="tabela" aria-label="Bloqueios ativos"><thead><tr><th>Leitor</th><th>Motivo</th><th>Início</th><th>Fim</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="blTbody"><tr><td colspan="6"><div class="loading-inline">Selecione a aba para carregar.</div></td></tr></tbody></table></div>
+          </div>
         </main>
       </div>
     </div>
@@ -682,7 +709,8 @@
     <div class="notification-center" id="notificationCenter"></div>
 
     <!-- SUPABASE SDK -->
-    <script type="importmap">
+      <script src="../shared/js/system-shell.js?v=20261019-pacote2-circulacao-2"></script>
+  <script type="importmap">
       {
         "imports": {
           "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
@@ -692,7 +720,7 @@
 
     <script type="module">
 import { supabase } from "../shared/js/supabase.js";
-      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261010-biblioteca-shared-shell-2";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261019-pacote2-circulacao-2";
       await initBibliotecaLayout(supabase);
       // ============================================
       // CONFIG SUPABASE
@@ -1935,6 +1963,105 @@ import { supabase } from "../shared/js/supabase.js";
         .addEventListener("click", () => window.print());
 
       // ============================================
+      // PACOTE 2 · RESERVAS E BLOQUEIOS
+      // ============================================
+      let dadosReservas = [];
+      let dadosBloqueios = [];
+      let opcoesCarregadas = false;
+
+      async function carregarOpcoesCirculacao() {
+        if (opcoesCarregadas) return;
+        const [{ data: livros }, { data: leitores }] = await Promise.all([
+          supabase.from("bib_livros").select("id,titulo,isbn").eq("ativo", true).order("titulo").limit(1000),
+          supabase.from("bib_leitores").select("id,nome,codigo_carteirinha,status").eq("status", "ATIVO").order("nome").limit(1000),
+        ]);
+        const livroHtml = (livros || []).map((x) => `<option value="${x.id}">${escaparHtml(x.titulo)}${x.isbn ? ` · ${escaparHtml(x.isbn)}` : ""}</option>`).join("");
+        const leitorHtml = (leitores || []).map((x) => `<option value="${x.id}">${escaparHtml(x.nome)}${x.codigo_carteirinha ? ` · ${escaparHtml(x.codigo_carteirinha)}` : ""}</option>`).join("");
+        document.getElementById("rvLivro").insertAdjacentHTML("beforeend", livroHtml);
+        document.getElementById("rvLeitor").insertAdjacentHTML("beforeend", leitorHtml);
+        document.getElementById("blLeitor").insertAdjacentHTML("beforeend", leitorHtml);
+        opcoesCarregadas = true;
+      }
+
+      function agruparReservasFiltradas() {
+        const termo = (document.getElementById("rvBusca").value || "").trim().toLowerCase();
+        const status = document.getElementById("rvStatus").value;
+        return dadosReservas.filter((r) => (!status || r.reserva_status === status) && (!termo || [r.livro_titulo,r.leitor_nome,r.codigo_carteirinha].filter(Boolean).join(" ").toLowerCase().includes(termo)));
+      }
+
+      function renderizarReservas() {
+        const rows = agruparReservasFiltradas();
+        setTexto("rvContador", rows.length);
+        const tbody = document.getElementById("rvTbody");
+        if (!rows.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-inbox"></i> Nenhuma reserva encontrada.</div></td></tr>`; return; }
+        tbody.innerHTML = rows.map((r) => `<tr><td><strong>${escaparHtml(r.livro_titulo)}</strong><div class="muted">${escaparHtml(r.isbn || "")}</div></td><td><strong>${escaparHtml(r.leitor_nome)}</strong><div class="muted">${escaparHtml(r.codigo_carteirinha || "")}</div></td><td class="celula-centro">${r.posicao_fila ?? "—"}</td><td>${r.exemplares_disponiveis ?? 0} disponível(is)<div class="muted">${r.exemplares_em_circulacao ?? 0} em circulação</div></td><td>${formatarData(r.data_reserva)}<div class="muted">expira: ${formatarData(r.data_expiracao)}</div></td><td><span class="badge ${r.situacao_operacional === "ATIVA" ? "badge-verde" : r.situacao_operacional === "EXPIRA_HOJE" ? "badge-amarelo" : "badge-cinza"}">${escaparHtml(r.situacao_operacional || r.reserva_status)}</span></td><td>${["ATIVA","AGUARDANDO_RETIRADA"].includes(r.reserva_status) ? `<button class="btn-acao cancelar-reserva" data-id="${r.reserva_id}" title="Cancelar reserva" type="button"><i class="fas fa-ban"></i></button>` : "—"}</td></tr>`).join("");
+        tbody.querySelectorAll(".cancelar-reserva").forEach((b) => b.addEventListener("click", () => cancelarReserva(Number(b.dataset.id))));
+      }
+
+      async function carregarReservas() {
+        await carregarOpcoesCirculacao();
+        const tbody = document.getElementById("rvTbody");
+        tbody.innerHTML = `<tr><td colspan="7"><div class="loading-inline"><i class="fas fa-spinner fa-spin"></i> Carregando reservas...</div></td></tr>`;
+        const { data, error } = await supabase.from("vw_bib_reservas_operacionais").select("municipio_id,reserva_id,livro_id,livro_titulo,isbn,leitor_id,leitor_nome,codigo_carteirinha,data_reserva,data_expiracao,reserva_status,observacoes,situacao_operacional,posicao_fila,exemplares_disponiveis,exemplares_em_circulacao").order("data_reserva", { ascending: false }).limit(1000);
+        if (error) { document.getElementById("rvEstadoFonte").textContent = "Fonte indisponível"; tbody.innerHTML = `<tr><td colspan="7"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Não foi possível carregar reservas.<br/><small>${escaparHtml(error.message)}</small></div></td></tr>`; return; }
+        dadosReservas = data || []; document.getElementById("rvEstadoFonte").textContent = "Fonte: vw_bib_reservas_operacionais"; renderizarReservas();
+      }
+
+      async function criarReserva() {
+        const livro = Number(document.getElementById("rvLivro").value); const leitor = Number(document.getElementById("rvLeitor").value); const obs = document.getElementById("rvObservacoes").value.trim();
+        if (!livro || !leitor) { window.showNotification("warning", "Dados incompletos", "Selecione o livro e o leitor."); return; }
+        const btn = document.getElementById("rvBtnCriar"); btn.disabled = true;
+        try { const { error } = await supabase.rpc("bib_registrar_reserva", { p_livro_id: livro, p_leitor_id: leitor, p_observacoes: obs || null }); if (error) throw error; window.showNotification("success", "Reserva criada", "A reserva foi registrada na fila operacional."); document.getElementById("rvObservacoes").value = ""; await carregarReservas(); } catch (e) { window.showNotification("error", "Não foi possível criar", e.message || "A RPC recusou a reserva."); } finally { btn.disabled = false; }
+      }
+
+      async function cancelarReserva(id) {
+        const motivo = window.prompt("Informe o motivo do cancelamento:");
+        if (!motivo || motivo.trim().length < 3) { if (motivo !== null) window.showNotification("warning", "Motivo obrigatório", "Informe pelo menos 3 caracteres."); return; }
+        try { const { error } = await supabase.rpc("bib_cancelar_reserva", { p_reserva_id: id, p_motivo: motivo.trim() }); if (error) throw error; window.showNotification("success", "Reserva cancelada", "O evento foi registrado na auditoria."); await carregarReservas(); } catch (e) { window.showNotification("error", "Não foi possível cancelar", e.message || "A RPC recusou o cancelamento."); }
+      }
+
+      function renderizarBloqueios() {
+        const termo = (document.getElementById("blBusca").value || "").trim().toLowerCase();
+        const rows = dadosBloqueios.filter((b) => !termo || [b.leitor_nome,b.codigo_carteirinha,b.motivo].filter(Boolean).join(" ").toLowerCase().includes(termo));
+        setTexto("blContador", rows.length); const tbody = document.getElementById("blTbody");
+        if (!rows.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="lista-vazia"><i class="fas fa-circle-check"></i> Nenhum bloqueio ativo encontrado.</div></td></tr>`; return; }
+        tbody.innerHTML = rows.map((b) => `<tr><td><strong>${escaparHtml(b.leitor_nome)}</strong><div class="muted">${escaparHtml(b.codigo_carteirinha || "")}</div></td><td>${escaparHtml(b.motivo)}</td><td>${formatarData(b.inicio)}</td><td>${formatarData(b.fim)}</td><td><span class="badge ${b.situacao_operacional === "ATIVO" ? "badge-vermelho" : "badge-amarelo"}">${escaparHtml(b.situacao_operacional)}</span></td><td><button class="btn-acao resolver-bloqueio" data-id="${b.bloqueio_id}" title="Resolver bloqueio" type="button"><i class="fas fa-unlock"></i></button></td></tr>`).join("");
+        tbody.querySelectorAll(".resolver-bloqueio").forEach((b) => b.addEventListener("click", () => resolverBloqueio(Number(b.dataset.id))));
+      }
+
+      async function carregarBloqueios() {
+        await carregarOpcoesCirculacao(); const tbody = document.getElementById("blTbody");
+        const { data, error } = await supabase.from("vw_bib_bloqueios_ativos").select("bloqueio_id,leitor_id,leitor_nome,codigo_carteirinha,motivo,inicio,fim,ativo,situacao_operacional").order("inicio", { ascending:false }).limit(500);
+        if (error) { document.getElementById("blEstadoFonte").textContent = "Fonte indisponível"; tbody.innerHTML = `<tr><td colspan="6"><div class="lista-vazia"><i class="fas fa-circle-exclamation"></i> Não foi possível carregar bloqueios.</div></td></tr>`; return; }
+        dadosBloqueios = data || []; document.getElementById("blEstadoFonte").textContent = "Fonte: vw_bib_bloqueios_ativos"; renderizarBloqueios();
+      }
+
+      async function criarBloqueio() {
+        const leitor = Number(document.getElementById("blLeitor").value); const motivo = document.getElementById("blMotivo").value.trim(); const fim = document.getElementById("blFim").value || null;
+        if (!leitor || motivo.length < 5) { window.showNotification("warning", "Dados incompletos", "Selecione o leitor e informe um motivo com pelo menos 5 caracteres."); return; }
+        const btn = document.getElementById("blBtnCriar"); btn.disabled = true;
+        try { const { error } = await supabase.rpc("bib_registrar_bloqueio", { p_leitor_id: leitor, p_motivo: motivo, p_fim: fim ? `${fim}T23:59:59` : null }); if (error) throw error; window.showNotification("success", "Leitor bloqueado", "O bloqueio foi registrado na auditoria."); document.getElementById("blMotivo").value = ""; document.getElementById("blFim").value = ""; await carregarBloqueios(); } catch (e) { window.showNotification("error", "Não foi possível bloquear", e.message || "A RPC recusou o bloqueio."); } finally { btn.disabled = false; }
+      }
+
+      async function resolverBloqueio(id) {
+        const motivo = window.prompt("Informe a regularização (opcional):") || null;
+        try { const { data, error } = await supabase.rpc("bib_resolver_bloqueio", { p_bloqueio_id: id, p_motivo: motivo }); if (error) throw error; if (!data) throw new Error("Bloqueio já resolvido ou não encontrado."); window.showNotification("success", "Bloqueio resolvido", "O evento foi registrado na auditoria."); await carregarBloqueios(); } catch (e) { window.showNotification("error", "Não foi possível resolver", e.message || "A RPC recusou a operação."); }
+      }
+
+      document.getElementById("rvBtnCriar").addEventListener("click", criarReserva);
+      document.getElementById("rvBtnAtualizar").addEventListener("click", carregarReservas);
+      document.getElementById("rvBtnCsv").addEventListener("click", () => {
+        const colunas = ["Reserva", "Livro", "Leitor", "Carteirinha", "Fila", "Disponíveis", "Em circulação", "Status", "Data"];
+        const linhas = agruparReservasFiltradas().map((r) => [r.reserva_id, r.livro_titulo, r.leitor_nome, r.codigo_carteirinha, r.posicao_fila, r.exemplares_disponiveis, r.exemplares_em_circulacao, r.situacao_operacional || r.reserva_status, formatarData(r.data_reserva)]);
+        exportarCsv(`reservas-${hojeISO()}.csv`, colunas, linhas);
+      });
+      document.getElementById("rvBusca").addEventListener("input", renderizarReservas);
+      document.getElementById("rvStatus").addEventListener("change", renderizarReservas);
+      document.getElementById("blBtnCriar").addEventListener("click", criarBloqueio);
+      document.getElementById("blBtnAtualizar").addEventListener("click", carregarBloqueios);
+      document.getElementById("blBusca").addEventListener("input", renderizarBloqueios);
+
+      // ============================================
       // ABAS · TROCA
       // ============================================
       const carregadoresPorAba = {
@@ -1943,6 +2070,8 @@ import { supabase } from "../shared/js/supabase.js";
         atrasados: carregarAtrasados,
         leitores: carregarLeitores,
         "mais-emprestados": null, // só carrega ao aplicar filtro
+        reservas: carregarReservas,
+        bloqueios: carregarBloqueios
       };
 
       document.querySelectorAll(".aba").forEach((aba) => {

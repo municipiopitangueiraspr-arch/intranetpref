@@ -172,6 +172,14 @@ async function finalizarPedido() {
     });
 
     const dataAtual = new Date().toISOString().split("T")[0];
+    const { data: lotacaoPrincipal, error: lotacaoError } = await supabase
+      .from("usuarios_unidades")
+      .select("unidade_id")
+      .eq("usuario_id", usuarioAtual.id)
+      .eq("principal", true)
+      .eq("ativo", true)
+      .maybeSingle();
+    if (lotacaoError) throw lotacaoError;
 
     // Para cada ata, criar um pedido
     for (const [ataId, pedido] of Object.entries(pedidosPorAta)) {
@@ -190,6 +198,7 @@ async function finalizarPedido() {
           usuario_id: usuarioAtual.id,
           ata_id: parseInt(ataId),
           orgao_solicitante_id: usuarioAtual.orgao_id,
+          unidade_id: lotacaoPrincipal?.unidade_id || null,
           fornecedor_id: pedido.fornecedorId,
           data_solicitacao: dataAtual,
           data_autorizacao: null,
@@ -315,12 +324,12 @@ function renderizarCarrinho() {
                     <table class="tabela-carrinho">
                         <thead>
                             <tr>
-                                <th data-intranet-style="1141ed377c3c">Item</th>
+                                <th>Item</th>
                                 <th>Descrição</th>
-                                <th data-intranet-style="bb08e3bb2adc">Qtd</th>
-                                <th data-intranet-style="78daa70c42c9">Valor Unit.</th>
-                                <th data-intranet-style="58f5ad668929">Total</th>
-                                <th data-intranet-style="bad4dc0c05f2">Ação</th>
+                                <th>Qtd</th>
+                                <th>Valor Unit.</th>
+                                <th>Total</th>
+                                <th>Ação</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -333,7 +342,7 @@ function renderizarCarrinho() {
                                     <td class="numeric">${i.quantidade || 0}</td>
                                     <td class="numeric">${formatarMoeda(i.valorUnitario || 0)}</td>
                                     <td class="numeric item-total">${formatarMoeda(i.valorTotal || 0)}</td>
-                                    <td data-intranet-style="251709996767">
+                                    <td>
                                         <button class="item-remover" onclick="removerItem('${i.id}')" title="Remover item">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
@@ -345,8 +354,8 @@ function renderizarCarrinho() {
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4" data-intranet-style="4764267ddc80">Subtotal da Ata:</td>
-                                <td class="numeric" data-intranet-style="1bc0a147d8f4">${formatarMoeda(totalAta)}</td>
+                                <td colspan="4">Subtotal da Ata:</td>
+                                <td class="numeric">${formatarMoeda(totalAta)}</td>
                                 <td></td>
                             </tr>
                         </tfoot>

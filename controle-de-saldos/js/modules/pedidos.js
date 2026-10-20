@@ -89,11 +89,6 @@ export class Pedidos {
 
   gerarHTMLPedidos() {
     return `
-      <nav class="atas-breadcrumb pedidos-breadcrumb" aria-label="Trilha de navegação">
-        <a href="#dashboard"><i class="fas fa-house" aria-hidden="true"></i><span>Visão geral</span></a>
-        <span class="atas-breadcrumb-separator" aria-hidden="true">/</span>
-        <span aria-current="page">Pedidos e aprovações</span>
-      </nav>
       <div class="pedido-container">
         <div class="pedidos-acoes-rapidas" id="pedidosAcoesRapidas">
           <button type="button" class="btn-acao-principal" id="btnNovoPedido" title="Ir para a Consulta em modo compra">
@@ -105,7 +100,7 @@ export class Pedidos {
             <span>Carrinho</span>
             <span class="badge-acao badge-vazio" id="badgeCarrinhoAcoes">0</span>
           </button>
-          <button type="button" class="btn-acao-secundaria btn-acao-fila" id="btnIrParaFila" style="display:none" title="Ver pedidos aguardando sua aprovação" data-intranet-style="2d281201779c">
+          <button type="button" class="btn-acao-secundaria btn-acao-fila is-hidden" id="btnIrParaFila" title="Ver pedidos aguardando sua aprovação">
             <i class="fas fa-clipboard-check"></i>
             <span>Fila de Aprovação</span>
             <span class="badge-acao badge-acao-alerta" id="badgeFilaAcoes">0</span>
@@ -130,7 +125,7 @@ export class Pedidos {
             <span class="indicador-copy"><span class="indicador-numero" id="rejeitadosPedidos">0</span><span class="indicador-label">Rejeitados</span></span>
           </div>
         </div>
-        <div class="fila-aprovacao" id="filaAprovacao" data-intranet-style="2d281201779c"></div>
+        <div class="fila-aprovacao" id="filaAprovacao"></div>
 
         <div class="compra-rapida" id="compraRapida">
           <div class="compra-rapida-header">
@@ -162,7 +157,7 @@ export class Pedidos {
               </button>
             </div>
           </div>
-          <div class="compra-rapida-preview" id="compraRapidaPreview" data-intranet-style="2d281201779c"></div>
+          <div class="compra-rapida-preview is-hidden" id="compraRapidaPreview"></div>
         </div>
 
         <div class="pedidos-filtros">
@@ -225,7 +220,7 @@ export class Pedidos {
 
         <div class="pedidos-contador">
           <span id="pedidosContador">Carregando pedidos...</span>
-          <button class="btn-carregar-mais" id="btnCarregarMais" data-intranet-style="2d281201779c">
+          <button class="btn-carregar-mais" id="btnCarregarMais">
             <i class="fas fa-chevron-down"></i> Carregar mais 15
           </button>
         </div>
@@ -508,19 +503,12 @@ export class Pedidos {
     const container = document.getElementById("pedidosLista");
     if (!this.sistema.usuarioAtual?.id) {
       container.innerHTML =
-        '<div data-intranet-style="b59c96af38c6">Usuário não logado</div>';
+        '<div>Usuário não logado</div>';
       return;
     }
 
     try {
       let query = supabase.from("pedidos").select("*", { count: "exact" });
-
-      if (this.sistema.usuarioAtual.orgao_id) {
-        query = query.eq(
-          "orgao_solicitante_id",
-          this.sistema.usuarioAtual.orgao_id,
-        );
-      }
 
       query = this.aplicarFiltrosQuery(query);
       query = query
@@ -545,10 +533,10 @@ export class Pedidos {
       this.atualizarContador();
     } catch (error) {
       console.error("Erro ao carregar pedidos:", error);
-      container.innerHTML = `<div data-intranet-style="8db6214e49f0">
-        <i class="fas fa-exclamation-triangle" data-intranet-style="566f135b8448"></i>
-        <h3 data-intranet-style="f11bafdf8591">Erro ao carregar pedidos</h3>
-        <p data-intranet-style="2e4030ebf549">${error.message}</p>
+      container.innerHTML = `<div>
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Erro ao carregar pedidos</h3>
+        <p>${error.message}</p>
       </div>`;
     }
   }
@@ -613,15 +601,10 @@ export class Pedidos {
 
   async carregarIndicadores() {
     try {
-      const orgId = this.sistema.usuarioAtual?.orgao_id;
-
-      const baseQuery = () => {
-        let q = supabase
-          .from("pedidos")
-          .select("*", { count: "exact", head: true });
-        if (orgId) q = q.eq("orgao_solicitante_id", orgId);
-        return q;
-      };
+      // O RLS aplica o escopo hierárquico; não restringir novamente por orgao_id.
+      const baseQuery = () => supabase
+        .from("pedidos")
+        .select("*", { count: "exact", head: true });
 
       const [
         { count: total, error: e1 },
@@ -657,10 +640,10 @@ export class Pedidos {
 
     if (!this.pedidosCache || this.pedidosCache.length === 0) {
       container.innerHTML = `
-        <div data-intranet-style="8a7910659452">
-          <i class="fas fa-file-invoice" data-intranet-style="bc31128c588f"></i>
-          <h3 data-intranet-style="cf788d1c3dfa">Nenhum pedido encontrado</h3>
-          <p data-intranet-style="71c9be8ee3ae">Nenhum pedido corresponde aos filtros aplicados.</p>
+        <div>
+          <i class="fas fa-file-invoice"></i>
+          <h3>Nenhum pedido encontrado</h3>
+          <p>Nenhum pedido corresponde aos filtros aplicados.</p>
         </div>
       `;
       return;
@@ -790,9 +773,9 @@ export class Pedidos {
             <span>Ata</span>
             <span>Fornecedor</span>
             <span>Local</span>
-            <span data-intranet-style="47b2ad8f5a47">Valor</span>
-            <span data-intranet-style="021b566d98d0">Status</span>
-            <span data-intranet-style="021b566d98d0">Data</span>
+            <span>Valor</span>
+            <span>Status</span>
+            <span>Data</span>
             <span aria-label="Ações"></span>
           </div>
           ${pedidosCompletos.map((p) => this.renderPedido(p)).join("")}
@@ -906,8 +889,7 @@ export class Pedidos {
     const statusAprovacao = p.status_aprovacao || "AGUARDANDO_APROVACAO";
     const podeAprovar =
       (this.sistema.usuarioAtual.perfil === "ADMIN" ||
-        (this.sistema.usuarioAtual.perfil === "SECRETARIO" &&
-          this.sistema.usuarioAtual.orgao_id === p.orgao_solicitante_id)) &&
+        this.sistema.usuarioAtual.perfil === "SECRETARIO") &&
       statusAprovacao === "AGUARDANDO_APROVACAO";
 
     const statusInfoMap = {
@@ -966,27 +948,27 @@ export class Pedidos {
           `;
         })
         .join("") ||
-      '<tr><td colspan="5" data-intranet-style="6dfc87758082">Nenhum item encontrado</td></tr>';
+      '<tr><td colspan="5">Nenhum item encontrado</td></tr>';
 
     return `
       <div class="pedidos-lista-item ${statusClass}" data-pedido-id="${p.id}" role="button" tabindex="0" aria-expanded="false" aria-controls="detalhes-${p.id}" aria-label="Pedido ${p.numero_pedido || "N/I"}, ${p.itens_pedido?.length || 0} itens, ${statusLabel}. Pressione Enter para ver os itens." onclick="sistema.pedidos.toggleExpandPedido(${p.id})" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); sistema.pedidos.toggleExpandPedido(${p.id}); }">
         <div class="numero-pedido"><i class="fas fa-file-invoice"></i> ${p.numero_pedido || "N/I"}<span class="itens-count">${p.itens_pedido?.length || 0} ${p.itens_pedido?.length === 1 ? "item" : "itens"}</span></div>
         <div class="ata-info">
           <strong>Ata ${p.ata?.numero_ata || "N/I"}</strong>
-          <span data-intranet-style="b1f458d6e386">${p.ata?.processo_administrativo || ""}</span>
+          <span>${p.ata?.processo_administrativo || ""}</span>
         </div>
         <div class="fornecedor-info" title="${p.fornecedor?.razao_social || "N/I"}">
           <strong>${p.fornecedor?.razao_social || "N/I"}</strong>
           ${p.fornecedor?.cnpj ? `<small>CNPJ ${this.formatarCnpj(p.fornecedor.cnpj)}</small>` : ""}
         </div>
         <div class="local-info" title="${localEntrega || "Não informado"}">
-          ${localEntrega ? `<i class="fas fa-map-marker-alt"></i> ${localEntrega.length > 22 ? localEntrega.slice(0, 20) + "…" : localEntrega}` : '<span data-intranet-style="867a9857b833">—</span>'}
+          ${localEntrega ? `<i class="fas fa-map-marker-alt"></i> ${localEntrega.length > 22 ? localEntrega.slice(0, 20) + "…" : localEntrega}` : '<span>—</span>'}
         </div>
         <div class="valor-info">${this.sistema.ui.formatarMoeda(total)}</div>
         <div class="status-info">
           ${
             statusAprovacao === "REPROVADO"
-              ? `<span class="status-badge ${statusClass} clickable" onclick="event.stopPropagation(); sistema.pedidos.abrirModalMotivoRejeicao(${p.id})" title="Clique para ver o motivo da rejeição">${statusLabel} <i class="fas fa-info-circle" data-intranet-style="91e4b4a0725b"></i></span>`
+              ? `<span class="status-badge ${statusClass} clickable" onclick="event.stopPropagation(); sistema.pedidos.abrirModalMotivoRejeicao(${p.id})" title="Clique para ver o motivo da rejeição">${statusLabel} <i class="fas fa-info-circle"></i></span>`
               : `<span class="status-badge ${statusClass}">${statusLabel}</span>`
           }
         </div>
@@ -1086,9 +1068,9 @@ export class Pedidos {
                 <tr>
                   <th>Item</th>
                   <th>Descrição</th>
-                  <th data-intranet-style="47b2ad8f5a47">Qtd</th>
-                  <th data-intranet-style="47b2ad8f5a47">Valor Unit.</th>
-                  <th data-intranet-style="47b2ad8f5a47">Total</th>
+                  <th>Qtd</th>
+                  <th>Valor Unit.</th>
+                  <th>Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -1096,8 +1078,8 @@ export class Pedidos {
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="4" data-intranet-style="47b2ad8f5a47">TOTAL DO PEDIDO</td>
-                  <td data-intranet-style="6ca98cd51031">
+                  <td colspan="4">TOTAL DO PEDIDO</td>
+                  <td>
                     ${this.sistema.ui.formatarMoeda(total)}
                   </td>
                 </tr>
@@ -1113,7 +1095,7 @@ export class Pedidos {
                 )
               : ""
           }
-          <div data-intranet-style="b6a708f99822">
+          <div>
             <span><i class="fas fa-user"></i> Solicitante: ${p.usuario?.nome || "N/I"}</span>
             <span><i class="fas fa-building"></i> Órgão: ${p.orgao_solicitante?.nome || "N/I"}</span>
             ${p.aprovado_por ? `<span><i class="fas fa-check-circle"></i> Aprovado por: ${p.aprovador_nome || "N/I"}</span>` : ""}
@@ -1141,7 +1123,7 @@ export class Pedidos {
     const modal = document.getElementById("modalRecebimentoPedido");
     const content = document.getElementById("modalRecebimentoPedidoContent");
     if (!modal || !content) return;
-    content.innerHTML = `<div data-intranet-style="cd8a6daf1f53"><i class="fas fa-spinner fa-spin"></i> Carregando itens do pedido...</div>`;
+    content.innerHTML = `<div><i class="fas fa-spinner fa-spin"></i> Carregando itens do pedido...</div>`;
     modal.classList.add("active");
 
     try {
@@ -1184,25 +1166,25 @@ export class Pedidos {
           <h2 class="modal-titulo"><i class="fas fa-truck-loading"></i> Recebimento — ${this._escaparRecebimento(pedido.numero_pedido)}</h2>
           <button type="button" class="modal-close" data-fechar-recebimento><i class="fas fa-times"></i></button>
         </div>
-        <div class="modal-body" data-intranet-style="0e0f2f71a17c">
-          <p data-intranet-style="b41a40dce3e5"><i class="fas fa-map-marker-alt"></i> Local: <strong>${this._escaparRecebimento(pedido.local_entrega || "Não informado")}</strong></p>
+        <div class="modal-body">
+          <p><i class="fas fa-map-marker-alt"></i> Local: <strong>${this._escaparRecebimento(pedido.local_entrega || "Não informado")}</strong></p>
           <div class="tabela-container"><table class="tabela-itens-pedido"><thead><tr><th>Item</th><th>Solicitado</th><th>Recebido</th><th>Restante</th><th>Receber agora</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum item encontrado.</td></tr>'}</tbody></table></div>
-          <div data-intranet-style="9ab897d7d0d7">
+          <div>
             <label class="filtro-label">Tipo de recebimento<select id="recebimentoTipo" class="filtro-select"><option value="PARCIAL">Entrega parcial</option><option value="FINAL">Entrega final</option></select></label>
             <label class="filtro-label">Data<input id="recebimentoData" class="filtro-input" type="date" value="${new Date().toISOString().slice(0,10)}"></label>
           </div>
-          <label class="filtro-label" data-intranet-style="74646c741687">Documento de referência<input id="recebimentoDocumento" class="filtro-input" maxlength="180" placeholder="NF, termo de recebimento ou protocolo"></label>
-          <label class="filtro-label" data-intranet-style="74646c741687">Anexo privado<input id="recebimentoArquivo" class="filtro-input" type="file" accept="application/pdf,image/*,.doc,.docx"></label>
-          <label class="filtro-label" data-intranet-style="74646c741687">Observação<textarea id="recebimentoObservacao" class="filtro-input" rows="3" maxlength="1000" placeholder="Informe divergências, avarias ou observações"></textarea></label>
+          <label class="filtro-label">Documento de referência<input id="recebimentoDocumento" class="filtro-input" maxlength="180" placeholder="NF, termo de recebimento ou protocolo"></label>
+          <label class="filtro-label">Anexo privado<input id="recebimentoArquivo" class="filtro-input" type="file" accept="application/pdf,image/*,.doc,.docx"></label>
+          <label class="filtro-label">Observação<textarea id="recebimentoObservacao" class="filtro-input" rows="3" maxlength="1000" placeholder="Informe divergências, avarias ou observações"></textarea></label>
         </div>
-        <div class="modal-footer-fracionar" data-intranet-style="182d596e184e">
+        <div class="modal-footer-fracionar">
           <button type="button" class="btn-cancelar-fracionar" data-fechar-recebimento>Cancelar</button>
           <button type="button" class="btn-aprovar" id="btnSalvarRecebimento"><i class="fas fa-check"></i> Registrar recebimento</button>
         </div>`;
       content.querySelectorAll("[data-fechar-recebimento]").forEach((button) => button.addEventListener("click", () => this._fecharModalOperacional("modalRecebimentoPedido")));
       content.querySelector("#btnSalvarRecebimento")?.addEventListener("click", () => this.confirmarRecebimentoPedido(pedidoId));
     } catch (error) {
-      content.innerHTML = `<div data-intranet-style="e8806a456002"><h3>Não foi possível carregar o recebimento</h3><p>${this._escaparRecebimento(error.message)}</p><button type="button" class="btn-limpar" data-fechar-recebimento>Fechar</button></div>`;
+      content.innerHTML = `<div><h3>Não foi possível carregar o recebimento</h3><p>${this._escaparRecebimento(error.message)}</p><button type="button" class="btn-limpar" data-fechar-recebimento>Fechar</button></div>`;
       content.querySelector("[data-fechar-recebimento]")?.addEventListener("click", () => this._fecharModalOperacional("modalRecebimentoPedido"));
     }
   }
@@ -1251,7 +1233,7 @@ export class Pedidos {
     const modal = document.getElementById("modalTimelinePedido");
     const content = document.getElementById("modalTimelinePedidoContent");
     if (!modal || !content) return;
-    content.innerHTML = `<div data-intranet-style="cd8a6daf1f53"><i class="fas fa-spinner fa-spin"></i> Carregando timeline...</div>`;
+    content.innerHTML = `<div><i class="fas fa-spinner fa-spin"></i> Carregando timeline...</div>`;
     modal.classList.add("active");
     try {
       const [{ data: pedido, error: pedidoError }, { data: eventos, error: eventosError }, { data: entregas, error: entregasError }, { data: ocorrencias, error: ocorrenciasError }] = await Promise.all([
@@ -1267,29 +1249,29 @@ export class Pedidos {
       const atorIds = [...new Set((eventos || []).map((e) => e.ator_id).concat((entregas || []).map((e) => e.recebido_por), (ocorrencias || []).map((e) => e.registrada_por)).filter(Boolean))];
       const { data: atores } = atorIds.length ? await supabase.from("usuarios").select("id,nome").in("id", atorIds) : { data: [] };
       const nomes = Object.fromEntries((atores || []).map((a) => [a.id, a.nome]));
-      const eventosHtml = (eventos || []).map((evento) => `<div data-intranet-style="17c87b2ba4ba">
-        <span data-intranet-style="ec1df5a29c7f"></span>
-        <strong>${this._escaparRecebimento(this._rotuloEventoPedido(evento.evento))}</strong><small data-intranet-style="6dbf3b6e1a75">${this._escaparRecebimento(this._formatarDataHora(evento.ocorrido_em))} · ${this._escaparRecebimento(nomes[evento.ator_id] || "Sistema")}</small>
-        ${evento.status_anterior || evento.status_novo ? `<div data-intranet-style="06c55bdee452">${this._escaparRecebimento(evento.status_anterior || "inicial")} → <strong>${this._escaparRecebimento(evento.status_novo || "")}</strong></div>` : ""}
-        ${evento.justificativa ? `<p data-intranet-style="d900bb952d92">${this._escaparRecebimento(evento.justificativa)}</p>` : ""}
+      const eventosHtml = (eventos || []).map((evento) => `<div>
+        <span></span>
+        <strong>${this._escaparRecebimento(this._rotuloEventoPedido(evento.evento))}</strong><small>${this._escaparRecebimento(this._formatarDataHora(evento.ocorrido_em))} · ${this._escaparRecebimento(nomes[evento.ator_id] || "Sistema")}</small>
+        ${evento.status_anterior || evento.status_novo ? `<div>${this._escaparRecebimento(evento.status_anterior || "inicial")} → <strong>${this._escaparRecebimento(evento.status_novo || "")}</strong></div>` : ""}
+        ${evento.justificativa ? `<p>${this._escaparRecebimento(evento.justificativa)}</p>` : ""}
       </div>`).join("");
-      const entregasHtml = (entregas || []).map((entrega) => `<div data-intranet-style="85feb674b88a">
-        <span data-intranet-style="7b6bb98f305a"></span>
-        <strong>Entrega ${entrega.numero} · ${this._escaparRecebimento(entrega.tipo)}</strong><small data-intranet-style="6dbf3b6e1a75">${this._escaparRecebimento(this._formatarDataHora(entrega.data_entrega))} · ${this._escaparRecebimento(nomes[entrega.recebido_por] || "Usuário")}</small>
-        ${entrega.documento_referencia ? `<div data-intranet-style="80739a46c50a">Documento: ${this._escaparRecebimento(entrega.documento_referencia)}</div>` : ""}
-        ${entrega.observacao ? `<p data-intranet-style="d900bb952d92">${this._escaparRecebimento(entrega.observacao)}</p>` : ""}
+      const entregasHtml = (entregas || []).map((entrega) => `<div>
+        <span></span>
+        <strong>Entrega ${entrega.numero} · ${this._escaparRecebimento(entrega.tipo)}</strong><small>${this._escaparRecebimento(this._formatarDataHora(entrega.data_entrega))} · ${this._escaparRecebimento(nomes[entrega.recebido_por] || "Usuário")}</small>
+        ${entrega.documento_referencia ? `<div>Documento: ${this._escaparRecebimento(entrega.documento_referencia)}</div>` : ""}
+        ${entrega.observacao ? `<p>${this._escaparRecebimento(entrega.observacao)}</p>` : ""}
       </div>`).join("");
-      const ocorrenciasHtml = (ocorrencias || []).map((ocorrencia) => `<div data-intranet-style="6355a321ade5">
-        <span data-intranet-style="995b7d24d0c1"></span>
-        <strong>Ocorrência · ${this._escaparRecebimento(ocorrencia.tipo)} <span class="status-badge">${this._escaparRecebimento(ocorrencia.severidade)}</span></strong><small data-intranet-style="6dbf3b6e1a75">${this._escaparRecebimento(this._formatarDataHora(ocorrencia.created_at))} · ${this._escaparRecebimento(nomes[ocorrencia.registrada_por] || "Usuário")}</small>
-        <p data-intranet-style="d900bb952d92">${this._escaparRecebimento(ocorrencia.descricao)}</p>
+      const ocorrenciasHtml = (ocorrencias || []).map((ocorrencia) => `<div>
+        <span></span>
+        <strong>Ocorrência · ${this._escaparRecebimento(ocorrencia.tipo)} <span class="status-badge">${this._escaparRecebimento(ocorrencia.severidade)}</span></strong><small>${this._escaparRecebimento(this._formatarDataHora(ocorrencia.created_at))} · ${this._escaparRecebimento(nomes[ocorrencia.registrada_por] || "Usuário")}</small>
+        <p>${this._escaparRecebimento(ocorrencia.descricao)}</p>
       </div>`).join("");
       content.innerHTML = `<div class="modal-header"><h2 class="modal-titulo"><i class="fas fa-stream"></i> Timeline — ${this._escaparRecebimento(pedido.numero_pedido)}</h2><button type="button" class="modal-close" data-fechar-timeline><i class="fas fa-times"></i></button></div>
-        <div class="modal-body" data-intranet-style="c4b01e2a103b"><div data-intranet-style="f75ffd8a507f"><span class="status-badge">${this._escaparRecebimento(pedido.status_aprovacao || pedido.status || "")}</span><span data-intranet-style="817a5b76bfdf">Criado em ${this._escaparRecebimento(this._formatarDataHora(pedido.created_at))}</span></div>
-        <div>${eventosHtml || ""}${entregasHtml || ""}${ocorrenciasHtml || ""}${!eventosHtml && !entregasHtml && !ocorrenciasHtml ? '<p data-intranet-style="176caf35c6ea">Nenhum evento registrado.</p>' : ""}</div></div>`;
+        <div class="modal-body"><div><span class="status-badge">${this._escaparRecebimento(pedido.status_aprovacao || pedido.status || "")}</span><span>Criado em ${this._escaparRecebimento(this._formatarDataHora(pedido.created_at))}</span></div>
+        <div>${eventosHtml || ""}${entregasHtml || ""}${ocorrenciasHtml || ""}${!eventosHtml && !entregasHtml && !ocorrenciasHtml ? '<p>Nenhum evento registrado.</p>' : ""}</div></div>`;
       content.querySelector("[data-fechar-timeline]")?.addEventListener("click", () => this._fecharModalOperacional("modalTimelinePedido"));
     } catch (error) {
-      content.innerHTML = `<div data-intranet-style="e8806a456002"><h3>Não foi possível carregar a timeline</h3><p>${this._escaparRecebimento(error.message)}</p><button type="button" class="btn-limpar" data-fechar-timeline>Fechar</button></div>`;
+      content.innerHTML = `<div><h3>Não foi possível carregar a timeline</h3><p>${this._escaparRecebimento(error.message)}</p><button type="button" class="btn-limpar" data-fechar-timeline>Fechar</button></div>`;
       content.querySelector("[data-fechar-timeline]")?.addEventListener("click", () => this._fecharModalOperacional("modalTimelinePedido"));
     }
   }
@@ -1298,7 +1280,7 @@ export class Pedidos {
     const modal = document.getElementById("modalEstornoPedido");
     const content = document.getElementById("modalEstornoPedidoContent");
     if (!modal || !content) return;
-    content.innerHTML = `<div data-intranet-style="cd8a6daf1f53"><i class="fas fa-spinner fa-spin"></i> Carregando itens elegíveis...</div>`;
+    content.innerHTML = `<div><i class="fas fa-spinner fa-spin"></i> Carregando itens elegíveis...</div>`;
     modal.classList.add("active");
     try {
       const [{ data: pedido, error: pedidoError }, { data: itens, error: itensError }, { data: entregas, error: entregasError }] = await Promise.all([
@@ -1320,11 +1302,11 @@ export class Pedidos {
         const m = metaMap[i.item_ata_id] || {};
         return `<tr><td><strong>${this._escaparRecebimento(m.item_numero || i.item_ata_id)}</strong><br><small>${this._escaparRecebimento(m.descricao || "Item")}</small></td><td>${i.quantidade_solicitada} ${this._escaparRecebimento(m.unidade_medida || "UN")}</td><td><input class="estorno-qtd filtro-input" data-item-pedido-id="${i.id}" max="${i.quantidade_solicitada}" min="0" step="0.01" type="number" value="0"></td></tr>`;
       }).join("");
-      content.innerHTML = `<div class="modal-header"><h2 class="modal-titulo"><i class="fas fa-undo-alt"></i> Solicitar estorno — ${this._escaparRecebimento(pedido.numero_pedido)}</h2><button type="button" class="modal-close" data-fechar-estorno><i class="fas fa-times"></i></button></div><div class="modal-body" data-intranet-style="0e0f2f71a17c"><p class="aviso-estorno"><i class="fas fa-circle-info"></i> O estorno não apaga o consumo; ele será submetido à aprovação de outro gestor.</p><div class="tabela-container"><table class="tabela-itens-pedido"><thead><tr><th>Item</th><th>Solicitado</th><th>Quantidade a estornar</th></tr></thead><tbody>${rows || '<tr><td colspan="3">Nenhum item disponível.</td></tr>'}</tbody></table></div><label class="filtro-label" data-intranet-style="ba3f03009e34">Justificativa <textarea id="estornoJustificativa" class="filtro-input" minlength="10" maxlength="1000" rows="4" placeholder="Explique o motivo do estorno (mínimo de 10 caracteres)"></textarea></label></div><div class="modal-footer-fracionar" data-intranet-style="182d596e184e"><button type="button" class="btn-cancelar-fracionar" data-fechar-estorno>Cancelar</button><button type="button" class="btn-estornar-pedido" id="btnSalvarEstorno"><i class="fas fa-paper-plane"></i> Enviar solicitação</button></div>`;
+      content.innerHTML = `<div class="modal-header"><h2 class="modal-titulo"><i class="fas fa-undo-alt"></i> Solicitar estorno — ${this._escaparRecebimento(pedido.numero_pedido)}</h2><button type="button" class="modal-close" data-fechar-estorno><i class="fas fa-times"></i></button></div><div class="modal-body"><p class="aviso-estorno"><i class="fas fa-circle-info"></i> O estorno não apaga o consumo; ele será submetido à aprovação de outro gestor.</p><div class="tabela-container"><table class="tabela-itens-pedido"><thead><tr><th>Item</th><th>Solicitado</th><th>Quantidade a estornar</th></tr></thead><tbody>${rows || '<tr><td colspan="3">Nenhum item disponível.</td></tr>'}</tbody></table></div><label class="filtro-label">Justificativa <textarea id="estornoJustificativa" class="filtro-input" minlength="10" maxlength="1000" rows="4" placeholder="Explique o motivo do estorno (mínimo de 10 caracteres)"></textarea></label></div><div class="modal-footer-fracionar"><button type="button" class="btn-cancelar-fracionar" data-fechar-estorno>Cancelar</button><button type="button" class="btn-estornar-pedido" id="btnSalvarEstorno"><i class="fas fa-paper-plane"></i> Enviar solicitação</button></div>`;
       content.querySelectorAll("[data-fechar-estorno]").forEach((b) => b.addEventListener("click", () => this._fecharModalOperacional("modalEstornoPedido")));
       content.querySelector("#btnSalvarEstorno")?.addEventListener("click", () => this.confirmarEstornoPedido(pedidoId));
     } catch (error) {
-      content.innerHTML = `<div data-intranet-style="e8806a456002"><h3>Não foi possível abrir o estorno</h3><p>${this._escaparRecebimento(error.message)}</p><button type="button" class="btn-limpar" data-fechar-estorno>Fechar</button></div>`;
+      content.innerHTML = `<div><h3>Não foi possível abrir o estorno</h3><p>${this._escaparRecebimento(error.message)}</p><button type="button" class="btn-limpar" data-fechar-estorno>Fechar</button></div>`;
       content.querySelector("[data-fechar-estorno]")?.addEventListener("click", () => this._fecharModalOperacional("modalEstornoPedido"));
     }
   }
@@ -1350,7 +1332,7 @@ export class Pedidos {
     const modal = document.getElementById("modalOcorrenciaPedido");
     const content = document.getElementById("modalOcorrenciaPedidoContent");
     if (!modal || !content) return;
-    content.innerHTML = `<div class="modal-header"><h2 class="modal-titulo"><i class="fas fa-triangle-exclamation"></i> Registrar ocorrência</h2><button type="button" class="modal-close" data-fechar-ocorrencia><i class="fas fa-times"></i></button></div><div class="modal-body" data-intranet-style="0e0f2f71a17c"><label class="filtro-label">Tipo<select id="ocorrenciaTipo" class="filtro-select"><option>DIVERGENCIA</option><option>AVARIA</option><option>ATRASO</option><option>RECUSA</option><option>DEVOLUCAO</option><option>OUTRA</option></select></label><label class="filtro-label" data-intranet-style="74646c741687">Severidade<select id="ocorrenciaSeveridade" class="filtro-select"><option>NORMAL</option><option>ALTA</option><option>CRITICA</option></select></label><label class="filtro-label" data-intranet-style="74646c741687">Descrição<textarea id="ocorrenciaDescricao" class="filtro-input" minlength="5" maxlength="1000" rows="5" placeholder="Descreva o fato e a providência necessária"></textarea></label><label class="filtro-label" data-intranet-style="74646c741687">Evidência privada<input id="ocorrenciaArquivo" class="filtro-input" type="file" accept="application/pdf,image/*,.doc,.docx"></label></div><div class="modal-footer-fracionar" data-intranet-style="182d596e184e"><button type="button" class="btn-cancelar-fracionar" data-fechar-ocorrencia>Cancelar</button><button type="button" class="btn-ocorrencia-pedido" id="btnSalvarOcorrencia"><i class="fas fa-save"></i> Registrar</button></div>`;
+    content.innerHTML = `<div class="modal-header"><h2 class="modal-titulo"><i class="fas fa-triangle-exclamation"></i> Registrar ocorrência</h2><button type="button" class="modal-close" data-fechar-ocorrencia><i class="fas fa-times"></i></button></div><div class="modal-body"><label class="filtro-label">Tipo<select id="ocorrenciaTipo" class="filtro-select"><option>DIVERGENCIA</option><option>AVARIA</option><option>ATRASO</option><option>RECUSA</option><option>DEVOLUCAO</option><option>OUTRA</option></select></label><label class="filtro-label">Severidade<select id="ocorrenciaSeveridade" class="filtro-select"><option>NORMAL</option><option>ALTA</option><option>CRITICA</option></select></label><label class="filtro-label">Descrição<textarea id="ocorrenciaDescricao" class="filtro-input" minlength="5" maxlength="1000" rows="5" placeholder="Descreva o fato e a providência necessária"></textarea></label><label class="filtro-label">Evidência privada<input id="ocorrenciaArquivo" class="filtro-input" type="file" accept="application/pdf,image/*,.doc,.docx"></label></div><div class="modal-footer-fracionar"><button type="button" class="btn-cancelar-fracionar" data-fechar-ocorrencia>Cancelar</button><button type="button" class="btn-ocorrencia-pedido" id="btnSalvarOcorrencia"><i class="fas fa-save"></i> Registrar</button></div>`;
     modal.classList.add("active");
     content.querySelectorAll("[data-fechar-ocorrencia]").forEach((b) => b.addEventListener("click", () => this._fecharModalOperacional("modalOcorrenciaPedido")));
     content.querySelector("#btnSalvarOcorrencia")?.addEventListener("click", () => this.confirmarOcorrenciaPedido(pedidoId));
@@ -1392,7 +1374,7 @@ export class Pedidos {
 
     if (total === 0) {
       contadorEl.innerHTML = "Nenhum pedido encontrado";
-      if (carregarMaisEl) carregarMaisEl.style.display = "none";
+      if (carregarMaisEl) carregarMaisEl.classList.add("is-hidden");
       return;
     }
 
@@ -1400,10 +1382,10 @@ export class Pedidos {
 
     if (carregarMaisEl) {
       if (exibidos < total) {
-        carregarMaisEl.style.display = "inline-flex";
+        carregarMaisEl.classList.remove("is-hidden");
         carregarMaisEl.disabled = false;
       } else {
-        carregarMaisEl.style.display = "none";
+        carregarMaisEl.classList.add("is-hidden");
       }
     }
   }
@@ -1978,8 +1960,8 @@ export class Pedidos {
           </div>
         </div>
 
-        <div class="fracionamento-info-meta" data-intranet-style="8024df14359e">
-          <label data-intranet-style="3700b8369bb0">
+        <div class="fracionamento-info-meta">
+          <label>
             <i class="fas fa-calendar-week"></i>
             <strong>Mês de entrega:</strong>
             <input
@@ -1990,7 +1972,7 @@ export class Pedidos {
               aria-label="Mês de entrega do fracionamento"
             />
           </label>
-          <small data-intranet-style="8335df4846bb">
+          <small>
             As semanas são calculadas de acordo com o calendário do mês, desconsiderando sábados, domingos e feriados.
           </small>
         </div>
@@ -1999,7 +1981,7 @@ export class Pedidos {
           <span>Nº</span>
           <span>Início</span>
           <span>Fim</span>
-          <span data-intranet-style="47b2ad8f5a47">Quantidade</span>
+          <span>Quantidade</span>
           <span></span>
         </div>
 
@@ -3255,8 +3237,8 @@ export class Pedidos {
         </section>
 
         <div class="periodos-semanas-bloco">
-          <div data-intranet-style="7791d473dff3">
-            <label data-intranet-style="9d27db3e1430">
+          <div>
+            <label>
               <i class="fas fa-calendar-week"></i>
               <span>Mês de entrega:</span>
               <input
@@ -3267,11 +3249,11 @@ export class Pedidos {
                 aria-label="Mês de entrega do fracionamento do pedido"
               />
             </label>
-            <small data-intranet-style="096f6c28a2b4">
+            <small>
               As semanas respeitam o calendário do mês, fins de semana e feriados. O feriado reduz a quantidade de dias úteis da semana sem empurrá-la para a semana seguinte.
             </small>
           </div>
-          <div class="periodos-semanas-header" data-intranet-style="1668f6cd7c83">
+          <div class="periodos-semanas-header">
             <div class="periodos-semanas-titulo">
               <i class="fas fa-calendar-week"></i> Períodos das Semanas
             </div>
@@ -4396,15 +4378,15 @@ export class Pedidos {
           <div class="pedido-header">
             <div>
               <h2 class="pedido-titulo">PEDIDO Nº ${pedidoCompleto.numero_pedido}</h2>
-              <p class="pedido-subtitulo" data-intranet-style="0d1587ea37c8">${this.sistema.ui.formatarData(pedidoCompleto.data_solicitacao)}</p>
+              <p class="pedido-subtitulo">${this.sistema.ui.formatarData(pedidoCompleto.data_solicitacao)}</p>
             </div>
             <span class="status-badge ${statusInfo.classe}">${statusInfo.label}</span>
           </div>
       `;
 
       if (pedidoCompleto.local_entrega) {
-        html += `<div data-intranet-style="b0f4fde992bc">
-          <i class="fas fa-map-marker-alt" data-intranet-style="fd756d15033a"></i>
+        html += `<div>
+          <i class="fas fa-map-marker-alt"></i>
           <strong>Local de entrega:</strong> ${pedidoCompleto.local_entrega}
         </div>`;
       }
@@ -4415,34 +4397,34 @@ export class Pedidos {
           .select("nome")
           .eq("id", pedidoCompleto.aprovado_por)
           .single();
-        html += `<div data-intranet-style="30ca3081251b"><strong>Aprovado/Rejeitado por:</strong> ${aprovador?.nome || "Desconhecido"} em ${this.sistema.ui.formatarData(pedidoCompleto.data_aprovacao)} ${pedidoCompleto.observacao_aprovacao ? `<br><strong>Observação:</strong> ${pedidoCompleto.observacao_aprovacao}` : ""}</div>`;
+        html += `<div><strong>Aprovado/Rejeitado por:</strong> ${aprovador?.nome || "Desconhecido"} em ${this.sistema.ui.formatarData(pedidoCompleto.data_aprovacao)} ${pedidoCompleto.observacao_aprovacao ? `<br><strong>Observação:</strong> ${pedidoCompleto.observacao_aprovacao}` : ""}</div>`;
       }
 
       html += `
-        <div data-intranet-style="bd3960dc8396">
-          <h3 data-intranet-style="ca6219ddfe73">DADOS DA ATA</h3>
-          <div data-intranet-style="c51f8d867b09">
+        <div class="pedido-detalhes-ata">
+          <h3>DADOS DA ATA</h3>
+          <div class="pedido-detalhes-ata-grid">
             <div>
-              <strong data-intranet-style="2e4030ebf549">Ata nº:</strong> <span data-intranet-style="0d1587ea37c8">${pedidoCompleto.ata?.numero_ata || "N/I"}</span><br>
-              <strong data-intranet-style="2e4030ebf549">Processo:</strong> <span data-intranet-style="0d1587ea37c8">${pedidoCompleto.ata?.processo_administrativo || "N/I"}</span><br>
-              <strong data-intranet-style="2e4030ebf549">Objeto:</strong> <span data-intranet-style="0d1587ea37c8">${pedidoCompleto.ata?.objeto || "N/I"}</span>
+              <strong>Ata nº:</strong> <span>${pedidoCompleto.ata?.numero_ata || "N/I"}</span><br>
+              <strong>Processo:</strong> <span>${pedidoCompleto.ata?.processo_administrativo || "N/I"}</span><br>
+              <strong>Objeto:</strong> <span>${pedidoCompleto.ata?.objeto || "N/I"}</span>
             </div>
             <div>
-              <strong data-intranet-style="2e4030ebf549">Vigência:</strong> <span data-intranet-style="0d1587ea37c8">${this.sistema.ui.formatarData(pedidoCompleto.ata?.data_inicio_vigencia)} até ${this.sistema.ui.formatarData(pedidoCompleto.ata?.data_fim_vigencia)}</span>
+              <strong>Vigência:</strong> <span>${this.sistema.ui.formatarData(pedidoCompleto.ata?.data_inicio_vigencia)} até ${this.sistema.ui.formatarData(pedidoCompleto.ata?.data_fim_vigencia)}</span>
             </div>
           </div>
         </div>
-        <div data-intranet-style="39b2ef073dbd">
-          <div data-intranet-style="0571cc0ab597">
-            <h4 data-intranet-style="abdb75f10489">FORNECEDOR</h4>
-            <p data-intranet-style="2e4030ebf549"><strong>Razão Social:</strong> ${pedidoCompleto.fornecedor?.razao_social || "N/I"}</p>
-            <p data-intranet-style="2e4030ebf549"><strong>CPF/CNPJ:</strong> ${this.formatarCnpj(pedidoCompleto.fornecedor?.cnpj || "N/I")}</p>
+        <div class="pedido-detalhes-participantes">
+          <div>
+            <h4>FORNECEDOR</h4>
+            <p><strong>Razão Social:</strong> ${pedidoCompleto.fornecedor?.razao_social || "N/I"}</p>
+            <p><strong>CPF/CNPJ:</strong> ${this.formatarCnpj(pedidoCompleto.fornecedor?.cnpj || "N/I")}</p>
           </div>
-          <div data-intranet-style="0571cc0ab597">
-            <h4 data-intranet-style="abdb75f10489">SOLICITANTE</h4>
-            <p data-intranet-style="2e4030ebf549"><strong>Órgão:</strong> ${pedidoCompleto.orgao_solicitante?.nome || "N/I"} (${pedidoCompleto.orgao_solicitante?.sigla || ""})</p>
-            <p data-intranet-style="2e4030ebf549"><strong>CPF/CNPJ:</strong> ${this.formatarCnpj(pedidoCompleto.orgao_solicitante?.cnpj || "N/I")}</p>
-            <p data-intranet-style="2e4030ebf549"><strong>Solicitante:</strong> ${pedidoCompleto.usuario?.nome || "N/I"}</p>
+          <div>
+            <h4>SOLICITANTE</h4>
+            <p><strong>Órgão:</strong> ${pedidoCompleto.orgao_solicitante?.nome || "N/I"} (${pedidoCompleto.orgao_solicitante?.sigla || ""})</p>
+            <p><strong>CPF/CNPJ:</strong> ${this.formatarCnpj(pedidoCompleto.orgao_solicitante?.cnpj || "N/I")}</p>
+            <p><strong>Solicitante:</strong> ${pedidoCompleto.usuario?.nome || "N/I"}</p>
           </div>
         </div>
       `;
@@ -4459,14 +4441,14 @@ export class Pedidos {
         <section class="pedido-itens-section" aria-labelledby="tituloItensPedido">
         <div class="pedido-section-heading"><div><span class="pedido-section-kicker">CONFERÊNCIA</span><h4 id="tituloItensPedido">ITENS DO PEDIDO</h4></div><span class="pedido-itens-count">${pedidoCompleto.itens_pedido?.length || 0} ${(pedidoCompleto.itens_pedido?.length || 0) === 1 ? "item" : "itens"}</span></div>
         <div class="tabela-container pedido-itens-table-wrap" data-pedido-itens="${pedidoCompleto.id}">
-          <table class="pedido-itens-tabela" data-intranet-style="e4fb724d2b82">
+          <table class="pedido-itens-tabela">
             <thead>
-              <tr data-intranet-style="b6a2c8685e3a">
-                <th data-intranet-style="670826d11b39">Item</th>
-                <th data-intranet-style="670826d11b39">Descrição</th>
-                <th data-intranet-style="9e0234044f46">Quantidade</th>
-                <th data-intranet-style="9e0234044f46">Valor Unit.</th>
-                <th data-intranet-style="9e0234044f46">Total</th>
+              <tr>
+                <th>Item</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor Unit.</th>
+                <th>Total</th>
               </tr>
             </thead>
             <tbody>
@@ -4474,33 +4456,33 @@ export class Pedidos {
                 .map(
                   (i) => `
                 <tr>
-                  <td class="pedido-item-numero" data-intranet-style="c8ca61e36d80">${i.item_numero || i.item_ata_id}</td>
-                  <td class="pedido-item-descricao" data-intranet-style="c8ca61e36d80">${i.descricao || "Descrição não disponível"}</td>
-                  <td class="pedido-item-quantidade" data-intranet-style="08e06aaaf5b2">${i.quantidade_solicitada || 0} <small>${i.unidade_medida || "UN"}</small></td>
-                  <td class="pedido-item-moeda" data-intranet-style="08e06aaaf5b2">${this.sistema.ui.formatarMoeda(i.valor_unitario)}</td>
-                  <td class="pedido-item-moeda pedido-item-total" data-intranet-style="08e06aaaf5b2">${this.sistema.ui.formatarMoeda(i.valor_total)}</td>
+                  <td class="pedido-item-numero">${i.item_numero || i.item_ata_id}</td>
+                  <td class="pedido-item-descricao">${i.descricao || "Descrição não disponível"}</td>
+                  <td class="pedido-item-quantidade">${i.quantidade_solicitada || 0} <small>${i.unidade_medida || "UN"}</small></td>
+                  <td class="pedido-item-moeda">${this.sistema.ui.formatarMoeda(i.valor_unitario)}</td>
+                  <td class="pedido-item-moeda pedido-item-total">${this.sistema.ui.formatarMoeda(i.valor_total)}</td>
                 </tr>
               `,
                 )
                 .join("")}
             </tbody>
             <tfoot>
-              <tr data-intranet-style="2bb05e4a26e1">
-                <td colspan="4" data-intranet-style="08d1aeca3b3c">TOTAL DO PEDIDO</td>
-                <td data-intranet-style="2aed206b6785">${this.sistema.ui.formatarMoeda(total)}</td>
+              <tr>
+                <td colspan="4">TOTAL DO PEDIDO</td>
+                <td>${this.sistema.ui.formatarMoeda(total)}</td>
               </tr>
             </tfoot>
           </table>
         </div></section>
-        <div class="pedido-documento-nota" data-intranet-style="f19d560c1f98">
+        <div class="pedido-documento-nota">
           <p>Documento gerado eletronicamente em ${new Date().toLocaleString("pt-BR")}.</p>
         </div>
-        <div data-intranet-style="38f7a5d33212" data-pedido-acoes="${pedidoCompleto.id}">
+        <div data-pedido-acoes="${pedidoCompleto.id}">
           ${this._podeEditarItensPedido(pedidoCompleto) ? `<button class="btn-ajustar-itens" type="button" onclick="sistema.pedidos.ativarAjusteItensPedido(${pedidoCompleto.id})"><i class="fas fa-sliders"></i> Fazer ajustes</button>` : ""}
-          <button class="btn" data-intranet-style="b9ccf0a14858" onclick="sistema.fecharModalVisualizarPedido()">Fechar</button>
+          <button class="btn" onclick="sistema.fecharModalVisualizarPedido()">Fechar</button>
           ${
             statusAprovacao === "APROVADO"
-              ? `<button class="btn-fracionar-pedido-inteiro" data-intranet-style="21db51af90f2" onclick="sistema.fecharModalVisualizarPedido(); sistema.pedidos._abrirModalFracionarPedido(${pedidoCompleto.id})">
+              ? `<button class="btn-fracionar-pedido-inteiro" onclick="sistema.fecharModalVisualizarPedido(); sistema.pedidos._abrirModalFracionarPedido(${pedidoCompleto.id})">
                    <i class="fas fa-calendar-alt"></i>
                    ${temCronogramaInteiro ? "Editar Cronograma do Pedido" : "Fracionar Entregas do Pedido"}
                  </button>`
@@ -4508,12 +4490,12 @@ export class Pedidos {
           }
           ${
             temCronogramaInteiro
-              ? `<button class="btn-pdf-cronograma" data-intranet-style="7fd3f3c1513f" onclick="sistema.pedidos._exportarCronogramaPedidoPDF(${pedidoCompleto.id})">
+              ? `<button class="btn-pdf-cronograma" onclick="sistema.pedidos._exportarCronogramaPedidoPDF(${pedidoCompleto.id})">
                    <i class="fas fa-file-pdf"></i> PDF do Cronograma
                  </button>`
               : ""
           }
-          <button class="btn-pdf" data-intranet-style="0a3dfdd28bc5" onclick="sistema.pedidos.gerarPDFPedido(${pedidoCompleto.id})"><i class="fas fa-file-pdf"></i> PDF do Pedido</button>
+          <button class="btn-pdf" onclick="sistema.pedidos.gerarPDFPedido(${pedidoCompleto.id})"><i class="fas fa-file-pdf"></i> PDF do Pedido</button>
         </div>
       </div>
       `;
@@ -4798,13 +4780,6 @@ export class Pedidos {
         .select(
           "*, atas:ata_id(numero_ata), fornecedores:fornecedor_id(razao_social, cnpj)",
         );
-
-      if (this.sistema.usuarioAtual.orgao_id) {
-        query = query.eq(
-          "orgao_solicitante_id",
-          this.sistema.usuarioAtual.orgao_id,
-        );
-      }
 
       query = this.aplicarFiltrosQuery(query);
       query = query.order("created_at", { ascending: false });
@@ -5377,7 +5352,7 @@ export class Pedidos {
     this.filtrarPorStatus("AGUARDANDO_APROVACAO");
 
     const bloco = document.getElementById("filaAprovacao");
-    if (bloco && bloco.style.display !== "none") {
+    if (bloco && !bloco.classList.contains("is-hidden")) {
       bloco.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       document
@@ -5403,10 +5378,10 @@ export class Pedidos {
     const temFila = (this._filaAprovacao || []).length > 0;
 
     if (podeAprovar && temFila) {
-      btnFila.style.display = "inline-flex";
+      btnFila.classList.remove("is-hidden");
       badgeFila.textContent = this._filaAprovacao.length;
     } else {
-      btnFila.style.display = "none";
+      btnFila.classList.add("is-hidden");
     }
   }
 
@@ -5597,7 +5572,7 @@ export class Pedidos {
     const valorUnit = item.valor_unitario || 0;
     const valorTotal = valorUnit * quantidade;
 
-    previewEl.style.display = "flex";
+    previewEl.classList.remove("is-hidden");
     previewEl.innerHTML = `
       <div class="compra-rapida-preview-linha">
         <span>Item selecionado:</span>
@@ -5631,7 +5606,7 @@ export class Pedidos {
   esconderPreviewCompraRapida() {
     const previewEl = document.getElementById("compraRapidaPreview");
     if (previewEl) {
-      previewEl.style.display = "none";
+      previewEl.classList.add("is-hidden");
       previewEl.innerHTML = "";
     }
   }
@@ -5772,12 +5747,6 @@ export class Pedidos {
         .eq("status_aprovacao", "AGUARDANDO_APROVACAO")
         .order("created_at", { ascending: true });
 
-      if (this.sistema.usuarioAtual.perfil === "SECRETARIO") {
-        query = query.eq(
-          "orgao_solicitante_id",
-          this.sistema.usuarioAtual.orgao_id,
-        );
-      }
 
       const { data: pedidos, error } = await query;
       if (error) throw error;
@@ -5799,7 +5768,7 @@ export class Pedidos {
     const pedidos = this._filaAprovacao || [];
 
     if (pedidos.length === 0) {
-      container.style.display = "none";
+      container.classList.add("is-hidden");
       container.innerHTML = "";
       return;
     }
@@ -5832,7 +5801,7 @@ export class Pedidos {
         ? `<li class="fila-aprovacao-mais">… e mais ${restantes} ${restantes === 1 ? "pedido" : "pedidos"}</li>`
         : "";
 
-    container.style.display = "block";
+    container.classList.remove("is-hidden");
     container.innerHTML = `
       <div class="fila-aprovacao-header">
         <i class="fas fa-exclamation-circle"></i>
@@ -5976,8 +5945,7 @@ export class Pedidos {
       const totalGeral = pedidos.reduce((s, p) => s + (p.valor_total || 0), 0);
 
       const overlay = document.createElement("div");
-      overlay.className = "modal-overlay";
-      overlay.style.cssText = `position:fixed;inset:0;background:rgba(3,7,18,0.82);backdrop-filter:blur(4px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;`;
+      overlay.className = "atas-batch-modal-overlay";
 
       const listaLinhas = pedidos
         .slice(0, 20)
@@ -5985,44 +5953,44 @@ export class Pedidos {
           const numero = p.numero_pedido || "N/I";
           const fornecedor = p.fornecedor?.razao_social || "N/I";
           const valor = this.sistema.ui.formatarMoeda(p.valor_total || 0);
-          return `<li data-intranet-style="5b23bad02ec2">
-            <strong data-intranet-style="ccd3a3450be9">${numero}</strong>
-            <span data-intranet-style="309a95fe0a55">${fornecedor}</span>
-            <span data-intranet-style="490f86a88244">${valor}</span>
+          return `<li class="atas-batch-modal__list-item">
+            <strong class="atas-batch-modal__order">${numero}</strong>
+            <span class="atas-batch-modal__supplier">${fornecedor}</span>
+            <span class="atas-batch-modal__value">${valor}</span>
           </li>`;
         })
         .join("");
 
       const maisLinha =
         pedidos.length > 20
-          ? `<li data-intranet-style="fc0b6b09b954">… e mais ${pedidos.length - 20} pedido(s)</li>`
+          ? `<li class="atas-batch-modal__more">… e mais ${pedidos.length - 20} pedido(s)</li>`
           : "";
 
       overlay.innerHTML = `
-        <div data-intranet-style="b24d00e0dfe3">
-          <div data-intranet-style="a5cd7bef067b">
-            <i class="fas fa-exclamation-triangle" data-intranet-style="ef0cd6921c16"></i>
+        <div class="atas-batch-modal">
+          <div class="atas-batch-modal__header">
+            <i class="fas fa-exclamation-triangle atas-batch-modal__header-icon"></i>
             <div>
-              <h3 data-intranet-style="7fa9409c0147">Aprovar ${pedidos.length} pedido(s) em lote</h3>
-              <p data-intranet-style="7e0afcfa38fc">Esta ação irá descontar o saldo das atas automaticamente.</p>
+              <h3 class="atas-batch-modal__title">Aprovar ${pedidos.length} pedido(s) em lote</h3>
+              <p class="atas-batch-modal__subtitle">Esta ação irá descontar o saldo das atas automaticamente.</p>
             </div>
           </div>
-          <div data-intranet-style="04fe1e502a91">
-            <div data-intranet-style="88a6a35ef102">
+          <div class="atas-batch-modal__body">
+            <div class="atas-batch-modal__notice">
               <strong>Atenção:</strong> Após a confirmação, os pedidos abaixo serão marcados como <strong>APROVADO</strong> e o saldo dos itens será reduzido.
             </div>
-            <ul data-intranet-style="60116182c64d">
+            <ul class="atas-batch-modal__list">
               ${listaLinhas}
               ${maisLinha}
             </ul>
-            <div data-intranet-style="ceb60dd8777b">
+            <div class="atas-batch-modal__total">
               <span>Valor total agregado:</span>
-              <span data-intranet-style="e68a4b149401">${this.sistema.ui.formatarMoeda(totalGeral)}</span>
+              <span class="atas-batch-modal__total-value">${this.sistema.ui.formatarMoeda(totalGeral)}</span>
             </div>
           </div>
-          <div data-intranet-style="cdaed154cea1">
-            <button type="button" id="__cancelarLote" data-intranet-style="80c143493e1d">Cancelar</button>
-            <button type="button" id="__confirmarLote" data-intranet-style="dd4237d7a086">
+          <div class="atas-batch-modal__actions">
+            <button type="button" id="__cancelarLote" class="atas-batch-modal__cancel">Cancelar</button>
+            <button type="button" id="__confirmarLote" class="atas-batch-modal__confirm">
               <i class="fas fa-check-double"></i> Confirmar e Aprovar
             </button>
           </div>
@@ -6030,8 +5998,7 @@ export class Pedidos {
       `;
 
       const fechar = (resultado) => {
-        overlay.style.opacity = "0";
-        overlay.style.transition = "opacity 0.2s ease";
+        overlay.classList.add("is-closing");
         setTimeout(() => {
           overlay.remove();
           resolve(resultado);
@@ -6265,7 +6232,7 @@ export class Pedidos {
             <div class="aprovador-info">
               <div class="aprovador-avatar">${iniciaisAprovador}</div>
               <div class="aprovador-detalhes">
-                <div class="nome"><i class="fas fa-user-check" data-intranet-style="a0051d6757f6"></i> ${nomeAprovador}</div>
+                <div class="nome"><i class="fas fa-user-check"></i> ${nomeAprovador}</div>
                 <div class="data"><i class="far fa-calendar-alt"></i> Rejeitado em ${this.sistema.ui.formatarData(pedido.data_aprovacao)}</div>
               </div>
             </div>

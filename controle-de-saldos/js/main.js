@@ -6,22 +6,22 @@
 import { supabase } from "./supabase.js";
 import { Auth } from "./modules/auth.js";
 import { UI } from "./modules/ui.js";
-import { Consulta } from "./modules/consulta.js?v=20261006-ui-polish-1";
+import { Consulta } from "./modules/consulta.js?v=20261016-governanca-2";
 import { Gestao } from "./modules/gestao.js";
 import { Cadastro } from "./modules/cadastro.js";
-import { Pedidos } from "./modules/pedidos.js?v=20261006-pedidos-kanban-3";
+import { Pedidos } from "./modules/pedidos.js?v=20261015-no-breadcrumb-1";
 import { Aditivos } from "./modules/aditivos.js";
 // ============================================================
 // CORREÇÃO: Importar módulo Dashboard
 // ============================================================
-import { Dashboard } from "./modules/dashboard.js";
+import { Dashboard } from "./modules/dashboard.js?v=20261016-governanca-1";
 // ============================================================
 // NOVO: Importar módulo Carrinho (view SPA)
 // Substitui a antiga página standalone carrinho.html.
 // O módulo é renderizado em #carrinhoContent e ativado via
 // sistema.ativarTab("carrinho").
 // ============================================================
-import { Carrinho } from "./modules/carrinho.js?v=20261007-cart-fullwidth-1";
+import { Carrinho } from "./modules/carrinho.js?v=20261015-no-breadcrumb-1";
 // ============================================================
 // NOVO: Importar módulo Relatórios (Fase 1 — 6 relatórios)
 // O módulo é renderizado em #relatoriosContent e ativado via
@@ -29,22 +29,63 @@ import { Carrinho } from "./modules/carrinho.js?v=20261007-cart-fullwidth-1";
 // fetch("templates/relatorios.html") no próprio módulo
 // (padrão do dashboard.js).
 // ============================================================
-import { Relatorios } from "./modules/relatorios.js";
+import { Relatorios } from "./modules/relatorios.js?v=20261016-analytic-scope-1";
 // ============================================================
 // Central de Ajuda integrada ao shell do módulo
 // ============================================================
 import { CentralAjudaAtas } from "./modules/central-ajuda-atas.js";
 import { SaaSExperience } from "./modules/saas-experience.js";
+import { SaudeAtas } from "./modules/saude-atas.js?v=20261016-governanca-2";
 // ============================================================
 // Layout compartilhado da intranet (sidebar + topbar)
 // ============================================================
-import { initLayout } from "../../shared/js/layout.js?v=20261010-shared-shell-1";
+import { carregarUsuario, carregarAtalhosModulos } from "../../shared/js/layout.js?v=20261017-hall-header-1";
 // ============================================================
 // REMOVIDAS: Importações de Orgaos e Usuarios
 // Agora gerenciados pelo módulo Core (core/orgaos/ e core/usuarios/)
 // ============================================================
 // import { Orgaos } from "./modules/orgaos.js";
 // import { Usuarios } from "./modules/usuarios.js";
+
+
+async function initHallShell() {
+  const usuario = await carregarUsuario(supabase);
+  if (!usuario) return null;
+  const initials = (nome) => {
+    const parts = String(nome || "?").trim().split(/\s+/).filter(Boolean);
+    return (parts.length > 1 ? parts[0][0] + parts.at(-1)[0] : (parts[0] || "?").slice(0, 2)).toUpperCase();
+  };
+  const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value || "—"; };
+  set("saudacaoMiniNome", usuario.nome || "Usuário");
+  set("menuNome", usuario.nome || "Usuário");
+  set("menuEmail", usuario.email || "—");
+  const avatar = document.getElementById("avatarIniciais");
+  const initialsText = initials(usuario.nome);
+  if (avatar) {
+    avatar.textContent = initialsText;
+    if (usuario.foto_url) {
+      const img = document.createElement("img");
+      img.className = "avatar-foto";
+      img.src = usuario.foto_url;
+      img.alt = `Foto de ${usuario.nome || "usuário"}`;
+      img.loading = "lazy";
+      img.addEventListener("error", () => {
+        img.remove();
+        avatar.textContent = initialsText;
+      }, { once: true });
+      avatar.replaceChildren(img);
+    }
+  }
+  const button = document.getElementById("avatarBtn");
+  const menu = document.getElementById("avatarMenu");
+  const close = () => { menu?.setAttribute("aria-hidden", "true"); menu?.classList.remove("aberto"); button?.setAttribute("aria-expanded", "false"); };
+  button?.addEventListener("click", (event) => { event.stopPropagation(); const open = menu?.getAttribute("aria-hidden") === "false"; menu?.setAttribute("aria-hidden", open ? "true" : "false"); menu?.classList.toggle("aberto", !open); button?.setAttribute("aria-expanded", String(!open)); });
+  document.addEventListener("click", (event) => { if (menu && !menu.contains(event.target) && !button?.contains(event.target)) close(); });
+  document.getElementById("menuSair")?.addEventListener("click", async () => { await supabase.auth.signOut(); window.location.href = "../index.html"; });
+  // Reaproveita o carregador compartilhado para listar os módulos autorizados.
+  void carregarAtalhosModulos(supabase, usuario, { rotaIntranet: "../intranet.html" });
+  return usuario;
+}
 
 class SistemaGestaoAtas {
   constructor() {
@@ -108,6 +149,7 @@ class SistemaGestaoAtas {
     this.relatorios = new Relatorios(this);
     this.centralAjuda = new CentralAjudaAtas(this);
     this.saasExperience = new SaaSExperience(this);
+    this.saudeAtas = new SaudeAtas(this);
     // ============================================================
     // REMOVIDOS: Módulos Orgaos e Usuarios
     // Agora gerenciados pelo módulo Core
@@ -132,109 +174,9 @@ class SistemaGestaoAtas {
       // ============================================================
       // Inicializa layout compartilhado (sidebar + topbar + auth)
       // ============================================================
-      const usuario = await initLayout({
-        supabase,
-
-        // Identidade institucional exibida na sidebar
-        brand: {
-          nome: "Prefeitura Municipal de Pitangueiras",
-          subtitulo: "Intranet Municipal",
-          icone: "fa-layer-group",
-        },
-
-        // Topbar identifica o módulo; cada view apresenta seu próprio título.
-        iconeTitulo: "fa-layer-group",
-        titulo: "Gestão de Atas, Saldos e Pedidos",
-        // Menu do usuário alinhado ao padrão da Biblioteca Municipal.
-        // A Ajuda abre a view FAQ já existente neste módulo.
-        menuUsuario: {
-          rotaPerfil: "../perfil.html",
-          rotaAjuda: "#faq",
-        },
-
-        // Menu da sidebar — cada item ativa uma view.
-        // A `rota` é um hash (#dashboard, #consulta, …)
-        // que o main.js intercepta para chamar ativarTab().
-        menu: [
-          {
-            section: "Principal",
-            itens: [
-              {
-                id: "dashboard",
-                rota: "#dashboard",
-                icone: "fa-chart-pie",
-                label: "Visão geral",
-              },
-              {
-                id: "consulta",
-                rota: "#consulta",
-                icone: "fa-search",
-                label: "Consulta",
-              },
-              // ============================================================
-              // NOVO · Relatórios — disponível para todos os perfis
-              // ============================================================
-              {
-                id: "relatorios",
-                rota: "#relatorios",
-                icone: "fa-chart-bar",
-                label: "Relatórios",
-              },
-            ],
-          },
-          {
-            section: "Gestão",
-            itens: [
-              {
-                id: "gestao",
-                rota: "#gestao",
-                icone: "fa-boxes",
-                label: "Saldos e consumo",
-              },
-              {
-                id: "cadastro",
-                rota: "#cadastro",
-                icone: "fa-plus-circle",
-                label: "Cadastrar Ata",
-              },
-              {
-                id: "carrinho",
-                rota: "#carrinho",
-                icone: "fa-shopping-cart",
-                label: "Meu Carrinho",
-              },
-              {
-                id: "pedidos",
-                rota: "#pedidos",
-                icone: "fa-file-invoice",
-                label: "Pedidos e aprovações",
-              },
-              {
-                id: "aditivos",
-                rota: "#aditivos",
-                icone: "fa-file-contract",
-                label: "Aditivos",
-              },
-              {
-                id: "faq",
-                rota: "#faq",
-                icone: "fa-circle-question",
-                label: "FAQ",
-              },
-            ],
-          },
-        ],
-
-        rotaVoltar: "../intranet.html",
-        textoVoltar: "Voltar à intranet",
-
-        // Chamado após o layout renderizar e o usuário carregar
-        onUsuario: (u) => {
-          this.usuarioAtual = u;
-          this.aplicarPermissoesSidebar(u);
-        },
-      });
-
+      const usuario = await initHallShell();
+      this.usuarioAtual = usuario;
+      this.aplicarPermissoesSidebar(usuario);
       if (!usuario) return; // layout.js já redirecionou
 
       // Carregar dados iniciais em cache
@@ -268,14 +210,16 @@ class SistemaGestaoAtas {
   // então filtramos aqui os itens restritos a ADMIN OU ESTAGIARIO.
   //
   // Regras:
-  //   · gestao / cadastro / aditivos → ADMIN ou ESTAGIARIO
+  //   · gestao                      → ADMIN, ESTAGIARIO, SECRETARIO ou PREFEITO
+  //   · cadastro / aditivos         → ADMIN ou ESTAGIARIO
   //   · carrinho                    → ADMIN, SECRETARIO ou SOLICITANTE
   //     (ESTAGIARIO não compra — é perfil de apoio à gestão)
   //   · relatorios                  → TODOS os perfis (por decisão)
   // ============================================================
   aplicarPermissoesSidebar(usuario) {
     const perfil = usuario?.perfil;
-    const podeGestao = perfil === "ADMIN" || perfil === "ESTAGIARIO";
+    const podeGestao = ["ADMIN", "ESTAGIARIO", "SECRETARIO", "PREFEITO"].includes(perfil);
+    const podeAdministrar = perfil === "ADMIN" || perfil === "ESTAGIARIO";
     const podeComprar =
       perfil === "ADMIN" || perfil === "SECRETARIO" || perfil === "SOLICITANTE";
 
@@ -284,12 +228,12 @@ class SistemaGestaoAtas {
     // validação existente em verificarPermissaoTab continua impedindo o acesso.
     const restritos = new Map([
       ["gestao", !podeGestao],
-      ["cadastro", !podeGestao],
-      ["aditivos", !podeGestao],
+      ["cadastro", !podeAdministrar],
+      ["aditivos", !podeAdministrar],
       ["carrinho", !podeComprar],
     ]);
     restritos.forEach((bloqueado, id) => {
-      const link = document.querySelector(`.sidebar-nav a[data-modulo="${id}"]`);
+      const link = document.querySelector(`.module-nav a[data-modulo="${id}"]`);
       if (!link) return;
       link.classList.toggle("menu-item-bloqueado", bloqueado);
       link.toggleAttribute("aria-disabled", bloqueado);
@@ -549,7 +493,7 @@ class SistemaGestaoAtas {
     // NAVEGAÇÃO · agora 100% pela sidebar
     // (o layout.js injeta `data-modulo` em cada <a>)
     // ============================================================
-    document.querySelectorAll(".sidebar-nav a[data-modulo]").forEach((link) => {
+    document.querySelectorAll(".module-nav a[data-modulo]").forEach((link) => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
         const view = link.dataset.modulo;
@@ -632,6 +576,7 @@ class SistemaGestaoAtas {
     const visivel = [
       "dashboard",
       "consulta",
+      "saude",
       "relatorios",
       "gestao",
       "cadastro",
@@ -657,6 +602,9 @@ class SistemaGestaoAtas {
         break;
       case "consulta":
         this.consulta.carregarConteudo();
+        break;
+      case "saude":
+        this.saudeAtas.carregarConteudo();
         break;
       case "relatorios":
         this.relatorios.carregarConteudo();
@@ -1017,6 +965,12 @@ class SistemaGestaoAtas {
   //   · atualiza a hash da URL
   //   · chama o carregador do módulo correspondente
   // ============================================================
+  abrirSaudeAta(ataId) {
+    const url = new URL("./ata.html", window.location.href);
+    url.searchParams.set("id", String(ataId));
+    window.location.assign(url.href);
+  }
+
   ativarTab(tab) {
     if (!this.verificarPermissaoTab(tab)) {
       // Feedback visual ao invés de falha silenciosa
@@ -1044,6 +998,7 @@ class SistemaGestaoAtas {
     const contents = [
       "dashboard",
       "consulta",
+      "saude",
       "relatorios",
       "gestao",
       "cadastro",
@@ -1066,7 +1021,7 @@ class SistemaGestaoAtas {
     // ============================================================
     // Sincronizar o item ativo na sidebar
     // ============================================================
-    document.querySelectorAll(".sidebar-nav a[data-modulo]").forEach((link) => {
+    document.querySelectorAll(".module-nav a[data-modulo]").forEach((link) => {
       link.classList.toggle("active", link.dataset.modulo === tab);
     });
 
@@ -1074,7 +1029,7 @@ class SistemaGestaoAtas {
     // Atualizar a hash da URL sem recarregar a página
     // ============================================================
     if (window.location.hash !== `#${tab}`) {
-      history.replaceState(null, "", `#${tab}`);
+      history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${tab}`);
     }
 
     // ============================================================
@@ -1086,6 +1041,9 @@ class SistemaGestaoAtas {
         break;
       case "consulta":
         this.consulta.carregarConteudo();
+        break;
+      case "saude":
+        this.saudeAtas.carregarConteudo();
         break;
       case "relatorios":
         this.relatorios.carregarConteudo();
@@ -1127,13 +1085,12 @@ class SistemaGestaoAtas {
     // ============================================================
     if (tab === "relatorios") return true;
 
-    // Gestão de itens / cadastro / aditivos → ADMIN ou ESTAGIARIO
+    // Gestão admite leitura por secretário/prefeito; cadastro e aditivos continuam restritos.
     if (tab === "aditivos" && !(perfil === "ADMIN" || perfil === "ESTAGIARIO"))
       return false;
-    if (
-      (tab === "gestao" || tab === "cadastro") &&
-      !(perfil === "ADMIN" || perfil === "ESTAGIARIO")
-    )
+    if (tab === "cadastro" && !(perfil === "ADMIN" || perfil === "ESTAGIARIO"))
+      return false;
+    if (tab === "gestao" && !["ADMIN", "ESTAGIARIO", "SECRETARIO", "PREFEITO"].includes(perfil))
       return false;
 
     // Carrinho → quem pode comprar (ADMIN, SECRETARIO, SOLICITANTE)

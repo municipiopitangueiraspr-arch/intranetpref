@@ -25,11 +25,12 @@
 
 
 <script src="../shared/js/acessibilidade-intranet.js" defer></script>
-  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261009-fontawesome-woff2-only-1">
-  <link rel="stylesheet" href="../shared/css/intranet-global.css?v=20261010-shared-shell-theme-4">
-  <link rel="stylesheet" href="../controle-de-saldos/css/atas-saldos-pedidos-redesign.css?v=20261010-shared-shell-theme-5">
+  
+  <link rel="stylesheet" href="../shared/css/vendor-fontawesome/all.min.css?v=20261016-library-identity-1">
+  <link rel="stylesheet" href="../shared/css/intranet-identidade.css?v=20261018-library-identity-3">
+  <link rel="stylesheet" href="./biblioteca.css?v=20261019-pacote2-circulacao-1">
 </head>
-  <body data-intranet-module="biblioteca" data-intranet-theme="atas" data-intranet-page="biblioteca-dashboard">
+  <body data-intranet-module="biblioteca" data-intranet-theme="shared" data-intranet-page="biblioteca-dashboard" class="app-shell" data-sidebar-open="false" data-shell-root="../" data-shell-supabase="../shared/js/supabase.js">
     <!-- =====================================================================
          LOADING OVERLAY (mostrado enquanto carrega dados)
          ===================================================================== -->
@@ -44,17 +45,31 @@
       <!-- ==================================================================
            SIDEBAR
            ================================================================== -->
-      <aside class="sidebar" id="sidebar"></aside>
+      <aside class="app-sidebar sidebar" id="sidebar"></aside>
 
       <!-- ==================================================================
            ÁREA PRINCIPAL
            ================================================================== -->
-      <div class="main-area">
+      <div class="main-area app-main">
         <!-- TOPBAR -->
         <header class="topbar" id="topbar"></header>
 
         <!-- CONTEÚDO -->
         <main class="conteudo conteudo-full">
+          <section class="bib-ops-heading" aria-label="Painel operacional da Biblioteca">
+            <div>
+              <span class="bib-ops-eyebrow">GESTÃO DA BIBLIOTECA</span>
+              <h1>Painel operacional</h1>
+              <p>Circulação, pendências e integridade do acervo em um só lugar.</p>
+            </div>
+            <div class="bib-ops-heading__actions">
+              <span id="painelAtualizadoEm" class="bib-ops-updated" role="status" aria-live="polite">Preparando dados…</span>
+              <button id="btnAtualizarPainel" class="btn btn-secondary" type="button">
+                <i class="fas fa-rotate" aria-hidden="true"></i> Atualizar
+              </button>
+            </div>
+          </section>
+          <p id="painelFonteStatus" class="bib-ops-source-status" role="status" aria-live="polite">Carregando fontes operacionais…</p>
           <!-- ---------- INDICADORES PRINCIPAIS ---------- -->
           <section class="indicadores-grid">
             <div class="indicador-card">
@@ -143,7 +158,7 @@
             <div class="secao-header">
               <h3>
                 <i
-                  class="fas fa-triangle-exclamation intranet-style-95b121b47d"
+                  class="fas fa-triangle-exclamation"
 
                 ></i>
                 Empréstimos em atraso
@@ -154,7 +169,7 @@
             </div>
             <div class="secao-corpo" id="listaAtrasados">
               <div class="lista-vazia">
-                <i class="fas fa-circle-check intranet-style-fdf6658183"></i>
+                <i class="fas fa-circle-check"></i>
                 Nenhum empréstimo em atraso. Bom trabalho!
               </div>
             </div>
@@ -164,7 +179,7 @@
           <section class="secao">
             <div class="secao-header">
               <h3>
-                <i class="fas fa-calendar-day intranet-style-943aa4d73a"></i>
+                <i class="fas fa-calendar-day"></i>
                 Devoluções previstas para hoje
               </h3>
               <span class="badge-contador badge-amarelo" id="badgeHoje">0</span>
@@ -177,11 +192,37 @@
             </div>
           </section>
 
+          <!-- ---------- CIRCULAÇÃO ---------- -->
+          <section class="secao bib-ops-section" aria-labelledby="tituloCirculacao">
+            <div class="secao-header"><h3 id="tituloCirculacao"><i class="fas fa-chart-line" aria-hidden="true"></i> Circulação · últimos 30 dias</h3><span class="bib-ops-caption">Janela móvel, incluindo hoje</span></div>
+            <div class="bib-ops-metrics">
+              <article class="bib-ops-metric"><span class="bib-ops-metric__icon"><i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i></span><div><strong id="circulacaoEmprestimos30">—</strong><span>Empréstimos iniciados</span></div></article>
+              <article class="bib-ops-metric"><span class="bib-ops-metric__icon"><i class="fas fa-arrow-rotate-left" aria-hidden="true"></i></span><div><strong id="circulacaoDevolucoes30">—</strong><span>Devoluções registradas</span></div></article>
+              <article class="bib-ops-metric"><span class="bib-ops-metric__icon"><i class="fas fa-book-open" aria-hidden="true"></i></span><div><strong id="circulacaoAbertos">—</strong><span>Empréstimos em aberto agora</span></div></article>
+            </div>
+          </section>
+
+          <!-- ---------- RESERVAS, MANUTENÇÃO E INVENTÁRIO ---------- -->
+          <div class="bib-ops-grid">
+            <section class="secao bib-ops-section" aria-labelledby="tituloReservas">
+              <div class="secao-header"><h3 id="tituloReservas"><i class="fas fa-bookmark" aria-hidden="true"></i> Reservas ativas</h3><span class="badge-contador" id="badgeReservas">—</span></div>
+              <div class="secao-corpo bib-ops-list" id="listaReservas" aria-live="polite"><div class="lista-vazia"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Carregando reservas…</div></div>
+            </section>
+            <section class="secao bib-ops-section" aria-labelledby="tituloManutencao">
+              <div class="secao-header"><h3 id="tituloManutencao"><i class="fas fa-screwdriver-wrench" aria-hidden="true"></i> Acervo em manutenção</h3><span class="badge-contador badge-amarelo" id="badgeManutencao">—</span></div>
+              <div class="secao-corpo bib-ops-list" id="listaManutencao" aria-live="polite"><div class="lista-vazia"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Carregando acervo…</div></div>
+            </section>
+            <section class="secao bib-ops-section" aria-labelledby="tituloInventario">
+              <div class="secao-header"><h3 id="tituloInventario"><i class="fas fa-clipboard-check" aria-hidden="true"></i> Inventário</h3><span class="badge-contador" id="badgeInventario">—</span></div>
+              <div class="secao-corpo bib-ops-list" id="resumoInventario" aria-live="polite"><div class="lista-vazia"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Consultando inventários…</div></div>
+            </section>
+          </div>
+
           <!-- ---------- ATALHOS RÁPIDOS ---------- -->
           <section class="secao">
             <div class="secao-header">
               <h3>
-                <i class="fas fa-bolt intranet-style-fdf6658183"></i>
+                <i class="fas fa-bolt"></i>
                 Atalhos rápidos
               </h3>
             </div>
@@ -207,6 +248,10 @@
                   <i class="fas fa-chart-column"></i>
                   <span>Relatórios</span>
                 </a>
+                <a href="inventario.html" class="atalho-card">
+                  <i class="fas fa-clipboard-check"></i>
+                  <span>Inventário</span>
+                </a>
               </div>
             </div>
           </section>
@@ -220,7 +265,8 @@
     <!-- =====================================================================
          SUPABASE SDK + LÓGICA DO DASHBOARD
          ===================================================================== -->
-    <script type="importmap">
+      <script src="../shared/js/system-shell.js?v=20261018-library-identity-3"></script>
+  <script type="importmap">
       {
         "imports": {
           "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
@@ -230,7 +276,7 @@
 
     <script type="module">
 import { supabase } from "../shared/js/supabase.js";
-      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261010-biblioteca-shared-shell-2";
+      import { initBibliotecaLayout } from "./biblioteca-layout.js?v=20261019-pacote2-circulacao-1";
       await initBibliotecaLayout(supabase);
       // ============================================
       // CONFIGURAÇÃO SUPABASE (mesma da intranet)
@@ -284,7 +330,9 @@ import { supabase } from "../shared/js/supabase.js";
       // ============================================
       function formatarData(iso) {
         if (!iso) return "—";
-        const d = new Date(iso);
+        const d = /^\d{4}-\d{2}-\d{2}$/.test(String(iso))
+          ? new Date(`${iso}T00:00:00`)
+          : new Date(iso);
         if (isNaN(d.getTime())) return "—";
         const dia = String(d.getDate()).padStart(2, "0");
         const mes = String(d.getMonth() + 1).padStart(2, "0");
@@ -373,146 +421,232 @@ import { supabase } from "../shared/js/supabase.js";
       }
 
       // ============================================
-      // 3. CARREGA INDICADORES (vw_bib_dashboard)
+      // 3. DADOS DO PAINEL OPERACIONAL
       // ============================================
-      async function carregarIndicadores() {
-        const { data, error } = await supabase
-          .from("vw_bib_dashboard")
-          .select("*")
-          .maybeSingle();
+      const statusEmprestimoAtivo = ["ABERTO", "PARCIAL"];
+      const limiteListaOperacional = 8;
 
-        if (error) {
-          console.error("Erro ao carregar indicadores:", error);
-          window.showNotification(
-            "error",
-            "Falha ao carregar indicadores",
-            "Não foi possível obter os números do painel.",
-          );
-          return;
-        }
-
-        const d = data || {};
-        setTexto("indTotalLivros", d.total_livros ?? 0);
-        setTexto("indTotalExemplares", d.total_exemplares ?? 0);
-        setTexto("indDisponiveis", d.exemplares_disponiveis ?? 0);
-        setTexto("indEmprestados", d.exemplares_emprestados ?? 0);
-        setTexto("indAtrasados", d.emprestimos_atrasados ?? 0);
-        setTexto("indLeitores", d.leitores_ativos ?? 0);
-        setTexto("indExtraviados", d.exemplares_extraviados ?? 0);
-        setTexto("indManutencao", d.exemplares_manutencao ?? 0);
+      function dataLocalISO(data = new Date()) {
+        const ano = data.getFullYear();
+        const mes = String(data.getMonth() + 1).padStart(2, "0");
+        const dia = String(data.getDate()).padStart(2, "0");
+        return `${ano}-${mes}-${dia}`;
       }
 
-      // ============================================
-      // 4. CARREGA EMPRÉSTIMOS ATRASADOS (view detalhada)
-      // ============================================
-      async function carregarAtrasados() {
-        const { data, error } = await supabase
-          .from("vw_bib_emprestimos_detalhados")
-          .select("*")
-          .in("emprestimo_status", ["ABERTO", "PARCIAL"])
-          .lt("prazo_devolucao", new Date().toISOString().slice(0, 10))
-          .order("prazo_devolucao", { ascending: true })
-          .limit(20);
+      function statusPainel(id, mensagem, tipo = "info") {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.add("bib-ops-state");
+        el.dataset.state = tipo;
+        el.textContent = mensagem;
+      }
 
-        if (error) {
-          console.error("Erro ao carregar atrasados:", error);
-          return;
+      function formatarDataHoraPainel(value) {
+        if (!value) return "Data não informada";
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? "Data não informada" : date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+      }
+
+      async function carregarIndicadores() {
+        const ids = ["indTotalLivros", "indTotalExemplares", "indDisponiveis", "indEmprestados", "indAtrasados", "indLeitores", "indExtraviados", "indManutencao"];
+        ids.forEach((id) => setTexto(id, "—"));
+        const { data, error } = await supabase.from("vw_bib_dashboard").select("total_livros,total_exemplares,exemplares_disponiveis,exemplares_emprestados,emprestimos_atrasados,leitores_ativos,exemplares_extraviados,exemplares_manutencao").maybeSingle();
+        if (error || !data) {
+          console.error("Fonte de indicadores indisponível:", error);
+          statusPainel("painelFonteStatus", "Indicadores gerais indisponíveis; os demais blocos podem continuar carregando.", "warning");
+          return false;
         }
+        setTexto("indTotalLivros", data.total_livros ?? "—");
+        setTexto("indTotalExemplares", data.total_exemplares ?? "—");
+        setTexto("indDisponiveis", data.exemplares_disponiveis ?? "—");
+        setTexto("indEmprestados", data.exemplares_emprestados ?? "—");
+        setTexto("indAtrasados", data.emprestimos_atrasados ?? "—");
+        setTexto("indLeitores", data.leitores_ativos ?? "—");
+        setTexto("indExtraviados", data.exemplares_extraviados ?? "—");
+        setTexto("indManutencao", data.exemplares_manutencao ?? "—");
+        return true;
+      }
 
-        const lista = data || [];
+      async function carregarAtrasados() {
+        const hoje = dataLocalISO();
+        const { data, error } = await supabase.from("vw_bib_circulacao_operacional").select("emprestimo_id,emprestimo_codigo,prazo_devolucao,dias_atraso_atual,leitor_nome,codigo_carteirinha,exemplar_codigo,livro_titulo,situacao_prazo", { count: "exact" }).eq("situacao_prazo", "ATRASADO").order("prazo_devolucao", { ascending: true }).limit(20);
         const badge = document.getElementById("badgeAtrasados");
         const container = document.getElementById("listaAtrasados");
-        if (badge) badge.textContent = lista.length;
-        if (!container) return;
-
-        if (lista.length === 0) {
-          container.innerHTML = `
-            <div class="lista-vazia">
-              <i class="fas fa-circle-check" data-intranet-inline-style="isc68769029614"></i>
-              Nenhum empréstimo em atraso. Bom trabalho!
-            </div>`;
-          return;
+        if (error) {
+          console.error("Erro ao carregar atrasados:", error);
+          if (badge) badge.textContent = "—";
+          statusPainel("listaAtrasados", "Não foi possível consultar os empréstimos atrasados.", "error");
+          return false;
         }
-
-        container.innerHTML = lista
-          .map((item) => {
-            const dias = item.dias_em_atraso_hoje || 0;
-            return `
-              <div class="item-alerta">
-                <div class="item-icon vermelho">
-                  <i class="fas fa-triangle-exclamation"></i>
-                </div>
-                <div class="item-info">
-                  <strong>${escaparHtml(item.livro_titulo)}</strong>
-                  <span>
-                    ${escaparHtml(item.leitor_nome)}
-                    · Carteirinha ${escaparHtml(item.codigo_carteirinha || "—")}
-                    · Exemplar ${escaparHtml(item.exemplar_codigo)}
-                  </span>
-                </div>
-                <div class="item-prazo">
-                  <strong data-intranet-inline-style="is28add9d6f4a3">${dias} dia${dias !== 1 ? "s" : ""}</strong>
-                  <span>em atraso</span>
-                </div>
-              </div>`;
-          })
-          .join("");
+        const lista = data || [];
+        if (badge) badge.textContent = lista.length === 20 ? "20+" : String(lista.length);
+        if (!container) return true;
+        if (!lista.length) {
+          statusPainel("listaAtrasados", "Nenhum empréstimo em atraso na consulta.", "success");
+          return true;
+        }
+        container.innerHTML = lista.map((item) => {
+          const dias = Number(item.dias_atraso_atual) || 0;
+          return `<div class="item-alerta"><div class="item-icon vermelho"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></div><div class="item-info"><strong>${escaparHtml(item.livro_titulo || "Título não informado")}</strong><span>${escaparHtml(item.leitor_nome || "Leitor não informado")} · Carteirinha ${escaparHtml(item.codigo_carteirinha || "—")} · Exemplar ${escaparHtml(item.exemplar_codigo || "—")}</span></div><div class="item-prazo"><strong>${dias} dia${dias === 1 ? "" : "s"}</strong><span>em atraso</span></div></div>`;
+        }).join("");
+        if (lista.length === 20) container.insertAdjacentHTML("beforeend", '<p class="bib-ops-caption">Exibindo até 20 registros; use a tela de Empréstimos para consultar o restante.</p>');
+        return true;
       }
 
-      // ============================================
-      // 5. CARREGA DEVOLUÇÕES DE HOJE
-      // ============================================
       async function carregarDevolucoesHoje() {
-        const hoje = new Date().toISOString().slice(0, 10);
-        const { data, error } = await supabase
-          .from("vw_bib_emprestimos_detalhados")
-          .select("*")
-          .in("emprestimo_status", ["ABERTO", "PARCIAL"])
-          .eq("prazo_devolucao", hoje)
-          .order("leitor_nome", { ascending: true })
-          .limit(20);
-
-        if (error) {
-          console.error("Erro ao carregar devoluções de hoje:", error);
-          return;
-        }
-
-        const lista = data || [];
+        const hoje = dataLocalISO();
+        const { data, error } = await supabase.from("vw_bib_circulacao_operacional").select("emprestimo_id,emprestimo_codigo,prazo_devolucao,leitor_nome,exemplar_codigo,livro_titulo,situacao_prazo").eq("situacao_prazo", "VENCE_HOJE").order("leitor_nome", { ascending: true }).limit(20);
         const badge = document.getElementById("badgeHoje");
         const container = document.getElementById("listaHoje");
-        if (badge) badge.textContent = lista.length;
-        if (!container) return;
-
-        if (lista.length === 0) {
-          container.innerHTML = `
-            <div class="lista-vazia">
-              <i class="fas fa-mug-hot"></i>
-              Nenhuma devolução prevista para hoje.
-            </div>`;
-          return;
+        if (error) {
+          console.error("Erro ao carregar devoluções de hoje:", error);
+          if (badge) badge.textContent = "—";
+          statusPainel("listaHoje", "Não foi possível consultar as devoluções previstas para hoje.", "error");
+          return false;
         }
+        const lista = data || [];
+        if (badge) badge.textContent = lista.length === 20 ? "20+" : String(lista.length);
+        if (!container) return true;
+        if (!lista.length) {
+          statusPainel("listaHoje", "Nenhuma devolução prevista para hoje na consulta.", "success");
+          return true;
+        }
+        container.innerHTML = lista.map((item) => `<div class="item-alerta"><div class="item-icon amarelo"><i class="fas fa-clock" aria-hidden="true"></i></div><div class="item-info"><strong>${escaparHtml(item.livro_titulo || "Título não informado")}</strong><span>${escaparHtml(item.leitor_nome || "Leitor não informado")} · Exemplar ${escaparHtml(item.exemplar_codigo || "—")}</span></div><div class="item-prazo"><strong>Hoje</strong><span>${formatarData(item.prazo_devolucao)}</span></div></div>`).join("");
+        if (lista.length === 20) container.insertAdjacentHTML("beforeend", '<p class="bib-ops-caption">Exibindo até 20 registros.</p>');
+        return true;
+      }
 
-        container.innerHTML = lista
-          .map(
-            (item) => `
-              <div class="item-alerta">
-                <div class="item-icon amarelo">
-                  <i class="fas fa-clock"></i>
-                </div>
-                <div class="item-info">
-                  <strong>${escaparHtml(item.livro_titulo)}</strong>
-                  <span>
-                    ${escaparHtml(item.leitor_nome)}
-                    · Exemplar ${escaparHtml(item.exemplar_codigo)}
-                  </span>
-                </div>
-                <div class="item-prazo">
-                  <strong>Hoje</strong>
-                  <span>${formatarData(item.prazo_devolucao)}</span>
-                </div>
-              </div>`,
-          )
-          .join("");
+      async function carregarCirculacao() {
+        const hoje = new Date();
+        const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 29);
+        const amanha = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 1);
+        const inicioISO = inicio.toISOString();
+        const amanhaISO = amanha.toISOString();
+        const [emprestimos, devolucoes, abertos] = await Promise.all([
+          supabase.from("bib_emprestimos").select("id", { count: "exact", head: true }).gte("data_retirada", inicioISO).lt("data_retirada", amanhaISO).neq("status", "CANCELADO"),
+          supabase.from("bib_emprestimo_itens").select("id", { count: "exact", head: true }).gte("data_devolucao", inicioISO).lt("data_devolucao", amanhaISO),
+          supabase.from("bib_emprestimos").select("id", { count: "exact", head: true }).in("status", statusEmprestimoAtivo),
+        ]);
+        for (const [id, result] of [["circulacaoEmprestimos30", emprestimos], ["circulacaoDevolucoes30", devolucoes], ["circulacaoAbertos", abertos]]) {
+          if (result.error) {
+            console.error(`Falha na consulta de circulação ${id}:`, result.error);
+            setTexto(id, "—");
+          } else setTexto(id, result.count ?? "—");
+        }
+        return !emprestimos.error && !devolucoes.error && !abertos.error;
+      }
+
+      async function nomesPorId(tabela, ids, coluna) {
+        const unicos = [...new Set(ids.filter((id) => id != null).map(String))];
+        if (!unicos.length) return new Map();
+        const { data, error } = await supabase.from(tabela).select(`id,${coluna}`).in("id", unicos.map(Number));
+        if (error) throw error;
+        return new Map((data || []).map((item) => [String(item.id), item[coluna]]));
+      }
+
+      async function carregarReservas() {
+        const hoje = dataLocalISO();
+        const emSeteDias = dataLocalISO(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 7));
+        const { data, count, error } = await supabase
+          .from("vw_bib_reservas_operacionais")
+          .select("reserva_id,livro_id,livro_titulo,leitor_id,leitor_nome,data_reserva,data_expiracao,situacao_operacional,posicao_fila,exemplares_disponiveis,exemplares_em_circulacao", { count: "exact" })
+          .in("situacao_operacional", ["ATIVA", "EXPIRA_HOJE"])
+          .or(`data_expiracao.is.null,data_expiracao.gte.${hoje}`)
+          .order("data_expiracao", { ascending: true, nullsFirst: false })
+          .order("posicao_fila", { ascending: true })
+          .limit(limiteListaOperacional);
+        const badge = document.getElementById("badgeReservas");
+        if (error) {
+          console.error("Erro ao carregar reservas:", error);
+          if (badge) badge.textContent = "—";
+          statusPainel("listaReservas", "Fonte operacional de reservas indisponível. O painel não apresenta isso como zero.", "error");
+          return false;
+        }
+        const reservas = data || [];
+        if (badge) badge.textContent = String(count ?? reservas.length);
+        const container = document.getElementById("listaReservas");
+        if (!reservas.length) {
+          statusPainel("listaReservas", "Nenhuma reserva ativa encontrada.", "success");
+          return true;
+        }
+        container.innerHTML = reservas.map((r) => {
+          const venceLogo = r.data_expiracao && r.data_expiracao <= emSeteDias;
+          const prazo = r.data_expiracao ? `Expira ${formatarData(r.data_expiracao)}` : "Sem data de expiração";
+          const fila = r.posicao_fila ? `Fila ${r.posicao_fila}` : "Fila não informada";
+          const disponibilidade = `${Number(r.exemplares_disponiveis) || 0} disponível(is)`;
+          return `<article class="bib-ops-row"><span class="bib-ops-row__icon"><i class="fas fa-bookmark" aria-hidden="true"></i></span><span class="bib-ops-row__main"><strong>${escaparHtml(r.livro_titulo || `Livro #${r.livro_id}`)}</strong><small>${escaparHtml(r.leitor_nome || `Leitor #${r.leitor_id}`)} · ${escaparHtml(fila)} · ${escaparHtml(disponibilidade)}</small></span><span class="bib-ops-tag ${venceLogo ? "bib-ops-tag--warning" : ""}">${escaparHtml(prazo)}</span></article>`;
+        }).join("");
+        if ((count ?? reservas.length) > reservas.length) container.insertAdjacentHTML("beforeend", `<p class="bib-ops-caption">Exibindo ${reservas.length} de ${count} reservas ativas.</p>`);
+        return true;
+      }
+
+      async function carregarManutencao() {
+        const { data, count, error } = await supabase.from("bib_exemplares").select("id,codigo,livro_id,estado_conservacao,updated_at", { count: "exact" }).eq("ativo", true).eq("situacao", "MANUTENCAO").order("updated_at", { ascending: false }).limit(limiteListaOperacional);
+        const badge = document.getElementById("badgeManutencao");
+        if (error) {
+          console.error("Erro ao carregar exemplares em manutenção:", error);
+          if (badge) badge.textContent = "—";
+          statusPainel("listaManutencao", "Fonte de manutenção indisponível.", "error");
+          return false;
+        }
+        const itens = data || [];
+        if (badge) badge.textContent = String(count ?? itens.length);
+        if (!itens.length) {
+          statusPainel("listaManutencao", "Nenhum exemplar ativo em manutenção na consulta.", "success");
+          return true;
+        }
+        let livros = new Map();
+        try { livros = await nomesPorId("bib_livros", itens.map((item) => item.livro_id), "titulo"); }
+        catch (lookupError) { console.warn("Títulos dos exemplares indisponíveis:", lookupError); }
+        const container = document.getElementById("listaManutencao");
+        container.innerHTML = itens.map((item) => `<article class="bib-ops-row"><span class="bib-ops-row__icon bib-ops-row__icon--warning"><i class="fas fa-screwdriver-wrench" aria-hidden="true"></i></span><span class="bib-ops-row__main"><strong>${escaparHtml(item.codigo || `Exemplar #${item.id}`)}</strong><small>${escaparHtml(livros.get(String(item.livro_id)) || `Livro #${item.livro_id}`)} · ${escaparHtml(item.estado_conservacao || "Conservação não informada")}</small></span><span class="bib-ops-tag">Em manutenção</span></article>`).join("");
+        if ((count ?? itens.length) > itens.length) container.insertAdjacentHTML("beforeend", `<p class="bib-ops-caption">Exibindo ${itens.length} de ${count} exemplares.</p>`);
+        return true;
+      }
+
+      async function carregarInventario() {
+        const { data, error } = await supabase.from("bib_inventarios").select("id,nome,escopo,status,iniciado_em,concluido_em,created_at").neq("status", "CANCELADO").order("created_at", { ascending: false }).limit(1).maybeSingle();
+        if (error) {
+          console.error("Erro ao carregar inventário:", error);
+          setTexto("badgeInventario", "—");
+          statusPainel("resumoInventario", "Fonte de inventário indisponível.", "error");
+          return false;
+        }
+        if (!data) {
+          setTexto("badgeInventario", "—");
+          statusPainel("resumoInventario", "Nenhum inventário registrado. Isso não significa inventário concluído ou acervo sem divergências.", "info");
+          return true;
+        }
+        setTexto("badgeInventario", data.status || "Em andamento");
+        const { count: leituras, error: leiturasError } = await supabase.from("bib_inventario_itens").select("id", { count: "exact", head: true }).eq("inventario_id", data.id);
+        const { count: divergencias, error: divergenciasError } = await supabase.from("bib_inventario_itens").select("id", { count: "exact", head: true }).eq("inventario_id", data.id).eq("divergente", true);
+        if (leiturasError || divergenciasError) {
+          console.error("Erro ao contar leituras de inventário:", leiturasError || divergenciasError);
+          statusPainel("resumoInventario", `Inventário “${data.nome || `#${data.id}`}” · ${data.status}. As leituras não puderam ser consultadas.`, "warning");
+          return false;
+        }
+        const labelStatus = { ABERTO: "Aberto", EM_EXECUCAO: "Em execução", CONCLUIDO: "Concluído" }[data.status] || data.status || "Status não informado";
+        const container = document.getElementById("resumoInventario");
+        container.innerHTML = `<article class="bib-ops-inventory"><div class="bib-ops-inventory__top"><span class="bib-ops-tag">${escaparHtml(labelStatus)}</span><small>Iniciado em ${escaparHtml(formatarDataHoraPainel(data.iniciado_em || data.created_at))}</small></div><h4>${escaparHtml(data.nome || `Inventário #${data.id}`)}</h4><div class="bib-ops-inventory__stats"><span><strong>${leituras ?? "—"}</strong> leituras registradas</span><span><strong>${divergencias ?? "—"}</strong> divergências observadas</span></div><p>Contagens referem-se apenas aos itens registrados nesta campanha; não equivalem ao percentual concluído do acervo.</p></article>`;
+        return true;
+      }
+
+      async function atualizarPainel() {
+        const button = document.getElementById("btnAtualizarPainel");
+        const stamp = document.getElementById("painelAtualizadoEm");
+        if (button?.disabled) return;
+        if (button) { button.disabled = true; button.setAttribute("aria-busy", "true"); }
+        statusPainel("painelFonteStatus", "Atualizando fontes operacionais…", "loading");
+        const results = await Promise.allSettled([
+          carregarIndicadores(), carregarAtrasados(), carregarDevolucoesHoje(), carregarCirculacao(), carregarReservas(), carregarManutencao(), carregarInventario(),
+        ]);
+        const ok = results.every((item) => item.status === "fulfilled" && item.value !== false);
+        if (stamp) stamp.textContent = `Atualizado ${new Date().toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}`;
+        if (document.getElementById("painelFonteStatus")?.dataset.state === "warning") {
+          // Mantém o aviso específico de fonte indisponível vindo dos indicadores.
+        } else statusPainel("painelFonteStatus", ok ? "Fontes carregadas. Números refletem o escopo permitido pela sua sessão." : "Uma ou mais fontes estão indisponíveis; veja o estado de cada bloco. Nenhuma falha foi apresentada como zero.", ok ? "success" : "warning");
+        if (button) { button.disabled = false; button.removeAttribute("aria-busy"); }
+        return ok;
       }
 
       // ============================================
@@ -546,12 +680,7 @@ import { supabase } from "../shared/js/supabase.js";
           if (!usuario) return;
 
           renderizarUsuario();
-// Carrega os dados em paralelo
-          await Promise.all([
-            carregarIndicadores(),
-            carregarAtrasados(),
-            carregarDevolucoesHoje(),
-          ]);
+          await atualizarPainel();
         } catch (err) {
           console.error("Erro na inicialização:", err);
           window.showNotification(
@@ -564,6 +693,7 @@ import { supabase } from "../shared/js/supabase.js";
         }
       }
 
+      document.getElementById("btnAtualizarPainel")?.addEventListener("click", () => void atualizarPainel());
       init();
 
       // ============================================
@@ -571,7 +701,5 @@ import { supabase } from "../shared/js/supabase.js";
       // ============================================
       window.showNotification = window.showNotification;
     </script>
-      
-    <script src="../shared/js/system-shell.js?v=20261004-system-mother-v1"></script>
 </body>
 </html>

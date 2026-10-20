@@ -15,7 +15,7 @@ export class SaaSExperience {
   }
 
   injectToolbar() {
-    const direita = document.querySelector(".topbar-direita");
+    const direita = document.querySelector("#moduleNotificationHost");
     if (!direita || document.getElementById("saasNotificationButton")) return;
     const wrap = document.createElement("div");
     wrap.className = "saas-notification-wrap";
@@ -47,7 +47,7 @@ export class SaaSExperience {
   async marcarTodasLidas() { await Promise.all(this.notificacoes.filter((n) => !n.lida_em).map((n) => supabase.rpc("compras_marcar_notificacao_lida", { p_id: n.id }))); await this.carregarNotificacoes(); }
 
   async carregarConfiguracao() {
-    const { data, error } = await supabase.rpc("compras_obter_configuracao_tenant");
+    const { data, error } = await supabase.rpc("compras_obter_configuracao_municipio");
     if (!error) this.configuracao = data;
   }
 
@@ -64,7 +64,7 @@ export class SaaSExperience {
       const config = { municipio: modal.querySelector("#saasCfgMunicipio").value.trim(), orgao_gestor: modal.querySelector("#saasCfgOrgao").value.trim(), prazo_aprovacao_dias: Number(modal.querySelector("#saasCfgPrazo").value), expiracao_reserva_dias: Number(modal.querySelector("#saasCfgReserva").value), suporte: modal.querySelector("#saasCfgSuporte").value.trim() };
       if (!config.municipio || !config.orgao_gestor) { this.toast("Informe o Município e o órgão gestor.", "aviso"); return; }
       const button = modal.querySelector("#saasOnboardingSave"); button.disabled = true;
-      const { data, error } = await supabase.rpc("compras_salvar_configuracao_tenant", { p_configuracao: config, p_concluida: true });
+      const { data, error } = await supabase.rpc("compras_salvar_configuracao_municipio", { p_configuracao: config, p_concluida: true });
       button.disabled = false;
       if (error) { this.toast(error.message, "erro"); return; }
       this.configuracao = data; close(); this.toast("Configuração inicial concluída.", "sucesso");
@@ -72,10 +72,10 @@ export class SaaSExperience {
   }
 
   async uploadDocumento({ entidade, entidadeId, arquivo }) {
-    if (!arquivo || !this.configuracao?.tenant_id) return null;
+    if (!arquivo || !this.configuracao?.municipio_id) return null;
     if (arquivo.size > 25 * 1024 * 1024) throw new Error("O arquivo excede o limite de 25 MB.");
     const safe = arquivo.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const path = `${this.configuracao.tenant_id}/${entidade}/${entidadeId}/${crypto.randomUUID()}-${safe}`;
+    const path = `${this.configuracao.municipio_id}/${entidade}/${entidadeId}/${crypto.randomUUID()}-${safe}`;
     const { error: uploadError } = await supabase.storage.from("compras-documentos").upload(path, arquivo, { contentType: arquivo.type || "application/octet-stream", upsert: false });
     if (uploadError) throw uploadError;
     const { data, error } = await supabase.rpc("compras_registrar_documento", { p_entidade: entidade, p_entidade_id: String(entidadeId), p_nome_arquivo: arquivo.name, p_storage_path: path, p_mime_type: arquivo.type || "application/octet-stream", p_tamanho_bytes: arquivo.size });

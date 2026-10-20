@@ -1,0 +1,144 @@
+/* ===== identity-shell.css ===== */
+
+.app-shell { min-height: 100vh; background: var(--surface-page); }
+.app-header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: var(--space-6); min-height: var(--shell-header-height); padding: .75rem clamp(1rem, 3vw, 2rem); background: var(--surface-header); border-bottom: 1px solid var(--border-soft); box-shadow: var(--shadow-header); }
+.app-brand { display: inline-flex; align-items: center; gap: .75rem; min-width: 12rem; color: var(--text-primary); text-decoration: none; }
+.app-brand__mark { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: .65rem; background: linear-gradient(135deg, var(--brand-blue), var(--brand-green)); color: #fff; font-weight: 800; }
+.app-brand__name { font-size: 1.1rem; font-weight: 800; letter-spacing: .06em; }
+.app-brand__caption { display: block; color: var(--text-secondary); font-size: .68rem; font-weight: 500; letter-spacing: 0; }
+.app-search { display: flex; align-items: center; flex: 1; max-width: 52rem; min-height: 2.65rem; padding: 0 .9rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-muted); background: var(--surface-card); }
+.app-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text-primary); }
+.app-header__actions { display: flex; align-items: center; gap: var(--space-3); margin-left: auto; }
+.app-user { display: flex; align-items: center; gap: .65rem; color: var(--text-primary); }
+.app-user__avatar { display: grid; place-items: center; width: 2.35rem; height: 2.35rem; border-radius: 50%; background: var(--brand-primary); color: #fff; font-weight: 700; }
+.app-user__name { font-size: var(--font-size-sm); font-weight: 700; }
+.app-user__role { color: var(--text-secondary); font-size: var(--font-size-xs); }
+.app-layout { display: grid; grid-template-columns: var(--shell-sidebar-width) minmax(0, 1fr); min-height: calc(100vh - var(--shell-header-height)); }
+.app-sidebar { padding: var(--space-5) var(--space-3); background: var(--surface-header); border-right: 1px solid var(--border-soft); }
+.app-sidebar__section { margin: 0 0 var(--space-5); }
+.app-sidebar__label { padding: 0 .75rem; color: var(--text-muted); font-size: var(--font-size-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.app-nav { display: grid; gap: .25rem; margin-top: .5rem; }
+.app-nav__link { display: flex; align-items: center; gap: .7rem; padding: .7rem .75rem; border-radius: var(--radius-md); color: var(--text-secondary); text-decoration: none; font-size: var(--font-size-sm); font-weight: 600; }
+.app-nav__link:hover, .app-nav__link[aria-current="page"] { background: var(--surface-soft-blue); color: var(--brand-primary); }
+.app-main { min-width: 0; padding: clamp(1.25rem, 3vw, 2.5rem); }
+.app-main__content { width: min(100%, var(--content-max-width)); margin-inline: auto; }
+.app-footer { padding: var(--space-4) 0; color: var(--text-muted); font-size: var(--font-size-xs); }
+
+@media (max-width: 900px) {
+  .app-header { gap: var(--space-3); }
+  .app-brand { min-width: auto; }
+  .app-brand__caption, .app-search { display: none; }
+}
+@media (max-width: 720px) {
+  .app-layout { display: block; }
+  .app-sidebar { position: fixed; inset: var(--shell-header-height) auto 0 0; z-index: 15; width: min(82vw, 18rem); transform: translateX(-105%); transition: transform .2s ease; box-shadow: var(--shadow-modal); }
+  .app-shell[data-sidebar-open="true"] .app-sidebar { transform: translateX(0); }
+  .app-main { padding: 1rem .75rem; }
+  .app-user__details { display: none; }
+}
+
+/* =====================================================================
+   CONTRATO TIPOGRÁFICO E VISUAL GLOBAL · TODAS AS SIDEBARS
+   ---------------------------------------------------------------------
+   O menu lateral é uma peça de navegação compartilhada. Módulos novos
+   devem usar .sidebar-nav/.sidebar-voltar ou .app-nav/.app-nav__link.
+   ===================================================================== */
+body[data-intranet-module] .sidebar-nav,
+body[data-intranet-module] .app-nav {
+  display: grid !important;
+  gap: .25rem !important;
+  margin-top: .5rem !important;
+}
+body[data-intranet-module] .sidebar-nav a,
+body[data-intranet-module] .sidebar-voltar a,
+body[data-intranet-module] .app-nav__link {
+  display: flex !important;
+  align-items: center !important;
+  gap: .7rem !important;
+  padding: .7rem .75rem !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text-secondary) !important;
+  font-family: var(--font-family-sans) !important;
+  font-size: var(--font-size-sm) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-decoration: none !important;
+  transform: none !important;
+}
+
+body[data-intranet-module] .sidebar-nav a:hover,
+body[data-intranet-module] .sidebar-nav a.active,
+body[data-intranet-module] .sidebar-nav a.ativo,
+body[data-intranet-module] .sidebar-nav a[aria-current="page"],
+body[data-intranet-module] .app-nav__link:hover,
+body[data-intranet-module] .app-nav__link.is-active,
+body[data-intranet-module] .app-nav__link[aria-current="page"] {
+  background: var(--brand-primary-light) !important;
+  color: var(--brand-primary) !important;
+  transform: none !important;
+}
+
+body[data-intranet-module] .sidebar-nav a i,
+body[data-intranet-module] .sidebar-voltar a i,
+body[data-intranet-module] .app-nav__link i {
+  width: 1.2rem !important;
+  flex: 0 0 1.2rem !important;
+  text-align: center !important;
+}
+
+body[data-intranet-module] .nav-section,
+body[data-intranet-module] .app-sidebar__label {
+  margin: .8rem .7rem .35rem !important;
+  padding: 0 !important;
+  color: var(--text-muted) !important;
+  font-family: var(--font-family-sans) !important;
+  font-size: var(--font-size-xs) !important;
+  font-weight: var(--font-weight-bold) !important;
+  line-height: 1.2 !important;
+  letter-spacing: .06em !important;
+  text-transform: uppercase !important;
+}
+
+/* O cabeçalho e o conteúdo também herdam a mesma família canônica. */
+body[data-intranet-module],
+body[data-intranet-module] .barra-usuario,
+body[data-intranet-module] .topbar,
+body[data-intranet-module] .app-header,
+body[data-intranet-module] main,
+body[data-intranet-module] .main-area,
+body[data-intranet-module] .app-main {
+  font-family: var(--font-family-sans) !important;
+}
+
+/* Introdução contextual do módulo — mesmo padrão visual da Governança. */
+body[data-intranet-module] .sidebar-module-intro {
+  margin: 0 .75rem 1.25rem;
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+body[data-intranet-module] .sidebar-module-intro h1 {
+  margin: .25rem 0;
+  color: var(--text-primary);
+  font-family: var(--font-family-sans) !important;
+  font-size: 1.15rem;
+  font-weight: var(--font-weight-bold) !important;
+  line-height: 1.25;
+}
+body[data-intranet-module] .sidebar-module-intro p {
+  margin: 0;
+  color: var(--text-muted);
+  font-family: var(--font-family-sans) !important;
+  font-size: var(--font-size-xs) !important;
+  font-weight: var(--font-weight-regular) !important;
+  line-height: 1.5;
+}
+body[data-intranet-module] .sidebar-module-intro__eyebrow {
+  color: var(--brand-primary);
+  font-family: var(--font-family-sans) !important;
+  font-size: .68rem;
+  font-weight: var(--font-weight-bold) !important;
+  letter-spacing: .11em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}

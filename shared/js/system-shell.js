@@ -1,92 +1,153 @@
-/* Sistema-mãe — comportamento compartilhado do shell e dos estados globais. */
+/* Reutiliza literalmente a barra de usuário do hall da Intranet nos módulos. */
 (() => {
-  const sidebarSelector = '.sidebar, .saas-sidebar, .admin-sidebar, #sidebar, .system-sidebar';
-  const toggleSelector = '#btnToggleSidebar, .btn-toggle-sidebar, [data-sidebar-toggle]';
-  const currentUrl = new URL(window.location.href);
-  const path = currentUrl.pathname.replace(/\/+$/, '') || '/';
+  const body = document.body;
+  if (!body || body.dataset.hallHeaderReady === "true") return;
+  body.dataset.hallHeaderReady = "true";
 
-  const boot = () => {
-    document.body.classList.add('system-mother');
-    const sidebar = document.querySelector(sidebarSelector);
-    if (!sidebar) return;
-    sidebar.classList.add('system-sidebar');
-    sidebar.setAttribute('aria-label', sidebar.getAttribute('aria-label') || 'Navegação principal da intranet');
+  // O Hall e os módulos compartilham este mesmo fragmento e as mesmas classes
+  // estilizadas por shared/css/identity-header.css.
+  if (!document.querySelector(".barra-usuario")) {
+    const header = `
+      <div class="barra-usuario">
+        <div class="saudacao-mini">
+          <span>Logado como</span>
+          <strong id="saudacaoMiniNome">—</strong>
+        </div>
+        <div class="avatar-wrapper">
+          <button
+            class="avatar-btn"
+            id="avatarBtn"
+            title="Menu do usuário"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            type="button">
+            <span id="avatarIniciais">?</span>
+          </button>
+          <div class="avatar-menu" id="avatarMenu" role="menu" aria-hidden="true">
+            <div class="avatar-menu-header">
+              <span class="avatar-menu-kicker">Conta conectada</span>
+              <strong id="menuNome">—</strong>
+              <span class="avatar-menu-email" id="menuEmail">—</span>
+            </div>
+            <div class="avatar-menu-section-label">Ações da conta</div>
+            <button
+              class="avatar-menu-item avatar-menu-item--profile"
+              id="menuMeuPerfil"
+              type="button"
+              role="menuitem">
+              <span class="avatar-menu-item-icon"><i class="fas fa-user-circle"></i></span><span>Meu Perfil</span>
+            </button>
+            <section class="avatar-menu-quick" aria-labelledby="avatarQuickTitle">
+              <h2 class="avatar-menu-quick-title" id="avatarQuickTitle">
+                <i class="fas fa-bolt" aria-hidden="true"></i> Módulos autorizados
+              </h2>
+              <div
+                class="avatar-menu-quick-list"
+                id="avatarQuickModules"
+                role="group"
+                aria-label="Módulos disponíveis para esta conta">
+                <p class="avatar-menu-quick-empty">Carregando módulos autorizados...</p>
+              </div>
+            </section>
+            <button
+              class="avatar-menu-item avatar-menu-item--logout sair"
+              id="menuSair"
+              type="button"
+              role="menuitem">
+              <span class="avatar-menu-item-icon"><i class="fas fa-sign-out-alt"></i></span><span>Sair</span>
+            </button>
+          </div>
+        </div>
+      </div>`;
+    body.insertAdjacentHTML("afterbegin", header);
+  }
 
-    const toggles = [...document.querySelectorAll(toggleSelector)];
-    const toggleAlreadyBound = toggles.some((button) => button.dataset.sidebarToggleBound === 'true');
-    let backdrop = document.querySelector('.system-sidebar-backdrop');
-    if (!toggleAlreadyBound && !backdrop) {
-      backdrop = document.createElement('div');
-      backdrop.className = 'system-sidebar-backdrop';
-      backdrop.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(backdrop);
-    }
-    const setOpen = (open) => {
-      sidebar.classList.toggle('is-open', open);
-      sidebar.classList.toggle('aberta', open);
-      backdrop?.classList.toggle('is-visible', open);
-      toggles.forEach((button) => {
-        button.setAttribute('aria-expanded', String(open));
-        button.setAttribute('aria-controls', sidebar.id || 'sidebar');
-        button.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
-        button.setAttribute('title', open ? 'Fechar menu' : 'Abrir menu');
-      });
-      document.body.style.overflow = open ? 'hidden' : '';
-      if (open) sidebar.querySelector('a,button,[tabindex]:not([tabindex="-1"])')?.focus({preventScroll:true});
-    };
-    if (!toggleAlreadyBound) {
-      toggles.forEach((button) => {
-        button.dataset.sidebarToggleBound = 'true';
-        button.addEventListener('click', () => setOpen(!sidebar.classList.contains('is-open')));
-      });
-      backdrop?.addEventListener('click', () => setOpen(false));
-    }
-    sidebar.querySelectorAll('a').forEach((link) => {
-      const href = link.getAttribute('href') || '';
-      try {
-        const targetUrl = new URL(href, document.baseURI);
-        const target = targetUrl.pathname.replace(/\/+$/, '') || '/';
-        const samePath = target === path || (target !== '/' && path.endsWith(target));
-        const hasViewRoute = currentUrl.searchParams.has('view') || targetUrl.searchParams.has('view');
-        const hasHashRoute = Boolean(currentUrl.hash || targetUrl.hash);
-        const matchesRoute = hasViewRoute
-          ? samePath && (targetUrl.searchParams.get('view') || 'dashboard') === (currentUrl.searchParams.get('view') || 'dashboard')
-          : hasHashRoute
-            ? samePath && Boolean(targetUrl.hash) && targetUrl.hash === currentUrl.hash
-            : samePath;
-        if (matchesRoute) {
-          link.classList.add('active');
-          link.setAttribute('aria-current', 'page');
-        }
-      } catch (_) { /* link externo ou placeholder: não interferir */ }
-      if (!toggleAlreadyBound) link.addEventListener('click', () => setOpen(false));
-    });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') setOpen(false);
-    });
-    const desktopQuery = window.matchMedia('(min-width: 1025px)');
-    const closeOnDesktop = (event) => { if (event.matches) setOpen(false); };
-    if (typeof desktopQuery.addEventListener === 'function') desktopQuery.addEventListener('change', closeOnDesktop);
-    else if (typeof desktopQuery.addListener === 'function') desktopQuery.addListener(closeOnDesktop);
-
-    document.querySelectorAll('.loading, .loading-state, [data-loading]').forEach((node) => {
-      node.setAttribute('role', node.getAttribute('role') || 'status');
-      node.setAttribute('aria-live', node.getAttribute('aria-live') || 'polite');
-    });
-    document.querySelectorAll('.toast, .notification-content, .notice-bar, [data-toast]').forEach((node) => {
-      node.setAttribute('role', node.getAttribute('role') || 'status');
-      node.setAttribute('aria-live', node.getAttribute('aria-live') || 'polite');
-    });
-    document.querySelectorAll('table').forEach((table) => {
-      if (!table.querySelector('caption')) {
-        const caption = document.createElement('caption');
-        caption.className = 'sr-only';
-        caption.textContent = table.getAttribute('aria-label') || 'Tabela de dados';
-        table.prepend(caption);
-      }
-    });
+  const root = body.dataset.shellRoot || "./";
+  const moduleName = body.dataset.intranetModule || "";
+  const avatarButton = document.getElementById("avatarBtn");
+  const avatarMenu = document.getElementById("avatarMenu");
+  const closeMenu = () => {
+    avatarMenu?.classList.remove("aberto");
+    avatarMenu?.setAttribute("aria-hidden", "true");
+    avatarButton?.setAttribute("aria-expanded", "false");
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
-  else boot();
+  // Os outros módulos têm estes handlers no próprio fluxo de autenticação;
+  // Governança não usa layout.js, por isso recebe aqui os handlers do Hall.
+  if (moduleName === "governanca") {
+    avatarButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const open = avatarMenu?.getAttribute("aria-hidden") !== "false";
+      avatarMenu?.classList.toggle("aberto", open);
+      avatarMenu?.setAttribute("aria-hidden", String(!open));
+      avatarButton?.setAttribute("aria-expanded", String(open));
+    });
+    document.addEventListener("click", (event) => {
+      if (!avatarMenu?.contains(event.target) && !avatarButton?.contains(event.target)) closeMenu();
+    });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeMenu(); });
+    const logout = document.getElementById("menuSair");
+    logout?.addEventListener("click", async () => {
+      try {
+        const supabaseUrl = new URL(body.dataset.shellSupabase || `${root}shared/js/supabase.js`, document.baseURI).href;
+        const { supabase } = await import(supabaseUrl);
+        await supabase.auth.signOut();
+      } catch (error) {
+        console.error("[hall-header] Falha ao sair:", error);
+      } finally {
+        window.location.assign(new URL(`${root}index.html`, document.baseURI).href);
+      }
+    });
+  }
+
+  document.getElementById("menuMeuPerfil")?.addEventListener("click", () => {
+    closeMenu();
+    const profileUrl = new URL(`${root}perfil.html`, document.baseURI);
+    if (moduleName !== "perfil") {
+      profileUrl.searchParams.set("returnTo", `${window.location.pathname}${window.location.search}${window.location.hash}`);
+    }
+    window.location.assign(profileUrl.href);
+  });
+
+  // O cabeçalho global hidrata os dados da conta em telas que não dependem
+  // do topbar antigo do layout, incluindo a Visão do Prefeito.
+  if (moduleName === "perfil" || moduleName === "governanca" || moduleName === "visao-agregada") {
+    void (async () => {
+      try {
+        const supabaseUrl = new URL(body.dataset.shellSupabase || `${root}shared/js/supabase.js`, document.baseURI).href;
+        const layoutUrl = new URL(`${root}shared/js/layout.js?v=20261017-prefeito-no-brand-1`, document.baseURI).href;
+        const [{ supabase }, layout] = await Promise.all([import(supabaseUrl), import(layoutUrl)]);
+        const user = await layout.carregarUsuario(supabase);
+        if (!user) return;
+        const name = user.nome || user.email || "Usuário";
+        const greeting = document.getElementById("saudacaoMiniNome");
+        const menuName = document.getElementById("menuNome");
+        const menuEmail = document.getElementById("menuEmail");
+        const initials = document.getElementById("avatarIniciais");
+        if (greeting) greeting.textContent = name;
+        if (menuName) menuName.textContent = name;
+        if (menuEmail) menuEmail.textContent = user.email || "—";
+        if (initials && user.foto_url) {
+          const image = document.createElement("img");
+          image.className = "avatar-foto";
+          image.src = user.foto_url;
+          image.alt = `Foto de ${name}`;
+          image.addEventListener("error", () => { image.remove(); initials.textContent = initialsFor(name); }, { once: true });
+          initials.replaceChildren(image);
+        } else if (initials) {
+          initials.textContent = initialsFor(name);
+        }
+        await layout.carregarAtalhosModulos(supabase, user, {
+          rotaIntranet: new URL(`${root}intranet.html`, document.baseURI).href,
+        });
+      } catch (error) {
+        console.warn("[hall-header] Não foi possível preparar os dados do cabeçalho:", error);
+      }
+    })();
+  }
+
+  function initialsFor(name) {
+    const words = String(name || "?").trim().split(/\s+/).filter(Boolean);
+    return (words.length > 1 ? words[0][0] + words.at(-1)[0] : (words[0] || "?").slice(0, 2)).toUpperCase();
+  }
 })();

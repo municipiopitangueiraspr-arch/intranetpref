@@ -1,0 +1,317 @@
+/* Gestão de Atas · Aditivos
+   Estilos da view e dos formulários dinâmicos; usa os tokens compartilhados. */
+body[data-intranet-module="atas"] #aditivosContent .aditivos-container {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 96rem;
+  margin-inline: auto;
+  color: var(--text-primary);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivos-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: clamp(1rem, 2vw, 1.4rem);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--surface-card), var(--surface-soft-blue));
+  box-shadow: var(--shadow-card);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivos-header h3 {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivos-header h3 i {
+  display: grid;
+  flex: 0 0 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+}
+body[data-intranet-module="atas"] #aditivosContent .btn-novo-aditivo,
+body[data-intranet-module="atas"] #aditivosContent .btn-visualizar-aditivo,
+body[data-intranet-module="atas"] #aditivosContent .btn-aplicar-aditivo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.6rem;
+  padding: .55rem .85rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+body[data-intranet-module="atas"] #aditivosContent .btn-novo-aditivo,
+body[data-intranet-module="atas"] #aditivosContent .btn-aplicar-aditivo {
+  background: var(--brand-primary);
+  color: var(--text-on-brand);
+}
+body[data-intranet-module="atas"] #aditivosContent .btn-novo-aditivo:hover,
+body[data-intranet-module="atas"] #aditivosContent .btn-aplicar-aditivo:hover {
+  background: var(--brand-primary-dark);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+body[data-intranet-module="atas"] #aditivosContent .btn-visualizar-aditivo {
+  border-color: var(--border-default);
+  background: var(--surface-card);
+  color: var(--brand-primary);
+}
+body[data-intranet-module="atas"] #aditivosContent .btn-visualizar-aditivo:hover {
+  border-color: var(--border-focus);
+  background: var(--surface-hover);
+}
+body[data-intranet-module="atas"] #aditivosContent :where(button, input, select, textarea, a):focus-visible {
+  outline: 0;
+  box-shadow: var(--focus-ring);
+}
+body[data-intranet-module="atas"] #aditivosContent button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+  transform: none;
+}
+
+body[data-intranet-module="atas"] #aditivosContent .filtros-container {
+  padding: clamp(1rem, 2vw, 1.25rem);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+body[data-intranet-module="atas"] #aditivosContent .filtros-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+body[data-intranet-module="atas"] #aditivosContent .filtro-grupo {
+  display: grid;
+  align-content: start;
+  gap: .4rem;
+  min-width: 0;
+}
+body[data-intranet-module="atas"] #aditivosContent .filtro-label,
+body[data-intranet-module="atas"] #aditivosContent .filtro-grupo label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+body[data-intranet-module="atas"] #aditivosContent .filtro-input,
+body[data-intranet-module="atas"] #aditivosContent .filtro-select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: .65rem .8rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font: inherit;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+body[data-intranet-module="atas"] #aditivosContent .filtro-input::placeholder { color: var(--text-muted); }
+body[data-intranet-module="atas"] #aditivosContent .filtro-input:focus,
+body[data-intranet-module="atas"] #aditivosContent .filtro-select:focus {
+  border-color: var(--border-focus);
+  outline: 0;
+  box-shadow: var(--focus-ring);
+}
+
+body[data-intranet-module="atas"] #aditivosContent .aditivos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  align-items: stretch;
+  gap: var(--space-4);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-card {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-card:hover {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-card .aditivo-header {
+  display: grid;
+  justify-items: start;
+  gap: .5rem;
+  padding: 1rem 1.1rem;
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: linear-gradient(135deg, var(--surface-soft-blue), var(--surface-card));
+  box-shadow: none;
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-tipo-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: .25rem .6rem;
+  border-radius: var(--radius-pill);
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-tipo-badge.prazo { background: var(--state-info-bg); color: var(--state-info); }
+body[data-intranet-module="atas"] #aditivosContent .aditivo-tipo-badge.valor { background: var(--state-success-bg); color: var(--state-success); }
+body[data-intranet-module="atas"] #aditivosContent .aditivo-tipo-badge.ambos { background: var(--state-warning-bg); color: var(--state-warning); }
+body[data-intranet-module="atas"] #aditivosContent .aditivo-numero {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-ata-original,
+body[data-intranet-module="atas"] #aditivosContent .aditivo-data {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-relaxed);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-header :where(.aditivo-ata-original, .aditivo-data) i {
+  width: 1rem;
+  color: var(--brand-primary);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-body {
+  display: grid;
+  align-content: start;
+  gap: .65rem;
+  padding: 1rem 1.1rem;
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-info-row {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, .75fr) minmax(0, 1.25fr);
+  gap: .65rem;
+  padding-bottom: .55rem;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: var(--font-size-sm);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-info-row:last-child { padding-bottom: 0; border-bottom: 0; }
+body[data-intranet-module="atas"] #aditivosContent .aditivo-label { color: var(--text-muted); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+body[data-intranet-module="atas"] #aditivosContent .aditivo-value { min-width: 0; color: var(--text-primary); overflow-wrap: anywhere; }
+body[data-intranet-module="atas"] #aditivosContent .aditivo-value.destaque { color: var(--brand-primary); font-weight: var(--font-weight-bold); }
+body[data-intranet-module="atas"] #aditivosContent .aditivo-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .55rem;
+  padding: .8rem 1.1rem;
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface-muted);
+}
+body[data-intranet-module="atas"] #aditivosContent .aditivo-footer > span { margin-right: auto; color: var(--state-success); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+
+/* Formulário e detalhes em modal: os handlers e a estrutura existentes são preservados. */
+body[data-intranet-module="atas"] .modal-content:has(#formAditivo) {
+  width: min(54rem, calc(100vw - 2rem));
+  max-height: min(90vh, 56rem);
+  border-radius: var(--radius-xl);
+}
+body[data-intranet-module="atas"] #formAditivo {
+  display: grid;
+  gap: var(--space-4);
+  padding: 1.1rem 1.25rem 1.25rem;
+}
+body[data-intranet-module="atas"] #formAditivo .form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+body[data-intranet-module="atas"] #formAditivo .form-group { display: grid; align-content: start; gap: .4rem; min-width: 0; }
+body[data-intranet-module="atas"] #formAditivo .form-group > label,
+body[data-intranet-module="atas"] #formAditivo > div > label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+body[data-intranet-module="atas"] #formAditivo .filtro-input,
+body[data-intranet-module="atas"] #formAditivo .filtro-select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: .65rem .8rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font: inherit;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+body[data-intranet-module="atas"] #formAditivo .filtro-input::placeholder { color: var(--text-muted); }
+body[data-intranet-module="atas"] #formAditivo .filtro-input:focus,
+body[data-intranet-module="atas"] #formAditivo .filtro-select:focus { border-color: var(--border-focus); outline: 0; box-shadow: var(--focus-ring); }
+body[data-intranet-module="atas"] #formAditivo textarea.filtro-input { min-height: 5rem; resize: vertical; }
+body[data-intranet-module="atas"] #formAditivo input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: var(--brand-primary); }
+body[data-intranet-module="atas"] #formAditivo h4,
+body[data-intranet-module="atas"] #formAditivo h5 { margin: 0 0 .65rem; color: var(--text-primary); font-size: var(--font-size-md); }
+body[data-intranet-module="atas"] #formAditivo #camposPrazo,
+body[data-intranet-module="atas"] #formAditivo #camposValor { padding-top: .85rem; border-top: 1px solid var(--border-soft); }
+body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal {
+  padding: .9rem 1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-muted);
+}
+body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal .resumo-ata-original h4 { margin-bottom: .75rem; }
+body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal .resumo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; }
+body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal .resumo-item { display: grid; gap: .2rem; min-width: 0; }
+body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal .resumo-label { color: var(--text-muted); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal .resumo-valor { color: var(--text-primary); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); overflow-wrap: anywhere; }
+body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal .resumo-valor.destaque { color: var(--brand-primary); }
+body[data-intranet-module="atas"] #formAditivo #itensAditivoContainer { min-width: 0; padding: .85rem; border: 1px solid var(--border-soft); border-radius: var(--radius-lg); background: var(--surface-muted); }
+body[data-intranet-module="atas"] #formAditivo .tabela-container { width: 100%; overflow: auto; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); }
+body[data-intranet-module="atas"] #formAditivo .itens-aditivo-tabela { width: 100%; min-width: 52rem; border-collapse: separate; border-spacing: 0; color: var(--text-primary); font-size: var(--font-size-xs); }
+body[data-intranet-module="atas"] #formAditivo .itens-aditivo-tabela th,
+body[data-intranet-module="atas"] #formAditivo .itens-aditivo-tabela td { padding: .6rem .65rem; border-bottom: 1px solid var(--border-soft); text-align: left; vertical-align: middle; }
+body[data-intranet-module="atas"] #formAditivo .itens-aditivo-tabela th { background: var(--surface-muted); color: var(--text-secondary); font-weight: var(--font-weight-bold); white-space: nowrap; }
+body[data-intranet-module="atas"] #formAditivo .itens-aditivo-tabela tbody tr:last-child td { border-bottom: 0; }
+body[data-intranet-module="atas"] #formAditivo .itens-aditivo-tabela input { width: 8rem; max-width: 100%; min-height: 2.3rem; padding: .45rem .55rem; border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-primary); font: inherit; }
+body[data-intranet-module="atas"] #formAditivo > div:last-child { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .6rem; padding-top: .4rem; }
+body[data-intranet-module="atas"] #formAditivo > div:last-child button { min-height: 2.55rem; padding: .55rem .9rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); color: var(--brand-primary); font: inherit; font-weight: var(--font-weight-semibold); cursor: pointer; }
+body[data-intranet-module="atas"] #formAditivo > div:last-child button[type="submit"] { border-color: transparent; background: var(--brand-primary); color: var(--text-on-brand); }
+body[data-intranet-module="atas"] #formAditivo > div:last-child button[type="submit"]:hover { background: var(--brand-primary-dark); }
+
+@media (max-width: 900px) {
+  body[data-intranet-module="atas"] #aditivosContent .aditivos-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+  body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal .resumo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  body[data-intranet-module="atas"] #aditivosContent .aditivos-header { align-items: flex-start; flex-direction: column; }
+  body[data-intranet-module="atas"] #aditivosContent .btn-novo-aditivo { width: 100%; }
+  body[data-intranet-module="atas"] #aditivosContent .filtros-grid,
+  body[data-intranet-module="atas"] #formAditivo .form-row { grid-template-columns: minmax(0, 1fr); }
+  body[data-intranet-module="atas"] #aditivosContent .aditivo-info-row { grid-template-columns: minmax(0, 1fr); gap: .2rem; }
+  body[data-intranet-module="atas"] #aditivosContent .aditivo-footer > span { flex-basis: 100%; }
+  body[data-intranet-module="atas"] #formAditivo { padding: 1rem; }
+  body[data-intranet-module="atas"] #modalAditivo #resumoAtaOriginal .resumo-grid { grid-template-columns: minmax(0, 1fr); }
+  body[data-intranet-module="atas"] #formAditivo > div:last-child button { flex: 1 1 8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-intranet-module="atas"] #aditivosContent *,
+  body[data-intranet-module="atas"] #formAditivo * { transition-duration: .01ms !important; }
+}

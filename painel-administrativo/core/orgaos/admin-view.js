@@ -1,0 +1,1274 @@
+/* Controlador extraído da página administrativa original; montado por core/admin-panel.js. */
+
+      // ============================================
+      // core/orgaos/index.html - Script Principal
+      // ============================================
+
+      import { supabase } from "../../../shared/js/supabase.js";
+      import { OrgaosService } from "../../../shared/js/services/orgaos-service.js";
+      import { auth } from "../../../shared/js/auth.js";
+
+      // ============================================
+      // VARIÁVEIS GLOBAIS
+      // ============================================
+      let usuarioAtual = null;
+      let orgaos = [];
+      let filtros = {
+        status: "todos",
+        busca: "",
+      };
+      let paginaAtual = 1;
+      const itensPorPagina = 10;
+
+      // ============================================
+      // UTILITÁRIOS
+      // ============================================
+
+      // Sistema de notificação no padrão Biblioteca (centro inferior)
+      window.showNotification = function (
+        type,
+        title,
+        message,
+        duration = 4000,
+      ) {
+        const container = document.getElementById("notificationCenter");
+        if (!container) return;
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        const toast = document.createElement("div");
+        toast.className = `notification-toast notification-${type}`;
+        toast.innerHTML = `
+          <span class="notification-icon">${icons[type]}</span>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" type="button">✕</button>
+        `;
+        container.appendChild(toast);
+        toast
+          .querySelector(".notification-close")
+          .addEventListener("click", () => {
+            toast.classList.add("removing");
+            setTimeout(() => toast.remove(), 300);
+          });
+        if (duration > 0) {
+          setTimeout(() => {
+            if (toast.parentElement) {
+              toast.classList.add("removing");
+              setTimeout(() => toast.remove(), 300);
+            }
+          }, duration);
+        }
+        return toast;
+      };
+
+      // Mapeia o tipo português (usado no JS atual) para o padrão inglês
+      function mostrarToast(tipo, titulo, mensagem, duracao = 4000) {
+        const mapa = {
+          sucesso: "success",
+          erro: "error",
+          aviso: "warning",
+          info: "info",
+        };
+        return window.showNotification(
+          mapa[tipo] || "info",
+          titulo,
+          mensagem,
+          duracao,
+        );
+      }
+
+      function formatarData(data) {
+        if (!data) return "-";
+        try {
+          const d = new Date(data);
+          return d.toLocaleDateString("pt-BR");
+        } catch {
+          return data;
+        }
+      }
+
+      function mostrarLoading(show) {
+        const container = document.getElementById("loadingContainer");
+        if (container) {
+          container.style.display = show ? "flex" : "none";
+        }
+        const content = document.querySelector(".orgaos-content");
+        if (content) {
+          content.style.display = show ? "none" : "block";
+        }
+      }
+
+      function iniciais(nome) {
+        if (!nome) return "?";
+        const p = nome.trim().split(/\s+/);
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+      }
+
+      function setTexto(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+      }
+
+      // ============================================
+      // SIDEBAR TOGGLE (mobile)
+      // ============================================
+      window.toggleSidebar = function () {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) sidebar.classList.toggle("aberta");
+      };
+
+      // Fecha a sidebar ao clicar em um link (mobile)
+      (function bindSidebarLinks() {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) {
+          sidebar.querySelectorAll("a").forEach((a) => {
+            a.addEventListener("click", () =>
+              sidebar.classList.remove("aberta"),
+            );
+          });
+        }
+      })();
+
+      // ============================================
+      // AUTENTICAÇÃO
+      // ============================================
+      async function verificarAutenticacao() {
+        try {
+          const session = await auth.verificarSessao();
+          if (!session) {
+            window.location.href = "../index.html";
+            return false;
+          }
+
+          const usuario = await auth.obterUsuarioAtual();
+          if (!usuario) {
+            window.location.href = "../index.html";
+            return false;
+          }
+
+          // Verificar se é ADMIN
+          if (usuario.perfil !== "ADMIN") {
+            mostrarToast(
+              "erro",
+              "Acesso negado",
+              "Apenas administradores podem acessar esta área.",
+            );
+            setTimeout(() => {
+              window.location.href = "../intranet.html";
+            }, 2000);
+            return false;
+          }
+
+          usuarioAtual = usuario;
+          return true;
+        } catch (error) {
+          console.error("Erro ao verificar autenticação:", error);
+          window.location.href = "../index.html";
+          return false;
+        }
+      }
+
+      // ============================================
+      // ATUALIZAR INTERFACE DO USUÁRIO
+      // ============================================
+      function atualizarInterfaceUsuario() {
+        if (!usuarioAtual) return;
+
+        setTexto("topbarNome", usuarioAtual.nome || "Usuário");
+        setTexto(
+          "topbarData",
+          new Date().toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+        );
+
+        const avatar = document.getElementById("avatarIniciais");
+        if (avatar && usuarioAtual.nome) {
+          avatar.textContent = iniciais(usuarioAtual.nome);
+        }
+      }
+
+      // ============================================
+      // CARREGAR DADOS
+      // ============================================
+      async function carregarOrgaos() {
+        try {
+          mostrarLoading(true);
+
+          const options = {};
+
+          if (filtros.status === "ativo") {
+            options.onlyActive = true;
+          }
+
+          if (filtros.busca) {
+            options.search = filtros.busca;
+          }
+
+          orgaos = await OrgaosService.listar(options);
+
+          // Se for inativo, filtrar manualmente
+          if (filtros.status === "inativo") {
+            orgaos = orgaos.filter((o) => o.ativo === false);
+          }
+
+          // Ordenar por nome
+          orgaos.sort((a, b) => a.nome.localeCompare(b.nome));
+
+          renderizarOrgaos();
+        } catch (error) {
+          console.error("Erro ao carregar órgãos:", error);
+          mostrarToast("erro", "Erro", "Não foi possível carregar os órgãos.");
+        } finally {
+          mostrarLoading(false);
+        }
+      }
+
+      // ============================================
+      // RENDERIZAR
+      // ============================================
+      function renderizarOrgaos() {
+        const container = document.getElementById("pageContent");
+        if (!container) return;
+
+        const totalPaginas = Math.ceil(orgaos.length / itensPorPagina) || 1;
+        if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+
+        const inicio = (paginaAtual - 1) * itensPorPagina;
+        const paginaOrgaos = orgaos.slice(inicio, inicio + itensPorPagina);
+
+        container.innerHTML = `
+                <div class="orgaos-content">
+                    <div class="page-header">
+                        <h1><i class="fas fa-building"></i> Órgãos</h1>
+                        <button class="btn btn-primary" id="btnNovoOrgao" type="button">
+                            <i class="fas fa-plus-circle"></i> Novo Órgão
+                        </button>
+                    </div>
+
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label><i class="fas fa-filter"></i> Status</label>
+                            <select id="filtroStatus" aria-label="filtroStatus">
+                                <option value="todos" ${filtros.status === "todos" ? "selected" : ""}>Todos</option>
+                                <option value="ativo" ${filtros.status === "ativo" ? "selected" : ""}>Ativos</option>
+                                <option value="inativo" ${filtros.status === "inativo" ? "selected" : ""}>Inativos</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-search"></i> Buscar</label>
+                            <input type="text" id="filtroBusca" placeholder="Nome ou sigla..." value="${filtros.busca || ""}" / aria-label="Nome ou sigla...">
+                        </div>
+                        <button class="btn btn-secondary" id="btnLimparFiltros" type="button">
+                            <i class="fas fa-undo-alt"></i> Limpar
+                        </button>
+                        <button class="btn btn-primary" id="btnAplicarFiltros" type="button">
+                            <i class="fas fa-search"></i> Aplicar
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-container">
+                            ${renderizarTabela(paginaOrgaos)}
+                        </div>
+                        ${
+                          orgaos.length > itensPorPagina
+                            ? `
+                            <div class="pagination">
+                                <button class="btn-page" id="btnPagAnterior" ${paginaAtual <= 1 ? "disabled" : ""} type="button">
+                                    <i class="fas fa-chevron-left"></i> Anterior
+                                </button>
+                                <span class="page-info">Página ${paginaAtual} de ${totalPaginas}</span>
+                                <button class="btn-page" id="btnPagProximo" ${paginaAtual >= totalPaginas ? "disabled" : ""} type="button">
+                                    Próximo <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        `
+                            : ""
+                        }
+                    </div>
+
+                    <div class="stats-footer">
+                        <span><i class="fas fa-building"></i> Total: <strong>${orgaos.length}</strong> órgãos</span>
+                        <span><i class="fas fa-check-circle"></i> Ativos: <strong>${orgaos.filter((o) => o.ativo).length}</strong></span>
+                        <span><i class="fas fa-times-circle"></i> Inativos: <strong>${orgaos.filter((o) => !o.ativo).length}</strong></span>
+                        <span><i class="fas fa-users"></i> Com gestor: <strong>${orgaos.filter((o) => o.gestor_atual).length}</strong></span>
+                    </div>
+                </div>
+            `;
+
+        // Configurar eventos da página
+        configurarEventosPagina();
+      }
+
+      // ============================================
+      // RENDERIZAR TABELA
+      // ============================================
+      function renderizarTabela(orgaosList) {
+        if (!orgaosList || orgaosList.length === 0) {
+          return `
+                    <div class="lista-vazia">
+                        <i class="fas fa-building"></i>
+                        <p>Nenhum órgão cadastrado.</p>
+                        <button class="btn btn-primary btn-sm" onclick="document.getElementById('btnNovoOrgao').click()" type="button">
+                            <i class="fas fa-plus-circle"></i> Cadastrar primeiro órgão
+                        </button>
+                    </div>
+                `;
+        }
+
+        return `
+                <table class="table" id="tabelaOrgaos" aria-label="Tabela de dados">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Sigla</th>
+                            <th>CNPJ</th>
+                            <th>Gestor Atual</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orgaosList
+                          .map((o, index) => {
+                            const num =
+                              (paginaAtual - 1) * itensPorPagina + index + 1;
+                            return `
+                                <tr>
+                                    <td>${num}</td>
+                                    <td><strong>${o.nome}</strong></td>
+                                    <td><span class="badge badge-sigla">${o.sigla || "-"}</span></td>
+                                    <td>${o.cnpj || "-"}</td>
+                                    <td>${o.gestor_atual || "-"}</td>
+                                    <td>
+                                        <span class="status-badge ${o.ativo ? "status-ativo" : "status-inativo"}">
+                                            ${o.ativo ? "Ativo" : "Inativo"}
+                                        </span>
+                                    </td>
+                                    <td class="acoes-cell">
+                                        <button class="btn btn-sm btn-outline" onclick="editarOrgao(${o.id})" title="Editar" type="button">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline" onclick="gerenciarGestores(${o.id})" title="Gestores" type="button">
+                                            <i class="fas fa-users"></i>
+                                        </button>
+                                        ${
+                                          o.ativo
+                                            ? `<button class="btn btn-sm btn-danger" onclick="desativarOrgao(${o.id})" title="Desativar" type="button">
+                                                <i class="fas fa-times-circle"></i>
+                                               </button>`
+                                            : `<button class="btn btn-sm btn-success" onclick="ativarOrgao(${o.id})" title="Ativar" type="button">
+                                                <i class="fas fa-check-circle"></i>
+                                               </button>`
+                                        }
+                                        <button class="btn btn-sm btn-danger" onclick="excluirOrgao(${o.id})" title="Excluir" type="button">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                          })
+                          .join("")}
+                    </tbody>
+                </table>
+            `;
+      }
+
+      // ============================================
+      // CONFIGURAR EVENTOS DA PÁGINA
+      // ============================================
+      function configurarEventosPagina() {
+        // Botão novo órgão
+        document
+          .getElementById("btnNovoOrgao")
+          ?.addEventListener("click", () => {
+            abrirModalOrgao();
+          });
+
+        // Botão aplicar filtros
+        document
+          .getElementById("btnAplicarFiltros")
+          ?.addEventListener("click", () => {
+            aplicarFiltros();
+          });
+
+        // Botão limpar filtros
+        document
+          .getElementById("btnLimparFiltros")
+          ?.addEventListener("click", () => {
+            limparFiltros();
+          });
+
+        // Filtro status
+        document
+          .getElementById("filtroStatus")
+          ?.addEventListener("change", () => {
+            aplicarFiltros();
+          });
+
+        // Filtro busca com Enter
+        document
+          .getElementById("filtroBusca")
+          ?.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+              aplicarFiltros();
+            }
+          });
+
+        // Paginação
+        document
+          .getElementById("btnPagAnterior")
+          ?.addEventListener("click", () => {
+            if (paginaAtual > 1) {
+              paginaAtual--;
+              renderizarOrgaos();
+            }
+          });
+
+        document
+          .getElementById("btnPagProximo")
+          ?.addEventListener("click", () => {
+            const totalPaginas = Math.ceil(orgaos.length / itensPorPagina);
+            if (paginaAtual < totalPaginas) {
+              paginaAtual++;
+              renderizarOrgaos();
+            }
+          });
+      }
+
+      // ============================================
+      // FILTROS
+      // ============================================
+      function aplicarFiltros() {
+        filtros.status =
+          document.getElementById("filtroStatus")?.value || "todos";
+        filtros.busca = document.getElementById("filtroBusca")?.value || "";
+        paginaAtual = 1;
+        carregarOrgaos();
+      }
+
+      function limparFiltros() {
+        const statusSelect = document.getElementById("filtroStatus");
+        const buscaInput = document.getElementById("filtroBusca");
+
+        if (statusSelect) statusSelect.value = "todos";
+        if (buscaInput) buscaInput.value = "";
+
+        filtros = { status: "todos", busca: "" };
+        paginaAtual = 1;
+        carregarOrgaos();
+      }
+
+      // ============================================
+      // MODAL DE ÓRGÃO
+      // ============================================
+      function abrirModalOrgao(id = null) {
+        const isEdit = !!id;
+        const orgao = isEdit ? orgaos.find((o) => o.id === id) : null;
+
+        // Carregar sugestões de gestores
+        carregarSugestoesGestores();
+
+        const modal = document.createElement("div");
+        modal.className = "modal-overlay";
+        modal.id = "modalOrgao";
+        modal.innerHTML = `
+                <div class="modal-container modal-md">
+                    <div class="modal-header">
+                        <h2><i class="fas ${isEdit ? "fa-edit" : "fa-plus-circle"}"></i> ${isEdit ? "Editar" : "Novo"} Órgão</h2>
+                        <button class="modal-close" onclick="fecharModal('modalOrgao')" title="Fechar" type="button">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formOrgao" novalidate>
+                            <input type="hidden" id="orgaoId" value="${id || ""}">
+
+                            <div class="form-group">
+                                <label class="required">Nome do Órgão</label>
+                                <input type="text" id="orgaoNome" class="form-input"
+                                    value="${orgao?.nome || ""}" placeholder="Ex: Secretaria Municipal de Saúde" required aria-label="Ex: Secretaria Municipal de Saúde">
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label>Sigla</label>
+                                    <input type="text" id="orgaoSigla" class="form-input"
+                                        value="${orgao?.sigla || ""}" placeholder="Ex: SEMAS" aria-label="Ex: SEMAS">
+                                    <span class="form-text">A sigla será convertida para maiúsculas automaticamente.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>CNPJ</label>
+                                    <input type="text" id="orgaoCnpj" class="form-input"
+                                        value="${orgao?.cnpj || ""}" placeholder="00.000.000/0001-00" aria-label="00.000.000/0001 00">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Endereço</label>
+                                <input type="text" id="orgaoEndereco" class="form-input"
+                                    value="${orgao?.endereco || ""}" placeholder="Endereço completo" aria-label="Endereço completo">
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label>Telefone</label>
+                                    <input type="text" id="orgaoTelefone" class="form-input"
+                                        value="${orgao?.telefone || ""}" placeholder="(00) 0000-0000" aria-label="(00) 0000 0000">
+                                </div>
+                                <div class="form-group">
+                                    <label>E-mail</label>
+                                    <input type="email" id="orgaoEmail" class="form-input"
+                                        value="${orgao?.email || ""}" placeholder="contato@orgao.gov.br" aria-label="contato@orgao.gov.br">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Tipo</label>
+                                <select id="orgaoTipo" class="form-input" aria-label="orgaoTipo">
+                                    <option value="SECRETARIA" ${orgao?.tipo === "SECRETARIA" ? "selected" : ""}>Secretaria</option>
+                                    <option value="PREFEITURA" ${orgao?.tipo === "PREFEITURA" ? "selected" : ""}>Prefeitura</option>
+                                    <option value="CAMARA" ${orgao?.tipo === "CAMARA" ? "selected" : ""}>Câmara</option>
+                                    <option value="SAAE" ${orgao?.tipo === "SAAE" ? "selected" : ""}>SAAE</option>
+                                    <option value="AUTARQUIA" ${orgao?.tipo === "AUTARQUIA" ? "selected" : ""}>Autarquia</option>
+                                    <option value="FUNDACAO" ${orgao?.tipo === "FUNDACAO" ? "selected" : ""}>Fundação</option>
+                                    <option value="OUTROS" ${orgao?.tipo === "OUTROS" ? "selected" : ""}>Outros</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Gestor Atual</label>
+                                <input type="text" id="orgaoGestor" class="form-input"
+                                    value="${orgao?.gestor_atual || ""}" placeholder="Nome do gestor atual" list="listaGestores" aria-label="Nome do gestor atual">
+                                <datalist id="listaGestores"></datalist>
+                                <span class="form-text">Digite o nome do gestor ou selecione da lista de sugestões.</span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="fecharModal('modalOrgao')" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button class="btn btn-primary" id="btnSalvarOrgao" type="button">
+                            <i class="fas fa-save"></i> ${isEdit ? "Atualizar" : "Salvar"}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+        document.body.appendChild(modal);
+
+        // Carregar sugestões de gestores
+        carregarSugestoesGestores();
+
+        // Evento do botão salvar
+        document
+          .getElementById("btnSalvarOrgao")
+          .addEventListener("click", () => {
+            salvarOrgao(id);
+          });
+
+        // Fechar modal ao clicar fora
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            fecharModal("modalOrgao");
+          }
+        });
+
+        // Focar no primeiro campo
+        setTimeout(() => {
+          document.getElementById("orgaoNome")?.focus();
+        }, 100);
+      }
+
+      // ============================================
+      // CARREGAR SUGESTÕES DE GESTORES
+      // ============================================
+      async function carregarSugestoesGestores() {
+        try {
+          const nomes = await OrgaosService.listarNomesGestores();
+          const datalist = document.getElementById("listaGestores");
+          if (datalist && nomes.length > 0) {
+            datalist.innerHTML = nomes
+              .slice(0, 50)
+              .map((n) => `<option value="${n.replace(/"/g, "&quot;")}">`)
+              .join("");
+          }
+        } catch (error) {
+          console.warn("Erro ao carregar sugestões de gestores:", error);
+        }
+      }
+
+      // ============================================
+      // SALVAR ÓRGÃO
+      // ============================================
+      async function salvarOrgao(id) {
+        const nomeInput = document.getElementById("orgaoNome");
+        const nome = nomeInput?.value?.trim();
+
+        if (!nome) {
+          mostrarToast(
+            "aviso",
+            "Campo obrigatório",
+            "Informe o nome do órgão.",
+          );
+          if (nomeInput) {
+            nomeInput.focus();
+            nomeInput.classList.add("error");
+            setTimeout(() => nomeInput.classList.remove("error"), 3000);
+          }
+          return;
+        }
+
+        const dados = {
+          nome: nome,
+          sigla:
+            document
+              .getElementById("orgaoSigla")
+              ?.value?.trim()
+              ?.toUpperCase() || null,
+          cnpj: document.getElementById("orgaoCnpj")?.value?.trim() || null,
+          endereco:
+            document.getElementById("orgaoEndereco")?.value?.trim() || null,
+          telefone:
+            document.getElementById("orgaoTelefone")?.value?.trim() || null,
+          email: document.getElementById("orgaoEmail")?.value?.trim() || null,
+          tipo: document.getElementById("orgaoTipo")?.value || "SECRETARIA",
+          gestor_atual:
+            document.getElementById("orgaoGestor")?.value?.trim() || null,
+        };
+
+        try {
+          mostrarLoading(true);
+
+          let resultado;
+          if (id) {
+            const orgaoExistente = orgaos.find((o) => o.id === id);
+            if (!orgaoExistente) {
+              throw new Error("Órgão não encontrado.");
+            }
+            resultado = await OrgaosService.atualizar(id, dados);
+            mostrarToast(
+              "sucesso",
+              "Atualizado",
+              `Órgão "${dados.nome}" atualizado com sucesso!`,
+            );
+          } else {
+            resultado = await OrgaosService.criar(dados);
+            mostrarToast(
+              "sucesso",
+              "Criado",
+              `Órgão "${dados.nome}" criado com sucesso!`,
+            );
+          }
+
+          fecharModal("modalOrgao");
+          await carregarOrgaos();
+        } catch (error) {
+          console.error("Erro ao salvar órgão:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível salvar o órgão.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      }
+
+      // ============================================
+      // AÇÕES DO ÓRGÃO
+      // ============================================
+      window.editarOrgao = function (id) {
+        abrirModalOrgao(id);
+      };
+
+      window.desativarOrgao = async function (id) {
+        const orgao = orgaos.find((o) => o.id === id);
+        if (!orgao) return;
+
+        const confirmado = await showConfirm(
+          "Desativar órgão",
+          `Tem certeza que deseja desativar o órgão "${orgao.nome}"?\n\nOs usuários vinculados continuarão ativos, mas não poderão ser associados a novos processos.`,
+          "⚠️",
+        );
+        if (!confirmado) return;
+
+        try {
+          mostrarLoading(true);
+          await OrgaosService.desativar(id);
+          mostrarToast(
+            "sucesso",
+            "Desativado",
+            `Órgão "${orgao.nome}" desativado com sucesso.`,
+          );
+          await carregarOrgaos();
+        } catch (error) {
+          console.error("Erro ao desativar órgão:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível desativar o órgão.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      window.ativarOrgao = async function (id) {
+        const orgao = orgaos.find((o) => o.id === id);
+        if (!orgao) return;
+
+        try {
+          mostrarLoading(true);
+          await OrgaosService.ativar(id);
+          mostrarToast(
+            "sucesso",
+            "Ativado",
+            `Órgão "${orgao.nome}" ativado com sucesso.`,
+          );
+          await carregarOrgaos();
+        } catch (error) {
+          console.error("Erro ao ativar órgão:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível ativar o órgão.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      window.excluirOrgao = async function (id) {
+        const orgao = orgaos.find((o) => o.id === id);
+        if (!orgao) return;
+
+        try {
+          const dependencias = await OrgaosService.verificarDependencias(id);
+          let mensagem = `Tem certeza que deseja excluir "${orgao.nome}"?\n\nEsta ação não pode ser desfeita.`;
+
+          if (dependencias.temUsuarios) {
+            mensagem +=
+              "\n\n⚠️ Este órgão possui usuários vinculados. Eles serão desassociados.";
+          }
+          if (dependencias.temAtos) {
+            mensagem += "\n\n⚠️ Este órgão possui atos oficiais vinculados.";
+          }
+          if (dependencias.temProcessos) {
+            mensagem +=
+              "\n\n⚠️ Este órgão possui processos licitatórios vinculados.";
+          }
+
+          const confirmado = await showConfirm("Excluir órgão", mensagem, "🗑️");
+          if (!confirmado) return;
+
+          mostrarLoading(true);
+          await OrgaosService.excluir(id);
+          mostrarToast(
+            "sucesso",
+            "Excluído",
+            `Órgão "${orgao.nome}" excluído com sucesso.`,
+          );
+          await carregarOrgaos();
+        } catch (error) {
+          console.error("Erro ao excluir órgão:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível excluir o órgão.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      // ============================================
+      // GESTORES
+      // ============================================
+      window.gerenciarGestores = async function (orgaoId) {
+        try {
+          const orgao = orgaos.find((o) => o.id === orgaoId);
+          if (!orgao) return;
+
+          const gestores = await OrgaosService.listarGestores(orgaoId);
+
+          const modal = document.createElement("div");
+          modal.className = "modal-overlay";
+          modal.id = "modalGestores";
+          modal.innerHTML = `
+                    <div class="modal-container modal-md">
+                        <div class="modal-header">
+                            <h2><i class="fas fa-users"></i> Gestores - ${orgao.nome}</h2>
+                            <button class="modal-close" onclick="fecharModal('modalGestores')" title="Fechar" type="button">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                <span><strong>Total:</strong> ${gestores.length} gestor(es)</span>
+                                <button class="btn btn-primary btn-sm" onclick="abrirModalGestor(${orgaoId})" type="button">
+                                    <i class="fas fa-plus-circle"></i> Novo Gestor
+                                </button>
+                            </div>
+                            <div class="table-container">
+                                ${renderizarTabelaGestores(gestores, orgaoId)}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="fecharModal('modalGestores')" type="button">
+                                <i class="fas fa-times"></i> Fechar
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+          document.body.appendChild(modal);
+
+          modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+              fecharModal("modalGestores");
+            }
+          });
+        } catch (error) {
+          console.error("Erro ao carregar gestores:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível carregar os gestores.",
+          );
+        }
+      };
+
+      function renderizarTabelaGestores(gestores, orgaoId) {
+        if (!gestores || gestores.length === 0) {
+          return `
+                    <div class="lista-vazia">
+                        <i class="fas fa-user"></i>
+                        <p>Nenhum gestor cadastrado para este órgão.</p>
+                        <button class="btn btn-primary btn-sm" onclick="abrirModalGestor(${orgaoId})" type="button">
+                            <i class="fas fa-plus-circle"></i> Adicionar primeiro gestor
+                        </button>
+                    </div>
+                `;
+        }
+
+        return `
+                <table class="table table-compacta" aria-label="Tabela de dados">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>Início</th>
+                            <th>Término</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${gestores
+                          .map(
+                            (g) => `
+                            <tr>
+                                <td><strong>${g.nome_responsavel}</strong></td>
+                                <td>${g.cargo_responsavel || "-"}</td>
+                                <td>${formatarData(g.data_inicio)}</td>
+                                <td>
+                                    ${
+                                      g.data_fim
+                                        ? formatarData(g.data_fim)
+                                        : '<span class="status-badge status-ativo">Atual</span>'
+                                    }
+                                </td>
+                                <td class="acoes-cell">
+                                    <button class="btn btn-sm btn-outline" onclick="abrirModalGestor(${orgaoId}, ${g.id})" title="Editar" type="button">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    ${
+                                      !g.data_fim
+                                        ? `<button class="btn btn-sm btn-success" onclick="finalizarGestor(${g.id})" title="Finalizar mandato" type="button">
+                                            <i class="fas fa-check"></i>
+                                           </button>`
+                                        : ""
+                                    }
+                                    <button class="btn btn-sm btn-danger" onclick="excluirGestor(${g.id})" title="Excluir" type="button">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `,
+                          )
+                          .join("")}
+                    </tbody>
+                </table>
+            `;
+      }
+
+      // ============================================
+      // MODAL DE GESTOR
+      // ============================================
+      window.abrirModalGestor = async function (orgaoId, gestorId = null) {
+        const isEdit = !!gestorId;
+        let gestor = null;
+
+        if (isEdit) {
+          const gestores = await OrgaosService.listarGestores(orgaoId);
+          gestor = gestores.find((g) => g.id === gestorId);
+        }
+
+        const modal = document.createElement("div");
+        modal.className = "modal-overlay";
+        modal.id = "modalGestor";
+        modal.innerHTML = `
+                <div class="modal-container modal-sm">
+                    <div class="modal-header">
+                        <h2><i class="fas ${isEdit ? "fa-edit" : "fa-user-plus"}"></i> ${isEdit ? "Editar" : "Novo"} Gestor</h2>
+                        <button class="modal-close" onclick="fecharModal('modalGestor')" title="Fechar" type="button">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formGestor" novalidate>
+                            <input type="hidden" id="gestorId" value="${gestorId || ""}">
+                            <input type="hidden" id="gestorOrgaoId" value="${orgaoId}">
+
+                            <div class="form-group">
+                                <label class="required">Nome do Gestor</label>
+                                <input type="text" id="gestorNome" class="form-input"
+                                    value="${gestor?.nome_responsavel || ""}" placeholder="Nome completo" required aria-label="Nome completo">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Cargo</label>
+                                <input type="text" id="gestorCargo" class="form-input"
+                                    value="${gestor?.cargo_responsavel || ""}" placeholder="Ex: Secretário Municipal" aria-label="Ex: Secretário Municipal">
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label class="required">Data de Início</label>
+                                    <input type="date" id="gestorDataInicio" class="form-input"
+                                        value="${gestor?.data_inicio || ""}" required aria-label="gestorDataInicio">
+                                </div>
+                                <div class="form-group">
+                                    <label>Data de Término</label>
+                                    <input type="date" id="gestorDataFim" class="form-input"
+                                        value="${gestor?.data_fim || ""}" aria-label="gestorDataFim">
+                                    <span class="form-text">Deixe em branco para gestão atual.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Observação</label>
+                                <textarea id="gestorObservacao" class="form-input" rows="2"
+                                    placeholder="Observações sobre o mandato..." aria-label="Observações sobre o mandato...">${gestor?.observacao || ""}</textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="fecharModal('modalGestor')" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button class="btn btn-primary" id="btnSalvarGestor" type="button">
+                            <i class="fas fa-save"></i> ${isEdit ? "Atualizar" : "Salvar"}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+        document.body.appendChild(modal);
+
+        document
+          .getElementById("btnSalvarGestor")
+          .addEventListener("click", () => {
+            salvarGestor(orgaoId, gestorId);
+          });
+
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            fecharModal("modalGestor");
+          }
+        });
+
+        setTimeout(() => {
+          document.getElementById("gestorNome")?.focus();
+        }, 100);
+      };
+
+      // ============================================
+      // SALVAR GESTOR
+      // ============================================
+      async function salvarGestor(orgaoId, gestorId) {
+        const nomeInput = document.getElementById("gestorNome");
+        const nome = nomeInput?.value?.trim();
+        const dataInicio = document.getElementById("gestorDataInicio")?.value;
+
+        if (!nome) {
+          mostrarToast(
+            "aviso",
+            "Campo obrigatório",
+            "Informe o nome do gestor.",
+          );
+          if (nomeInput) {
+            nomeInput.focus();
+            nomeInput.classList.add("error");
+            setTimeout(() => nomeInput.classList.remove("error"), 3000);
+          }
+          return;
+        }
+
+        if (!dataInicio) {
+          mostrarToast(
+            "aviso",
+            "Campo obrigatório",
+            "Informe a data de início.",
+          );
+          document.getElementById("gestorDataInicio")?.focus();
+          return;
+        }
+
+        const dados = {
+          orgao_id: orgaoId,
+          nome_responsavel: nome,
+          cargo_responsavel:
+            document.getElementById("gestorCargo")?.value?.trim() || null,
+          data_inicio: dataInicio,
+          data_fim: document.getElementById("gestorDataFim")?.value || null,
+          observacao:
+            document.getElementById("gestorObservacao")?.value?.trim() || null,
+        };
+
+        try {
+          mostrarLoading(true);
+
+          if (gestorId) {
+            await OrgaosService.atualizarGestor(gestorId, dados);
+            mostrarToast(
+              "sucesso",
+              "Atualizado",
+              "Gestor atualizado com sucesso!",
+            );
+          } else {
+            await OrgaosService.criarGestor(dados);
+            mostrarToast("sucesso", "Criado", "Gestor criado com sucesso!");
+          }
+
+          fecharModal("modalGestor");
+
+          const modalGestores = document.getElementById("modalGestores");
+          if (modalGestores) {
+            modalGestores.remove();
+            gerenciarGestores(orgaoId);
+          }
+        } catch (error) {
+          console.error("Erro ao salvar gestor:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível salvar o gestor.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      }
+
+      // ============================================
+      // AÇÕES DO GESTOR
+      // ============================================
+      window.finalizarGestor = async function (id) {
+        const confirmado = await showConfirm(
+          "Finalizar mandato",
+          'Tem certeza que deseja finalizar o mandato deste gestor?\n\nO gestor será marcado como "anterior" e um novo gestor poderá ser cadastrado.',
+          "⚠️",
+        );
+        if (!confirmado) return;
+
+        try {
+          mostrarLoading(true);
+          await OrgaosService.finalizarGestor(id);
+          mostrarToast(
+            "sucesso",
+            "Finalizado",
+            "Mandato finalizado com sucesso.",
+          );
+
+          const modal = document.getElementById("modalGestores");
+          if (modal) {
+            const orgaoId = document.getElementById("gestorOrgaoId")?.value;
+            if (orgaoId) {
+              modal.remove();
+              gerenciarGestores(parseInt(orgaoId));
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao finalizar gestor:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível finalizar o mandato.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      window.excluirGestor = async function (id) {
+        const confirmado = await showConfirm(
+          "Excluir gestor",
+          "Tem certeza que deseja excluir este gestor?\n\nEsta ação não pode ser desfeita.",
+          "🗑️",
+        );
+        if (!confirmado) return;
+
+        try {
+          mostrarLoading(true);
+          await OrgaosService.excluirGestor(id);
+          mostrarToast("sucesso", "Excluído", "Gestor excluído com sucesso.");
+
+          const modal = document.getElementById("modalGestores");
+          if (modal) {
+            const orgaoId = document.getElementById("gestorOrgaoId")?.value;
+            if (orgaoId) {
+              modal.remove();
+              gerenciarGestores(parseInt(orgaoId));
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao excluir gestor:", error);
+          mostrarToast(
+            "erro",
+            "Erro",
+            error.message || "Não foi possível excluir o gestor.",
+          );
+        } finally {
+          mostrarLoading(false);
+        }
+      };
+
+      // ============================================
+      // FECHAR MODAL
+      // ============================================
+      window.fecharModal = function (id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+          modal.remove();
+        }
+      };
+
+      // ============================================
+      // MODAL DE CONFIRMAÇÃO
+      // ============================================
+      function showConfirm(title, message, icon = "⚠️") {
+        return new Promise((resolve) => {
+          const modal = document.getElementById("confirmModal");
+          const confirmIcon = document.getElementById("confirmIcon");
+          const confirmTitle = document.getElementById("confirmTitle");
+          const confirmMessage = document.getElementById("confirmMessage");
+          const confirmOkBtn = document.getElementById("confirmOkBtn");
+          const confirmCancelBtn = document.getElementById("confirmCancelBtn");
+
+          if (!modal) {
+            resolve(confirm(`${icon} ${title}\n\n${message}`));
+            return;
+          }
+
+          confirmIcon.textContent = icon;
+          confirmTitle.textContent = title;
+          confirmMessage.textContent = message;
+
+          modal.style.display = "flex";
+
+          function cleanup() {
+            modal.style.display = "none";
+            confirmOkBtn.removeEventListener("click", handleConfirm);
+            confirmCancelBtn.removeEventListener("click", handleCancel);
+            modal.removeEventListener("click", handleClickOutside);
+          }
+
+          function handleConfirm() {
+            cleanup();
+            resolve(true);
+          }
+
+          function handleCancel() {
+            cleanup();
+            resolve(false);
+          }
+
+          function handleClickOutside(e) {
+            if (e.target === modal) {
+              cleanup();
+              resolve(false);
+            }
+          }
+
+          confirmOkBtn.addEventListener("click", handleConfirm);
+          confirmCancelBtn.addEventListener("click", handleCancel);
+          modal.addEventListener("click", handleClickOutside);
+        });
+      }
+
+      // ============================================
+      // LOGOUT
+      // ============================================
+      document.getElementById("btnSair").addEventListener("click", async () => {
+        const confirmado = await showConfirm(
+          "Sair do sistema",
+          "Tem certeza que deseja sair?",
+          "🔓",
+        );
+        if (confirmado) {
+          await auth.logout();
+          window.location.href = "../index.html";
+        }
+      });
+
+      // ============================================
+      // INICIALIZAÇÃO
+      // ============================================
+      async function init() {
+        const autenticado = await verificarAutenticacao();
+        if (!autenticado) return;
+
+        atualizarInterfaceUsuario();
+        await carregarOrgaos();
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            const modals = document.querySelectorAll(".modal-overlay");
+            modals.forEach((modal) => {
+              if (modal.style.display !== "none") {
+                modal.style.display = "none";
+                // Se for modal dinâmico (não o confirmModal), remove
+                if (modal.id !== "confirmModal") {
+                  modal.remove();
+                }
+              }
+            });
+          }
+        });
+      }
+
+      // ============================================
+      // EXPOR FUNÇÕES GLOBAIS
+      // ============================================
+      window.mostrarToast = mostrarToast;
+      window.formatarData = formatarData;
+      window.showConfirm = showConfirm;
+      window.fecharModal = fecharModal;
+      window.abrirModalGestor = abrirModalGestor;
+      window.finalizarGestor = finalizarGestor;
+      window.excluirGestor = excluirGestor;
+      window.gerenciarGestores = gerenciarGestores;
+      window.editarOrgao = editarOrgao;
+      window.desativarOrgao = desativarOrgao;
+      window.ativarOrgao = ativarOrgao;
+      window.excluirOrgao = excluirOrgao;
+      window.abrirModalOrgao = abrirModalOrgao;
+
+export async function initializeAdminView() { return await init(); }

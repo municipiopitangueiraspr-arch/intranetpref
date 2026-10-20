@@ -68,9 +68,26 @@
 // ============================================================
 
 import { supabase } from "../supabase.js";
+import { getAnalyticAtaIds, isGlobalProfile } from "../../../shared/js/ata-scope.js";
 import { drawMunicipalPdfHeader, loadMunicipalCrestDataUrl } from "../../../shared/js/report-branding.js";
 
 export class Relatorios {
+  async obterEscopoAnaliticoAtas() {
+    const usuario = this.sistema.usuarioAtual;
+    try {
+      if (typeof this.sistema.consulta?.obterEscopoAnaliticoAtas === "function") {
+        return await this.sistema.consulta.obterEscopoAnaliticoAtas();
+      }
+      return await getAnalyticAtaIds(supabase, usuario);
+    } catch (error) {
+      console.warn("Escopo analítico indisponível; relatório restrito a carteira vazia:", error);
+      return isGlobalProfile(usuario) ? null : [];
+    }
+  }
+  async aplicarEscopoAta(query, colunaAta = "ata_id") {
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
+    return escopoIds === null ? query : query.in(colunaAta, escopoIds.length ? escopoIds : [-1]);
+  }
   constructor(sistema) {
     this.sistema = sistema;
 
@@ -140,6 +157,8 @@ export class Relatorios {
       // ----------------------------------------------------------
       // GRUPO · VISÃO GERAL
       // ----------------------------------------------------------
+      { id: "atas_vigentes", titulo: "Atas Vigentes", descricao: "Relação consolidada das atas ativas, com contratado, consumido e saldo.", icone: "fa-file-contract", tipo: "snapshot", grupo: "visao_geral" },
+      { id: "contratado_consumido_saldo", titulo: "Contratado x Consumido x Saldo", descricao: "Comparativo financeiro consolidado por ata.", icone: "fa-scale-balanced", tipo: "snapshot", grupo: "visao_geral" },
       {
         id: "atas_vencendo",
         titulo: "Atas Vencendo em X Dias",
@@ -207,6 +226,8 @@ export class Relatorios {
         tipo: "periodo",
         grupo: "consumo",
       },
+      { id: "saldos_por_item", titulo: "Saldos por Item", descricao: "Quantidade contratada, consumida e saldo atual por item.", icone: "fa-cubes", tipo: "snapshot", grupo: "consumo" },
+      { id: "itens_saldo_critico", titulo: "Itens com Saldo Crítico", descricao: "Itens com saldo abaixo do limite de segurança.", icone: "fa-triangle-exclamation", tipo: "snapshot", grupo: "consumo" },
       {
         id: "consumo_por_item",
         titulo: "Consumo por Item (Analítico)",
@@ -323,6 +344,7 @@ export class Relatorios {
       // ----------------------------------------------------------
       // GRUPO · FORNECEDORES
       // ----------------------------------------------------------
+      { id: "consumo_por_fornecedor", titulo: "Consumo por Fornecedor", descricao: "Valor consumido e quantidade de atas por fornecedor.", icone: "fa-truck", tipo: "snapshot", grupo: "fornecedores" },
       {
         id: "ranking_fornecedores",
         titulo: "Ranking de Fornecedores",
@@ -354,6 +376,7 @@ export class Relatorios {
       // ----------------------------------------------------------
       // GRUPO · AUDITORIA
       // ----------------------------------------------------------
+      { id: "aditivos", titulo: "Aditivos", descricao: "Aditivos registrados, situação de aplicação e impacto nas atas.", icone: "fa-file-pen", tipo: "snapshot", grupo: "auditoria" },
       {
         id: "historico_alteracoes",
         titulo: "Histórico de Alterações",
@@ -449,11 +472,11 @@ export class Relatorios {
       } catch (err) {
         console.error("[Relatorios] Erro ao carregar template:", err);
         container.innerHTML = `
-          <div class="relatorios-empty" data-intranet-style="e167651f3657">
+          <div class="relatorios-empty">
             <i class="fas fa-exclamation-triangle"></i>
             <h4>Não foi possível carregar os relatórios</h4>
             <p>${this._escapeHtml(err.message || "Erro desconhecido.")}</p>
-            <p data-intranet-style="1e2f55eef270">
+            <p>
               Verifique se <code>templates/relatorios.html</code> existe e
               se o servidor está rodando.
             </p>
@@ -858,6 +881,12 @@ export class Relatorios {
     try {
       switch (id) {
         // -------- Visão Geral --------
+        case "atas_vigentes":
+          await this._relSaldoConsolidadoAta(meta);
+          break;
+        case "contratado_consumido_saldo":
+          await this._relSaldoConsolidadoAta(meta);
+          break;
         case "atas_vencendo":
           await this._relAtasVencendo(meta);
           break;
@@ -878,6 +907,12 @@ export class Relatorios {
           break;
         case "curva_abc_itens":
           await this._relCurvaAbcItens(meta);
+          break;
+        case "saldos_por_item":
+          await this._relConsumoPorItem(meta);
+          break;
+        case "itens_saldo_critico":
+          await this._relDivergenciasSaldo(meta);
           break;
         case "consumo_por_item":
           await this._relConsumoPorItem(meta);
@@ -922,6 +957,9 @@ export class Relatorios {
           break;
 
         // -------- Fornecedores --------
+        case "consumo_por_fornecedor":
+          await this._relRankingFornecedores(meta);
+          break;
         case "ranking_fornecedores":
           await this._relRankingFornecedores(meta);
           break;
@@ -933,6 +971,9 @@ export class Relatorios {
           break;
 
         // -------- Auditoria --------
+        case "aditivos":
+          await this._relAditivos(meta);
+          break;
         case "historico_alteracoes":
           await this._relHistoricoAlteracoes(meta);
           break;
@@ -1135,11 +1176,11 @@ export class Relatorios {
 
     if (meta.tipo === "snapshot") {
       html += `
-        <div class="filtro-grupo" data-intranet-style="ef8d2f055580">
+        <div class="filtro-grupo">
           <label class="filtro-label">
             <i class="fas fa-info-circle"></i> Info
           </label>
-          <div data-intranet-style="53b0b46a52c7">
+          <div>
             Este relatório é um <strong>snapshot atual</strong> — não usa filtro de data.
             Clique em <strong>Atualizar</strong> para recalcular.
           </div>
@@ -1550,7 +1591,7 @@ export class Relatorios {
     const limite = new Date(hoje);
     limite.setDate(limite.getDate() + dias);
 
-    const { data: atas, error } = await supabase
+    let atasQuery = supabase
       .from("atas")
       .select(
         `
@@ -1568,6 +1609,8 @@ export class Relatorios {
       .lte("data_fim_vigencia", this._toISODate(limite))
       .in("situacao", ["ATIVA", "PROXIMA"])
       .order("data_fim_vigencia", { ascending: true });
+    atasQuery = await this.aplicarEscopoAta(atasQuery, "id");
+    const { data: atas, error } = await atasQuery;
 
     if (error) throw error;
 
@@ -1718,13 +1761,14 @@ export class Relatorios {
 
   // ============================================================
   // ============================================================
-  // RELATÓRIO 02 · EXECUÇÃO POR ATA
+  // RELATÓRIO 02 · UTILIZAÇÃO POR ATA
   // ============================================================
   // ============================================================
   async _relExecucaoPorAta(meta) {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
 
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
     let atasQuery = supabase.from("atas").select(
       `
         id,
@@ -1741,6 +1785,7 @@ export class Relatorios {
     if (inicio) atasQuery = atasQuery.gte("data_inicio_vigencia", inicio);
     if (fim) atasQuery = atasQuery.lte("data_inicio_vigencia", fim);
 
+    if (escopoIds !== null) atasQuery = atasQuery.in("id", escopoIds.length ? escopoIds : [-1]);
     const { data: atas, error: atasErr } = await atasQuery;
     if (atasErr) throw atasErr;
 
@@ -1753,22 +1798,15 @@ export class Relatorios {
       return;
     }
 
-    const [itensRes, consumosRes] = await Promise.all([
-      supabase
-        .from("itens_ata")
-        .select("ata_id, valor_total")
-        .in("ata_id", atasIds),
+    const [, consumosRes] = await Promise.all([
+      Promise.resolve({ data: [] }),
       supabase
         .from("consumos")
         .select("ata_id, valor_total")
         .in("ata_id", atasIds),
     ]);
 
-    const contratadoPorAta = {};
-    (itensRes.data || []).forEach((i) => {
-      contratadoPorAta[i.ata_id] =
-        (contratadoPorAta[i.ata_id] || 0) + (i.valor_total || 0);
-    });
+    const contratadoPorAta = Object.fromEntries((atas || []).map((a) => [a.id, Number(a.valor_global || 0)]));
 
     const consumidoPorAta = {};
     (consumosRes.data || []).forEach((c) => {
@@ -1825,7 +1863,7 @@ export class Relatorios {
       },
       {
         key: "percentual_execucao",
-        label: "% Execução",
+        label: "% Utilização",
         align: "right",
         formato: (v) => {
           const n = Number(v);
@@ -1873,7 +1911,7 @@ export class Relatorios {
         cor: "aviso",
       },
       {
-        label: "Execução Geral",
+        label: "Utilização Geral",
         valor: `${percentualGeral.toFixed(1)}%`,
         cor: percentualGeral >= 80 ? "erro" : "info",
       },
@@ -1909,11 +1947,14 @@ export class Relatorios {
     const dataInicio = new Date(this._hoje());
     dataInicio.setDate(dataInicio.getDate() - dias);
     const dataInicioISO = this._toISODate(dataInicio);
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
 
-    const { data: consumos, error: consErr } = await supabase
+    let queryConsumos = supabase
       .from("consumos")
-      .select("item_ata_id, quantidade")
+      .select("item_ata_id, quantidade, ata_id")
       .gte("data_consumo", dataInicioISO);
+    if (escopoIds !== null) queryConsumos = queryConsumos.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+    const { data: consumos, error: consErr } = await queryConsumos;
 
     if (consErr) throw consErr;
 
@@ -2073,7 +2114,7 @@ export class Relatorios {
   // ============================================================
   // ============================================================
   async _relSaldoConsolidadoAta(meta) {
-    const { data: atas, error: atasErr } = await supabase
+    let atasQuery = supabase
       .from("atas")
       .select(
         `
@@ -2089,6 +2130,8 @@ export class Relatorios {
       )
       .in("situacao", ["ATIVA", "PROXIMA"])
       .order("numero_ata");
+    atasQuery = await this.aplicarEscopoAta(atasQuery, "id");
+    const { data: atas, error: atasErr } = await atasQuery;
 
     if (atasErr) throw atasErr;
 
@@ -2101,22 +2144,15 @@ export class Relatorios {
       return;
     }
 
-    const [itensRes, consumosRes] = await Promise.all([
-      supabase
-        .from("itens_ata")
-        .select("ata_id, valor_total")
-        .in("ata_id", atasIds),
+    const [, consumosRes] = await Promise.all([
+      Promise.resolve({ data: [] }),
       supabase
         .from("consumos")
         .select("ata_id, valor_total")
         .in("ata_id", atasIds),
     ]);
 
-    const contratadoPorAta = {};
-    (itensRes.data || []).forEach((i) => {
-      contratadoPorAta[i.ata_id] =
-        (contratadoPorAta[i.ata_id] || 0) + (i.valor_total || 0);
-    });
+    const contratadoPorAta = Object.fromEntries((atas || []).map((a) => [a.id, Number(a.valor_global || 0)]));
 
     const consumidoPorAta = {};
     (consumosRes.data || []).forEach((c) => {
@@ -2174,7 +2210,7 @@ export class Relatorios {
       },
       {
         key: "percentual_execucao",
-        label: "% Execução",
+        label: "% Utilização",
         align: "right",
         formato: (v) => {
           const n = Number(v);
@@ -2261,6 +2297,7 @@ export class Relatorios {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
 
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
     let query = supabase
       .from("consumos")
       .select(
@@ -2276,6 +2313,7 @@ export class Relatorios {
     if (inicio) query = query.gte("data_consumo", inicio);
     if (fim) query = query.lte("data_consumo", fim);
 
+    if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
     const { data: consumos, error } = await query;
     if (error) throw error;
 
@@ -2375,12 +2413,14 @@ export class Relatorios {
   async _relConsumoPorCategoria(meta) {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
 
     let query = supabase
       .from("consumos")
       .select(
         `
         valor_total,
+        ata_id,
         ata:atas(
           id,
           categoria:categorias(id, nome)
@@ -2391,6 +2431,7 @@ export class Relatorios {
 
     if (inicio) query = query.gte("data_consumo", inicio);
     if (fim) query = query.lte("data_consumo", fim);
+    if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
 
     const { data: consumos, error } = await query;
     if (error) throw error;
@@ -2488,6 +2529,7 @@ export class Relatorios {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
 
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
     let query = supabase.from("consumos").select(
       `
         quantidade,
@@ -2503,6 +2545,7 @@ export class Relatorios {
 
     if (inicio) query = query.gte("data_consumo", inicio);
     if (fim) query = query.lte("data_consumo", fim);
+    if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
 
     const { data: consumos, error } = await query;
     if (error) throw error;
@@ -2684,8 +2727,9 @@ export class Relatorios {
   async _relConsumoPorItem(meta) {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
 
-    const { data: itens, error: itensErr } = await supabase
+    let itensQuery = supabase
       .from("itens_ata")
       .select(
         `
@@ -2701,6 +2745,8 @@ export class Relatorios {
       `,
       )
       .in("ata.situacao", ["ATIVA", "PROXIMA"]);
+    if (escopoIds !== null) itensQuery = itensQuery.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+    const { data: itens, error: itensErr } = await itensQuery;
 
     if (itensErr) throw itensErr;
 
@@ -2722,6 +2768,7 @@ export class Relatorios {
     if (inicio) consQuery = consQuery.gte("data_consumo", inicio);
     if (fim) consQuery = consQuery.lte("data_consumo", fim);
 
+    if (escopoIds !== null) consQuery = consQuery.in("ata_id", escopoIds.length ? escopoIds : [-1]);
     const { data: consumos, error: consErr } = await consQuery;
     if (consErr) throw consErr;
 
@@ -2833,7 +2880,7 @@ export class Relatorios {
         cor: "aviso",
       },
       {
-        label: "Execução Geral",
+        label: "Utilização Geral",
         valor: `${percentualGeral.toFixed(1)}%`,
         cor: percentualGeral >= 80 ? "erro" : "info",
       },
@@ -2866,6 +2913,7 @@ export class Relatorios {
   async _relConsumoPorSolicitante(meta) {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
 
     let query = supabase
       .from("consumos")
@@ -2873,6 +2921,7 @@ export class Relatorios {
         `
         valor_total,
         quantidade,
+        ata_id,
         usuario_id,
         usuario:usuarios(id, nome, perfil)
       `,
@@ -2881,6 +2930,7 @@ export class Relatorios {
 
     if (inicio) query = query.gte("data_consumo", inicio);
     if (fim) query = query.lte("data_consumo", fim);
+    if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
 
     const { data: consumos, error } = await query;
     if (error) throw error;
@@ -2994,14 +3044,16 @@ export class Relatorios {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
     const agrupamento = this.filtrosAtivos.agrupamento || "dia";
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
 
     let query = supabase
       .from("consumos")
-      .select("data_consumo, valor_total, quantidade")
+      .select("data_consumo, valor_total, quantidade, ata_id")
       .order("data_consumo", { ascending: true });
 
     if (inicio) query = query.gte("data_consumo", inicio);
     if (fim) query = query.lte("data_consumo", fim);
+    if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
 
     const { data: consumos, error } = await query;
     if (error) throw error;
@@ -3125,13 +3177,17 @@ export class Relatorios {
     const corte = new Date(hoje);
     corte.setDate(corte.getDate() - 7);
 
-    const [atasRes, pedidosRes, devolucoesRes] = await Promise.all([
-      supabase.from("atas").select("id, numero_ata, data_fim_vigencia, valor_global, situacao")
+    let atasQuery = supabase.from("atas").select("id, numero_ata, data_fim_vigencia, valor_global, situacao")
         .in("situacao", ["ATIVA", "PROXIMA"])
         .gte("data_fim_vigencia", this._toISODate(hoje))
-        .lte("data_fim_vigencia", this._toISODate(limite)),
-      supabase.from("pedidos").select("id, numero_pedido, status_aprovacao, valor_total, created_at")
-        .in("status_aprovacao", ["AGUARDANDO_APROVACAO", "DEVOLVIDO_AJUSTE", "EM_ENTREGA"]),
+        .lte("data_fim_vigencia", this._toISODate(limite));
+    atasQuery = await this.aplicarEscopoAta(atasQuery, "id");
+    let pedidosQuery = supabase.from("pedidos").select("id, numero_pedido, status_aprovacao, valor_total, created_at, ata_id")
+        .in("status_aprovacao", ["AGUARDANDO_APROVACAO", "DEVOLVIDO_AJUSTE", "EM_ENTREGA"]);
+    pedidosQuery = await this.aplicarEscopoAta(pedidosQuery, "ata_id");
+    const [atasRes, pedidosRes, devolucoesRes] = await Promise.all([
+      atasQuery,
+      pedidosQuery,
       supabase.from("pedidos_devolucoes").select("id, status, criado_em")
         .eq("status", "AGUARDANDO_SOLICITANTE"),
     ]);
@@ -3182,10 +3238,12 @@ export class Relatorios {
     const dias = this.filtrosAtivos.dias || 7;
     const corte = new Date(this._hoje());
     corte.setDate(corte.getDate() - dias);
-    const { data: pedidos, error } = await supabase.from("pedidos").select(
+    let pedidosQuery = supabase.from("pedidos").select(
       "id, numero_pedido, status_aprovacao, valor_total, created_at, data_solicitacao, usuario:usuarios(nome), orgao:orgaos(nome, sigla)"
     ).in("status_aprovacao", ["AGUARDANDO_APROVACAO", "DEVOLVIDO_AJUSTE", "EM_ENTREGA"])
       .lt("created_at", corte.toISOString()).order("created_at", { ascending: true });
+    pedidosQuery = await this.aplicarEscopoAta(pedidosQuery, "ata_id");
+    const { data: pedidos, error } = await pedidosQuery;
     if (error) throw error;
     const rotulos = { AGUARDANDO_APROVACAO: "Aguardando aprovação", DEVOLVIDO_AJUSTE: "Devolvido para ajuste", EM_ENTREGA: "Em entrega" };
     const linhas = (pedidos || []).map((p) => ({
@@ -3210,7 +3268,9 @@ export class Relatorios {
   async _relDevolucoesAjuste() {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
-    let query = supabase.from("pedidos_devolucoes").select("id, pedido_id, justificativa, status, criado_em, respondido_em, pedido:pedidos(numero_pedido, valor_total, usuario:usuarios(nome), orgao:orgaos(nome, sigla))").order("criado_em", { ascending: false });
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
+    let query = supabase.from("pedidos_devolucoes").select("id, pedido_id, justificativa, status, criado_em, respondido_em, pedido:pedidos!inner(ata_id, numero_pedido, valor_total, usuario:usuarios(nome), orgao:orgaos(nome, sigla))").order("criado_em", { ascending: false });
+    if (escopoIds !== null) query = query.in("pedido.ata_id", escopoIds.length ? escopoIds : [-1]);
     if (inicio) query = query.gte("criado_em", `${inicio}T00:00:00`);
     if (fim) query = query.lte("criado_em", `${fim}T23:59:59`);
     const { data, error } = await query;
@@ -3233,8 +3293,11 @@ export class Relatorios {
   // RELATÓRIO · RISCO DE ABASTECIMENTO
   // ============================================================
   async _relRiscoAbastecimento() {
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
+    let itensQuery = supabase.from("itens_ata").select("id, item_numero, descricao, unidade_medida, saldo_quantidade, valor_unitario, ata:atas(numero_ata, situacao)").in("ata.situacao", ["ATIVA", "PROXIMA"]);
+    if (escopoIds !== null) itensQuery = itensQuery.in("ata_id", escopoIds.length ? escopoIds : [-1]);
     const [itensRes, pedidosRes] = await Promise.all([
-      supabase.from("itens_ata").select("id, item_numero, descricao, unidade_medida, saldo_quantidade, valor_unitario, ata:atas(numero_ata, situacao)").in("ata.situacao", ["ATIVA", "PROXIMA"]),
+      itensQuery,
       supabase.from("itens_pedido").select("item_ata_id, quantidade_solicitada, pedido:pedidos(status_aprovacao)")
     ]);
     if (itensRes.error) throw itensRes.error;
@@ -3268,6 +3331,7 @@ export class Relatorios {
     if (inicio) query = query.gte("data_solicitacao", inicio);
     if (fim) query = query.lte("data_solicitacao", fim);
 
+    query = await this.aplicarEscopoAta(query, "ata_id");
     const { data: pedidos, error } = await query;
     if (error) throw error;
 
@@ -3376,7 +3440,7 @@ export class Relatorios {
     const corte = new Date(this._hoje());
     corte.setDate(corte.getDate() - dias);
 
-    const { data: pedidos, error } = await supabase
+    let pedidosQuery = supabase
       .from("pedidos")
       .select(
         `
@@ -3394,6 +3458,8 @@ export class Relatorios {
       .eq("status_aprovacao", "AGUARDANDO_APROVACAO")
       .lt("created_at", corte.toISOString())
       .order("created_at", { ascending: true });
+    pedidosQuery = await this.aplicarEscopoAta(pedidosQuery, "ata_id");
+    const { data: pedidos, error } = await pedidosQuery;
 
     if (error) throw error;
 
@@ -3503,6 +3569,7 @@ export class Relatorios {
     if (inicio) query = query.gte("data_aprovacao", inicio);
     if (fim) query = query.lte("data_aprovacao", fim);
 
+    query = await this.aplicarEscopoAta(query, "ata_id");
     const { data: pedidos, error } = await query;
     if (error) throw error;
 
@@ -3665,6 +3732,7 @@ export class Relatorios {
     if (inicio) query = query.gte("data_solicitacao", inicio);
     if (fim) query = query.lte("data_solicitacao", fim);
 
+    query = await this.aplicarEscopoAta(query, "ata_id");
     const { data: pedidos, error } = await query;
     if (error) throw error;
 
@@ -3794,6 +3862,7 @@ export class Relatorios {
     if (inicio) query = query.gte("data_aprovacao", inicio);
     if (fim) query = query.lte("data_aprovacao", fim);
 
+    query = await this.aplicarEscopoAta(query, "ata_id");
     const { data: pedidos, error } = await query;
     if (error) throw error;
 
@@ -3920,8 +3989,9 @@ export class Relatorios {
   // ============================================================
   // ============================================================
   async _relEstoqueZeradoPendente(meta) {
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
     // 1. Buscar itens com saldo zerado ou negativo
-    const { data: itens, error: itensErr } = await supabase
+    let itensQuery = supabase
       .from("itens_ata")
       .select(
         `
@@ -3936,6 +4006,8 @@ export class Relatorios {
       `,
       )
       .lte("saldo_quantidade", 0);
+    if (escopoIds !== null) itensQuery = itensQuery.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+    const { data: itens, error: itensErr } = await itensQuery;
 
     if (itensErr) throw itensErr;
 
@@ -4100,6 +4172,7 @@ export class Relatorios {
     const fim = this.filtrosAtivos.dataFim;
     const ordenacao = this.filtrosAtivos.ordenacao || "contratado";
 
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
     let atasQuery = supabase.from("atas").select(
       `
         id,
@@ -4113,6 +4186,7 @@ export class Relatorios {
     if (inicio) atasQuery = atasQuery.gte("data_inicio_vigencia", inicio);
     if (fim) atasQuery = atasQuery.lte("data_inicio_vigencia", fim);
 
+    if (escopoIds !== null) atasQuery = atasQuery.in("id", escopoIds.length ? escopoIds : [-1]);
     const { data: atas, error: atasErr } = await atasQuery;
     if (atasErr) throw atasErr;
 
@@ -4121,6 +4195,7 @@ export class Relatorios {
     if (inicio) consQuery = consQuery.gte("data_consumo", inicio);
     if (fim) consQuery = consQuery.lte("data_consumo", fim);
 
+    if (escopoIds !== null) consQuery = consQuery.in("ata_id", escopoIds.length ? escopoIds : [-1]);
     const { data: consumos, error: consErr } = await consQuery;
     if (consErr) throw consErr;
 
@@ -4206,7 +4281,7 @@ export class Relatorios {
       },
       {
         key: "percentual_execucao",
-        label: "% Execução",
+        label: "% Utilização",
         align: "right",
         formato: (v) => {
           const n = Number(v);
@@ -4274,7 +4349,7 @@ export class Relatorios {
   // ============================================================
   // ============================================================
   async _relSaldoPorFornecedor(meta) {
-    const { data: atas, error: atasErr } = await supabase
+    let atasQuery = supabase
       .from("atas")
       .select(
         `
@@ -4286,6 +4361,8 @@ export class Relatorios {
       `,
       )
       .in("situacao", ["ATIVA", "PROXIMA"]);
+    atasQuery = await this.aplicarEscopoAta(atasQuery, "id");
+    const { data: atas, error: atasErr } = await atasQuery;
 
     if (atasErr) throw atasErr;
 
@@ -4450,7 +4527,8 @@ export class Relatorios {
   // ============================================================
   async _relDiferencaPrecos(meta) {
     // 1. Buscar todos os itens de atas ATIVA/PROXIMA
-    const { data: itens, error } = await supabase
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
+    let itensQuery = supabase
       .from("itens_ata")
       .select(
         `
@@ -4470,6 +4548,8 @@ export class Relatorios {
       )
       .in("ata.situacao", ["ATIVA", "PROXIMA"])
       .gt("valor_unitario", 0);
+    if (escopoIds !== null) itensQuery = itensQuery.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+    const { data: itens, error } = await itensQuery;
 
     if (error) throw error;
 
@@ -4641,6 +4721,17 @@ export class Relatorios {
   }
 
   // ============================================================
+  async _relAditivos(meta) {
+    let query = supabase.from("aditivos_ata").select("id, numero_aditivo, tipo_aditivo, ata_original_id, data_assinatura, data_aplicacao, justificativa, ata_original:atas(numero_ata), usuario:usuarios(nome)").order("created_at", { ascending: false });
+    query = await this.aplicarEscopoAta(query, "ata_original_id");
+    const { data, error } = await query;
+    if (error) throw error;
+    this.dadosAtuais = (data || []).map((a) => ({ numero_aditivo: a.numero_aditivo || "N/I", ata: a.ata_original?.numero_ata || "N/I", tipo: a.tipo_aditivo || "—", data_assinatura: a.data_assinatura, situacao: a.data_aplicacao ? "Aplicado" : "Pendente", responsavel: a.usuario?.nome || "—", justificativa: a.justificativa || "—" }));
+    this.colunasAtuais = [{key:"numero_aditivo",label:"Aditivo"},{key:"ata",label:"Ata"},{key:"tipo",label:"Tipo"},{key:"data_assinatura",label:"Assinatura"},{key:"situacao",label:"Situação"},{key:"responsavel",label:"Responsável"},{key:"justificativa",label:"Justificativa"}];
+    this._renderizarKpis([{label:"Aditivos",valor:this.dadosAtuais.length,cor:"info"},{label:"Aplicados",valor:this.dadosAtuais.filter((a)=>a.situacao === "Aplicado").length,cor:"sucesso"},{label:"Pendentes",valor:this.dadosAtuais.filter((a)=>a.situacao === "Pendente").length,cor:"aviso"}]);
+    this._renderizarTabela(this.dadosAtuais, this.colunasAtuais);
+  }
+
   // ============================================================
   // RELATÓRIO 20 · HISTÓRICO DE ALTERAÇÕES
   // ============================================================
@@ -4666,6 +4757,7 @@ export class Relatorios {
       )
       .order("created_at", { ascending: false });
 
+    query = await this.aplicarEscopoAta(query, "ata_id");
     if (inicio) query = query.gte("created_at", `${inicio}T00:00:00`);
     if (fim) query = query.lte("created_at", `${fim}T23:59:59`);
 
@@ -4764,7 +4856,8 @@ export class Relatorios {
   // Lógica autocontida (não chama gestao.js).
   // ============================================================
   async _relDivergenciasSaldo(meta) {
-    const { data: itens, error: itensErr } = await supabase
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
+    let itensQuery = supabase
       .from("itens_ata")
       .select(
         `
@@ -4779,6 +4872,8 @@ export class Relatorios {
       `,
       )
       .in("ata.situacao", ["ATIVA", "PROXIMA"]);
+    if (escopoIds !== null) itensQuery = itensQuery.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+    const { data: itens, error: itensErr } = await itensQuery;
 
     if (itensErr) throw itensErr;
 
@@ -4924,12 +5019,15 @@ export class Relatorios {
 
     const dataInicio = `${anoAnterior}-01-01`;
     const dataFim = `${anoBase}-12-31`;
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
 
-    const { data: consumos, error } = await supabase
+    let query = supabase
       .from("consumos")
-      .select("data_consumo, valor_total")
+      .select("data_consumo, valor_total, ata_id")
       .gte("data_consumo", dataInicio)
       .lte("data_consumo", dataFim);
+    if (escopoIds !== null) query = query.in("ata_id", escopoIds.length ? escopoIds : [-1]);
+    const { data: consumos, error } = await query;
 
     if (error) throw error;
 
@@ -5114,6 +5212,7 @@ export class Relatorios {
   async _relAuditoriaCompleta(meta) {
     const inicio = this.filtrosAtivos.dataInicio;
     const fim = this.filtrosAtivos.dataFim;
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
 
     // 1. Pedidos
     let qPedidos = supabase
@@ -5136,6 +5235,7 @@ export class Relatorios {
 
     if (inicio) qPedidos = qPedidos.gte("created_at", `${inicio}T00:00:00`);
     if (fim) qPedidos = qPedidos.lte("created_at", `${fim}T23:59:59`);
+    if (escopoIds !== null) qPedidos = qPedidos.in("ata_id", escopoIds.length ? escopoIds : [-1]);
 
     // 2. Consumos
     let qConsumos = supabase
@@ -5158,6 +5258,7 @@ export class Relatorios {
 
     if (inicio) qConsumos = qConsumos.gte("created_at", `${inicio}T00:00:00`);
     if (fim) qConsumos = qConsumos.lte("created_at", `${fim}T23:59:59`);
+    if (escopoIds !== null) qConsumos = qConsumos.in("ata_id", escopoIds.length ? escopoIds : [-1]);
 
     // 3. Alterações de atas
     let qHist = supabase
@@ -5178,6 +5279,7 @@ export class Relatorios {
 
     if (inicio) qHist = qHist.gte("created_at", `${inicio}T00:00:00`);
     if (fim) qHist = qHist.lte("created_at", `${fim}T23:59:59`);
+    if (escopoIds !== null) qHist = qHist.in("ata_id", escopoIds.length ? escopoIds : [-1]);
 
     const [pedidosRes, consumosRes, histRes] = await Promise.all([
       qPedidos,
@@ -5315,6 +5417,7 @@ export class Relatorios {
     const topN = this.filtrosAtivos.topo || 10;
 
     // 1. Buscar atas do período (para obter fornecedor de cada ata)
+    const escopoIds = await this.obterEscopoAnaliticoAtas();
     let atasQuery = supabase.from("atas").select(
       `
         id,
@@ -5327,6 +5430,7 @@ export class Relatorios {
     if (inicio) atasQuery = atasQuery.gte("data_inicio_vigencia", inicio);
     if (fim) atasQuery = atasQuery.lte("data_inicio_vigencia", fim);
 
+    if (escopoIds !== null) atasQuery = atasQuery.in("id", escopoIds.length ? escopoIds : [-1]);
     const { data: atas, error: atasErr } = await atasQuery;
     if (atasErr) throw atasErr;
 
@@ -5335,6 +5439,7 @@ export class Relatorios {
     if (inicio) consQuery = consQuery.gte("data_consumo", inicio);
     if (fim) consQuery = consQuery.lte("data_consumo", fim);
 
+    if (escopoIds !== null) consQuery = consQuery.in("ata_id", escopoIds.length ? escopoIds : [-1]);
     const { data: consumos, error: consErr } = await consQuery;
     if (consErr) throw consErr;
 
@@ -5501,6 +5606,7 @@ export class Relatorios {
     if (inicio) query = query.gte("data_solicitacao", inicio);
     if (fim) query = query.lte("data_solicitacao", fim);
 
+    query = await this.aplicarEscopoAta(query, "ata_id");
     const { data: pedidos, error } = await query;
     if (error) throw error;
 
@@ -5649,7 +5755,7 @@ export class Relatorios {
   // ============================================================
   async _relExecucaoMediaCategoria(meta) {
     // 1. Buscar atas ATIVA/PROXIMA com categoria e valor global
-    const { data: atas, error: atasErr } = await supabase
+    let atasQuery = supabase
       .from("atas")
       .select(
         `
@@ -5660,6 +5766,8 @@ export class Relatorios {
       `,
       )
       .in("situacao", ["ATIVA", "PROXIMA"]);
+    atasQuery = await this.aplicarEscopoAta(atasQuery, "id");
+    const { data: atas, error: atasErr } = await atasQuery;
 
     if (atasErr) throw atasErr;
 
@@ -5790,7 +5898,7 @@ export class Relatorios {
         cor: "aviso",
       },
       {
-        label: "Execução Geral",
+        label: "Utilização Geral",
         valor: `${pctGeral.toFixed(1)}%`,
         cor: pctGeral >= 80 ? "erro" : "info",
       },
