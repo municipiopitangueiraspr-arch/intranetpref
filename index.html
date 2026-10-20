@@ -72,7 +72,7 @@
     </script>
 
     <script type="module">
-	import { supabase, SUPABASE_CONFIG } from "/shared/js/supabase.js";
+	import { supabase, SUPABASE_CONFIG } from "./shared/js/supabase.js";
       const OAUTH_AUDIT_MARKER = "intranet.oauth_audit_started_at";
       function consumeOAuthAuditMarker(session) {
         const startedAt = Number(sessionStorage.getItem(OAUTH_AUDIT_MARKER) || 0);
